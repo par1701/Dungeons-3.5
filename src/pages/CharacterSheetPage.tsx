@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { useCharacterStore } from "../store/characterStore";
-import { findClass, findFeat, findRace, findSkill, findSpell, getEnabledClasses } from "../data";
+import { findClass, findFeat, findPower, findRace, findSkill, findSpell, getEnabledClasses } from "../data";
 import {
   abilityModifier,
   applyRacialAdjustments,
@@ -167,6 +167,19 @@ export default function CharacterSheetPage() {
               {character.spells.map((s, i) => (
                 <li key={i}>
                   [Nv.{s.level}] {findSpell(s.spellId)?.name ?? s.spellId} ({s.classId})
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+
+        {character.powers.length > 0 && (
+          <>
+            <h3>Poderes psiónicos</h3>
+            <ul>
+              {character.powers.map((p, i) => (
+                <li key={i}>
+                  [Nv.{p.level}] {findPower(p.powerId)?.name ?? p.powerId} ({p.classId})
                 </li>
               ))}
             </ul>

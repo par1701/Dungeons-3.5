@@ -1,6 +1,6 @@
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import type { Character } from "../types";
-import { findClass, findFeat, findRace, findSkill, findSpell, getEnabledClasses } from "../data";
+import { findClass, findFeat, findPower, findRace, findSkill, findSpell, getEnabledClasses } from "../data";
 import {
   abilityModifier,
   applyRacialAdjustments,
@@ -122,6 +122,17 @@ export default function CharacterSheetDocument({ character }: { character: Chara
             {character.spells.map((s, i) => (
               <Text key={i}>
                 • [Nv.{s.level}] {findSpell(s.spellId)?.name ?? s.spellId} ({s.classId})
+              </Text>
+            ))}
+          </>
+        )}
+
+        {character.powers.length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>Poderes psiónicos</Text>
+            {character.powers.map((p, i) => (
+              <Text key={i}>
+                • [Nv.{p.level}] {findPower(p.powerId)?.name ?? p.powerId} ({p.classId})
               </Text>
             ))}
           </>

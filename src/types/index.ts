@@ -25,6 +25,9 @@ export type SourceBookId =
   | "complete-divine"
   | "complete-adventurer"
   | "complete-champion"
+  | "complete-scoundrel"
+  | "complete-mage"
+  | "complete-psionic"
   | "phb2"
   | "dmg2";
 
@@ -66,6 +69,27 @@ export interface SpellcastingInfo {
   startLevel: number;
 }
 
+/**
+ * Manifestación psiónica (Complete Psionic): en vez de conjuros por nivel,
+ * el manifestador tiene una reserva de puntos de poder y conoce un número
+ * fijo de poderes que puede manifestar gastando puntos según su nivel
+ * (con la opción de "aumentar" gastando puntos extra, ver `PsionicPower.augment`).
+ */
+export interface ManifestingInfo {
+  /** Habilidad usada para CD y puntos de poder. */
+  ability: Ability;
+  /** Id de la lista de poderes que usa esta clase (normalmente = classId). */
+  powerListId: string;
+  /** Nivel de poder máximo que puede llegar a manifestar (0-9). */
+  maxPowerLevel: number;
+  /** puntos de poder por día [nivel de clase] (sin contar el bonus por característica alta) */
+  powerPointsPerDay: number[];
+  /** poderes conocidos [nivel de clase][nivel de poder 0..9] */
+  powersKnown: number[][];
+  /** a qué nivel de clase empieza a manifestar poderes */
+  startLevel: number;
+}
+
 export interface ClassDef {
   id: string;
   name: string;
@@ -79,6 +103,7 @@ export interface ClassDef {
   weaponProficiencies: string[];
   armorProficiencies: string[];
   spellcasting?: SpellcastingInfo;
+  manifesting?: ManifestingInfo;
   features: ClassFeature[]; // rasgos de clase por nivel (texto)
   maxLevel: number;
   isPrestige?: boolean;
@@ -180,6 +205,36 @@ export interface Spell {
   description: string;
 }
 
+export type PsionicDiscipline =
+  | "Clarividencia"
+  | "Metacreatividad"
+  | "Psicocinesis"
+  | "Psicometabolismo"
+  | "Psicoportación"
+  | "Telepatía"
+  | "Adivinación"
+  | "Universal";
+
+export interface PsionicPower {
+  id: string;
+  name: string;
+  source: SourceBookId;
+  discipline: PsionicDiscipline;
+  subdiscipline?: string;
+  descriptors: string[];
+  levelByClass: Record<string, number>; // classId -> nivel del poder
+  display: string; // análogo a "components" en conjuros (Vi/Au/Ma/Ol/Ma)
+  manifestingTime: string;
+  range: string;
+  target: string;
+  duration: string;
+  savingThrow: string;
+  powerResistance: string;
+  description: string;
+  /** Cómo mejora el poder si se gastan puntos de poder adicionales. */
+  augment?: string;
+}
+
 export type WeaponCategory = "simple" | "marcial" | "exotica";
 export type WeaponType = "cuerpo_a_cuerpo" | "distancia";
 
@@ -272,6 +327,12 @@ export interface CharacterSpellSelection {
   level: number;
 }
 
+export interface CharacterPowerSelection {
+  classId: string;
+  powerId: string;
+  level: number;
+}
+
 export interface CharacterEquipmentItem {
   itemId: string;
   itemKind: "weapon" | "armor" | "gear";
@@ -297,6 +358,7 @@ export interface Character {
   skillRanks: CharacterSkillRanks;
   feats: CharacterFeatChoice[];
   spells: CharacterSpellSelection[];
+  powers: CharacterPowerSelection[];
   equipment: CharacterEquipmentItem[];
   gold: number;
   hpRolls: number[]; // hp tirados/asignados por nivel

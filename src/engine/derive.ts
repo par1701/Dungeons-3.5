@@ -219,6 +219,36 @@ export function spellsPerDayForClassLevel(
   });
 }
 
+/**
+ * Puntos de poder bonus por característica alta (Complete Psionic / XPH):
+ * equivalen a la suma de los conjuros bonus "virtuales" de cada nivel de
+ * poder, convertidos a puntos según su coste (2×nivel−1 puntos de poder).
+ */
+export function bonusPowerPoints(abilityMod: number, maxPowerLevel: number): number {
+  let bonus = 0;
+  for (let lvl = 1; lvl <= maxPowerLevel; lvl++) {
+    bonus += bonusSpellsForLevel(abilityMod, lvl) * (2 * lvl - 1);
+  }
+  return bonus;
+}
+
+export function powerPointsForClassLevel(
+  def: ClassDef,
+  classLevel: number,
+  abilityScores: AbilityScores,
+): number | null {
+  if (!def.manifesting) return null;
+  const base = def.manifesting.powerPointsPerDay[classLevel];
+  if (base === undefined) return null;
+  const abilityMod = abilityModifier(abilityScores[def.manifesting.ability]);
+  return base + bonusPowerPoints(abilityMod, def.manifesting.maxPowerLevel);
+}
+
+/** Coste en puntos de poder para manifestar un poder de un nivel dado (mínimo, sin aumentar). */
+export function powerPointCost(powerLevel: number): number {
+  return powerLevel <= 0 ? 0 : 2 * powerLevel - 1;
+}
+
 const CARRY_CAPACITY_STR: Record<number, [number, number, number]> = {
   1: [3, 6, 10],
   2: [6, 13, 20],

@@ -1,4 +1,4 @@
-import type { Armor, ClassDef, Feat, GearItem, Race, Skill, SourceBookId, Spell, Weapon } from "../types";
+import type { Armor, ClassDef, Feat, GearItem, PsionicPower, Race, Skill, SourceBookId, Spell, Weapon } from "../types";
 import { SRD_RACES } from "./srd/races";
 import { SRD_SKILLS } from "./srd/skills";
 import { SRD_SPELLS } from "./srd/spells";
@@ -37,6 +37,8 @@ export const ALL_SPELLS: Spell[] = [...SRD_SPELLS, ...CA_SPELLS, ...CDV_SPELLS];
 export const ALL_WEAPONS: Weapon[] = [...SRD_WEAPONS];
 export const ALL_ARMORS: Armor[] = [...SRD_ARMORS];
 export const ALL_GEAR: GearItem[] = [...SRD_GEAR];
+// TODO: se completa cuando se generen los datos de Complete Psionic (poderes).
+export const ALL_POWERS: PsionicPower[] = [];
 
 function bySource<T extends { source: SourceBookId }>(items: T[], enabled: SourceBookId[]): T[] {
   return items.filter((item) => enabled.includes(item.source));
@@ -66,6 +68,9 @@ export function getEnabledArmors(enabled: SourceBookId[]): Armor[] {
 export function getEnabledGear(enabled: SourceBookId[]): GearItem[] {
   return bySource(ALL_GEAR, enabled);
 }
+export function getEnabledPowers(enabled: SourceBookId[]): PsionicPower[] {
+  return bySource(ALL_POWERS, enabled);
+}
 
 export function findRace(id: string): Race | undefined {
   return ALL_RACES.find((r) => r.id === id);
@@ -81,4 +86,7 @@ export function findFeat(id: string): Feat | undefined {
 }
 export function findSpell(id: string): Spell | undefined {
   return ALL_SPELLS.find((s) => s.id === id);
+}
+export function findPower(id: string): PsionicPower | undefined {
+  return ALL_POWERS.find((p) => p.id === id);
 }

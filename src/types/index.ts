@@ -82,6 +82,8 @@ export interface ClassDef {
   features: ClassFeature[]; // rasgos de clase por nivel (texto)
   maxLevel: number;
   isPrestige?: boolean;
+  /** Requisitos de entrada (solo relevante para clases de prestigio). */
+  prerequisites?: FeatPrerequisite[];
 }
 
 export interface RaceTrait {

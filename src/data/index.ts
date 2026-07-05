@@ -7,12 +7,33 @@ import { SRD_CLASSES_B } from "./srd/classes-b";
 import { SRD_CLASSES_C } from "./srd/classes-c";
 import { SRD_FEATS } from "./srd/feats";
 import { SRD_WEAPONS, SRD_ARMORS, SRD_GEAR } from "./srd/equipment";
+import { CW_CLASSES } from "./complete-warrior/classes";
+import { CW_FEATS } from "./complete-warrior/feats";
+import { CA_CLASSES } from "./complete-arcane/classes";
+import { CA_FEATS } from "./complete-arcane/feats";
+import { CA_SPELLS } from "./complete-arcane/spells";
+import { CDV_CLASSES } from "./complete-divine/classes";
+import { CDV_FEATS } from "./complete-divine/feats";
+import { CDV_SPELLS } from "./complete-divine/spells";
+import { CAD_CLASSES } from "./complete-adventurer/classes";
+import { CAD_FEATS } from "./complete-adventurer/feats";
+import { CC_CLASSES } from "./complete-champion/classes";
+import { CC_FEATS } from "./complete-champion/feats";
 
 export const ALL_RACES: Race[] = [...SRD_RACES];
-export const ALL_CLASSES: ClassDef[] = [...SRD_CLASSES_A, ...SRD_CLASSES_B, ...SRD_CLASSES_C];
-export const ALL_FEATS: Feat[] = [...SRD_FEATS];
+export const ALL_CLASSES: ClassDef[] = [
+  ...SRD_CLASSES_A,
+  ...SRD_CLASSES_B,
+  ...SRD_CLASSES_C,
+  ...CW_CLASSES,
+  ...CA_CLASSES,
+  ...CDV_CLASSES,
+  ...CAD_CLASSES,
+  ...CC_CLASSES,
+];
+export const ALL_FEATS: Feat[] = [...SRD_FEATS, ...CW_FEATS, ...CA_FEATS, ...CDV_FEATS, ...CAD_FEATS, ...CC_FEATS];
 export const ALL_SKILLS: Skill[] = [...SRD_SKILLS];
-export const ALL_SPELLS: Spell[] = [...SRD_SPELLS];
+export const ALL_SPELLS: Spell[] = [...SRD_SPELLS, ...CA_SPELLS, ...CDV_SPELLS];
 export const ALL_WEAPONS: Weapon[] = [...SRD_WEAPONS];
 export const ALL_ARMORS: Armor[] = [...SRD_ARMORS];
 export const ALL_GEAR: GearItem[] = [...SRD_GEAR];

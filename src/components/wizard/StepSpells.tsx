@@ -3,6 +3,14 @@ import type { StepProps } from "./types";
 import { applyRacialAdjustments, spellsPerDayForClassLevel } from "../../engine/derive";
 import { findRace } from "../../data";
 
+function reachableMaxLevel(perDay: number[] | null, fallbackMax: number): number {
+  if (!perDay) return fallbackMax;
+  for (let lvl = perDay.length - 1; lvl >= 0; lvl--) {
+    if (perDay[lvl] > 0) return lvl;
+  }
+  return 0;
+}
+
 export default function StepSpells({ character, onChange }: StepProps) {
   const classes = getEnabledClasses(character.activeSourceBooks);
   const spells = getEnabledSpells(character.activeSourceBooks);
@@ -52,7 +60,7 @@ export default function StepSpells({ character, onChange }: StepProps) {
                 Conjuros por día: {perDay.map((n, i) => `Nv.${i}: ${n}`).join(" · ")}
               </p>
             )}
-            {Array.from({ length: (def.spellcasting?.maxSpellLevel ?? 0) + 1 }).map((_, spellLevel) => {
+            {Array.from({ length: reachableMaxLevel(perDay, def.spellcasting?.maxSpellLevel ?? 0) + 1 }).map((_, spellLevel) => {
               const options = spells.filter((sp) => sp.levelByClass[cl.classId] === spellLevel);
               if (options.length === 0) return null;
               const selectedCount = selectedForClass.filter((s) => s.level === spellLevel).length;

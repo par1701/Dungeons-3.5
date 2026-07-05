@@ -1,12 +1,12 @@
 import type { Armor, ClassDef, Feat, GearItem, Race, Skill, SourceBookId, Spell, Weapon } from "../types";
 import { SRD_RACES } from "./srd/races";
 import { SRD_SKILLS } from "./srd/skills";
+import { SRD_SPELLS } from "./srd/spells";
 
 // TODO: se completan automáticamente cuando terminan de generarse los datos
-// de clases/dotes/conjuros/equipo del SRD (ver src/data/srd/*).
+// de clases/dotes/equipo del SRD (ver src/data/srd/*).
 const SRD_CLASSES: ClassDef[] = [];
 const SRD_FEATS: Feat[] = [];
-const SRD_SPELLS: Spell[] = [];
 const SRD_WEAPONS: Weapon[] = [];
 const SRD_ARMORS: Armor[] = [];
 const SRD_GEAR: GearItem[] = [];

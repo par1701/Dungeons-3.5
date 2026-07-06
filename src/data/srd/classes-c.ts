@@ -13,7 +13,7 @@ const ROGUE_FEATURES = [
     level: 1,
     name: "Encontrar Trampas",
     description:
-      "El pícaro puede usar la habilidad Buscar para localizar trampas mágicas con CD 25 o más, y puede intentar desactivar trampas mecánicas con CD superior a 20 usando Desactivar Mecanismo.",
+      "El pícaro puede usar la habilidad Buscar para localizar trampas mágicas con CD 25 o más, y puede intentar desactivar trampas mecánicas con CD superior a 20 usando Inutilizar Mecanismo.",
   },
   {
     level: 2,

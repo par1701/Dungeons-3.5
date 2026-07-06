@@ -357,7 +357,7 @@ export const CM_CLASSES: ClassDef[] = [
     isPrestige: true,
     prerequisites: [
       { description: "Ser un mago especialista con una escuela de especialidad elegida" },
-      { description: "Foco de Conjuro en la escuela de especialidad", check: hasFeat("spell-focus") },
+      { description: "Soltura con una Escuela de Magia en la escuela de especialidad", check: hasFeat("spell-focus") },
       { description: "Conocimiento de Conjuros 5 rangos", check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 5 },
       { description: "Nivel de lanzador arcano 5", check: (ctx) => ctx.casterLevel >= 5 },
     ],

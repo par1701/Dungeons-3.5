@@ -293,7 +293,7 @@ export const CW_FEATS: Feat[] = [
       "Mientras luche con dos armas cortantes ligeras idénticas empuñadas una en cada mano, si ambos ataques de un mismo asalto impactan al mismo objetivo, puede realizar de inmediato un ataque adicional gratuito contra ese objetivo con cualquiera de las dos armas.",
     prerequisites: [
       { description: "Destreza 13", check: (ctx) => ctx.abilityScores.dex >= 13 },
-      { description: "Lucha con Dos Armas", check: hasFeat("two-weapon-fighting") },
+      { description: "Combate con Dos Armas", check: hasFeat("two-weapon-fighting") },
     ],
     fighterBonusFeat: true,
     stackable: false,
@@ -319,7 +319,7 @@ export const CW_FEATS: Feat[] = [
       "Si un enemigo falla un ataque cuerpo a cuerpo contra usted, puede realizar de inmediato una prueba de derribo enfrentada gratuita contra él, sin provocar ataque de oportunidad.",
     prerequisites: [
       { description: "Inteligencia 13", check: (ctx) => ctx.abilityScores.int >= 13 },
-      { description: "Combate Experto", check: hasFeat("combat-expertise") },
+      { description: "Pericia en Combate", check: hasFeat("combat-expertise") },
     ],
     fighterBonusFeat: true,
     stackable: false,
@@ -348,7 +348,7 @@ export const CW_FEATS: Feat[] = [
     benefit:
       "Al cargar y realizar un ataque desarmado, puede tratar su golpe como si procediera de un arma de tamaño superior, aumentando el dado de daño resultante.",
     prerequisites: [
-      { description: "Golpe Desarmado Mejorado", check: hasFeat("improved-unarmed-strike") },
+      { description: "Impacto sin Arma Mejorado", check: hasFeat("improved-unarmed-strike") },
       { description: "Bonificador base de ataque +6", check: (ctx) => ctx.babTotal >= 6 },
     ],
     fighterBonusFeat: true,
@@ -444,7 +444,7 @@ export const CW_FEATS: Feat[] = [
     benefit:
       "Cuando finta con éxito contra un enemigo, puede sustituir su siguiente ataque desarmado por una patada circular que, de impactar, deja al objetivo tambaleante durante 1 asalto (sufre -2 a la Clase de Armadura y a las tiradas de ataque).",
     prerequisites: [
-      { description: "Golpe Desarmado Mejorado", check: hasFeat("improved-unarmed-strike") },
+      { description: "Impacto sin Arma Mejorado", check: hasFeat("improved-unarmed-strike") },
       { description: "Finta Mejorada", check: hasFeat("improved-feint") },
     ],
     fighterBonusFeat: true,
@@ -469,10 +469,10 @@ export const CW_FEATS: Feat[] = [
     types: ["combate"],
     description: "Una técnica que enseña a manejar dos espadas idénticas casi como si fueran una sola arma.",
     benefit:
-      "Mientras empuñe dos armas idénticas con las que tenga Ataque Especializado, una en cada mano, puede usar su arma secundaria para parar como si portara un escudo ligero, ganando +1 de bonificador de escudo a la Clase de Armadura.",
+      "Mientras empuñe dos armas idénticas con las que tenga Soltura, una en cada mano, puede usar su arma secundaria para parar como si portara un escudo ligero, ganando +1 de bonificador de escudo a la Clase de Armadura.",
     prerequisites: [
-      { description: "Ataque Especializado con el arma elegida", check: hasFeat("weapon-focus") },
-      { description: "Lucha con Dos Armas", check: hasFeat("two-weapon-fighting") },
+      { description: "Soltura con el arma elegida", check: hasFeat("weapon-focus") },
+      { description: "Combate con Dos Armas", check: hasFeat("two-weapon-fighting") },
     ],
     fighterBonusFeat: true,
     stackable: false,
@@ -586,7 +586,7 @@ export const CW_FEATS: Feat[] = [
     description: "Una precisión letal a la hora de rematar los golpes críticos con un arma concreta.",
     benefit: "+4 de bonificador a las tiradas para confirmar un golpe crítico con el arma cuerpo a cuerpo elegida.",
     prerequisites: [
-      { description: "Ataque Especializado con el arma elegida", check: hasFeat("weapon-focus") },
+      { description: "Soltura con el arma elegida", check: hasFeat("weapon-focus") },
       { description: "Bonificador base de ataque +4", check: (ctx) => ctx.babTotal >= 4 },
     ],
     fighterBonusFeat: true,
@@ -601,7 +601,7 @@ export const CW_FEATS: Feat[] = [
     benefit:
       "Cuando ataca con un arma contundente, ignora la reducción de daño que ciertas criaturas (como esqueletos u objetos animados) poseen específicamente contra el daño contundente.",
     prerequisites: [
-      { description: "Ataque Especializado con un arma contundente", check: hasFeat("weapon-focus") },
+      { description: "Soltura con un arma contundente", check: hasFeat("weapon-focus") },
       { description: "Bonificador base de ataque +6", check: (ctx) => ctx.babTotal >= 6 },
     ],
     fighterBonusFeat: true,
@@ -616,7 +616,7 @@ export const CW_FEATS: Feat[] = [
     benefit:
       "Cuando ataca con un arma perforante, ignora la reducción de daño que ciertas criaturas poseen específicamente contra el daño perforante.",
     prerequisites: [
-      { description: "Ataque Especializado con un arma perforante", check: hasFeat("weapon-focus") },
+      { description: "Soltura con un arma perforante", check: hasFeat("weapon-focus") },
       { description: "Bonificador base de ataque +6", check: (ctx) => ctx.babTotal >= 6 },
     ],
     fighterBonusFeat: true,
@@ -631,7 +631,7 @@ export const CW_FEATS: Feat[] = [
     benefit:
       "Cuando ataca con un arma cortante, ignora la reducción de daño que ciertas criaturas poseen específicamente contra el daño cortante.",
     prerequisites: [
-      { description: "Ataque Especializado con un arma cortante", check: hasFeat("weapon-focus") },
+      { description: "Soltura con un arma cortante", check: hasFeat("weapon-focus") },
       { description: "Bonificador base de ataque +6", check: (ctx) => ctx.babTotal >= 6 },
     ],
     fighterBonusFeat: true,
@@ -678,7 +678,7 @@ export const CW_FEATS: Feat[] = [
     benefit:
       "Puede realizar todos sus ataques normales (no solo uno) mientras su montura se mueve, siempre que esta no se desplace más de su velocidad ese turno, sin provocar ataques de oportunidad por ello.",
     prerequisites: [
-      { description: "Combate Montado", check: hasFeat("mounted-combat") },
+      { description: "Combatir desde Montura", check: hasFeat("mounted-combat") },
       { description: "1 rango en Montar", check: (ctx) => (ctx.skillRanks["ride"] ?? 0) >= 1 },
     ],
     fighterBonusFeat: true,
@@ -693,7 +693,7 @@ export const CW_FEATS: Feat[] = [
     benefit:
       "Cuando impacta con una lanza durante una carga montada, puede realizar de inmediato una prueba de derribo enfrentada gratuita contra el jinete objetivo.",
     prerequisites: [
-      { description: "Combate Montado", check: hasFeat("mounted-combat") },
+      { description: "Combatir desde Montura", check: hasFeat("mounted-combat") },
       { description: "1 rango en Montar", check: (ctx) => (ctx.skillRanks["ride"] ?? 0) >= 1 },
     ],
     fighterBonusFeat: true,

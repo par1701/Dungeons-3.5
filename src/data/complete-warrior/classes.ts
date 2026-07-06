@@ -242,8 +242,8 @@ const HALFLING_OUTRIDER_FEATURES: ClassFeature[] = [
   },
   {
     level: 3,
-    name: "Dote de bonificación: Carga Enardecida",
-    description: "El jinete obtiene Carga Enardecida como dote de bonificación, aunque no cumpla sus prerrequisitos.",
+    name: "Dote de bonificación: Carga Impetuosa",
+    description: "El jinete obtiene Carga Impetuosa como dote de bonificación, aunque no cumpla sus prerrequisitos.",
   },
   {
     level: 4,
@@ -344,7 +344,7 @@ export const CW_CLASSES: ClassDef[] = [
         check: (ctx) => ctx.abilityScores.int >= 8,
       },
       {
-        description: "Ataque Especializado con el arma cortante elegida para el baile (habitualmente cimitarra)",
+        description: "Soltura con el arma cortante elegida para el baile (habitualmente cimitarra)",
         check: (ctx) => ctx.featIds.has("weapon-focus"),
       },
       {
@@ -448,7 +448,7 @@ export const CW_CLASSES: ClassDef[] = [
         check: (ctx) => ctx.featIds.has("precise-shot"),
       },
       {
-        description: "Ataque Especializado con el arco elegido",
+        description: "Soltura con el arco elegido",
         check: (ctx) => ctx.featIds.has("weapon-focus"),
       },
       {
@@ -521,7 +521,7 @@ export const CW_CLASSES: ClassDef[] = [
         check: (ctx) => (ctx.skillRanks["ride"] ?? 0) >= 8,
       },
       {
-        description: "Combate Montado",
+        description: "Combatir desde Montura",
         check: (ctx) => ctx.featIds.has("mounted-combat"),
       },
       {

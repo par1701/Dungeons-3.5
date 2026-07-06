@@ -545,7 +545,7 @@ export const CA_CLASSES: ClassDef[] = [
         check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 5,
       },
       {
-        description: "Ataque Especializado con cualquier arma",
+        description: "Soltura con el arma elegida",
         check: (ctx) => ctx.featIds.has("weapon-focus"),
       },
       {

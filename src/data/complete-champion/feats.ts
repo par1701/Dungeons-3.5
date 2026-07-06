@@ -124,7 +124,7 @@ export const CC_FEATS: Feat[] = [
     benefit:
       "A efectos de determinar su ataque desarmado, Clase de Armadura sin armadura y velocidad de monje, suma la mitad de sus niveles en una clase de lanzador divino a su nivel de monje.",
     prerequisites: [
-      { description: "Golpe Desarmado Mejorado", check: hasFeat("improved-unarmed-strike") },
+      { description: "Impacto sin Arma Mejorado", check: hasFeat("improved-unarmed-strike") },
       { description: "Capacidad de lanzar conjuros divinos" },
     ],
     fighterBonusFeat: false,
@@ -139,7 +139,7 @@ export const CC_FEATS: Feat[] = [
     benefit:
       "A efectos de determinar su ataque desarmado, Clase de Armadura sin armadura y velocidad de monje, suma la mitad de sus niveles en una clase de lanzador arcano a su nivel de monje.",
     prerequisites: [
-      { description: "Golpe Desarmado Mejorado", check: hasFeat("improved-unarmed-strike") },
+      { description: "Impacto sin Arma Mejorado", check: hasFeat("improved-unarmed-strike") },
       { description: "Capacidad de lanzar conjuros arcanos" },
     ],
     fighterBonusFeat: false,

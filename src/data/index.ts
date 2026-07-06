@@ -28,6 +28,7 @@ import { CPS_CLASSES } from "./complete-psionic/classes";
 import { CPS_PRESTIGE_CLASSES } from "./complete-psionic/prestige-classes";
 import { CPS_FEATS } from "./complete-psionic/feats";
 import { CPS_POWERS } from "./complete-psionic/powers";
+import { PHB2_FEATS } from "./phb2/feats";
 
 export const ALL_RACES: Race[] = [...SRD_RACES];
 export const ALL_CLASSES: ClassDef[] = [
@@ -54,6 +55,7 @@ export const ALL_FEATS: Feat[] = [
   ...CS_FEATS,
   ...CM_FEATS,
   ...CPS_FEATS,
+  ...PHB2_FEATS,
 ];
 export const ALL_SKILLS: Skill[] = [...SRD_SKILLS];
 export const ALL_SPELLS: Spell[] = [...SRD_SPELLS, ...CA_SPELLS, ...CDV_SPELLS, ...CM_SPELLS];

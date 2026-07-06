@@ -90,16 +90,17 @@ export const SOURCE_BOOKS: SourceBook[] = [
     id: "phb2",
     name: "Player's Handbook II",
     shortName: "PHB2",
-    description: "Reglas y opciones adicionales para jugadores.",
-    implemented: false,
+    description: "Dotes adicionales y reglas variantes de personaje (gestalt, puntos de acción, trasfondos, etc.).",
+    implemented: true,
     defaultEnabled: false,
   },
   {
     id: "dmg2",
     name: "Dungeon Master's Guide II",
     shortName: "DMG2",
-    description: "Reglas variantes y opciones adicionales para directores de juego.",
-    implemented: false,
+    description:
+      "Reglas variantes para jugadores (puntos de acción, reputación, afiliación, riqueza abstracta, reentrenamiento, etc.).",
+    implemented: true,
     defaultEnabled: false,
   },
 ];

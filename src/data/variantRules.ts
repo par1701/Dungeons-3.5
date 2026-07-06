@@ -1,9 +1,12 @@
 import type { VariantRule } from "../types";
+import { PHB2_VARIANT_RULES } from "./phb2/variant-rules";
+import { DMG2_VARIANT_RULES } from "./dmg2/variant-rules";
 
 // Reglas variantes disponibles para activar/desactivar al crear un personaje.
-// Cada libro futuro (Complete X, PHB2, DMG2) puede añadir las suyas aquí,
-// siempre que su SourceBook correspondiente tenga implemented=true.
-export const VARIANT_RULES: VariantRule[] = [
+// Cada libro (Complete X, PHB2, DMG2) añade las suyas en su propio archivo
+// src/data/<libro>/variant-rules.ts y se combinan aquí, siempre que su
+// SourceBook correspondiente tenga implemented=true.
+const CORE_VARIANT_RULES: VariantRule[] = [
   {
     id: "vr-ability-point-buy",
     name: "Generación de características: Compra por puntos",
@@ -78,6 +81,20 @@ export const VARIANT_RULES: VariantRule[] = [
     description: "El personaje recibe el máximo de su dado de golpe en el primer nivel de su primera clase.",
     defaultEnabled: true,
   },
+];
+
+// PHB2 y DMG2 describen el mismo subsistema de Puntos de Acción; se agrupan
+// como mutuamente excluyentes para que no se activen los dos a la vez.
+const ACTION_POINTS_GROUP = "sistema_puntos_accion";
+
+export const VARIANT_RULES: VariantRule[] = [
+  ...CORE_VARIANT_RULES,
+  ...PHB2_VARIANT_RULES.map((vr) =>
+    vr.id === "vr-phb2-action-points" ? { ...vr, exclusiveGroup: ACTION_POINTS_GROUP } : vr,
+  ),
+  ...DMG2_VARIANT_RULES.map((vr) =>
+    vr.id === "vr-dmg2-action-points" ? { ...vr, exclusiveGroup: ACTION_POINTS_GROUP } : vr,
+  ),
 ];
 
 export function getEnabledVariantIds(overrides?: Record<string, boolean>): string[] {

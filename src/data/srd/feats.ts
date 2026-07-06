@@ -182,27 +182,27 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "greater-spell-focus",
-    name: "Foco de Conjuro Mayor",
+    name: "Soltura Mayor con una Escuela de Magia",
     source: "srd",
     types: ["general"],
     description: "Un dominio superior sobre una escuela de magia concreta.",
-    benefit: "+1 adicional (además del de Foco de Conjuro) a la CD de salvación de los conjuros de la escuela elegida.",
+    benefit: "+1 adicional (además del de Soltura con una Escuela de Magia) a la CD de salvación de los conjuros de la escuela elegida.",
     prerequisites: [
-      { description: "Foco de Conjuro en la misma escuela", check: hasFeat("spell-focus") },
+      { description: "Soltura con la misma escuela de magia", check: hasFeat("spell-focus") },
     ],
     fighterBonusFeat: false,
     stackable: true,
   },
   {
     id: "greater-spell-penetration",
-    name: "Penetrar Conjuro Mayor",
+    name: "Conjuros Penetrantes Mayores",
     source: "srd",
     types: ["general"],
     description: "Una comprensión superior de cómo perforar la resistencia a la magia.",
     benefit:
-      "+2 adicionales (total +4 junto con Penetrar Conjuro) a las pruebas de nivel de lanzador para superar la resistencia a conjuros de una criatura.",
+      "+2 adicionales (total +4 junto con Conjuros Penetrantes) a las pruebas de nivel de lanzador para superar la resistencia a conjuros de una criatura.",
     prerequisites: [
-      { description: "Penetrar Conjuro", check: hasFeat("spell-penetration") },
+      { description: "Conjuros Penetrantes", check: hasFeat("spell-penetration") },
     ],
     fighterBonusFeat: false,
     stackable: false,
@@ -291,7 +291,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "magical-aptitude",
-    name: "Talento Mágico",
+    name: "Facilidad para la Magia",
     source: "srd",
     types: ["general"],
     description: "Una intuición natural sobre cómo funciona la magia.",
@@ -373,7 +373,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "skill-focus",
-    name: "Aptitud en Habilidad",
+    name: "Soltura con una Habilidad",
     source: "srd",
     types: ["general"],
     description: "Una especialización notable en un campo de conocimiento o destreza concreto.",
@@ -384,7 +384,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "spell-focus",
-    name: "Foco de Conjuro",
+    name: "Soltura con una Escuela de Magia",
     source: "srd",
     types: ["general"],
     description: "Un lanzador se especializa en una escuela de magia concreta.",
@@ -407,7 +407,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "spell-penetration",
-    name: "Penetrar Conjuro",
+    name: "Conjuros Penetrantes",
     source: "srd",
     types: ["general"],
     description: "Un lanzador aprende a forzar su magia a través de defensas mágicas.",
@@ -429,7 +429,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "toughness",
-    name: "Resistente",
+    name: "Dureza",
     source: "srd",
     types: ["general"],
     description: "Una constitución especialmente dura de matar.",

@@ -326,13 +326,13 @@ export const CPS_CLASSES: ClassDef[] = [
         level: 9,
         name: "Dote de Combate Adicional",
         description:
-          "La hoja del alma obtiene otra dote de combate adicional de la lista restringida de dotes de hoja mental.",
+          "El cuchillo del alma obtiene otra dote de combate adicional de la lista restringida de dotes de hoja mental.",
       },
       {
         level: 10,
         name: "Hoja Mental Gemela",
         description:
-          "La hoja del alma aprende a materializar una segunda hoja mental más pequeña en su otra mano, permitiéndole luchar con dos armas sin necesidad de empuñar una hoja física adicional.",
+          "El cuchillo del alma aprende a materializar una segunda hoja mental más pequeña en su otra mano, permitiéndole luchar con dos armas sin necesidad de empuñar una hoja física adicional.",
       },
       {
         level: 12,
@@ -343,13 +343,13 @@ export const CPS_CLASSES: ClassDef[] = [
         level: 14,
         name: "Viento de Hojas",
         description:
-          "Como acción de asalto completo, la hoja del alma puede realizar un ataque cuerpo a cuerpo con su hoja mental contra cada enemigo que amenace a su alrededor.",
+          "Como acción de asalto completo, el cuchillo del alma puede realizar un ataque cuerpo a cuerpo con su hoja mental contra cada enemigo que amenace a su alrededor.",
       },
       {
         level: 15,
         name: "Dote de Combate Adicional",
         description:
-          "La hoja del alma obtiene otra dote de combate adicional de la lista restringida de dotes de hoja mental.",
+          "El cuchillo del alma obtiene otra dote de combate adicional de la lista restringida de dotes de hoja mental.",
       },
       {
         level: 16,
@@ -360,13 +360,13 @@ export const CPS_CLASSES: ClassDef[] = [
         level: 18,
         name: "Dote de Combate Adicional",
         description:
-          "La hoja del alma obtiene otra dote de combate adicional de la lista restringida de dotes de hoja mental.",
+          "El cuchillo del alma obtiene otra dote de combate adicional de la lista restringida de dotes de hoja mental.",
       },
       {
         level: 20,
         name: "Mejora de la Hoja Mental +5",
         description:
-          "El bono de mejora de la hoja mental alcanza su máximo de +5. La hoja del alma es reconocida como una maestra absoluta de su arma psíquica.",
+          "El bono de mejora de la hoja mental alcanza su máximo de +5. El cuchillo del alma es reconocido como un maestro absoluto de su arma psíquica.",
       },
     ],
     maxLevel: 20,

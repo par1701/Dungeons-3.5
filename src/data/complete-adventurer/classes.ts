@@ -269,7 +269,7 @@ const EXEMPLAR_FEATURES = [
 ];
 
 // ---------------------------------------------------------------------------
-// Asesino de Rostro Fantasma (Ghost-Faced Killer)
+// Asesino Fantasma (Ghost-Faced Killer)
 // ---------------------------------------------------------------------------
 
 const GHOST_FACED_KILLER_FEATURES = [
@@ -573,7 +573,7 @@ export const CAD_CLASSES: ClassDef[] = [
   },
   {
     id: "cad-ghost-faced-killer",
-    name: "Asesino de Rostro Fantasma (Ghost-Faced Killer)",
+    name: "Asesino Fantasma (Ghost-Faced Killer)",
     source: "complete-adventurer",
     description:
       "Un asesino silencioso entrenado en una escuela legendaria que combina las artes marciales con un sigilo casi sobrenatural, capaz de parecer que se desvanece en el aire en pleno combate.",

@@ -2,7 +2,7 @@ import type { ClassDef, ClassFeature } from "../../types";
 
 // Clases de Complete Divine (2004).
 //
-// Se incluyen dos clases base nuevas (Alma Elegida y Chamán Espiritual, ambas
+// Se incluyen dos clases base nuevas (Alma Predilecta y Chamán Espiritual, ambas
 // lanzadoras divinas espontáneas) y varias clases de prestigio representativas
 // del libro. Las clases de prestigio cuyo único efecto mágico es "avanzar el
 // nivel de lanzador de una clase divina que el personaje ya poseyera" omiten
@@ -11,7 +11,7 @@ import type { ClassDef, ClassFeature } from "../../types";
 // rasgo de clase (ClassFeature) de texto, siguiendo el mismo criterio usado en
 // las clases de prestigio de Complete Arcane.
 //
-// Alma Elegida y Chamán Espiritual reutilizan, por forma, la misma progresión
+// Alma Predilecta y Chamán Espiritual reutilizan, por forma, la misma progresión
 // de "conjuros por día"/"conjuros conocidos" que usa el Hechicero en el PHB:
 // en las reglas originales, ambas clases comparten exactamente esas tablas
 // (solo cambian la característica de lanzamiento, cha/sab, y la lista de
@@ -154,7 +154,7 @@ const CHURCH_INQUISITOR_FEATURES: ClassFeature[] = [
     level: 2,
     name: "Sentido del hereje",
     description:
-      "El inquisidor obtiene un bonificador de competencia igual a la mitad de su nivel de inquisidor (mínimo +1) a las pruebas de Sentir Motivaciones realizadas para detectar mentiras o dobleces en asuntos de fe.",
+      "El inquisidor obtiene un bonificador de competencia igual a la mitad de su nivel de inquisidor (mínimo +1) a las pruebas de Averiguar Intenciones realizadas para detectar mentiras o dobleces en asuntos de fe.",
   },
   {
     level: 5,
@@ -197,7 +197,7 @@ const DIVINE_ORACLE_FEATURES: ClassFeature[] = [
     level: 3,
     name: "Voz de la razón",
     description:
-      "El oráculo divino obtiene un bonificador de +2 a las pruebas de Diplomacia y Sentir Motivaciones cuando actúa transmitiendo un mensaje o advertencia que cree inspirado por su deidad.",
+      "El oráculo divino obtiene un bonificador de +2 a las pruebas de Diplomacia y Averiguar Intenciones cuando actúa transmitiendo un mensaje o advertencia que cree inspirado por su deidad.",
   },
   {
     level: 6,
@@ -394,7 +394,7 @@ export const CDV_CLASSES: ClassDef[] = [
   // ---------------------------------------------------------------------
   {
     id: "cdv-favored-soul",
-    name: "Alma Elegida (Favored Soul)",
+    name: "Alma Predilecta (Favored Soul)",
     source: "complete-divine",
     description:
       "Un lanzador divino tocado directamente por su deidad desde el nacimiento, que canaliza el poder sagrado de forma espontánea y natural, sin necesidad de estudio ni oración formal, de un modo análogo a como el hechicero canaliza la magia arcana.",
@@ -503,11 +503,11 @@ export const CDV_CLASSES: ClassDef[] = [
         check: (ctx) => (ctx.skillRanks["diplomacy"] ?? 0) >= 4,
       },
       {
-        description: "Conocimiento (Religión): 8 rangos",
+        description: "Saber (Religión): 8 rangos",
         check: (ctx) => (ctx.skillRanks["knowledge-religion"] ?? 0) >= 8,
       },
       {
-        description: "Sentir Motivaciones: 4 rangos",
+        description: "Averiguar Intenciones: 4 rangos",
         check: (ctx) => (ctx.skillRanks["sense-motive"] ?? 0) >= 4,
       },
       {
@@ -543,11 +543,11 @@ export const CDV_CLASSES: ClassDef[] = [
     isPrestige: true,
     prerequisites: [
       {
-        description: "Conocimiento (Religión): 8 rangos",
+        description: "Saber (Religión): 8 rangos",
         check: (ctx) => (ctx.skillRanks["knowledge-religion"] ?? 0) >= 8,
       },
       {
-        description: "Conjuros: 8 rangos",
+        description: "Conocimiento de Conjuros: 8 rangos",
         check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 8,
       },
       {
@@ -585,7 +585,7 @@ export const CDV_CLASSES: ClassDef[] = [
         check: (ctx) => ctx.babTotal >= 5,
       },
       {
-        description: "Conocimiento (Religión): 2 rangos",
+        description: "Saber (Religión): 2 rangos",
         check: (ctx) => (ctx.skillRanks["knowledge-religion"] ?? 0) >= 2,
       },
       {
@@ -612,7 +612,7 @@ export const CDV_CLASSES: ClassDef[] = [
     isPrestige: true,
     prerequisites: [
       {
-        description: "Conocimiento (Religión): 8 rangos",
+        description: "Saber (Religión): 8 rangos",
         check: (ctx) => (ctx.skillRanks["knowledge-religion"] ?? 0) >= 8,
       },
       {
@@ -654,11 +654,11 @@ export const CDV_CLASSES: ClassDef[] = [
     isPrestige: true,
     prerequisites: [
       {
-        description: "Conocimiento (Religión): 8 rangos",
+        description: "Saber (Religión): 8 rangos",
         check: (ctx) => (ctx.skillRanks["knowledge-religion"] ?? 0) >= 8,
       },
       {
-        description: "Conocimiento (Planos): 4 rangos",
+        description: "Saber (Planos): 4 rangos",
         check: (ctx) => (ctx.skillRanks["knowledge-the-planes"] ?? 0) >= 4,
       },
       {
@@ -701,7 +701,7 @@ export const CDV_CLASSES: ClassDef[] = [
         check: (ctx) => ctx.babTotal >= 5,
       },
       {
-        description: "Conocimiento (Religión): 4 rangos",
+        description: "Saber (Religión): 4 rangos",
         check: (ctx) => (ctx.skillRanks["knowledge-religion"] ?? 0) >= 4,
       },
       {

@@ -1,12 +1,43 @@
 import type {
   Ability,
   AbilityScores,
+  Armor,
   Character,
   CharacterClassLevel,
   ClassDef,
   Race,
   SaveProgression,
+  Weapon,
 } from "../types";
+
+const SKILL_KEY_SEPARATOR = "::";
+
+/** Compone la clave usada en `CharacterSkillRanks` para una habilidad con especialización (Oficio, Profesión, Interpretar). */
+export function makeSkillKey(skillId: string, specialization?: string): string {
+  return specialization ? `${skillId}${SKILL_KEY_SEPARATOR}${specialization}` : skillId;
+}
+
+/** Descompone una clave de `CharacterSkillRanks` en el id de habilidad base y su especialización, si tiene. */
+export function parseSkillKey(key: string): { skillId: string; specialization?: string } {
+  const idx = key.indexOf(SKILL_KEY_SEPARATOR);
+  if (idx === -1) return { skillId: key };
+  return { skillId: key.slice(0, idx), specialization: key.slice(idx + SKILL_KEY_SEPARATOR.length) };
+}
+
+/**
+ * Aplana `CharacterSkillRanks` a un mapa `idHabilidad -> rangos` usable para
+ * comprobar prerrequisitos (ej. "Interpretar 9 rangos"). Para habilidades con
+ * especialización se toma el máximo entre todas sus especialidades, que es
+ * como el SRD interpreta ese tipo de requisito.
+ */
+export function flattenSkillRanksForPrereqs(skillRanks: Record<string, number>): Record<string, number> {
+  const flattened: Record<string, number> = {};
+  for (const [key, ranks] of Object.entries(skillRanks)) {
+    const { skillId } = parseSkillKey(key);
+    flattened[skillId] = Math.max(flattened[skillId] ?? 0, ranks);
+  }
+  return flattened;
+}
 
 export function abilityModifier(score: number): number {
   return Math.floor((score - 10) / 2);
@@ -165,6 +196,23 @@ export function proficiencyBonusPlaceholder(): number {
   return 0;
 }
 
+const SIZE_MODIFIER: Record<string, number> = {
+  Fino: 8,
+  Diminuto: 4,
+  Diminuta: 4,
+  Pequeño: 1,
+  Mediano: 0,
+  Grande: -1,
+  Enorme: -2,
+  Descomunal: -4,
+  Colosal: -8,
+};
+
+/** Modificador de tamaño (idéntico para Clase de Armadura y para tiradas de ataque). */
+export function sizeModifier(size: string): number {
+  return SIZE_MODIFIER[size] ?? 0;
+}
+
 export interface ArmorClassInputs {
   armorBonus: number;
   shieldBonus: number;
@@ -311,6 +359,28 @@ export function isHumanRace(race?: Race): boolean {
   return race?.id === "human";
 }
 
+export interface UnlockedClassFeature {
+  classId: string;
+  className: string;
+  level: number;
+  name: string;
+  description: string;
+}
+
+/** Rasgos de clase ya obtenidos según el nivel actual de cada clase del personaje. */
+export function getUnlockedClassFeatures(
+  classLevels: CharacterClassLevel[],
+  classes: ClassDef[],
+): UnlockedClassFeature[] {
+  return classLevels.flatMap((cl) => {
+    const def = classes.find((c) => c.id === cl.classId);
+    if (!def) return [];
+    return def.features
+      .filter((f) => f.level <= cl.level)
+      .map((f) => ({ classId: def.id, className: def.name, level: f.level, name: f.name, description: f.description }));
+  });
+}
+
 const FIGHTER_BONUS_FEAT_LEVELS = [1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20];
 
 export function computeFeatSlots(classLevels: CharacterClassLevel[], isHuman: boolean): number {
@@ -343,4 +413,62 @@ export function deriveCharacterSummary(
   );
   const carrying = computeCarryingCapacity(finalAbilityScores.str, race?.size ?? "Mediano");
   return { finalAbilityScores, bab, saves, level, hp, carrying };
+}
+
+export interface EquippedArmorPieces {
+  bodyArmor?: Armor;
+  shield?: Armor;
+}
+
+export function computeCharacterArmorClass(
+  finalScores: AbilityScores,
+  size: string,
+  equipped: EquippedArmorPieces,
+): { total: number; touch: number; flatFooted: number; armorBonus: number; shieldBonus: number; maxDexBonus: number | null } {
+  const armorBonus = equipped.bodyArmor?.armorBonus ?? 0;
+  const shieldBonus = equipped.shield?.armorBonus ?? 0;
+  const maxDexLimits = [equipped.bodyArmor?.maxDexBonus, equipped.shield?.maxDexBonus].filter(
+    (v): v is number => v !== undefined && v !== null,
+  );
+  const maxDexBonus = maxDexLimits.length > 0 ? Math.min(...maxDexLimits) : null;
+  const ac = computeArmorClass({
+    armorBonus,
+    shieldBonus,
+    dexScore: finalScores.dex,
+    maxDexBonus,
+    sizeModifier: sizeModifier(size),
+    naturalArmor: 0,
+    deflection: 0,
+    misc: 0,
+  });
+  return { ...ac, armorBonus, shieldBonus, maxDexBonus };
+}
+
+export interface WeaponAttackSummary {
+  itemId: string;
+  name: string;
+  attackBonus: number;
+  damage: string;
+  critical: string;
+  rangeIncrement?: number;
+}
+
+export function computeWeaponAttack(
+  weapon: Weapon,
+  bab: number,
+  finalScores: AbilityScores,
+  size: string,
+): WeaponAttackSummary {
+  const abilityMod = weapon.type === "distancia" ? abilityModifier(finalScores.dex) : abilityModifier(finalScores.str);
+  const attackBonus = bab + abilityMod + sizeModifier(size);
+  const damageMod = weapon.type === "distancia" ? 0 : abilityModifier(finalScores.str);
+  const damage = damageMod === 0 ? weapon.damageMedium : `${weapon.damageMedium}${damageMod > 0 ? "+" : ""}${damageMod}`;
+  return {
+    itemId: weapon.id,
+    name: weapon.name,
+    attackBonus,
+    damage,
+    critical: weapon.critical,
+    rangeIncrement: weapon.rangeIncrement,
+  };
 }

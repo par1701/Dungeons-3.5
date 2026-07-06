@@ -61,14 +61,14 @@ export const SRD_RACES: Race[] = [
           "Los enanos reciben un bonificador de +4 a la CD para resistir maniobras de derribo cuando están de pie sobre el suelo.",
       },
       {
-        name: "+2 a Tasar (piedra o metal)",
+        name: "+2 a Tasación (piedra o metal)",
         description:
-          "Los enanos reciben un bonificador racial de +2 a las pruebas de Tasar relacionadas con objetos de piedra o metal.",
+          "Los enanos reciben un bonificador racial de +2 a las pruebas de Tasación relacionadas con objetos de piedra o metal.",
       },
       {
-        name: "+2 a Oficio (herrería de armas o armaduras)",
+        name: "+2 a Artesanía (herrería de armas o armaduras)",
         description:
-          "Los enanos reciben un bonificador racial de +2 a las pruebas de Oficio relacionadas con la herrería de armas o armaduras.",
+          "Los enanos reciben un bonificador racial de +2 a las pruebas de Artesanía relacionadas con la herrería de armas o armaduras.",
       },
       {
         name: "Competencia con armas enanas",
@@ -199,7 +199,7 @@ export const SRD_RACES: Race[] = [
       {
         name: "Afinidad con animales pequeños",
         description:
-          "Los gnomos reciben un bonificador racial de +2 a las pruebas de Manejar Animales y Montar cuando la montura o el animal es de tamaño Pequeño.",
+          "Los gnomos reciben un bonificador racial de +2 a las pruebas de Trato con Animales y Montar cuando la montura o el animal es de tamaño Pequeño.",
       },
     ],
     automaticLanguages: ["Común", "Gnomo"],
@@ -237,9 +237,9 @@ export const SRD_RACES: Race[] = [
           "Los semielfos reciben un bonificador racial de +1 a las pruebas de Escuchar, Buscar y Avistar.",
       },
       {
-        name: "+1 a Diplomacia y Obtener Información",
+        name: "+1 a Diplomacia y Reunir Información",
         description:
-          "Los semielfos reciben un bonificador racial de +1 a las pruebas de Diplomacia y Obtener Información, gracias a su facilidad para tratar con ambos padres, humano y élfico.",
+          "Los semielfos reciben un bonificador racial de +1 a las pruebas de Diplomacia y Reunir Información, gracias a su facilidad para tratar con ambos padres, humano y élfico.",
       },
     ],
     automaticLanguages: ["Común", "Élfico"],
@@ -301,9 +301,9 @@ export const SRD_RACES: Race[] = [
           "Los medianos reciben un bonificador racial de +1 a las tiradas de ataque con armas arrojadizas, incluida la honda.",
       },
       {
-        name: "+2 a Escalar, Saltar y Moverse en Silencio",
+        name: "+2 a Escalar, Saltar y Moverse Sigilosamente",
         description:
-          "Los medianos reciben un bonificador racial de +2 a las pruebas de Trepar, Saltar y Moverse en Silencio.",
+          "Los medianos reciben un bonificador racial de +2 a las pruebas de Trepar, Saltar y Moverse Sigilosamente.",
       },
       {
         name: "+2 a Escuchar",

@@ -13,7 +13,7 @@ const ROGUE_FEATURES = [
     level: 1,
     name: "Encontrar Trampas",
     description:
-      "El pícaro puede usar la habilidad Buscar para localizar trampas mágicas con CD 25 o más, y puede intentar desactivar trampas mecánicas con CD superior a 20 usando Desactivar Mecanismo.",
+      "El pícaro puede usar la habilidad Buscar para localizar trampas mágicas con CD 25 o más, y puede intentar desactivar trampas mecánicas con CD superior a 20 usando Inutilizar Mecanismo.",
   },
   {
     level: 2,
@@ -279,6 +279,7 @@ export const SRD_CLASSES_C: ClassDef[] = [
       spellsPerDay: SORCERER_SPELLS_PER_DAY,
       spellsKnown: SORCERER_SPELLS_KNOWN,
     },
+    companionGrant: { kind: "familiar", startLevel: 1, effectiveLevelOffset: 0 },
     maxLevel: 20,
   },
   {
@@ -338,6 +339,7 @@ export const SRD_CLASSES_C: ClassDef[] = [
       startLevel: 1,
       spellsPerDay: WIZARD_SPELLS_PER_DAY,
     },
+    companionGrant: { kind: "familiar", startLevel: 1, effectiveLevelOffset: 0 },
     maxLevel: 20,
   },
 ];

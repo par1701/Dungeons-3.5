@@ -1,5 +1,6 @@
-import type { Armor, ClassDef, Feat, GearItem, PsionicPower, Race, Skill, SourceBookId, Spell, Weapon } from "../types";
+import type { Armor, ClassDef, CompanionBaseCreature, Feat, GearItem, PsionicPower, Race, Skill, SourceBookId, Spell, Weapon } from "../types";
 import { SRD_RACES } from "./srd/races";
+import { SRD_COMPANIONS } from "./srd/companions";
 import { SRD_SKILLS } from "./srd/skills";
 import { SRD_SPELLS } from "./srd/spells";
 import { SRD_CLASSES_A } from "./srd/classes-a";
@@ -28,6 +29,7 @@ import { CPS_CLASSES } from "./complete-psionic/classes";
 import { CPS_PRESTIGE_CLASSES } from "./complete-psionic/prestige-classes";
 import { CPS_FEATS } from "./complete-psionic/feats";
 import { CPS_POWERS } from "./complete-psionic/powers";
+import { PHB2_FEATS } from "./phb2/feats";
 
 export const ALL_RACES: Race[] = [...SRD_RACES];
 export const ALL_CLASSES: ClassDef[] = [
@@ -54,6 +56,7 @@ export const ALL_FEATS: Feat[] = [
   ...CS_FEATS,
   ...CM_FEATS,
   ...CPS_FEATS,
+  ...PHB2_FEATS,
 ];
 export const ALL_SKILLS: Skill[] = [...SRD_SKILLS];
 export const ALL_SPELLS: Spell[] = [...SRD_SPELLS, ...CA_SPELLS, ...CDV_SPELLS, ...CM_SPELLS];
@@ -61,6 +64,7 @@ export const ALL_WEAPONS: Weapon[] = [...SRD_WEAPONS];
 export const ALL_ARMORS: Armor[] = [...SRD_ARMORS];
 export const ALL_GEAR: GearItem[] = [...SRD_GEAR];
 export const ALL_POWERS: PsionicPower[] = [...CPS_POWERS];
+export const ALL_COMPANIONS: CompanionBaseCreature[] = [...SRD_COMPANIONS];
 
 function bySource<T extends { source: SourceBookId }>(items: T[], enabled: SourceBookId[]): T[] {
   return items.filter((item) => enabled.includes(item.source));
@@ -93,6 +97,9 @@ export function getEnabledGear(enabled: SourceBookId[]): GearItem[] {
 export function getEnabledPowers(enabled: SourceBookId[]): PsionicPower[] {
   return bySource(ALL_POWERS, enabled);
 }
+export function getEnabledCompanions(enabled: SourceBookId[]): CompanionBaseCreature[] {
+  return bySource(ALL_COMPANIONS, enabled);
+}
 
 export function findRace(id: string): Race | undefined {
   return ALL_RACES.find((r) => r.id === id);
@@ -111,4 +118,16 @@ export function findSpell(id: string): Spell | undefined {
 }
 export function findPower(id: string): PsionicPower | undefined {
   return ALL_POWERS.find((p) => p.id === id);
+}
+export function findCompanion(id: string): CompanionBaseCreature | undefined {
+  return ALL_COMPANIONS.find((c) => c.id === id);
+}
+export function findWeapon(id: string): Weapon | undefined {
+  return ALL_WEAPONS.find((w) => w.id === id);
+}
+export function findArmor(id: string): Armor | undefined {
+  return ALL_ARMORS.find((a) => a.id === id);
+}
+export function findGear(id: string): GearItem | undefined {
+  return ALL_GEAR.find((g) => g.id === id);
 }

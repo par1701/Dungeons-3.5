@@ -163,7 +163,7 @@ export const CDV_FEATS: Feat[] = [
     description: "El personaje ha estudiado técnicas para maximizar la eficacia de sus conjuros curativos.",
     benefit:
       "Cualquier conjuro que lance que restaure puntos de golpe cura un 50% adicional de puntos de golpe, como si estuviera potenciado, sin aumentar el nivel de conjuro ni el tiempo de lanzamiento.",
-    prerequisites: [{ description: "Curar 5 rangos", check: minSkillRanks("heal", 5) }],
+    prerequisites: [{ description: "Sanar 5 rangos", check: minSkillRanks("heal", 5) }],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -174,8 +174,8 @@ export const CDV_FEATS: Feat[] = [
     types: ["general"],
     description: "El personaje sabe atender heridas incluso en pleno fragor de la batalla.",
     benefit:
-      "Puede usar la habilidad Curar para estabilizar a una criatura moribunda como acción de movimiento en lugar de una acción estándar, y no provoca ataques de oportunidad al usar Curar de forma adyacente a un enemigo.",
-    prerequisites: [{ description: "Curar 5 rangos", check: minSkillRanks("heal", 5) }],
+      "Puede usar la habilidad Sanar para estabilizar a una criatura moribunda como acción de movimiento en lugar de una acción estándar, y no provoca ataques de oportunidad al usar Sanar de forma adyacente a un enemigo.",
+    prerequisites: [{ description: "Sanar 5 rangos", check: minSkillRanks("heal", 5) }],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -235,7 +235,7 @@ export const CDV_FEATS: Feat[] = [
     description: "El estudio devoto de la teología ha afinado la conexión del personaje con lo divino más allá de su fuerza de voluntad personal.",
     benefit:
       "Puede usar su modificador de Sabiduría en lugar de su modificador de Carisma para determinar el número y el resultado de sus intentos de expulsar o reprender no muertos.",
-    prerequisites: [{ description: "Conocimiento (religión) 4 rangos", check: minSkillRanks("knowledge-religion", 4) }],
+    prerequisites: [{ description: "Saber (religión) 4 rangos", check: minSkillRanks("knowledge-religion", 4) }],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -515,8 +515,8 @@ export const CDV_FEATS: Feat[] = [
     types: ["general"],
     description: "El personaje ha entrenado su mente para detectar el engaño y la herejía en nombre de su fe.",
     benefit:
-      "Gana un bonificador de competencia +2 en las pruebas de Detectar Intenciones y Conocimiento (religión), y puede realizar pruebas de Detectar Intenciones para percibir mentiras como acción libre una vez por asalto.",
-    prerequisites: [{ description: "Conocimiento (religión) 4 rangos", check: minSkillRanks("knowledge-religion", 4) }],
+      "Gana un bonificador de competencia +2 en las pruebas de Averiguar Intenciones y Saber (religión), y puede realizar pruebas de Averiguar Intenciones para percibir mentiras como acción libre una vez por asalto.",
+    prerequisites: [{ description: "Saber (religión) 4 rangos", check: minSkillRanks("knowledge-religion", 4) }],
     fighterBonusFeat: false,
     stackable: false,
   },

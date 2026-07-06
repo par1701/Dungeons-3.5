@@ -3,9 +3,9 @@ import type { ClassDef } from "../../types";
 // Clases de prestigio psiónicas de Complete Psionic (2006) / Manual de Psiónica
 // Ampliado.
 //
-// El sistema psiónico base (Psíon, Guerrero Psíquico, Silvestre, Hoja del
-// Alma, la lista de poderes y habilidades propias como Psicognosis/Psicraft,
-// Autohipnosis o Conocimiento [Psiónica]) todavía no está implementado en
+// El sistema psiónico base (Psiónico, Guerrero Psíquico, Indómito, Cuchillo
+// del Alma, la lista de poderes y habilidades propias como Psicognosis/Psicraft,
+// Autohipnosis o Saber [Psiónica]) todavía no está implementado en
 // esta app (ver `src/data/sourcebooks.ts`, `complete-psionic.implemented =
 // false`, y `ALL_POWERS = []` en `src/data/index.ts`). Por eso:
 //
@@ -226,11 +226,11 @@ export const CPS_PRESTIGE_CLASSES: ClassDef[] = [
     isPrestige: true,
     prerequisites: [
       {
-        description: "Conocimiento (Arcano): 8 rangos",
+        description: "Saber (Arcano): 8 rangos",
         check: (ctx) => (ctx.skillRanks["knowledge-arcana"] ?? 0) >= 8,
       },
       {
-        description: "Conocimiento (Psiónica): 8 rangos",
+        description: "Saber (Psiónica): 8 rangos",
       },
       {
         description: "Manifestación en Combate",
@@ -366,7 +366,7 @@ export const CPS_PRESTIGE_CLASSES: ClassDef[] = [
         check: (ctx) => ctx.abilityScores.cha >= 15,
       },
       {
-        description: "Conocimiento (cualquiera): 9 rangos",
+        description: "Saber (cualquiera): 9 rangos",
         check: (ctx) => hasAnyKnowledgeRanks(ctx.skillRanks, 9),
       },
       {

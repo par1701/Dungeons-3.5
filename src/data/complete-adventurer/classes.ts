@@ -3,7 +3,7 @@ import type { ClassDef } from "../../types";
 // Clases de Complete Adventurer (2005).
 //
 // Se incluyen dos clases base centradas en el combate ágil y furtivo
-// (Explorador Furtivo y Espadachín) y un puñado de clases de prestigio
+// (Batidor y Espadachín) y un puñado de clases de prestigio
 // representativas del libro, elegidas por ser razonablemente conocidas y
 // por poder documentarse con confianza.
 //
@@ -13,13 +13,13 @@ import type { ClassDef } from "../../types";
 // clase (ClassFeature) de texto en vez de automatizarse, porque el modelo de
 // datos todavía no soporta "tomar prestada" la progresión de otra clase.
 //
-// Las progresiones numéricas de Golpe de Escaramuza (Explorador Furtivo) y
+// Las progresiones numéricas de Golpe de Escaramuza (Batidor) y
 // de Gracia / Bono de Perspicacia (Espadachín) son aproximadas: siguen el
 // espíritu de las clases originales, pero se ha priorizado una progresión
 // razonable y jugable sobre la reproducción exacta tabla por tabla.
 
 // ---------------------------------------------------------------------------
-// Explorador Furtivo (Scout)
+// Batidor (Scout)
 // ---------------------------------------------------------------------------
 
 const SCOUT_FEATURES = [
@@ -27,24 +27,24 @@ const SCOUT_FEATURES = [
     level: 1,
     name: "Golpe de Escaramuza +1d6/+1 CA",
     description:
-      "Si el explorador se mueve al menos 3 metros durante su turno antes de realizar un ataque cuerpo a cuerpo o a distancia (y no tiene un aliado que le ayude a flanquear, ni recurre a él para determinar el flanqueo), inflige 1d6 puntos de daño adicional con ese ataque y obtiene un bonificador de +1 a la Clase de Armadura hasta el comienzo de su siguiente turno. No funciona si el explorador lleva armadura media o pesada, ni si está inmovilizado o no puede moverse libremente.",
+      "Si el batidor se mueve al menos 3 metros durante su turno antes de realizar un ataque cuerpo a cuerpo o a distancia (y no tiene un aliado que le ayude a flanquear, ni recurre a él para determinar el flanqueo), inflige 1d6 puntos de daño adicional con ese ataque y obtiene un bonificador de +1 a la Clase de Armadura hasta el comienzo de su siguiente turno. No funciona si el batidor lleva armadura media o pesada, ni si está inmovilizado o no puede moverse libremente.",
   },
   {
     level: 1,
     name: "Detectar Trampas",
     description:
-      "El explorador puede usar la habilidad Buscar para localizar trampas mágicas con CD 25 o más, igual que un pícaro.",
+      "El batidor puede usar la habilidad Buscar para localizar trampas mágicas con CD 25 o más, igual que un pícaro.",
   },
   {
     level: 2,
     name: "Bono de Batalla",
     description:
-      "El explorador obtiene un bonificador de competencia a las tiradas de iniciativa y a las tiradas de salvación de Fortaleza igual a la mitad de su nivel de explorador (redondeando hacia abajo, mínimo +1).",
+      "El batidor obtiene un bonificador de competencia a las tiradas de iniciativa y a las tiradas de salvación de Fortaleza igual a la mitad de su nivel de batidor (redondeando hacia abajo, mínimo +1).",
   },
   {
     level: 3,
     name: "Movimiento Rápido",
-    description: "La velocidad base del explorador aumenta en 3 metros mientras no lleve una carga pesada ni armadura media o pesada.",
+    description: "La velocidad base del batidor aumenta en 3 metros mientras no lleve una carga pesada ni armadura media o pesada.",
   },
   {
     level: 4,
@@ -55,12 +55,12 @@ const SCOUT_FEATURES = [
     level: 5,
     name: "Esquiva Sobrenatural",
     description:
-      "El explorador conserva su bonificador de Destreza a la Clase de Armadura incluso cuando es sorprendido o atacado por un enemigo invisible (salvo que esté inmovilizado).",
+      "El batidor conserva su bonificador de Destreza a la Clase de Armadura incluso cuando es sorprendido o atacado por un enemigo invisible (salvo que esté inmovilizado).",
   },
   {
     level: 6,
     name: "Camuflaje",
-    description: "El explorador puede usar la habilidad Esconderse incluso mientras es observado, siempre que se encuentre en un entorno natural que le proporcione algún tipo de cobertura o distracción visual.",
+    description: "El batidor puede usar la habilidad Esconderse incluso mientras es observado, siempre que se encuentre en un entorno natural que le proporcione algún tipo de cobertura o distracción visual.",
   },
   {
     level: 7,
@@ -70,13 +70,13 @@ const SCOUT_FEATURES = [
   {
     level: 8,
     name: "Paso Certero",
-    description: "El explorador ignora el terreno difícil de origen natural (no mágico) al moverse, y puede atravesar zonas de vegetación densa a su velocidad normal.",
+    description: "El batidor ignora el terreno difícil de origen natural (no mágico) al moverse, y puede atravesar zonas de vegetación densa a su velocidad normal.",
   },
   {
     level: 9,
     name: "Esquiva Sobrenatural Mejorada",
     description:
-      "El explorador ya no puede perder su bono de Destreza a la Clase de Armadura por estar flanqueado, excepto ante un atacante que sea pícaro y tenga al menos 4 niveles de pícaro más que él.",
+      "El batidor ya no puede perder su bono de Destreza a la Clase de Armadura por estar flanqueado, excepto ante un atacante que sea pícaro y tenga al menos 4 niveles de pícaro más que él.",
   },
   {
     level: 10,
@@ -86,7 +86,7 @@ const SCOUT_FEATURES = [
   {
     level: 11,
     name: "Sentido Ciego 3 m",
-    description: "El explorador desarrolla una percepción tan aguda de su entorno inmediato que puede detectar criaturas a 3 metros sin necesidad de verlas, mediante el oído, el olfato y las vibraciones.",
+    description: "El batidor desarrolla una percepción tan aguda de su entorno inmediato que puede detectar criaturas a 3 metros sin necesidad de verlas, mediante el oído, el olfato y las vibraciones.",
   },
   {
     level: 13,
@@ -96,7 +96,7 @@ const SCOUT_FEATURES = [
   {
     level: 14,
     name: "Camuflaje Superior",
-    description: "El bonificador que el explorador obtiene por Camuflaje se convierte en la capacidad de esconderse incluso sin ningún tipo de cobertura, siempre que no esté completamente a la vista en campo abierto.",
+    description: "El bonificador que el batidor obtiene por Camuflaje se convierte en la capacidad de esconderse incluso sin ningún tipo de cobertura, siempre que no esté completamente a la vista en campo abierto.",
   },
   {
     level: 16,
@@ -106,7 +106,7 @@ const SCOUT_FEATURES = [
   {
     level: 17,
     name: "Sentido Ciego 9 m",
-    description: "El alcance del Sentido Ciego del explorador aumenta a 9 metros.",
+    description: "El alcance del Sentido Ciego del batidor aumenta a 9 metros.",
   },
   {
     level: 19,
@@ -165,7 +165,7 @@ const SWASHBUCKLER_FEATURES = [
   {
     level: 8,
     name: "Carga Acrobática",
-    description: "El espadachín puede cargar a través de terreno difícil, sobre superficies estrechas o saltando por encima de obstáculos bajos, siempre que supere una prueba de Acrobacias con CD 15.",
+    description: "El espadachín puede cargar a través de terreno difícil, sobre superficies estrechas o saltando por encima de obstáculos bajos, siempre que supere una prueba de Piruetas con CD 15.",
   },
   {
     level: 9,
@@ -205,7 +205,7 @@ const SWASHBUCKLER_FEATURES = [
 ];
 
 // ---------------------------------------------------------------------------
-// Exemplar
+// Ejemplar (Exemplar)
 // ---------------------------------------------------------------------------
 
 const EXEMPLAR_FEATURES = [
@@ -213,18 +213,18 @@ const EXEMPLAR_FEATURES = [
     level: 1,
     name: "Habilidad Insigne",
     description:
-      "Al entrar en la clase, el exemplar elige una habilidad en la que tenga al menos 12 rangos: se convierte en su \"habilidad insigne\". El exemplar obtiene un bonificador de +2 a las pruebas de esa habilidad.",
+      "Al entrar en la clase, el ejemplar elige una habilidad en la que tenga al menos 12 rangos: se convierte en su \"habilidad insigne\". El ejemplar obtiene un bonificador de +2 a las pruebas de esa habilidad.",
   },
   {
     level: 1,
     name: "Progresión de Clase Base",
     description:
-      "Cada nivel de exemplar cuenta como un nivel de la clase base que el exemplar poseyera antes de entrar en la clase de prestigio a efectos de rasgos de clase dependientes del nivel (por ejemplo, ataque furtivo de pícaro, torrente de golpes de monje o estilo de combate de guardabosques), aunque no otorga puntos de golpe, bonificador base de ataque ni salvaciones de esa clase.",
+      "Cada nivel de ejemplar cuenta como un nivel de la clase base que el ejemplar poseyera antes de entrar en la clase de prestigio a efectos de rasgos de clase dependientes del nivel (por ejemplo, ataque furtivo de pícaro, torrente de golpes de monje o estilo de combate de guardabosques), aunque no otorga puntos de golpe, bonificador base de ataque ni salvaciones de esa clase.",
   },
   {
     level: 2,
     name: "Resistencia a Fatiga",
-    description: "El exemplar es inmune a los efectos de fatiga y agotamiento inducidos por el uso extremo de su habilidad insigne (por ejemplo, correr, trepar o luchar sin descanso).",
+    description: "El ejemplar es inmune a los efectos de fatiga y agotamiento inducidos por el uso extremo de su habilidad insigne (por ejemplo, correr, trepar o luchar sin descanso).",
   },
   {
     level: 3,
@@ -234,12 +234,12 @@ const EXEMPLAR_FEATURES = [
   {
     level: 4,
     name: "Dote Adicional",
-    description: "El exemplar obtiene una dote adicional que cumpla sus requisitos.",
+    description: "El ejemplar obtiene una dote adicional que cumpla sus requisitos.",
   },
   {
     level: 5,
     name: "Hazaña Legendaria",
-    description: "Una vez por día, el exemplar puede realizar una prueba de su habilidad insigne con un bonificador de competencia adicional igual a su nivel de exemplar, representando un golpe de suerte o pericia sobrehumana.",
+    description: "Una vez por día, el ejemplar puede realizar una prueba de su habilidad insigne con un bonificador de competencia adicional igual a su nivel de ejemplar, representando un golpe de suerte o pericia sobrehumana.",
   },
   {
     level: 6,
@@ -249,27 +249,27 @@ const EXEMPLAR_FEATURES = [
   {
     level: 7,
     name: "Resistencia a la Muerte Súbita",
-    description: "El exemplar obtiene un bonificador de +2 de competencia a las tiradas de salvación contra efectos de muerte instantánea y contra golpes críticos que le reduzcan a menos de 0 puntos de golpe.",
+    description: "El ejemplar obtiene un bonificador de +2 de competencia a las tiradas de salvación contra efectos de muerte instantánea y contra golpes críticos que le reduzcan a menos de 0 puntos de golpe.",
   },
   {
     level: 8,
     name: "Dote Adicional",
-    description: "El exemplar obtiene una segunda dote adicional que cumpla sus requisitos.",
+    description: "El ejemplar obtiene una segunda dote adicional que cumpla sus requisitos.",
   },
   {
     level: 9,
     name: "Hazaña Legendaria Mejorada",
-    description: "El exemplar puede usar la Hazaña Legendaria dos veces al día.",
+    description: "El ejemplar puede usar la Hazaña Legendaria dos veces al día.",
   },
   {
     level: 10,
     name: "Leyenda Viviente",
-    description: "El bonificador a la habilidad insigne aumenta a +8 y el exemplar se convierte en una leyenda reconocida en su campo: quienes hayan oído hablar de sus hazañas reaccionan ante él con una actitud inicial mejorada.",
+    description: "El bonificador a la habilidad insigne aumenta a +8 y el ejemplar se convierte en una leyenda reconocida en su campo: quienes hayan oído hablar de sus hazañas reaccionan ante él con una actitud inicial mejorada.",
   },
 ];
 
 // ---------------------------------------------------------------------------
-// Asesino de Rostro Fantasma (Ghost-Faced Killer)
+// Asesino Fantasma (Ghost-Faced Killer)
 // ---------------------------------------------------------------------------
 
 const GHOST_FACED_KILLER_FEATURES = [
@@ -335,7 +335,7 @@ const NINJA_OF_THE_CRESCENT_MOON_FEATURES = [
   {
     level: 1,
     name: "Camuflaje Lunar",
-    description: "Durante la noche o bajo luz tenue, el ninja de la luna creciente obtiene un bonificador de +4 de competencia a las pruebas de Esconderse y Moverse en Silencio.",
+    description: "Durante la noche o bajo luz tenue, el ninja de la luna creciente obtiene un bonificador de +4 de competencia a las pruebas de Esconderse y Moverse Sigilosamente.",
   },
   {
     level: 2,
@@ -378,7 +378,7 @@ const SPYMASTER_FEATURES = [
   {
     level: 1,
     name: "Farsa Perfecta",
-    description: "El maestro de espías obtiene un bonificador de +2 de competencia a las pruebas de Farolear, Disfraz y Obtener Información.",
+    description: "El maestro de espías obtiene un bonificador de +2 de competencia a las pruebas de Engañar, Disfrazarse y Reunir Información.",
   },
   {
     level: 2,
@@ -393,7 +393,7 @@ const SPYMASTER_FEATURES = [
   {
     level: 4,
     name: "Identidad Falsa",
-    description: "El maestro de espías puede mantener una identidad alternativa completa; mientras la interpreta, las pruebas de Sentir Motivaciones u otros medios para desenmascararlo sufren una CD adicional de +5.",
+    description: "El maestro de espías puede mantener una identidad alternativa completa; mientras la interpreta, las pruebas de Averiguar Intenciones u otros medios para desenmascararlo sufren una CD adicional de +5.",
   },
   {
     level: 6,
@@ -447,7 +447,7 @@ const TEMPEST_FEATURES = [
 export const CAD_CLASSES: ClassDef[] = [
   {
     id: "cad-scout",
-    name: "Explorador Furtivo (Scout)",
+    name: "Batidor (Scout)",
     source: "complete-adventurer",
     description:
       "Un experto en el combate en movimiento, capaz de golpear con fuerza y desaparecer de nuevo entre la maleza antes de que el enemigo pueda reaccionar. Combina la movilidad del guardabosques con la letalidad furtiva del pícaro.",
@@ -527,7 +527,7 @@ export const CAD_CLASSES: ClassDef[] = [
   },
   {
     id: "cad-exemplar",
-    name: "Exemplar",
+    name: "Ejemplar (Exemplar)",
     source: "complete-adventurer",
     description:
       "Un maestro tan consumado en una única habilidad que ha trascendido los límites de sus compañeros de clase, convirtiendo su pericia en algo que roza lo legendario.",
@@ -573,7 +573,7 @@ export const CAD_CLASSES: ClassDef[] = [
   },
   {
     id: "cad-ghost-faced-killer",
-    name: "Asesino de Rostro Fantasma (Ghost-Faced Killer)",
+    name: "Asesino Fantasma (Ghost-Faced Killer)",
     source: "complete-adventurer",
     description:
       "Un asesino silencioso entrenado en una escuela legendaria que combina las artes marciales con un sigilo casi sobrenatural, capaz de parecer que se desvanece en el aire en pleno combate.",
@@ -611,7 +611,7 @@ export const CAD_CLASSES: ClassDef[] = [
         check: (ctx) => (ctx.skillRanks["hide"] ?? 0) >= 8,
       },
       {
-        description: "Moverse en Silencio 8 rangos",
+        description: "Moverse Sigilosamente 8 rangos",
         check: (ctx) => (ctx.skillRanks["move-silently"] ?? 0) >= 8,
       },
       {
@@ -661,7 +661,7 @@ export const CAD_CLASSES: ClassDef[] = [
         check: (ctx) => (ctx.skillRanks["hide"] ?? 0) >= 8,
       },
       {
-        description: "Moverse en Silencio 8 rangos",
+        description: "Moverse Sigilosamente 8 rangos",
         check: (ctx) => (ctx.skillRanks["move-silently"] ?? 0) >= 8,
       },
       {
@@ -712,7 +712,7 @@ export const CAD_CLASSES: ClassDef[] = [
     isPrestige: true,
     prerequisites: [
       {
-        description: "Farolear 9 rangos",
+        description: "Engañar 9 rangos",
         check: (ctx) => (ctx.skillRanks["bluff"] ?? 0) >= 9,
       },
       {
@@ -720,11 +720,11 @@ export const CAD_CLASSES: ClassDef[] = [
         check: (ctx) => (ctx.skillRanks["diplomacy"] ?? 0) >= 9,
       },
       {
-        description: "Obtener Información 9 rangos",
+        description: "Reunir Información 9 rangos",
         check: (ctx) => (ctx.skillRanks["gather-information"] ?? 0) >= 9,
       },
       {
-        description: "Sentir Motivaciones 4 rangos",
+        description: "Averiguar Intenciones 4 rangos",
         check: (ctx) => (ctx.skillRanks["sense-motive"] ?? 0) >= 4,
       },
       {
@@ -762,7 +762,7 @@ export const CAD_CLASSES: ClassDef[] = [
         check: (ctx) => ctx.featIds.has("two-weapon-fighting"),
       },
       {
-        description: "Ataque Especializado con cualquier arma",
+        description: "Soltura con el arma elegida",
         check: (ctx) => ctx.featIds.has("weapon-focus"),
       },
     ],

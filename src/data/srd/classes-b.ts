@@ -106,7 +106,7 @@ const clericFeatures: ClassFeature[] = [
 const druidFeatures: ClassFeature[] = [
   { level: 1, name: "Empatía con animales", description: "El druida puede mejorar la actitud de un animal de forma similar a Diplomacia, mediante comunicación e interacción con lenguaje corporal." },
   { level: 1, name: "Compañero animal", description: "El druida puede convocar a un compañero animal especial que le sirve fielmente y mejora en poder junto a él." },
-  { level: 1, name: "Sentido de la naturaleza", description: "El druida obtiene un bonificador de +2 a las pruebas de Conocimiento (naturaleza) y de Supervivencia." },
+  { level: 1, name: "Sentido de la naturaleza", description: "El druida obtiene un bonificador de +2 a las pruebas de Saber (Naturaleza) y de Supervivencia." },
   { level: 2, name: "Paso por el bosque", description: "El druida se mueve a través de terreno difícil de origen natural (zarzas, enredaderas, etc.) a su velocidad normal y sin sufrir daño ni otros efectos adversos." },
   { level: 3, name: "Paso sin rastro", description: "El druida no deja rastro al moverse por terrenos naturales y no puede ser seguido, salvo mediante magia." },
   { level: 4, name: "Resistencia a los encantos de la naturaleza", description: "El druida obtiene un bonificador de +4 a las tiradas de salvación contra los efectos que dependan del tipo feérico y contra los conjuros y efectos de sortilegio de las criaturas de tipo planta." },
@@ -281,6 +281,7 @@ export const SRD_CLASSES_B: ClassDef[] = [
       spellsPerDay: FULL_DIVINE_SPELLS_PER_DAY,
       startLevel: 1,
     },
+    companionGrant: { kind: "animal_companion", startLevel: 1, effectiveLevelOffset: 0 },
     features: druidFeatures,
     maxLevel: 20,
   },

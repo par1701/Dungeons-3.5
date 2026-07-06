@@ -240,7 +240,7 @@ const UNCANNY_TRICKSTER_FEATURES: ClassFeature[] = [
   {
     level: 4,
     name: "Timo mágico",
-    description: "Una vez al día, puede lanzar cualquier conjuro de nivel 2 o inferior que conozca disimulándolo por completo como un gesto casual o una frase de conversación, sin que los testigos noten que se ha lanzado un conjuro salvo con una prueba de Detectar Magia o Sentir Motivaciones (CD 20).",
+    description: "Una vez al día, puede lanzar cualquier conjuro de nivel 2 o inferior que conozca disimulándolo por completo como un gesto casual o una frase de conversación, sin que los testigos noten que se ha lanzado un conjuro salvo con una prueba de Detectar Magia o Averiguar Intenciones (CD 20).",
   },
   {
     level: 6,
@@ -289,7 +289,7 @@ export const CS_CLASSES: ClassDef[] = [
     isPrestige: true,
     prerequisites: [
       {
-        description: "Conocimiento (Religión): 4 rangos",
+        description: "Saber (Religión): 4 rangos",
         check: (ctx) => (ctx.skillRanks["knowledge-religion"] ?? 0) >= 4,
       },
       {
@@ -338,7 +338,7 @@ export const CS_CLASSES: ClassDef[] = [
         check: (ctx) => (ctx.skillRanks["diplomacy"] ?? 0) >= 8,
       },
       {
-        description: "Conocimiento (Nobleza y Realeza): 4 rangos",
+        description: "Saber (Nobleza y Realeza): 4 rangos",
         check: (ctx) => (ctx.skillRanks["knowledge-nobility-royalty"] ?? 0) >= 4,
       },
       { description: "Alineamiento no malvado" },
@@ -380,7 +380,7 @@ export const CS_CLASSES: ClassDef[] = [
         check: (ctx) => ctx.babTotal >= 5,
       },
       {
-        description: "Farolear: 8 rangos",
+        description: "Engañar: 8 rangos",
         check: (ctx) => (ctx.skillRanks["bluff"] ?? 0) >= 8,
       },
       {
@@ -462,7 +462,7 @@ export const CS_CLASSES: ClassDef[] = [
     isPrestige: true,
     prerequisites: [
       {
-        description: "Farolear: 8 rangos",
+        description: "Engañar: 8 rangos",
         check: (ctx) => (ctx.skillRanks["bluff"] ?? 0) >= 8,
       },
       {

@@ -98,18 +98,18 @@ export const SRD_ARMORS: Armor[] = [
   { id: "padded", name: "Armadura Acolchada", source: "srd", category: "ligera", armorBonus: 1, maxDexBonus: 8, armorCheckPenalty: 0, arcaneSpellFailure: 5, speed30: 30, speed20: 20, weight: 10, cost: 5 },
   { id: "leather", name: "Armadura de Cuero", source: "srd", category: "ligera", armorBonus: 2, maxDexBonus: 6, armorCheckPenalty: 0, arcaneSpellFailure: 10, speed30: 30, speed20: 20, weight: 15, cost: 10 },
   { id: "studded-leather", name: "Cuero Tachonado", source: "srd", category: "ligera", armorBonus: 3, maxDexBonus: 5, armorCheckPenalty: -1, arcaneSpellFailure: 15, speed30: 30, speed20: 20, weight: 20, cost: 25 },
-  { id: "chain-shirt", name: "Camisote de Malla", source: "srd", category: "ligera", armorBonus: 4, maxDexBonus: 4, armorCheckPenalty: -2, arcaneSpellFailure: 20, speed30: 30, speed20: 20, weight: 25, cost: 100 },
+  { id: "chain-shirt", name: "Camisote de Mallas", source: "srd", category: "ligera", armorBonus: 4, maxDexBonus: 4, armorCheckPenalty: -2, arcaneSpellFailure: 20, speed30: 30, speed20: 20, weight: 25, cost: 100 },
 
   // ----- Armaduras Medias -----
   { id: "hide", name: "Armadura de Pieles", source: "srd", category: "media", armorBonus: 3, maxDexBonus: 4, armorCheckPenalty: -3, arcaneSpellFailure: 20, speed30: 20, speed20: 15, weight: 25, cost: 15 },
   { id: "scale-mail", name: "Cota de Escamas", source: "srd", category: "media", armorBonus: 4, maxDexBonus: 3, armorCheckPenalty: -4, arcaneSpellFailure: 25, speed30: 20, speed20: 15, weight: 30, cost: 50 },
-  { id: "chainmail", name: "Cota de Malla", source: "srd", category: "media", armorBonus: 5, maxDexBonus: 2, armorCheckPenalty: -5, arcaneSpellFailure: 30, speed30: 20, speed20: 15, weight: 40, cost: 150 },
+  { id: "chainmail", name: "Cota de Mallas", source: "srd", category: "media", armorBonus: 5, maxDexBonus: 2, armorCheckPenalty: -5, arcaneSpellFailure: 30, speed30: 20, speed20: 15, weight: 40, cost: 150 },
   { id: "breastplate", name: "Coraza", source: "srd", category: "media", armorBonus: 5, maxDexBonus: 3, armorCheckPenalty: -4, arcaneSpellFailure: 25, speed30: 20, speed20: 15, weight: 30, cost: 200 },
 
   // ----- Armaduras Pesadas -----
-  { id: "splint-mail", name: "Armadura de Bandas Enlazadas", source: "srd", category: "pesada", armorBonus: 6, maxDexBonus: 0, armorCheckPenalty: -7, arcaneSpellFailure: 40, speed30: 20, speed20: 15, weight: 45, cost: 200 },
-  { id: "banded-mail", name: "Armadura de Bandas", source: "srd", category: "pesada", armorBonus: 6, maxDexBonus: 1, armorCheckPenalty: -6, arcaneSpellFailure: 35, speed30: 20, speed20: 15, weight: 35, cost: 250 },
-  { id: "half-plate", name: "Semiplacas", source: "srd", category: "pesada", armorBonus: 7, maxDexBonus: 0, armorCheckPenalty: -7, arcaneSpellFailure: 40, speed30: 20, speed20: 15, weight: 50, cost: 600 },
+  { id: "splint-mail", name: "Armadura Laminada", source: "srd", category: "pesada", armorBonus: 6, maxDexBonus: 0, armorCheckPenalty: -7, arcaneSpellFailure: 40, speed30: 20, speed20: 15, weight: 45, cost: 200 },
+  { id: "banded-mail", name: "Cota de Bandas", source: "srd", category: "pesada", armorBonus: 6, maxDexBonus: 1, armorCheckPenalty: -6, arcaneSpellFailure: 35, speed30: 20, speed20: 15, weight: 35, cost: 250 },
+  { id: "half-plate", name: "Armadura de Placas y Mallas", source: "srd", category: "pesada", armorBonus: 7, maxDexBonus: 0, armorCheckPenalty: -7, arcaneSpellFailure: 40, speed30: 20, speed20: 15, weight: 50, cost: 600 },
   { id: "full-plate", name: "Armadura Completa", source: "srd", category: "pesada", armorBonus: 8, maxDexBonus: 1, armorCheckPenalty: -6, arcaneSpellFailure: 35, speed30: 20, speed20: 15, weight: 50, cost: 1500 },
 
   // ----- Escudos -----
@@ -125,7 +125,7 @@ export const SRD_GEAR: GearItem[] = [
   { id: "backpack", name: "Mochila", source: "srd", cost: 2, weight: 2, description: "Permite llevar hasta el doble de la carga habitual antes de que el peso extra cuente como carga adicional." },
   { id: "bedroll", name: "Saco de Dormir", source: "srd", cost: 0.1, weight: 5, description: "Manta enrollada para dormir a la intemperie." },
   { id: "hemp-rope-50ft", name: "Cuerda de Cáñamo (15 m)", source: "srd", cost: 1, weight: 10, description: "Cuerda resistente; tiene 2 puntos de golpe y se puede romper con una prueba de Fuerza CD 23." },
-  { id: "silk-rope-50ft", name: "Cuerda de Seda (15 m)", source: "srd", cost: 10, weight: 5, description: "Más ligera y resistente que el cáñamo; otorga +2 a las pruebas de Usar Cuerdas relacionadas." },
+  { id: "silk-rope-50ft", name: "Cuerda de Seda (15 m)", source: "srd", cost: 10, weight: 5, description: "Más ligera y resistente que el cáñamo; otorga +2 a las pruebas de Uso de Cuerdas relacionadas." },
   { id: "torch", name: "Antorcha", source: "srd", cost: 0.01, weight: 1, description: "Ilumina en un radio de 6 m durante 1 hora; también puede usarse como arma improvisada de fuego." },
   { id: "hooded-lantern", name: "Linterna Sorda", source: "srd", cost: 7, weight: 2, description: "Ilumina en un radio de 9 m; un frasco de aceite la alimenta durante 6 horas." },
   { id: "oil-flask", name: "Frasco de Aceite", source: "srd", cost: 0.1, weight: 1, description: "Combustible para lámparas y linternas; también puede arrojarse como arma improvisada de fuego." },
@@ -133,7 +133,7 @@ export const SRD_GEAR: GearItem[] = [
   { id: "waterskin", name: "Odre de Agua", source: "srd", cost: 1, weight: 4, description: "Recipiente de cuero para transportar agua, lleno pesa unas 4 libras." },
   { id: "thieves-tools", name: "Ganzúas", source: "srd", cost: 30, weight: 1, description: "Herramientas necesarias para las pruebas de Abrir Cerraduras." },
   { id: "thieves-tools-masterwork", name: "Ganzúas Maestras", source: "srd", cost: 100, weight: 2, description: "Herramientas de calidad superior que otorgan +2 de circunstancias a Abrir Cerraduras." },
-  { id: "healers-kit", name: "Kit de Sanador", source: "srd", cost: 50, weight: 1, description: "Vendas y ungüentos para pruebas de Curar; tiene 10 usos." },
+  { id: "healers-kit", name: "Kit de Sanador", source: "srd", cost: 50, weight: 1, description: "Vendas y ungüentos para pruebas de Sanar; tiene 10 usos." },
   { id: "tent", name: "Tienda de Campaña", source: "srd", cost: 10, weight: 20, description: "Refugio de lona para una persona." },
   { id: "manacles", name: "Grilletes", source: "srd", cost: 15, weight: 2, description: "Restringen a un prisionero; CD 20 para escapar o CD 26 para romperlos." },
   { id: "manacles-masterwork", name: "Grilletes Maestros", source: "srd", cost: 50, weight: 2, description: "Grilletes de calidad superior; +2 a la CD para escapar de ellos." },

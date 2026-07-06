@@ -95,7 +95,7 @@ const ABJURANT_CHAMPION_FEATURES = [
 ];
 
 // ---------------------------------------------------------------------------
-// Adepto Elemental (Elemental Savant)
+// Erudito Elemental (Elemental Savant)
 // ---------------------------------------------------------------------------
 
 const ELEMENTAL_SAVANT_FEATURES = [
@@ -103,19 +103,19 @@ const ELEMENTAL_SAVANT_FEATURES = [
     level: 1,
     name: "Vínculo Elemental",
     description:
-      "Al entrar en la clase, el adepto elemental elige uno de los cuatro elementos (aire, agua, fuego o tierra) y su energía asociada (electricidad, frío, fuego o ácido, respectivamente). Obtiene resistencia a la energía 5 frente a esa energía.",
+      "Al entrar en la clase, el erudito elemental elige uno de los cuatro elementos (aire, agua, fuego o tierra) y su energía asociada (electricidad, frío, fuego o ácido, respectivamente). Obtiene resistencia a la energía 5 frente a esa energía.",
   },
   {
     level: 1,
     name: "Progresión de Conjuros Arcanos",
     description:
-      "Cada nivel de adepto elemental (1º a 5º) otorga un nivel de lanzador arcano adicional a una clase de lanzador arcano que el personaje ya poseyera antes de entrar en la clase de prestigio, exactamente como si hubiera obtenido un nivel en dicha clase a efectos de conjuros por día, conjuros conocidos y nivel de lanzador (pero no otros rasgos de esa clase).",
+      "Cada nivel de erudito elemental (1º a 5º) otorga un nivel de lanzador arcano adicional a una clase de lanzador arcano que el personaje ya poseyera antes de entrar en la clase de prestigio, exactamente como si hubiera obtenido un nivel en dicha clase a efectos de conjuros por día, conjuros conocidos y nivel de lanzador (pero no otros rasgos de esa clase).",
   },
   {
     level: 2,
     name: "Cuerpo Elemental (menor)",
     description:
-      "El cuerpo del adepto elemental empieza a transformarse: obtiene un bonificador de +2 a las pruebas de Concentración realizadas para lanzar conjuros con el descriptor de su elemento.",
+      "El cuerpo del erudito elemental empieza a transformarse: obtiene un bonificador de +2 a las pruebas de Concentración realizadas para lanzar conjuros con el descriptor de su elemento.",
   },
   {
     level: 3,
@@ -126,13 +126,13 @@ const ELEMENTAL_SAVANT_FEATURES = [
     level: 4,
     name: "Cuerpo Elemental (mayor)",
     description:
-      "El adepto elemental es cada vez más ajeno a la carne mortal: gana un bonificador de +2 de competencia a las tiradas de salvación contra conjuros y efectos con el descriptor opuesto a su elemento.",
+      "El erudito elemental es cada vez más ajeno a la carne mortal: gana un bonificador de +2 de competencia a las tiradas de salvación contra conjuros y efectos con el descriptor opuesto a su elemento.",
   },
   {
     level: 5,
     name: "Subtipo Elemental",
     description:
-      "El adepto elemental se convierte parcialmente en una criatura del subtipo de su elemento: su resistencia a la energía aumenta a 20 y se vuelve inmune a los efectos de veneno, sueño mágico, parálisis y aturdimiento, además de no ser susceptible de sufrir golpes críticos ni ataques furtivos.",
+      "El erudito elemental se convierte parcialmente en una criatura del subtipo de su elemento: su resistencia a la energía aumenta a 20 y se vuelve inmune a los efectos de veneno, sueño mágico, parálisis y aturdimiento, además de no ser susceptible de sufrir golpes críticos ni ataques furtivos.",
   },
 ];
 
@@ -275,7 +275,7 @@ const PALE_MASTER_FEATURES = [
 ];
 
 // ---------------------------------------------------------------------------
-// Espada Arcana (Spellsword)
+// Espadamante (Spellsword)
 // ---------------------------------------------------------------------------
 
 const SPELLSWORD_FEATURES = [
@@ -283,47 +283,47 @@ const SPELLSWORD_FEATURES = [
     level: 1,
     name: "Guerrero con Armadura Ligera",
     description:
-      "Mientras lleve armadura ligera, la espada arcana no sufre la probabilidad de fallo arcano al lanzar sus conjuros arcanos.",
+      "Mientras lleve armadura ligera, la espadamante no sufre la probabilidad de fallo arcano al lanzar sus conjuros arcanos.",
   },
   {
     level: 1,
     name: "Progresión de Conjuros Arcanos",
     description:
-      "Cada nivel de espada arcana (1º a 10º) otorga un nivel de lanzador arcano adicional a una clase de lanzador arcano que el personaje ya poseyera antes de entrar en la clase de prestigio, exactamente como si hubiera obtenido un nivel en dicha clase a efectos de conjuros por día, conjuros conocidos y nivel de lanzador (pero no otros rasgos de esa clase).",
+      "Cada nivel de espadamante (1º a 10º) otorga un nivel de lanzador arcano adicional a una clase de lanzador arcano que el personaje ya poseyera antes de entrar en la clase de prestigio, exactamente como si hubiera obtenido un nivel en dicha clase a efectos de conjuros por día, conjuros conocidos y nivel de lanzador (pero no otros rasgos de esa clase).",
   },
   {
     level: 3,
     name: "Guerrero con Armadura Media",
     description:
-      "Mientras lleve armadura media, la espada arcana no sufre la probabilidad de fallo arcano al lanzar sus conjuros arcanos.",
+      "Mientras lleve armadura media, la espadamante no sufre la probabilidad de fallo arcano al lanzar sus conjuros arcanos.",
   },
   {
     level: 4,
     name: "Dote de Combate Adicional",
-    description: "La espada arcana obtiene una dote de combate adicional que cumpla sus requisitos.",
+    description: "La espadamante obtiene una dote de combate adicional que cumpla sus requisitos.",
   },
   {
     level: 5,
     name: "Ataque de Toque Canalizado",
     description:
-      "La espada arcana puede lanzar un conjuro de toque y \"guardarlo\" en su arma cuerpo a cuerpo, de modo que el siguiente golpe con éxito con esa arma administra el efecto del conjuro además del daño normal del arma.",
+      "La espadamante puede lanzar un conjuro de toque y \"guardarlo\" en su arma cuerpo a cuerpo, de modo que el siguiente golpe con éxito con esa arma administra el efecto del conjuro además del daño normal del arma.",
   },
   {
     level: 7,
     name: "Guerrero con Armadura Pesada",
     description:
-      "Mientras lleve armadura pesada, la espada arcana no sufre la probabilidad de fallo arcano al lanzar sus conjuros arcanos.",
+      "Mientras lleve armadura pesada, la espadamante no sufre la probabilidad de fallo arcano al lanzar sus conjuros arcanos.",
   },
   {
     level: 8,
     name: "Dote de Combate Adicional",
-    description: "La espada arcana obtiene una segunda dote de combate adicional que cumpla sus requisitos.",
+    description: "La espadamante obtiene una segunda dote de combate adicional que cumpla sus requisitos.",
   },
   {
     level: 10,
     name: "Fusión de Acero y Conjuro",
     description:
-      "Una vez por combate, la espada arcana puede lanzar un conjuro como parte del mismo asalto en que realiza una carga o un ataque a la carrera, sin que ello cuente como su acción estándar habitual para lanzar conjuros.",
+      "Una vez por combate, la espadamante puede lanzar un conjuro como parte del mismo asalto en que realiza una carga o un ataque a la carrera, sin que ello cuente como su acción estándar habitual para lanzar conjuros.",
   },
 ];
 
@@ -392,7 +392,7 @@ export const CA_CLASSES: ClassDef[] = [
         check: (ctx) => ctx.babTotal >= 5,
       },
       {
-        description: "Conjuros: 4 rangos",
+        description: "Conocimiento de Conjuros: 4 rangos",
         check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 4,
       },
       {
@@ -407,7 +407,7 @@ export const CA_CLASSES: ClassDef[] = [
   },
   {
     id: "ca-elemental-savant",
-    name: "Adepto Elemental (Elemental Savant)",
+    name: "Erudito Elemental (Elemental Savant)",
     source: "complete-arcane",
     description:
       "Un especialista arcano que ata su magia y, poco a poco, su propio cuerpo a uno de los cuatro elementos clásicos (aire, agua, fuego o tierra), volviéndose cada vez más ajeno a la carne mortal.",
@@ -423,11 +423,11 @@ export const CA_CLASSES: ClassDef[] = [
     isPrestige: true,
     prerequisites: [
       {
-        description: "Conocimiento (Planos): 8 rangos",
+        description: "Saber (Planos): 8 rangos",
         check: (ctx) => (ctx.skillRanks["knowledge-the-planes"] ?? 0) >= 8,
       },
       {
-        description: "Conjuros: 8 rangos",
+        description: "Conocimiento de Conjuros: 8 rangos",
         check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 8,
       },
       {
@@ -458,11 +458,11 @@ export const CA_CLASSES: ClassDef[] = [
     isPrestige: true,
     prerequisites: [
       {
-        description: "Conjuros: 12 rangos",
+        description: "Conocimiento de Conjuros: 12 rangos",
         check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 12,
       },
       {
-        description: "Conocimiento (Arcano): 4 rangos",
+        description: "Saber (Arcano): 4 rangos",
         check: (ctx) => (ctx.skillRanks["knowledge-arcana"] ?? 0) >= 4,
       },
       {
@@ -493,11 +493,11 @@ export const CA_CLASSES: ClassDef[] = [
     isPrestige: true,
     prerequisites: [
       {
-        description: "Conjuros: 5 rangos",
+        description: "Conocimiento de Conjuros: 5 rangos",
         check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 5,
       },
       {
-        description: "Conocimiento (Arcano): 8 rangos",
+        description: "Saber (Arcano): 8 rangos",
         check: (ctx) => (ctx.skillRanks["knowledge-arcana"] ?? 0) >= 8,
       },
       {
@@ -511,7 +511,7 @@ export const CA_CLASSES: ClassDef[] = [
   },
   {
     id: "ca-spellsword",
-    name: "Espada Arcana (Spellsword)",
+    name: "Espadamante (Spellsword)",
     source: "complete-arcane",
     description:
       "Un guerrero que también domina la magia arcana, capaz de combinar el acero y el conjuro en un mismo combate sin que el peso de su armadura le impida lanzar sus hechizos.",
@@ -541,11 +541,11 @@ export const CA_CLASSES: ClassDef[] = [
         check: (ctx) => ctx.babTotal >= 5,
       },
       {
-        description: "Conjuros: 5 rangos",
+        description: "Conocimiento de Conjuros: 5 rangos",
         check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 5,
       },
       {
-        description: "Ataque Especializado con cualquier arma",
+        description: "Soltura con el arma elegida",
         check: (ctx) => ctx.featIds.has("weapon-focus"),
       },
       {
@@ -572,11 +572,11 @@ export const CA_CLASSES: ClassDef[] = [
     isPrestige: true,
     prerequisites: [
       {
-        description: "Conocimiento (Arcano): 15 rangos",
+        description: "Saber (Arcano): 15 rangos",
         check: (ctx) => (ctx.skillRanks["knowledge-arcana"] ?? 0) >= 15,
       },
       {
-        description: "Conjuros: 15 rangos",
+        description: "Conocimiento de Conjuros: 15 rangos",
         check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 15,
       },
       {

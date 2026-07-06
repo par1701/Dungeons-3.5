@@ -90,6 +90,20 @@ export interface ManifestingInfo {
   startLevel: number;
 }
 
+export type CompanionKind = "animal_companion" | "familiar" | "special_mount";
+
+export interface CompanionGrant {
+  kind: CompanionKind;
+  /** Nivel de esta clase a partir del cual se obtiene el compañero/familiar/montura. */
+  startLevel: number;
+  /**
+   * Cómo se traduce el nivel de esta clase al "nivel efectivo" usado en las
+   * tablas de progresión (la tabla de bonos de compañero animal está pensada
+   * para nivel de druida; el explorador la usa con un desfase de -3).
+   */
+  effectiveLevelOffset: number;
+}
+
 export interface ClassDef {
   id: string;
   name: string;
@@ -104,6 +118,7 @@ export interface ClassDef {
   armorProficiencies: string[];
   spellcasting?: SpellcastingInfo;
   manifesting?: ManifestingInfo;
+  companionGrant?: CompanionGrant;
   features: ClassFeature[]; // rasgos de clase por nivel (texto)
   maxLevel: number;
   isPrestige?: boolean;
@@ -174,6 +189,13 @@ export interface Skill {
   armorCheckPenalty: boolean;
   description: string;
   source: SourceBookId;
+  /**
+   * Habilidades como Oficio, Profesión e Interpretar exigen elegir una
+   * especialización libre (ej. "Oficio (Herrería)") y pueden tomarse varias
+   * veces, cada una con sus propios rangos. En `CharacterSkillRanks` estas se
+   * guardan con clave compuesta "idHabilidad::especialización".
+   */
+  requiresSpecialization?: boolean;
 }
 
 export type MagicSchool =
@@ -279,6 +301,38 @@ export interface GearItem {
   description: string;
 }
 
+export interface CompanionAttack {
+  name: string;
+  bonus: number;
+  damage: string;
+}
+
+/**
+ * Bloque de estadísticas base (a su nivel de dado de golpe inicial en el
+ * Manual de Monstruos) de una criatura usable como compañero animal,
+ * familiar o montura especial. La hoja de personaje muestra este bloque
+ * junto con los bonos por nivel de amo correspondientes (ver
+ * `engine/companions.ts`), en vez de precalcular cada combinación posible.
+ */
+export interface CompanionBaseCreature {
+  id: string;
+  name: string;
+  source: SourceBookId;
+  kind: CompanionKind;
+  size: Size;
+  baseHitDice: number;
+  hitDie: number;
+  baseAbilityScores: AbilityScores;
+  baseNaturalArmor: number;
+  baseSpeed: number;
+  attacks: CompanionAttack[];
+  specialQualities: string[];
+  skillBonuses: string[];
+  /** Nivel efectivo mínimo (según la tabla de compañero animal) al que se puede elegir; 1 para familiares/montura. */
+  minEffectiveLevel: number;
+  description: string;
+}
+
 export type VariantRuleCategory =
   | "puntuaciones_habilidad"
   | "raza"
@@ -341,6 +395,16 @@ export interface CharacterEquipmentItem {
   masterwork?: boolean;
 }
 
+export interface CharacterCompanion {
+  id: string;
+  kind: CompanionKind;
+  baseCreatureId: string;
+  /** Nombre propio elegido por el jugador para el compañero/familiar/montura. */
+  name: string;
+  /** Clase del personaje que otorga este compañero (druida, explorador, paladín, mago, hechicero...). */
+  masterClassId: string;
+}
+
 export interface Character {
   id: string;
   name: string;
@@ -359,6 +423,7 @@ export interface Character {
   feats: CharacterFeatChoice[];
   spells: CharacterSpellSelection[];
   powers: CharacterPowerSelection[];
+  companions: CharacterCompanion[];
   equipment: CharacterEquipmentItem[];
   gold: number;
   hpRolls: number[]; // hp tirados/asignados por nivel

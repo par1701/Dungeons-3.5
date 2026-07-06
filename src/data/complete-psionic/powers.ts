@@ -2,8 +2,8 @@
 // Equivalente psiónico de los conjuros: en vez de "school"/"components"/"castingTime"/"spellResistance"
 // se usan "discipline"/"display"/"manifestingTime"/"powerResistance", y hay un campo opcional "augment"
 // que describe cómo mejora el poder al gastar puntos de poder adicionales.
-// Cubre las listas de Psíon (cps-psion, niveles 0-9), Guerrero Psíquico (cps-psychic-warrior, niveles 1-6)
-// y Silvestre (cps-wilder, niveles 0-9). Los poderes compartidos entre clases reutilizan la misma entrada,
+// Cubre las listas de Psiónico (cps-psion, niveles 0-9), Guerrero Psíquico (cps-psychic-warrior, niveles 1-6)
+// y Indómito (cps-wilder, niveles 0-9). Los poderes compartidos entre clases reutilizan la misma entrada,
 // añadiendo la clave correspondiente en `levelByClass` (el nivel de un poder es el mismo para todas las clases).
 import type { PsionicPower } from "../../types";
 

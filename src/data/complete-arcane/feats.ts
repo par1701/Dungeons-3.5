@@ -33,7 +33,7 @@ export const CA_FEATS: Feat[] = [
     benefit:
       "Elige un dominio de una deidad a la que venere. Añade los conjuros de dominio de nivel igual o inferior al conjuro arcano más alto que pueda lanzar a la lista de conjuros de su clase, y obtiene el poder de dominio de nivel 1 asociado. Además, puede lanzar una vez al día el conjuro de dominio de mayor nivel al que tenga acceso como un conjuro de dominio adicional.",
     prerequisites: [
-      { description: "Conocimiento (Religión) 8 rangos", check: (ctx) => (ctx.skillRanks["knowledge-religion"] ?? 0) >= 8 },
+      { description: "Saber (Religión) 8 rangos", check: (ctx) => (ctx.skillRanks["knowledge-religion"] ?? 0) >= 8 },
       { description: "Debe venerar a una deidad" },
       { description: "Capacidad de lanzar conjuros arcanos" },
     ],
@@ -50,7 +50,7 @@ export const CA_FEATS: Feat[] = [
     benefit:
       "Cuando otro lanzador intenta contrarrestar o disipar un conjuro suyo, puede gastar una acción rápida para sumar un bonificador a la prueba de nivel de lanzador enfrentada igual a la mitad de su nivel de lanzador (redondeando hacia abajo).",
     prerequisites: [
-      { description: "Conjuros 15 rangos", check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 15 },
+      { description: "Conocimiento de Conjuros 15 rangos", check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 15 },
       { description: "Capacidad de lanzar conjuros arcanos de nivel 9" },
     ],
     fighterBonusFeat: false,
@@ -79,7 +79,7 @@ export const CA_FEATS: Feat[] = [
     description:
       "El personaje recibió una educación formal en los fundamentos de la magia arcana, aunque su vocación principal sea otra.",
     benefit:
-      "Elige bardo, hechicero o mago. Gana Conjuros como habilidad de clase en todas sus clases y obtiene un +2 de bonificador de competencia en las pruebas de Usar Objetos Mágicos realizadas para activar pergaminos de esa clase.",
+      "Elige bardo, hechicero o mago. Gana Conocimiento de Conjuros como habilidad de clase en todas sus clases y obtiene un +2 de bonificador de competencia en las pruebas de Usar Objeto Mágico realizadas para activar pergaminos de esa clase.",
     prerequisites: [],
     fighterBonusFeat: false,
     stackable: false,
@@ -129,7 +129,7 @@ export const CA_FEATS: Feat[] = [
     description:
       "El lanzador transforma parte de su magia estudiada en un poder que fluye de su propio ser, sin preparación ni componentes.",
     benefit:
-      "Elige conjuros conocidos cuya suma de niveles no exceda su modificador de característica de lanzamiento. Puede manifestar cada uno de ellos una vez al día como una capacidad sobrenatural similar a un conjuro (sin componentes verbales, somáticos ni materiales, inmune a Contrahechizo y a pruebas de Conjuros para identificarlo mientras se manifiesta), usando su nivel de lanzador habitual para todos los efectos dependientes del nivel.",
+      "Elige conjuros conocidos cuya suma de niveles no exceda su modificador de característica de lanzamiento. Puede manifestar cada uno de ellos una vez al día como una capacidad sobrenatural similar a un conjuro (sin componentes verbales, somáticos ni materiales, inmune a Contrahechizo y a pruebas de Conocimiento de Conjuros para identificarlo mientras se manifiesta), usando su nivel de lanzador habitual para todos los efectos dependientes del nivel.",
     prerequisites: [{ description: "Nivel de lanzador 9", check: (ctx) => ctx.casterLevel >= 9 }],
     fighterBonusFeat: false,
     stackable: false,
@@ -201,7 +201,7 @@ export const CA_FEATS: Feat[] = [
     benefit:
       "Elige un tipo de energía (ácido, electricidad, frío, fuego o sónico). Puede lanzar cualquier conjuro que conozca con descriptor de energía sustituyendo su tipo de daño original por el elegido, sin alterar ningún otro efecto del conjuro. No requiere un espacio de conjuro de nivel superior. Se puede tomar varias veces, cada una para un tipo de energía distinto.",
     prerequisites: [
-      { description: "Conocimiento (Arcano) 5 rangos", check: (ctx) => (ctx.skillRanks["knowledge-arcana"] ?? 0) >= 5 },
+      { description: "Saber (Arcano) 5 rangos", check: (ctx) => (ctx.skillRanks["knowledge-arcana"] ?? 0) >= 5 },
     ],
     fighterBonusFeat: false,
     stackable: true,
@@ -409,7 +409,7 @@ export const CA_FEATS: Feat[] = [
     types: ["creacion_objetos"],
     description: "El lanzador aprende a sacar el máximo partido de cualquier varita que empuñe, no solo de las que él mismo fabricó.",
     benefit:
-      "Al usar cualquier varita, puede tratar su propio nivel de lanzador como el nivel de lanzador de la varita si este es superior, hasta un máximo igual a su nivel de lanzador real, y no necesita realizar una prueba de Usar Objetos Mágicos para activar varitas de una clase que no domine.",
+      "Al usar cualquier varita, puede tratar su propio nivel de lanzador como el nivel de lanzador de la varita si este es superior, hasta un máximo igual a su nivel de lanzador real, y no necesita realizar una prueba de Usar Objeto Mágico para activar varitas de una clase que no domine.",
     prerequisites: [{ description: "Crear Varita Mágica", check: hasFeat("craft-wand") }],
     fighterBonusFeat: false,
     stackable: false,

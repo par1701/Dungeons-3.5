@@ -40,7 +40,7 @@ export const SOURCE_BOOKS: SourceBook[] = [
     name: "Complete Divine",
     shortName: "C. Divine",
     description:
-      "Dotes, conjuros, las clases base Alma Elegida y Chamán Espiritual, y clases de prestigio divinas.",
+      "Dotes, conjuros, las clases base Alma Predilecta y Chamán Espiritual, y clases de prestigio divinas.",
     implemented: true,
     defaultEnabled: false,
   },
@@ -49,7 +49,7 @@ export const SOURCE_BOOKS: SourceBook[] = [
     name: "Complete Adventurer",
     shortName: "C. Adventurer",
     description:
-      "Dotes, las clases base Explorador Furtivo y Espadachín, y clases de prestigio para exploradores y pícaros.",
+      "Dotes, las clases base Batidor y Espadachín, y clases de prestigio para exploradores y pícaros.",
     implemented: true,
     defaultEnabled: false,
   },
@@ -82,7 +82,7 @@ export const SOURCE_BOOKS: SourceBook[] = [
     name: "Complete Psionic",
     shortName: "C. Psionic",
     description:
-      "Sistema psiónico completo: Psíon, Guerrero Psíquico, Silvestre y Hoja del Alma, con puntos de poder en vez de conjuros por día.",
+      "Sistema psiónico completo: Psiónico, Guerrero Psíquico, Indómito y Cuchillo del Alma, con puntos de poder en vez de conjuros por día.",
     implemented: true,
     defaultEnabled: false,
   },
@@ -90,16 +90,17 @@ export const SOURCE_BOOKS: SourceBook[] = [
     id: "phb2",
     name: "Player's Handbook II",
     shortName: "PHB2",
-    description: "Reglas y opciones adicionales para jugadores.",
-    implemented: false,
+    description: "Dotes adicionales y reglas variantes de personaje (gestalt, puntos de acción, trasfondos, etc.).",
+    implemented: true,
     defaultEnabled: false,
   },
   {
     id: "dmg2",
     name: "Dungeon Master's Guide II",
     shortName: "DMG2",
-    description: "Reglas variantes y opciones adicionales para directores de juego.",
-    implemented: false,
+    description:
+      "Reglas variantes para jugadores (puntos de acción, reputación, afiliación, riqueza abstracta, reentrenamiento, etc.).",
+    implemented: true,
     defaultEnabled: false,
   },
 ];

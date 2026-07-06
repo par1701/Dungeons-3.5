@@ -108,7 +108,7 @@ const DIVINE_ORACLE_FEATURES: ClassFeature[] = [
     level: 1,
     name: "Visión del oráculo",
     description:
-      "El oráculo divino obtiene un bonificador de perspicacia igual a la mitad de su nivel de oráculo divino (mínimo +1) a todas las pruebas de Conocimiento y a las pruebas de Sentir Motivaciones.",
+      "El oráculo divino obtiene un bonificador de perspicacia igual a la mitad de su nivel de oráculo divino (mínimo +1) a todas las pruebas de Saber y a las pruebas de Averiguar Intenciones.",
   },
   {
     level: 2,
@@ -364,7 +364,7 @@ export const CC_CLASSES: ClassDef[] = [
     isPrestige: true,
     prerequisites: [
       {
-        description: "Conocimiento (Religión): 8 rangos",
+        description: "Saber (Religión): 8 rangos",
         check: (ctx) => (ctx.skillRanks["knowledge-religion"] ?? 0) >= 8,
       },
       {
@@ -399,11 +399,11 @@ export const CC_CLASSES: ClassDef[] = [
     isPrestige: true,
     prerequisites: [
       {
-        description: "Conocimiento (Religión): 8 rangos",
+        description: "Saber (Religión): 8 rangos",
         check: (ctx) => (ctx.skillRanks["knowledge-religion"] ?? 0) >= 8,
       },
       {
-        description: "Conjuros: 8 rangos",
+        description: "Conocimiento de Conjuros: 8 rangos",
         check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 8,
       },
       {
@@ -437,7 +437,7 @@ export const CC_CLASSES: ClassDef[] = [
         check: (ctx) => ctx.featIds.has("improved-unarmed-strike"),
       },
       {
-        description: "Conocimiento (Naturaleza): 6 rangos",
+        description: "Saber (Naturaleza): 6 rangos",
         check: (ctx) => (ctx.skillRanks["knowledge-nature"] ?? 0) >= 6,
       },
       {
@@ -468,7 +468,7 @@ export const CC_CLASSES: ClassDef[] = [
         check: (ctx) => ctx.babTotal >= 5,
       },
       {
-        description: "Curar: 4 rangos",
+        description: "Sanar: 4 rangos",
         check: (ctx) => (ctx.skillRanks["heal"] ?? 0) >= 4,
       },
       {
@@ -495,11 +495,11 @@ export const CC_CLASSES: ClassDef[] = [
     isPrestige: true,
     prerequisites: [
       {
-        description: "Conocimiento (Religión): 8 rangos",
+        description: "Saber (Religión): 8 rangos",
         check: (ctx) => (ctx.skillRanks["knowledge-religion"] ?? 0) >= 8,
       },
       {
-        description: "Conocimiento (Planos): 4 rangos",
+        description: "Saber (Planos): 4 rangos",
         check: (ctx) => (ctx.skillRanks["knowledge-the-planes"] ?? 0) >= 4,
       },
       {
@@ -538,7 +538,7 @@ export const CC_CLASSES: ClassDef[] = [
         check: (ctx) => ctx.featIds.has("improved-unarmed-strike"),
       },
       {
-        description: "Conocimiento (Religión): 4 rangos",
+        description: "Saber (Religión): 4 rangos",
         check: (ctx) => (ctx.skillRanks["knowledge-religion"] ?? 0) >= 4,
       },
       {

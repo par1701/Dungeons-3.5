@@ -52,7 +52,7 @@ export const CS_FEATS: Feat[] = [
     benefit:
       "Puede intentar una finta en combate como acción de movimiento en lugar de acción estándar. Además, cuando finta con éxito a un enemigo, este también se considera desprevenido frente a los ataques de los aliados del personaje hasta el comienzo del siguiente turno de dicho enemigo.",
     prerequisites: [
-      { description: "Farolear: 4 rangos", check: (ctx) => (ctx.skillRanks["bluff"] ?? 0) >= 4 },
+      { description: "Engañar: 4 rangos", check: (ctx) => (ctx.skillRanks["bluff"] ?? 0) >= 4 },
       { description: "Capacidad de infligir daño de ataque furtivo" },
     ],
     fighterBonusFeat: false,
@@ -93,7 +93,7 @@ export const CS_FEATS: Feat[] = [
     types: ["general"],
     description: "El personaje se crió en una familia de comerciantes, contrabandistas o mercaderes itinerantes.",
     benefit:
-      "Obtiene +2 de bonificador de competencia a las pruebas de Tasar y Profesión (mercader o similar). Además, al crear el personaje, su oro inicial aumenta un 50% sobre lo habitual para su clase.",
+      "Obtiene +2 de bonificador de competencia a las pruebas de Tasación y Oficio (mercader o similar). Además, al crear el personaje, su oro inicial aumenta un 50% sobre lo habitual para su clase.",
     prerequisites: [],
     fighterBonusFeat: false,
     stackable: false,
@@ -105,8 +105,8 @@ export const CS_FEATS: Feat[] = [
     types: ["combate"],
     description: "Mientras charla, se burla y desconcierta a su rival, el personaje también sortea sus golpes con más facilidad.",
     benefit:
-      "Cuando intenta una prueba de Farolear para fintar a un enemigo en combate, gana un bonificador de esquiva a la Clase de Armadura frente a ese enemigo igual a su modificador de Carisma (mínimo +1) hasta el comienzo de su siguiente turno, tenga éxito o no en la finta.",
-    prerequisites: [{ description: "Farolear: 4 rangos", check: (ctx) => (ctx.skillRanks["bluff"] ?? 0) >= 4 }],
+      "Cuando intenta una prueba de Engañar para fintar a un enemigo en combate, gana un bonificador de esquiva a la Clase de Armadura frente a ese enemigo igual a su modificador de Carisma (mínimo +1) hasta el comienzo de su siguiente turno, tenga éxito o no en la finta.",
+    prerequisites: [{ description: "Engañar: 4 rangos", check: (ctx) => (ctx.skillRanks["bluff"] ?? 0) >= 4 }],
     fighterBonusFeat: false,
     stackable: false,
   },

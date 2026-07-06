@@ -567,7 +567,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "cleave",
-    name: "Machacar",
+    name: "Hendedura",
     source: "srd",
     types: ["combate"],
     description: "Un guerrero capaz de encadenar un segundo golpe tras derribar a un enemigo.",
@@ -582,16 +582,16 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "great-cleave",
-    name: "Machacar Mayor",
+    name: "Gran Hendedura",
     source: "srd",
     types: ["combate"],
-    description: "Una versión sin límite de la técnica de Machacar.",
+    description: "Una versión sin límite de la técnica de Hendedura.",
     benefit:
-      "Como Machacar, pero sin límite en el número de ataques adicionales que puede realizar en el mismo turno tras derribar enemigos.",
+      "Como Hendedura, pero sin límite en el número de ataques adicionales que puede realizar en el mismo turno tras derribar enemigos.",
     prerequisites: [
       { description: "Fuerza 13", check: (ctx) => ctx.abilityScores.str >= 13 },
       { description: "Ataque Poderoso", check: hasFeat("power-attack") },
-      { description: "Machacar", check: hasFeat("cleave") },
+      { description: "Hendedura", check: hasFeat("cleave") },
       { description: "Bonificador base de ataque +4", check: (ctx) => ctx.babTotal >= 4 },
     ],
     fighterBonusFeat: true,
@@ -599,7 +599,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "combat-expertise",
-    name: "Combate Experto",
+    name: "Pericia en Combate",
     source: "srd",
     types: ["combate"],
     description: "Sacrifica precisión por seguridad defensiva.",
@@ -619,7 +619,7 @@ export const SRD_FEATS: Feat[] = [
       "No provoca ataque de oportunidad al intentar desarmar a un enemigo y gana +4 de bonificador en la prueba enfrentada de desarme.",
     prerequisites: [
       { description: "Inteligencia 13", check: (ctx) => ctx.abilityScores.int >= 13 },
-      { description: "Combate Experto", check: hasFeat("combat-expertise") },
+      { description: "Pericia en Combate", check: hasFeat("combat-expertise") },
     ],
     fighterBonusFeat: true,
     stackable: false,
@@ -633,7 +633,7 @@ export const SRD_FEATS: Feat[] = [
     benefit: "Puede fintar en combate como una acción de movimiento en lugar de una acción estándar.",
     prerequisites: [
       { description: "Inteligencia 13", check: (ctx) => ctx.abilityScores.int >= 13 },
-      { description: "Combate Experto", check: hasFeat("combat-expertise") },
+      { description: "Pericia en Combate", check: hasFeat("combat-expertise") },
     ],
     fighterBonusFeat: true,
     stackable: false,
@@ -648,14 +648,14 @@ export const SRD_FEATS: Feat[] = [
       "No provoca ataque de oportunidad al intentar derribar a un enemigo y gana +4 en la prueba enfrentada. Si tiene éxito, puede realizar de inmediato un ataque cuerpo a cuerpo adicional contra el enemigo derribado.",
     prerequisites: [
       { description: "Inteligencia 13", check: (ctx) => ctx.abilityScores.int >= 13 },
-      { description: "Combate Experto", check: hasFeat("combat-expertise") },
+      { description: "Pericia en Combate", check: hasFeat("combat-expertise") },
     ],
     fighterBonusFeat: true,
     stackable: false,
   },
   {
     id: "whirlwind-attack",
-    name: "Ataque en Torbellino",
+    name: "Ataque de Torbellino",
     source: "srd",
     types: ["combate"],
     description: "Una técnica que permite golpear a todos los enemigos alrededor en un mismo turno.",
@@ -664,8 +664,8 @@ export const SRD_FEATS: Feat[] = [
     prerequisites: [
       { description: "Destreza 13", check: (ctx) => ctx.abilityScores.dex >= 13 },
       { description: "Inteligencia 13", check: (ctx) => ctx.abilityScores.int >= 13 },
-      { description: "Combate Experto", check: hasFeat("combat-expertise") },
-      { description: "Ataque en Movimiento", check: hasFeat("spring-attack") },
+      { description: "Pericia en Combate", check: hasFeat("combat-expertise") },
+      { description: "Ataque Elástico", check: hasFeat("spring-attack") },
       { description: "Bonificador base de ataque +4", check: (ctx) => ctx.babTotal >= 4 },
     ],
     fighterBonusFeat: true,

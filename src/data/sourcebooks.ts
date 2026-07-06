@@ -82,7 +82,7 @@ export const SOURCE_BOOKS: SourceBook[] = [
     name: "Complete Psionic",
     shortName: "C. Psionic",
     description:
-      "Sistema psiónico completo: Psíon, Guerrero Psíquico, Silvestre y Hoja del Alma, con puntos de poder en vez de conjuros por día.",
+      "Sistema psiónico completo: Psiónico, Guerrero Psíquico, Indómito y Cuchillo del Alma, con puntos de poder en vez de conjuros por día.",
     implemented: true,
     defaultEnabled: false,
   },

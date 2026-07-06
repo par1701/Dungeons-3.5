@@ -7,6 +7,8 @@ import {
   computeBabTotal,
   computeMaxHp,
   computeSaveTotals,
+  getUnlockedClassFeatures,
+  parseSkillKey,
   totalCharacterLevel,
 } from "../engine/derive";
 
@@ -42,6 +44,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
   const classSummary = character.classLevels
     .map((cl) => `${findClass(cl.classId)?.name ?? cl.classId} ${cl.level}`)
     .join(" / ");
+  const unlockedFeatures = getUnlockedClassFeatures(character.classLevels, classes);
 
   const abilities: [string, number][] = [
     ["Fuerza", finalScores.str],
@@ -99,22 +102,51 @@ export default function CharacterSheetDocument({ character }: { character: Chara
         <Text style={styles.sectionTitle}>Habilidades</Text>
         {Object.entries(character.skillRanks)
           .filter(([, ranks]) => ranks > 0)
-          .map(([skillId, ranks]) => {
+          .map(([key, ranks]) => {
+            const { skillId, specialization } = parseSkillKey(key);
             const skill = findSkill(skillId);
             const mod = skill ? abilityModifier(finalScores[skill.keyAbility]) : 0;
+            const label = skill ? (specialization ? `${skill.name} (${specialization})` : skill.name) : key;
             return (
-              <View style={styles.tableRow} key={skillId}>
-                <Text style={styles.cell}>{skill?.name ?? skillId}</Text>
+              <View style={styles.tableRow} key={key}>
+                <Text style={styles.cell}>{label}</Text>
                 <Text style={styles.smallCell}>Rangos {ranks}</Text>
                 <Text style={styles.smallCell}>Total {ranks + mod}</Text>
               </View>
             );
           })}
 
+        {race && race.traits.length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>Rasgos raciales</Text>
+            {race.traits.map((t) => (
+              <Text key={t.name}>
+                • {t.name}: {t.description}
+              </Text>
+            ))}
+          </>
+        )}
+
+        {unlockedFeatures.length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>Rasgos de clase</Text>
+            {unlockedFeatures.map((f, i) => (
+              <Text key={i}>
+                • {f.name} ({f.className} {f.level}): {f.description}
+              </Text>
+            ))}
+          </>
+        )}
+
         <Text style={styles.sectionTitle}>Dotes</Text>
-        {character.feats.map((f) => (
-          <Text key={f.featId}>• {findFeat(f.featId)?.name ?? f.featId}</Text>
-        ))}
+        {character.feats.map((f) => {
+          const feat = findFeat(f.featId);
+          return (
+            <Text key={f.featId}>
+              • {feat?.name ?? f.featId}: {feat?.benefit ?? ""}
+            </Text>
+          );
+        })}
 
         {character.spells.length > 0 && (
           <>

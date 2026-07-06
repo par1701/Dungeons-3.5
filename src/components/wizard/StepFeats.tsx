@@ -2,7 +2,14 @@ import { useState } from "react";
 import { getEnabledFeats, getEnabledClasses } from "../../data";
 import type { StepProps } from "./types";
 import type { FeatPrereqContext } from "../../types";
-import { applyRacialAdjustments, computeBabTotal, computeFeatSlots, isHumanRace, totalCharacterLevel } from "../../engine/derive";
+import {
+  applyRacialAdjustments,
+  computeBabTotal,
+  computeFeatSlots,
+  flattenSkillRanksForPrereqs,
+  isHumanRace,
+  totalCharacterLevel,
+} from "../../engine/derive";
 import { findRace } from "../../data";
 
 export default function StepFeats({ character, onChange }: StepProps) {
@@ -21,7 +28,7 @@ export default function StepFeats({ character, onChange }: StepProps) {
     classLevels: Object.fromEntries(character.classLevels.map((cl) => [cl.classId, cl.level])),
     totalCharacterLevel: totalCharacterLevel(character.classLevels),
     featIds: takenIds,
-    skillRanks: character.skillRanks,
+    skillRanks: flattenSkillRanksForPrereqs(character.skillRanks),
     casterLevel: totalCharacterLevel(character.classLevels),
   };
 

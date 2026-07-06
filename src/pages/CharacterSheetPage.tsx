@@ -9,6 +9,8 @@ import {
   computeCarryingCapacity,
   computeMaxHp,
   computeSaveTotals,
+  getUnlockedClassFeatures,
+  parseSkillKey,
   totalCharacterLevel,
 } from "../engine/derive";
 import CharacterSheetDocument from "../pdf/CharacterSheetDocument";
@@ -46,6 +48,7 @@ export default function CharacterSheetPage() {
   const classSummary = character.classLevels
     .map((cl) => `${findClass(cl.classId)?.name ?? cl.classId} ${cl.level}`)
     .join(" / ");
+  const unlockedFeatures = getUnlockedClassFeatures(character.classLevels, classes);
 
   const abilities: [string, keyof typeof finalScores][] = [
     ["Fuerza", "str"],
@@ -138,12 +141,14 @@ export default function CharacterSheetPage() {
           <tbody>
             {Object.entries(character.skillRanks)
               .filter(([, ranks]) => ranks > 0)
-              .map(([skillId, ranks]) => {
+              .map(([key, ranks]) => {
+                const { skillId, specialization } = parseSkillKey(key);
                 const skill = findSkill(skillId);
                 const mod = skill ? abilityModifier(finalScores[skill.keyAbility]) : 0;
+                const label = skill ? (specialization ? `${skill.name} (${specialization})` : skill.name) : key;
                 return (
-                  <tr key={skillId}>
-                    <td>{skill?.name ?? skillId}</td>
+                  <tr key={key}>
+                    <td>{label}</td>
                     <td>{ranks}</td>
                     <td>{mod >= 0 ? `+${mod}` : mod}</td>
                     <td>{ranks + mod}</td>
@@ -153,11 +158,50 @@ export default function CharacterSheetPage() {
           </tbody>
         </table>
 
+        {race && race.traits.length > 0 && (
+          <>
+            <h3>Rasgos raciales</h3>
+            <p className="muted">
+              Incluye bonificadores condicionales que solo se aplican en las circunstancias descritas (contra ciertos
+              enemigos, en ciertos terrenos, etc.).
+            </p>
+            <ul>
+              {race.traits.map((t) => (
+                <li key={t.name}>
+                  <strong>{t.name}:</strong> {t.description}
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+
+        {unlockedFeatures.length > 0 && (
+          <>
+            <h3>Rasgos de clase</h3>
+            <ul>
+              {unlockedFeatures.map((f, i) => (
+                <li key={i}>
+                  <strong>
+                    {f.name} ({f.className} {f.level}):
+                  </strong>{" "}
+                  {f.description}
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+
         <h3>Dotes</h3>
+        <p className="muted">El beneficio completo incluye cualquier condición o restricción de uso.</p>
         <ul>
-          {character.feats.map((f) => (
-            <li key={f.featId}>{findFeat(f.featId)?.name ?? f.featId}</li>
-          ))}
+          {character.feats.map((f) => {
+            const feat = findFeat(f.featId);
+            return (
+              <li key={f.featId}>
+                <strong>{feat?.name ?? f.featId}:</strong> {feat?.benefit ?? ""}
+              </li>
+            );
+          })}
         </ul>
 
         {character.spells.length > 0 && (

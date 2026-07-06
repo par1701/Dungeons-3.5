@@ -174,6 +174,13 @@ export interface Skill {
   armorCheckPenalty: boolean;
   description: string;
   source: SourceBookId;
+  /**
+   * Habilidades como Oficio, Profesión e Interpretar exigen elegir una
+   * especialización libre (ej. "Oficio (Herrería)") y pueden tomarse varias
+   * veces, cada una con sus propios rangos. En `CharacterSkillRanks` estas se
+   * guardan con clave compuesta "idHabilidad::especialización".
+   */
+  requiresSpecialization?: boolean;
 }
 
 export type MagicSchool =

@@ -8,6 +8,35 @@ import type {
   SaveProgression,
 } from "../types";
 
+const SKILL_KEY_SEPARATOR = "::";
+
+/** Compone la clave usada en `CharacterSkillRanks` para una habilidad con especialización (Oficio, Profesión, Interpretar). */
+export function makeSkillKey(skillId: string, specialization?: string): string {
+  return specialization ? `${skillId}${SKILL_KEY_SEPARATOR}${specialization}` : skillId;
+}
+
+/** Descompone una clave de `CharacterSkillRanks` en el id de habilidad base y su especialización, si tiene. */
+export function parseSkillKey(key: string): { skillId: string; specialization?: string } {
+  const idx = key.indexOf(SKILL_KEY_SEPARATOR);
+  if (idx === -1) return { skillId: key };
+  return { skillId: key.slice(0, idx), specialization: key.slice(idx + SKILL_KEY_SEPARATOR.length) };
+}
+
+/**
+ * Aplana `CharacterSkillRanks` a un mapa `idHabilidad -> rangos` usable para
+ * comprobar prerrequisitos (ej. "Interpretar 9 rangos"). Para habilidades con
+ * especialización se toma el máximo entre todas sus especialidades, que es
+ * como el SRD interpreta ese tipo de requisito.
+ */
+export function flattenSkillRanksForPrereqs(skillRanks: Record<string, number>): Record<string, number> {
+  const flattened: Record<string, number> = {};
+  for (const [key, ranks] of Object.entries(skillRanks)) {
+    const { skillId } = parseSkillKey(key);
+    flattened[skillId] = Math.max(flattened[skillId] ?? 0, ranks);
+  }
+  return flattened;
+}
+
 export function abilityModifier(score: number): number {
   return Math.floor((score - 10) / 2);
 }
@@ -309,6 +338,28 @@ export function computeCarryingCapacity(
 
 export function isHumanRace(race?: Race): boolean {
   return race?.id === "human";
+}
+
+export interface UnlockedClassFeature {
+  classId: string;
+  className: string;
+  level: number;
+  name: string;
+  description: string;
+}
+
+/** Rasgos de clase ya obtenidos según el nivel actual de cada clase del personaje. */
+export function getUnlockedClassFeatures(
+  classLevels: CharacterClassLevel[],
+  classes: ClassDef[],
+): UnlockedClassFeature[] {
+  return classLevels.flatMap((cl) => {
+    const def = classes.find((c) => c.id === cl.classId);
+    if (!def) return [];
+    return def.features
+      .filter((f) => f.level <= cl.level)
+      .map((f) => ({ classId: def.id, className: def.name, level: f.level, name: f.name, description: f.description }));
+  });
 }
 
 const FIGHTER_BONUS_FEAT_LEVELS = [1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20];

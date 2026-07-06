@@ -1112,7 +1112,7 @@ export const SRD_FEATS: Feat[] = [
     types: ["combate"],
     description: "Un arquero capaz de disparar con precisión desde una montura en movimiento.",
     benefit: "La penalización por disparar un arma a distancia desde una montura en movimiento se reduce a la mitad.",
-    prerequisites: [{ description: "Combate Montado", check: hasFeat("mounted-combat") }],
+    prerequisites: [{ description: "Combatir desde Montura", check: hasFeat("mounted-combat") }],
     fighterBonusFeat: true,
     stackable: false,
   },
@@ -1124,33 +1124,33 @@ export const SRD_FEATS: Feat[] = [
     description: "El jinete aprende a pasar por encima de sus enemigos durante una carga.",
     benefit:
       "Durante una carga montada, su montura puede pasar por encima de enemigos de tamaño igual o menor, atropellándolos si no pueden esquivar y causando el daño de pisoteo de la montura más el modificador de Fuerza del jinete.",
-    prerequisites: [{ description: "Combate Montado", check: hasFeat("mounted-combat") }],
+    prerequisites: [{ description: "Combatir desde Montura", check: hasFeat("mounted-combat") }],
     fighterBonusFeat: true,
     stackable: false,
   },
   {
     id: "ride-by-attack",
-    name: "Ataque y Huida",
+    name: "Ataque al Galope",
     source: "srd",
     types: ["combate"],
     description: "El jinete golpea y continúa su carga sin detenerse.",
     benefit:
       "Durante una carga montada, puede moverse, atacar y continuar el movimiento sin provocar un ataque de oportunidad del enemigo atacado.",
-    prerequisites: [{ description: "Combate Montado", check: hasFeat("mounted-combat") }],
+    prerequisites: [{ description: "Combatir desde Montura", check: hasFeat("mounted-combat") }],
     fighterBonusFeat: true,
     stackable: false,
   },
   {
     id: "spirited-charge",
-    name: "Carga Enardecida",
+    name: "Carga Impetuosa",
     source: "srd",
     types: ["combate"],
     description: "Una carga montada devastadora gracias al impulso del galope.",
     benefit:
       "Durante una carga montada, causa el doble de daño con un arma cuerpo a cuerpo (el triple si usa una lanza montado).",
     prerequisites: [
-      { description: "Combate Montado", check: hasFeat("mounted-combat") },
-      { description: "Ataque y Huida", check: hasFeat("ride-by-attack") },
+      { description: "Combatir desde Montura", check: hasFeat("mounted-combat") },
+      { description: "Ataque al Galope", check: hasFeat("ride-by-attack") },
     ],
     fighterBonusFeat: true,
     stackable: false,
@@ -1196,7 +1196,7 @@ export const SRD_FEATS: Feat[] = [
   // ---------------------------------------------------------------------
   {
     id: "empower-spell",
-    name: "Conjuro Fortalecido",
+    name: "Potenciar Conjuro",
     source: "srd",
     types: ["metamagia"],
     description: "El lanzador aumenta la potencia numérica de sus conjuros.",
@@ -1208,7 +1208,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "enlarge-spell",
-    name: "Conjuro Agrandado",
+    name: "Ampliar Conjuro",
     source: "srd",
     types: ["metamagia"],
     description: "El lanzador extiende el alcance de su magia.",
@@ -1220,7 +1220,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "extend-spell",
-    name: "Conjuro Extendido",
+    name: "Prolongar Conjuro",
     source: "srd",
     types: ["metamagia"],
     description: "El lanzador prolonga los efectos de su magia.",
@@ -1231,7 +1231,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "heighten-spell",
-    name: "Conjuro Ampliado",
+    name: "Intensificar Conjuro",
     source: "srd",
     types: ["metamagia"],
     description: "El lanzador hace que su conjuro se comporte como uno de nivel superior.",

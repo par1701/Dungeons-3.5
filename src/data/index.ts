@@ -122,3 +122,12 @@ export function findPower(id: string): PsionicPower | undefined {
 export function findCompanion(id: string): CompanionBaseCreature | undefined {
   return ALL_COMPANIONS.find((c) => c.id === id);
 }
+export function findWeapon(id: string): Weapon | undefined {
+  return ALL_WEAPONS.find((w) => w.id === id);
+}
+export function findArmor(id: string): Armor | undefined {
+  return ALL_ARMORS.find((a) => a.id === id);
+}
+export function findGear(id: string): GearItem | undefined {
+  return ALL_GEAR.find((g) => g.id === id);
+}

@@ -1,11 +1,13 @@
 import type {
   Ability,
   AbilityScores,
+  Armor,
   Character,
   CharacterClassLevel,
   ClassDef,
   Race,
   SaveProgression,
+  Weapon,
 } from "../types";
 
 const SKILL_KEY_SEPARATOR = "::";
@@ -192,6 +194,23 @@ export function computeMaxHp(
 // Bonificador de competencia unificado (regla 3.5: siempre +2 desde nivel 1).
 export function proficiencyBonusPlaceholder(): number {
   return 0;
+}
+
+const SIZE_MODIFIER: Record<string, number> = {
+  Fino: 8,
+  Diminuto: 4,
+  Diminuta: 4,
+  Pequeño: 1,
+  Mediano: 0,
+  Grande: -1,
+  Enorme: -2,
+  Descomunal: -4,
+  Colosal: -8,
+};
+
+/** Modificador de tamaño (idéntico para Clase de Armadura y para tiradas de ataque). */
+export function sizeModifier(size: string): number {
+  return SIZE_MODIFIER[size] ?? 0;
 }
 
 export interface ArmorClassInputs {
@@ -394,4 +413,62 @@ export function deriveCharacterSummary(
   );
   const carrying = computeCarryingCapacity(finalAbilityScores.str, race?.size ?? "Mediano");
   return { finalAbilityScores, bab, saves, level, hp, carrying };
+}
+
+export interface EquippedArmorPieces {
+  bodyArmor?: Armor;
+  shield?: Armor;
+}
+
+export function computeCharacterArmorClass(
+  finalScores: AbilityScores,
+  size: string,
+  equipped: EquippedArmorPieces,
+): { total: number; touch: number; flatFooted: number; armorBonus: number; shieldBonus: number; maxDexBonus: number | null } {
+  const armorBonus = equipped.bodyArmor?.armorBonus ?? 0;
+  const shieldBonus = equipped.shield?.armorBonus ?? 0;
+  const maxDexLimits = [equipped.bodyArmor?.maxDexBonus, equipped.shield?.maxDexBonus].filter(
+    (v): v is number => v !== undefined && v !== null,
+  );
+  const maxDexBonus = maxDexLimits.length > 0 ? Math.min(...maxDexLimits) : null;
+  const ac = computeArmorClass({
+    armorBonus,
+    shieldBonus,
+    dexScore: finalScores.dex,
+    maxDexBonus,
+    sizeModifier: sizeModifier(size),
+    naturalArmor: 0,
+    deflection: 0,
+    misc: 0,
+  });
+  return { ...ac, armorBonus, shieldBonus, maxDexBonus };
+}
+
+export interface WeaponAttackSummary {
+  itemId: string;
+  name: string;
+  attackBonus: number;
+  damage: string;
+  critical: string;
+  rangeIncrement?: number;
+}
+
+export function computeWeaponAttack(
+  weapon: Weapon,
+  bab: number,
+  finalScores: AbilityScores,
+  size: string,
+): WeaponAttackSummary {
+  const abilityMod = weapon.type === "distancia" ? abilityModifier(finalScores.dex) : abilityModifier(finalScores.str);
+  const attackBonus = bab + abilityMod + sizeModifier(size);
+  const damageMod = weapon.type === "distancia" ? 0 : abilityModifier(finalScores.str);
+  const damage = damageMod === 0 ? weapon.damageMedium : `${weapon.damageMedium}${damageMod > 0 ? "+" : ""}${damageMod}`;
+  return {
+    itemId: weapon.id,
+    name: weapon.name,
+    attackBonus,
+    damage,
+    critical: weapon.critical,
+    rangeIncrement: weapon.rangeIncrement,
+  };
 }

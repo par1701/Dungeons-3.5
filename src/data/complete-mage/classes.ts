@@ -115,7 +115,7 @@ const FATESPINNER_FEATURES = [
 ];
 
 // ---------------------------------------------------------------------------
-// Arcanamante Suel (Suel Arcanamach)
+// Arcanamach Suelio (Suel Arcanamach)
 // ---------------------------------------------------------------------------
 
 const SUEL_ARCANAMACH_FEATURES = [
@@ -123,37 +123,37 @@ const SUEL_ARCANAMACH_FEATURES = [
     level: 1,
     name: "Progresión de Conjuros Arcanos Parcial",
     description:
-      "En los niveles 1º, 3º, 5º, 7º y 9º de arcanamante suel, el personaje obtiene un nivel de lanzador arcano adicional en una clase de lanzador arcano que ya poseyera antes de entrar en la clase de prestigio, exactamente como si hubiera obtenido un nivel en dicha clase a efectos de conjuros por día, conjuros conocidos y nivel de lanzador (pero no otros rasgos de esa clase). Los niveles pares no otorgan este beneficio.",
+      "En los niveles 1º, 3º, 5º, 7º y 9º de arcanamach suelio, el personaje obtiene un nivel de lanzador arcano adicional en una clase de lanzador arcano que ya poseyera antes de entrar en la clase de prestigio, exactamente como si hubiera obtenido un nivel en dicha clase a efectos de conjuros por día, conjuros conocidos y nivel de lanzador (pero no otros rasgos de esa clase). Los niveles pares no otorgan este beneficio.",
   },
   {
     level: 1,
     name: "Competencia con Armas Marciales",
-    description: "El arcanamante suel obtiene competencia con todas las armas marciales.",
+    description: "El arcanamach suelio obtiene competencia con todas las armas marciales.",
   },
   {
     level: 2,
     name: "Dote de Combate Adicional",
-    description: "El arcanamante suel obtiene una dote de combate adicional que cumpla sus requisitos.",
+    description: "El arcanamach suelio obtiene una dote de combate adicional que cumpla sus requisitos.",
   },
   {
     level: 4,
     name: "Fusión de Espada y Conjuro",
-    description: "Una vez por combate, el arcanamante suel puede lanzar un conjuro de tiempo de lanzamiento de 1 acción estándar como parte del mismo asalto en que realiza una carga, sin perder su ataque de carga.",
+    description: "Una vez por combate, el arcanamach suelio puede lanzar un conjuro de tiempo de lanzamiento de 1 acción estándar como parte del mismo asalto en que realiza una carga, sin perder su ataque de carga.",
   },
   {
     level: 6,
     name: "Reducción de Daño 2/-",
-    description: "El cuerpo del arcanamante suel se endurece con el uso combinado de acero y magia, ganando reducción de daño 2/-.",
+    description: "El cuerpo del arcanamach suelio se endurece con el uso combinado de acero y magia, ganando reducción de daño 2/-.",
   },
   {
     level: 8,
     name: "Dote de Combate Adicional",
-    description: "El arcanamante suel obtiene una segunda dote de combate adicional que cumpla sus requisitos.",
+    description: "El arcanamach suelio obtiene una segunda dote de combate adicional que cumpla sus requisitos.",
   },
   {
     level: 10,
     name: "Maestro de Espada y Conjuro",
-    description: "La reducción de daño del arcanamante suel aumenta a 4/- y, una vez por combate, puede lanzar un segundo conjuro además del que ya le permite Fusión de Espada y Conjuro, siempre en el mismo asalto de carga.",
+    description: "La reducción de daño del arcanamach suelio aumenta a 4/- y, una vez por combate, puede lanzar un segundo conjuro además del que ya le permite Fusión de Espada y Conjuro, siempre en el mismo asalto de carga.",
   },
 ];
 
@@ -265,10 +265,10 @@ export const CM_CLASSES: ClassDef[] = [
     prerequisites: [
       { description: "Interpretar 9 rangos", check: (ctx) => (ctx.skillRanks["perform"] ?? 0) >= 9 },
       {
-        description: "Conocimiento (Planos) 4 rangos",
+        description: "Saber (Planos) 4 rangos",
         check: (ctx) => (ctx.skillRanks["knowledge-the-planes"] ?? 0) >= 4,
       },
-      { description: "Conjuros 9 rangos", check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 9 },
+      { description: "Conocimiento de Conjuros 9 rangos", check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 9 },
       {
         description: "Capacidad de lanzar conjuros arcanos de nivel 3 de forma espontánea, nivel de lanzador arcano 7",
         check: (ctx) => ctx.casterLevel >= 7,
@@ -292,9 +292,9 @@ export const CM_CLASSES: ClassDef[] = [
     maxLevel: 10,
     isPrestige: true,
     prerequisites: [
-      { description: "Conjuros 8 rangos", check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 8 },
+      { description: "Conocimiento de Conjuros 8 rangos", check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 8 },
       {
-        description: "Conocimiento (Arcano) 8 rangos",
+        description: "Saber (Arcano) 8 rangos",
         check: (ctx) => (ctx.skillRanks["knowledge-arcana"] ?? 0) >= 8,
       },
       { description: "Nivel de lanzador arcano 5", check: (ctx) => ctx.casterLevel >= 5 },
@@ -302,7 +302,7 @@ export const CM_CLASSES: ClassDef[] = [
   },
   {
     id: "cm-suel-arcanamach",
-    name: "Arcanamante Suel (Suel Arcanamach)",
+    name: "Arcanamach Suelio (Suel Arcanamach)",
     source: "complete-mage",
     description:
       "Un guerrero-lanzador de tradición suel que combina la espada y el conjuro en un mismo instante de combate, sacrificando parte de su progresión mágica a cambio de una versatilidad marcial mucho mayor que la de un simple lanzador.",
@@ -328,7 +328,7 @@ export const CM_CLASSES: ClassDef[] = [
     isPrestige: true,
     prerequisites: [
       { description: "Bonificador base de ataque +5", check: (ctx) => ctx.babTotal >= 5 },
-      { description: "Conjuros 5 rangos", check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 5 },
+      { description: "Conocimiento de Conjuros 5 rangos", check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 5 },
       {
         description: "Competencia con arma marcial (cualquiera)",
         check: (ctx) => ctx.featIds.has("martial-weapon-proficiency"),
@@ -358,7 +358,7 @@ export const CM_CLASSES: ClassDef[] = [
     prerequisites: [
       { description: "Ser un mago especialista con una escuela de especialidad elegida" },
       { description: "Foco de Conjuro en la escuela de especialidad", check: hasFeat("spell-focus") },
-      { description: "Conjuros 5 rangos", check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 5 },
+      { description: "Conocimiento de Conjuros 5 rangos", check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 5 },
       { description: "Nivel de lanzador arcano 5", check: (ctx) => ctx.casterLevel >= 5 },
     ],
   },
@@ -387,10 +387,10 @@ export const CM_CLASSES: ClassDef[] = [
     maxLevel: 10,
     isPrestige: true,
     prerequisites: [
-      { description: "Oficio (escultura o alfarería) 5 rangos", check: (ctx) => (ctx.skillRanks["craft"] ?? 0) >= 5 },
-      { description: "Conjuros 8 rangos", check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 8 },
+      { description: "Artesanía (escultura o alfarería) 5 rangos", check: (ctx) => (ctx.skillRanks["craft"] ?? 0) >= 5 },
+      { description: "Conocimiento de Conjuros 8 rangos", check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 8 },
       {
-        description: "Conocimiento (Arcano) 5 rangos",
+        description: "Saber (Arcano) 5 rangos",
         check: (ctx) => (ctx.skillRanks["knowledge-arcana"] ?? 0) >= 5,
       },
       { description: "Nivel de lanzador arcano 5", check: (ctx) => ctx.casterLevel >= 5 },

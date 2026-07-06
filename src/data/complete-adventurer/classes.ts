@@ -205,7 +205,7 @@ const SWASHBUCKLER_FEATURES = [
 ];
 
 // ---------------------------------------------------------------------------
-// Exemplar
+// Ejemplar (Exemplar)
 // ---------------------------------------------------------------------------
 
 const EXEMPLAR_FEATURES = [
@@ -213,18 +213,18 @@ const EXEMPLAR_FEATURES = [
     level: 1,
     name: "Habilidad Insigne",
     description:
-      "Al entrar en la clase, el exemplar elige una habilidad en la que tenga al menos 12 rangos: se convierte en su \"habilidad insigne\". El exemplar obtiene un bonificador de +2 a las pruebas de esa habilidad.",
+      "Al entrar en la clase, el ejemplar elige una habilidad en la que tenga al menos 12 rangos: se convierte en su \"habilidad insigne\". El ejemplar obtiene un bonificador de +2 a las pruebas de esa habilidad.",
   },
   {
     level: 1,
     name: "Progresión de Clase Base",
     description:
-      "Cada nivel de exemplar cuenta como un nivel de la clase base que el exemplar poseyera antes de entrar en la clase de prestigio a efectos de rasgos de clase dependientes del nivel (por ejemplo, ataque furtivo de pícaro, torrente de golpes de monje o estilo de combate de guardabosques), aunque no otorga puntos de golpe, bonificador base de ataque ni salvaciones de esa clase.",
+      "Cada nivel de ejemplar cuenta como un nivel de la clase base que el ejemplar poseyera antes de entrar en la clase de prestigio a efectos de rasgos de clase dependientes del nivel (por ejemplo, ataque furtivo de pícaro, torrente de golpes de monje o estilo de combate de guardabosques), aunque no otorga puntos de golpe, bonificador base de ataque ni salvaciones de esa clase.",
   },
   {
     level: 2,
     name: "Resistencia a Fatiga",
-    description: "El exemplar es inmune a los efectos de fatiga y agotamiento inducidos por el uso extremo de su habilidad insigne (por ejemplo, correr, trepar o luchar sin descanso).",
+    description: "El ejemplar es inmune a los efectos de fatiga y agotamiento inducidos por el uso extremo de su habilidad insigne (por ejemplo, correr, trepar o luchar sin descanso).",
   },
   {
     level: 3,
@@ -234,12 +234,12 @@ const EXEMPLAR_FEATURES = [
   {
     level: 4,
     name: "Dote Adicional",
-    description: "El exemplar obtiene una dote adicional que cumpla sus requisitos.",
+    description: "El ejemplar obtiene una dote adicional que cumpla sus requisitos.",
   },
   {
     level: 5,
     name: "Hazaña Legendaria",
-    description: "Una vez por día, el exemplar puede realizar una prueba de su habilidad insigne con un bonificador de competencia adicional igual a su nivel de exemplar, representando un golpe de suerte o pericia sobrehumana.",
+    description: "Una vez por día, el ejemplar puede realizar una prueba de su habilidad insigne con un bonificador de competencia adicional igual a su nivel de ejemplar, representando un golpe de suerte o pericia sobrehumana.",
   },
   {
     level: 6,
@@ -249,22 +249,22 @@ const EXEMPLAR_FEATURES = [
   {
     level: 7,
     name: "Resistencia a la Muerte Súbita",
-    description: "El exemplar obtiene un bonificador de +2 de competencia a las tiradas de salvación contra efectos de muerte instantánea y contra golpes críticos que le reduzcan a menos de 0 puntos de golpe.",
+    description: "El ejemplar obtiene un bonificador de +2 de competencia a las tiradas de salvación contra efectos de muerte instantánea y contra golpes críticos que le reduzcan a menos de 0 puntos de golpe.",
   },
   {
     level: 8,
     name: "Dote Adicional",
-    description: "El exemplar obtiene una segunda dote adicional que cumpla sus requisitos.",
+    description: "El ejemplar obtiene una segunda dote adicional que cumpla sus requisitos.",
   },
   {
     level: 9,
     name: "Hazaña Legendaria Mejorada",
-    description: "El exemplar puede usar la Hazaña Legendaria dos veces al día.",
+    description: "El ejemplar puede usar la Hazaña Legendaria dos veces al día.",
   },
   {
     level: 10,
     name: "Leyenda Viviente",
-    description: "El bonificador a la habilidad insigne aumenta a +8 y el exemplar se convierte en una leyenda reconocida en su campo: quienes hayan oído hablar de sus hazañas reaccionan ante él con una actitud inicial mejorada.",
+    description: "El bonificador a la habilidad insigne aumenta a +8 y el ejemplar se convierte en una leyenda reconocida en su campo: quienes hayan oído hablar de sus hazañas reaccionan ante él con una actitud inicial mejorada.",
   },
 ];
 
@@ -527,7 +527,7 @@ export const CAD_CLASSES: ClassDef[] = [
   },
   {
     id: "cad-exemplar",
-    name: "Exemplar",
+    name: "Ejemplar (Exemplar)",
     source: "complete-adventurer",
     description:
       "Un maestro tan consumado en una única habilidad que ha trascendido los límites de sus compañeros de clase, convirtiendo su pericia en algo que roza lo legendario.",

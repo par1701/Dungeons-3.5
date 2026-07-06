@@ -5,9 +5,9 @@ import type { ClassDef } from "../../types";
 // día, y un número fijo de poderes conocidos por nivel de poder.
 
 // ---------------------------------------------------------------------------
-// Psíon: manifestador puro (Int), progresión de puntos de poder más alta de
+// Psiónico: manifestador puro (Int), progresión de puntos de poder más alta de
 // las tres clases manifestadoras y el mayor repertorio de poderes conocidos.
-// Fila 0 sin usar (nivel de personaje 0); filas/índices 1-20 = nivel de psíon.
+// Fila 0 sin usar (nivel de personaje 0); filas/índices 1-20 = nivel de psiónico.
 // ---------------------------------------------------------------------------
 const PSION_POWER_POINTS_PER_DAY: number[] = [
   0, 2, 6, 11, 17, 25, 35, 46, 58, 72, 88, 106, 126, 147, 170, 195, 221, 249, 279, 311, 343,
@@ -40,7 +40,7 @@ const PSION_POWERS_KNOWN: number[][] = [
 // ---------------------------------------------------------------------------
 // Guerrero Psíquico: semi-manifestador (Sab) tipo paladín/explorador, pero con
 // progresión de poderes desde nivel 1. Puntos de poder y poderes conocidos
-// aproximadamente la mitad que el Psíon a igual nivel; tope de poder de 6º nivel.
+// aproximadamente la mitad que el Psiónico a igual nivel; tope de poder de 6º nivel.
 // ---------------------------------------------------------------------------
 const PSYCHIC_WARRIOR_POWER_POINTS_PER_DAY: number[] = [
   0, 1, 3, 6, 9, 13, 18, 23, 29, 36, 44, 53, 63, 74, 85, 98, 111, 125, 140, 156, 172,
@@ -71,7 +71,7 @@ const PSYCHIC_WARRIOR_POWERS_KNOWN: number[][] = [
 ];
 
 // ---------------------------------------------------------------------------
-// Silvestre: manifestador espontáneo (Car), con la mayor reserva de puntos de
+// Indómito: manifestador espontáneo (Car), con la mayor reserva de puntos de
 // poder de las tres clases manifestadoras a igual nivel, pero un repertorio de
 // poderes conocidos muy limitado (compensado con la Sobrecarga Psiónica).
 // ---------------------------------------------------------------------------
@@ -106,10 +106,10 @@ const WILDER_POWERS_KNOWN: number[][] = [
 export const CPS_CLASSES: ClassDef[] = [
   {
     id: "cps-psion",
-    name: "Psíon",
+    name: "Psiónico",
     source: "complete-psionic",
     description:
-      "El psíon es un manifestador puro que doblega su mente para producir efectos psiónicos mediante el estudio y el entrenamiento disciplinado. En vez de memorizar conjuros, extrae poderes de una reserva diaria de puntos de poder, y puede especializarse en una disciplina psiónica concreta.",
+      "El psiónico es un manifestador puro que doblega su mente para producir efectos psiónicos mediante el estudio y el entrenamiento disciplinado. En vez de memorizar conjuros, extrae poderes de una reserva diaria de puntos de poder, y puede especializarse en una disciplina psiónica concreta.",
     hitDie: 4,
     skillPointsPerLevel: 2,
     classSkills: [
@@ -135,19 +135,19 @@ export const CPS_CLASSES: ClassDef[] = [
         level: 1,
         name: "Manifestación de Poderes",
         description:
-          "El psíon manifiesta poderes psiónicos extrayendo energía de una reserva diaria de puntos de poder. La Inteligencia determina la Clase de Dificultad de sus poderes y el número extra de puntos de poder que recibe por tener una puntuación alta.",
+          "El psiónico manifiesta poderes psiónicos extrayendo energía de una reserva diaria de puntos de poder. La Inteligencia determina la Clase de Dificultad de sus poderes y el número extra de puntos de poder que recibe por tener una puntuación alta.",
       },
       {
         level: 1,
         name: "Especialización en Disciplina (opcional)",
         description:
-          "El psíon puede especializarse en una de las disciplinas psiónicas (Clarividencia, Metacreatividad, Psicocinesis, Psicometabolismo, Psicoportación o Telepatía), obteniendo un poder adicional conocido de esa disciplina por nivel de poder a cambio de renunciar a aprender poderes de dos disciplinas opuestas.",
+          "El psiónico puede especializarse en una de las disciplinas psiónicas (Clarividencia, Metacreatividad, Psicocinesis, Psicometabolismo, Psicoportación o Telepatía), obteniendo un poder adicional conocido de esa disciplina por nivel de poder a cambio de renunciar a aprender poderes de dos disciplinas opuestas.",
       },
       {
         level: 1,
         name: "Enfoque Psiónico",
         description:
-          "Una vez por combate, como acción rápida, el psíon puede concentrarse para quedar psiónicamente enfocado, lo que le permite activar más adelante ciertas dotes y rasgos psiónicos que consumen ese enfoque en vez de puntos de poder.",
+          "Una vez por combate, como acción rápida, el psiónico puede concentrarse para quedar psiónicamente enfocado, lo que le permite activar más adelante ciertas dotes y rasgos psiónicos que consumen ese enfoque en vez de puntos de poder.",
       },
     ],
     manifesting: {

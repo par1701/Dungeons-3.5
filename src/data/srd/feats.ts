@@ -74,21 +74,21 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "augment-summoning",
-    name: "Aumentar Invocación",
+    name: "Aumentar Convocación",
     source: "srd",
     types: ["general"],
-    description: "Las criaturas que invoca llegan más fuertes y resistentes.",
+    description: "Las criaturas que convoca llegan más fuertes y resistentes.",
     benefit:
-      "Todas las criaturas que invoque con cualquier conjuro de la línea Monstruo Convocado ganan +4 a la Fuerza y +4 a la Constitución mientras dure el efecto.",
+      "Todas las criaturas que convoque con cualquier conjuro de la línea Monstruo Convocado ganan +4 a la Fuerza y +4 a la Constitución mientras dure el efecto.",
     prerequisites: [
-      { description: "Foco de Conjuro (Conjuración)", check: hasFeat("spell-focus") },
+      { description: "Soltura con una Escuela de Magia (Conjuración)", check: hasFeat("spell-focus") },
     ],
     fighterBonusFeat: false,
     stackable: false,
   },
   {
     id: "combat-casting",
-    name: "Concentración en Combate",
+    name: "Conjurar en Combate",
     source: "srd",
     types: ["general"],
     description: "Capacidad de mantener la concentración de un conjuro incluso en pleno combate.",
@@ -145,7 +145,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "eschew-materials",
-    name: "Prescindir de Componentes",
+    name: "Abstención de Materiales",
     source: "srd",
     types: ["general"],
     description: "El lanzador aprende a suplir los componentes materiales más baratos con pura voluntad.",
@@ -266,7 +266,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "leadership",
-    name: "Dote de Liderazgo",
+    name: "Liderazgo",
     source: "srd",
     types: ["especial"],
     description: "La reputación del personaje atrae seguidores y un secuaz leal.",

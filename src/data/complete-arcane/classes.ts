@@ -95,7 +95,7 @@ const ABJURANT_CHAMPION_FEATURES = [
 ];
 
 // ---------------------------------------------------------------------------
-// Adepto Elemental (Elemental Savant)
+// Erudito Elemental (Elemental Savant)
 // ---------------------------------------------------------------------------
 
 const ELEMENTAL_SAVANT_FEATURES = [
@@ -103,19 +103,19 @@ const ELEMENTAL_SAVANT_FEATURES = [
     level: 1,
     name: "Vínculo Elemental",
     description:
-      "Al entrar en la clase, el adepto elemental elige uno de los cuatro elementos (aire, agua, fuego o tierra) y su energía asociada (electricidad, frío, fuego o ácido, respectivamente). Obtiene resistencia a la energía 5 frente a esa energía.",
+      "Al entrar en la clase, el erudito elemental elige uno de los cuatro elementos (aire, agua, fuego o tierra) y su energía asociada (electricidad, frío, fuego o ácido, respectivamente). Obtiene resistencia a la energía 5 frente a esa energía.",
   },
   {
     level: 1,
     name: "Progresión de Conjuros Arcanos",
     description:
-      "Cada nivel de adepto elemental (1º a 5º) otorga un nivel de lanzador arcano adicional a una clase de lanzador arcano que el personaje ya poseyera antes de entrar en la clase de prestigio, exactamente como si hubiera obtenido un nivel en dicha clase a efectos de conjuros por día, conjuros conocidos y nivel de lanzador (pero no otros rasgos de esa clase).",
+      "Cada nivel de erudito elemental (1º a 5º) otorga un nivel de lanzador arcano adicional a una clase de lanzador arcano que el personaje ya poseyera antes de entrar en la clase de prestigio, exactamente como si hubiera obtenido un nivel en dicha clase a efectos de conjuros por día, conjuros conocidos y nivel de lanzador (pero no otros rasgos de esa clase).",
   },
   {
     level: 2,
     name: "Cuerpo Elemental (menor)",
     description:
-      "El cuerpo del adepto elemental empieza a transformarse: obtiene un bonificador de +2 a las pruebas de Concentración realizadas para lanzar conjuros con el descriptor de su elemento.",
+      "El cuerpo del erudito elemental empieza a transformarse: obtiene un bonificador de +2 a las pruebas de Concentración realizadas para lanzar conjuros con el descriptor de su elemento.",
   },
   {
     level: 3,
@@ -126,13 +126,13 @@ const ELEMENTAL_SAVANT_FEATURES = [
     level: 4,
     name: "Cuerpo Elemental (mayor)",
     description:
-      "El adepto elemental es cada vez más ajeno a la carne mortal: gana un bonificador de +2 de competencia a las tiradas de salvación contra conjuros y efectos con el descriptor opuesto a su elemento.",
+      "El erudito elemental es cada vez más ajeno a la carne mortal: gana un bonificador de +2 de competencia a las tiradas de salvación contra conjuros y efectos con el descriptor opuesto a su elemento.",
   },
   {
     level: 5,
     name: "Subtipo Elemental",
     description:
-      "El adepto elemental se convierte parcialmente en una criatura del subtipo de su elemento: su resistencia a la energía aumenta a 20 y se vuelve inmune a los efectos de veneno, sueño mágico, parálisis y aturdimiento, además de no ser susceptible de sufrir golpes críticos ni ataques furtivos.",
+      "El erudito elemental se convierte parcialmente en una criatura del subtipo de su elemento: su resistencia a la energía aumenta a 20 y se vuelve inmune a los efectos de veneno, sueño mágico, parálisis y aturdimiento, además de no ser susceptible de sufrir golpes críticos ni ataques furtivos.",
   },
 ];
 
@@ -407,7 +407,7 @@ export const CA_CLASSES: ClassDef[] = [
   },
   {
     id: "ca-elemental-savant",
-    name: "Adepto Elemental (Elemental Savant)",
+    name: "Erudito Elemental (Elemental Savant)",
     source: "complete-arcane",
     description:
       "Un especialista arcano que ata su magia y, poco a poco, su propio cuerpo a uno de los cuatro elementos clásicos (aire, agua, fuego o tierra), volviéndose cada vez más ajeno a la carne mortal.",

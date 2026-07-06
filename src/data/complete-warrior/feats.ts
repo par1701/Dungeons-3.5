@@ -143,7 +143,7 @@ export const CW_FEATS: Feat[] = [
   },
   {
     id: "cw-monkey-grip",
-    name: "Empuñadura Forzada",
+    name: "Agarre del Mono",
     source: "complete-warrior",
     types: ["general", "combate"],
     description: "Una fuerza descomunal le permite manejar armas pensadas para manos más grandes que las suyas.",

@@ -88,7 +88,7 @@ export const CM_FEATS: Feat[] = [
     types: ["general"],
     description: "El personaje se formó en una academia arcana con un plan de estudios riguroso y bien documentado.",
     benefit:
-      "Gana +2 de bonificador de competencia en las pruebas de Conjuros y Conocimiento (Arcano). Además, una vez al día puede repetir una prueba de Conjuros fallida para identificar un conjuro o un objeto mágico, quedándose con el segundo resultado.",
+      "Gana +2 de bonificador de competencia en las pruebas de Conocimiento de Conjuros y Saber (Arcano). Además, una vez al día puede repetir una prueba de Conocimiento de Conjuros fallida para identificar un conjuro o un objeto mágico, quedándose con el segundo resultado.",
     prerequisites: [],
     fighterBonusFeat: false,
     stackable: false,

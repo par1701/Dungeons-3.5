@@ -49,7 +49,7 @@ export const SOURCE_BOOKS: SourceBook[] = [
     name: "Complete Adventurer",
     shortName: "C. Adventurer",
     description:
-      "Dotes, las clases base Explorador Furtivo y Espadachín, y clases de prestigio para exploradores y pícaros.",
+      "Dotes, las clases base Batidor y Espadachín, y clases de prestigio para exploradores y pícaros.",
     implemented: true,
     defaultEnabled: false,
   },

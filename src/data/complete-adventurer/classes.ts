@@ -3,7 +3,7 @@ import type { ClassDef } from "../../types";
 // Clases de Complete Adventurer (2005).
 //
 // Se incluyen dos clases base centradas en el combate ágil y furtivo
-// (Explorador Furtivo y Espadachín) y un puñado de clases de prestigio
+// (Batidor y Espadachín) y un puñado de clases de prestigio
 // representativas del libro, elegidas por ser razonablemente conocidas y
 // por poder documentarse con confianza.
 //
@@ -13,13 +13,13 @@ import type { ClassDef } from "../../types";
 // clase (ClassFeature) de texto en vez de automatizarse, porque el modelo de
 // datos todavía no soporta "tomar prestada" la progresión de otra clase.
 //
-// Las progresiones numéricas de Golpe de Escaramuza (Explorador Furtivo) y
+// Las progresiones numéricas de Golpe de Escaramuza (Batidor) y
 // de Gracia / Bono de Perspicacia (Espadachín) son aproximadas: siguen el
 // espíritu de las clases originales, pero se ha priorizado una progresión
 // razonable y jugable sobre la reproducción exacta tabla por tabla.
 
 // ---------------------------------------------------------------------------
-// Explorador Furtivo (Scout)
+// Batidor (Scout)
 // ---------------------------------------------------------------------------
 
 const SCOUT_FEATURES = [
@@ -27,24 +27,24 @@ const SCOUT_FEATURES = [
     level: 1,
     name: "Golpe de Escaramuza +1d6/+1 CA",
     description:
-      "Si el explorador se mueve al menos 3 metros durante su turno antes de realizar un ataque cuerpo a cuerpo o a distancia (y no tiene un aliado que le ayude a flanquear, ni recurre a él para determinar el flanqueo), inflige 1d6 puntos de daño adicional con ese ataque y obtiene un bonificador de +1 a la Clase de Armadura hasta el comienzo de su siguiente turno. No funciona si el explorador lleva armadura media o pesada, ni si está inmovilizado o no puede moverse libremente.",
+      "Si el batidor se mueve al menos 3 metros durante su turno antes de realizar un ataque cuerpo a cuerpo o a distancia (y no tiene un aliado que le ayude a flanquear, ni recurre a él para determinar el flanqueo), inflige 1d6 puntos de daño adicional con ese ataque y obtiene un bonificador de +1 a la Clase de Armadura hasta el comienzo de su siguiente turno. No funciona si el batidor lleva armadura media o pesada, ni si está inmovilizado o no puede moverse libremente.",
   },
   {
     level: 1,
     name: "Detectar Trampas",
     description:
-      "El explorador puede usar la habilidad Buscar para localizar trampas mágicas con CD 25 o más, igual que un pícaro.",
+      "El batidor puede usar la habilidad Buscar para localizar trampas mágicas con CD 25 o más, igual que un pícaro.",
   },
   {
     level: 2,
     name: "Bono de Batalla",
     description:
-      "El explorador obtiene un bonificador de competencia a las tiradas de iniciativa y a las tiradas de salvación de Fortaleza igual a la mitad de su nivel de explorador (redondeando hacia abajo, mínimo +1).",
+      "El batidor obtiene un bonificador de competencia a las tiradas de iniciativa y a las tiradas de salvación de Fortaleza igual a la mitad de su nivel de batidor (redondeando hacia abajo, mínimo +1).",
   },
   {
     level: 3,
     name: "Movimiento Rápido",
-    description: "La velocidad base del explorador aumenta en 3 metros mientras no lleve una carga pesada ni armadura media o pesada.",
+    description: "La velocidad base del batidor aumenta en 3 metros mientras no lleve una carga pesada ni armadura media o pesada.",
   },
   {
     level: 4,
@@ -55,12 +55,12 @@ const SCOUT_FEATURES = [
     level: 5,
     name: "Esquiva Sobrenatural",
     description:
-      "El explorador conserva su bonificador de Destreza a la Clase de Armadura incluso cuando es sorprendido o atacado por un enemigo invisible (salvo que esté inmovilizado).",
+      "El batidor conserva su bonificador de Destreza a la Clase de Armadura incluso cuando es sorprendido o atacado por un enemigo invisible (salvo que esté inmovilizado).",
   },
   {
     level: 6,
     name: "Camuflaje",
-    description: "El explorador puede usar la habilidad Esconderse incluso mientras es observado, siempre que se encuentre en un entorno natural que le proporcione algún tipo de cobertura o distracción visual.",
+    description: "El batidor puede usar la habilidad Esconderse incluso mientras es observado, siempre que se encuentre en un entorno natural que le proporcione algún tipo de cobertura o distracción visual.",
   },
   {
     level: 7,
@@ -70,13 +70,13 @@ const SCOUT_FEATURES = [
   {
     level: 8,
     name: "Paso Certero",
-    description: "El explorador ignora el terreno difícil de origen natural (no mágico) al moverse, y puede atravesar zonas de vegetación densa a su velocidad normal.",
+    description: "El batidor ignora el terreno difícil de origen natural (no mágico) al moverse, y puede atravesar zonas de vegetación densa a su velocidad normal.",
   },
   {
     level: 9,
     name: "Esquiva Sobrenatural Mejorada",
     description:
-      "El explorador ya no puede perder su bono de Destreza a la Clase de Armadura por estar flanqueado, excepto ante un atacante que sea pícaro y tenga al menos 4 niveles de pícaro más que él.",
+      "El batidor ya no puede perder su bono de Destreza a la Clase de Armadura por estar flanqueado, excepto ante un atacante que sea pícaro y tenga al menos 4 niveles de pícaro más que él.",
   },
   {
     level: 10,
@@ -86,7 +86,7 @@ const SCOUT_FEATURES = [
   {
     level: 11,
     name: "Sentido Ciego 3 m",
-    description: "El explorador desarrolla una percepción tan aguda de su entorno inmediato que puede detectar criaturas a 3 metros sin necesidad de verlas, mediante el oído, el olfato y las vibraciones.",
+    description: "El batidor desarrolla una percepción tan aguda de su entorno inmediato que puede detectar criaturas a 3 metros sin necesidad de verlas, mediante el oído, el olfato y las vibraciones.",
   },
   {
     level: 13,
@@ -96,7 +96,7 @@ const SCOUT_FEATURES = [
   {
     level: 14,
     name: "Camuflaje Superior",
-    description: "El bonificador que el explorador obtiene por Camuflaje se convierte en la capacidad de esconderse incluso sin ningún tipo de cobertura, siempre que no esté completamente a la vista en campo abierto.",
+    description: "El bonificador que el batidor obtiene por Camuflaje se convierte en la capacidad de esconderse incluso sin ningún tipo de cobertura, siempre que no esté completamente a la vista en campo abierto.",
   },
   {
     level: 16,
@@ -106,7 +106,7 @@ const SCOUT_FEATURES = [
   {
     level: 17,
     name: "Sentido Ciego 9 m",
-    description: "El alcance del Sentido Ciego del explorador aumenta a 9 metros.",
+    description: "El alcance del Sentido Ciego del batidor aumenta a 9 metros.",
   },
   {
     level: 19,
@@ -447,7 +447,7 @@ const TEMPEST_FEATURES = [
 export const CAD_CLASSES: ClassDef[] = [
   {
     id: "cad-scout",
-    name: "Explorador Furtivo (Scout)",
+    name: "Batidor (Scout)",
     source: "complete-adventurer",
     description:
       "Un experto en el combate en movimiento, capaz de golpear con fuerza y desaparecer de nuevo entre la maleza antes de que el enemigo pueda reaccionar. Combina la movilidad del guardabosques con la letalidad furtiva del pícaro.",

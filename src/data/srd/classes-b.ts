@@ -281,6 +281,7 @@ export const SRD_CLASSES_B: ClassDef[] = [
       spellsPerDay: FULL_DIVINE_SPELLS_PER_DAY,
       startLevel: 1,
     },
+    companionGrant: { kind: "animal_companion", startLevel: 1, effectiveLevelOffset: 0 },
     features: druidFeatures,
     maxLevel: 20,
   },

@@ -10,6 +10,7 @@ import StepSkills from "../components/wizard/StepSkills";
 import StepFeats from "../components/wizard/StepFeats";
 import StepSpells from "../components/wizard/StepSpells";
 import StepPowers from "../components/wizard/StepPowers";
+import StepCompanions from "../components/wizard/StepCompanions";
 import StepEquipment from "../components/wizard/StepEquipment";
 import StepDetails from "../components/wizard/StepDetails";
 
@@ -22,6 +23,7 @@ const STEPS = [
   { id: "dotes", label: "Dotes", Component: StepFeats },
   { id: "conjuros", label: "Conjuros", Component: StepSpells },
   { id: "poderes", label: "Poderes psiónicos", Component: StepPowers },
+  { id: "companeros", label: "Compañeros", Component: StepCompanions },
   { id: "equipo", label: "Equipo", Component: StepEquipment },
   { id: "detalles", label: "Detalles", Component: StepDetails },
 ] as const;

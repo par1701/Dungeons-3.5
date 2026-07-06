@@ -279,6 +279,7 @@ export const SRD_CLASSES_C: ClassDef[] = [
       spellsPerDay: SORCERER_SPELLS_PER_DAY,
       spellsKnown: SORCERER_SPELLS_KNOWN,
     },
+    companionGrant: { kind: "familiar", startLevel: 1, effectiveLevelOffset: 0 },
     maxLevel: 20,
   },
   {
@@ -338,6 +339,7 @@ export const SRD_CLASSES_C: ClassDef[] = [
       startLevel: 1,
       spellsPerDay: WIZARD_SPELLS_PER_DAY,
     },
+    companionGrant: { kind: "familiar", startLevel: 1, effectiveLevelOffset: 0 },
     maxLevel: 20,
   },
 ];

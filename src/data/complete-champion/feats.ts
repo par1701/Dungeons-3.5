@@ -162,7 +162,7 @@ export const CC_FEATS: Feat[] = [
     source: "complete-champion",
     types: ["general"],
     description: "Una formación amplia en historia, leyes, religión y tradiciones.",
-    benefit: "Todas las habilidades de Conocimiento se convierten en habilidades de clase para el personaje.",
+    benefit: "Todas las habilidades de Saber se convierten en habilidades de clase para el personaje.",
     prerequisites: [],
     fighterBonusFeat: false,
     stackable: false,
@@ -279,13 +279,13 @@ export const CC_FEATS: Feat[] = [
   // ---------------------------------------------------------------------
   {
     id: "cc-knowledge-devotion",
-    name: "Devoción del Conocimiento",
+    name: "Devoción del Saber",
     source: "complete-champion",
     types: ["general"],
     description: "El estudioso religioso convierte su erudición sobre las criaturas del mundo en una ventaja táctica.",
     benefit:
-      "Como acción libre, puede intentar una prueba de Conocimiento apropiada (CD 20) para identificar el tipo de una criatura visible; si tiene éxito, gana un bonificador a las tiradas de ataque y daño cuerpo a cuerpo contra esa criatura igual a 1 más 1 por cada 5 rangos que posea en la Conocimiento usada, durante el resto del encuentro.",
-    prerequisites: [{ description: "5 rangos en alguna habilidad de Conocimiento", check: hasKnowledgeRanks(5) }],
+      "Como acción libre, puede intentar una prueba de Saber apropiada (CD 20) para identificar el tipo de una criatura visible; si tiene éxito, gana un bonificador a las tiradas de ataque y daño cuerpo a cuerpo contra esa criatura igual a 1 más 1 por cada 5 rangos que posea en el Saber usado, durante el resto del encuentro.",
+    prerequisites: [{ description: "5 rangos en alguna habilidad de Saber", check: hasKnowledgeRanks(5) }],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -309,7 +309,7 @@ export const CC_FEATS: Feat[] = [
     source: "complete-champion",
     types: ["general"],
     description: "La devoción al dominio de Animal fortalece el vínculo del fiel con las bestias.",
-    benefit: "Una vez al día, puede gastar un uso de expulsar o reprender no muertos para ganar +10 de bonificador de competencia a una prueba de Manejar Animales o de Empatía Salvaje.",
+    benefit: "Una vez al día, puede gastar un uso de expulsar o reprender no muertos para ganar +10 de bonificador de competencia a una prueba de Trato con Animales o de Empatía Salvaje.",
     prerequisites: [
       { description: "Acceso al dominio de Animal" },
       { description: "Capacidad de expulsar o reprender no muertos" },

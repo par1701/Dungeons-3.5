@@ -268,7 +268,7 @@ const BLOODHOUND_FEATURES: ClassFeature[] = [
     level: 1,
     name: "Presa predilecta",
     description:
-      "El sabueso de sangre elige a un individuo concreto como presa. Obtiene un bonificador de +2 a las pruebas de Buscar, Obtener Información, Sentir Motivaciones y Avistar realizadas para localizarlo, así como +2 al daño contra él en combate.",
+      "El sabueso de sangre elige a un individuo concreto como presa. Obtiene un bonificador de +2 a las pruebas de Buscar, Reunir Información, Averiguar Intenciones y Avistar realizadas para localizarlo, así como +2 al daño contra él en combate.",
   },
   {
     level: 1,
@@ -352,7 +352,7 @@ export const CW_CLASSES: ClassDef[] = [
         check: (ctx) => (ctx.skillRanks["perform"] ?? 0) >= 3,
       },
       {
-        description: "Acrobacias: 5 rangos",
+        description: "Piruetas: 5 rangos",
         check: (ctx) => (ctx.skillRanks["tumble"] ?? 0) >= 5,
       },
       {
@@ -564,7 +564,7 @@ export const CW_CLASSES: ClassDef[] = [
         check: (ctx) => ctx.featIds.has("track"),
       },
       {
-        description: "Obtener Información: 4 rangos",
+        description: "Reunir Información: 4 rangos",
         check: (ctx) => (ctx.skillRanks["gather-information"] ?? 0) >= 4,
       },
       {
@@ -572,7 +572,7 @@ export const CW_CLASSES: ClassDef[] = [
         check: (ctx) => (ctx.skillRanks["search"] ?? 0) >= 4,
       },
       {
-        description: "Sentir Motivaciones: 4 rangos",
+        description: "Averiguar Intenciones: 4 rangos",
         check: (ctx) => (ctx.skillRanks["sense-motive"] ?? 0) >= 4,
       },
       {

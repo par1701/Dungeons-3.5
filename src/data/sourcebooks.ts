@@ -40,7 +40,7 @@ export const SOURCE_BOOKS: SourceBook[] = [
     name: "Complete Divine",
     shortName: "C. Divine",
     description:
-      "Dotes, conjuros, las clases base Alma Elegida y Chamán Espiritual, y clases de prestigio divinas.",
+      "Dotes, conjuros, las clases base Alma Predilecta y Chamán Espiritual, y clases de prestigio divinas.",
     implemented: true,
     defaultEnabled: false,
   },

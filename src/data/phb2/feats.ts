@@ -40,7 +40,7 @@ export const PHB2_FEATS: Feat[] = [
     types: ["general"],
     description: "Un talento natural para meterse en la piel de otro personaje.",
     benefit:
-      "+2 de bonificador de competencia en las pruebas de Farsantear y Disfrazarse relacionadas con interpretar un papel o hacerse pasar por otra persona, y +2 en Interpretar cuando la actuación consiste en representar un personaje.",
+      "+2 de bonificador de competencia en las pruebas de Engañar y Disfrazarse relacionadas con interpretar un papel o hacerse pasar por otra persona, y +2 en Interpretar cuando la actuación consiste en representar un personaje.",
     prerequisites: [],
     fighterBonusFeat: false,
     stackable: false,

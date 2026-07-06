@@ -165,7 +165,7 @@ const SWASHBUCKLER_FEATURES = [
   {
     level: 8,
     name: "Carga Acrobática",
-    description: "El espadachín puede cargar a través de terreno difícil, sobre superficies estrechas o saltando por encima de obstáculos bajos, siempre que supere una prueba de Acrobacias con CD 15.",
+    description: "El espadachín puede cargar a través de terreno difícil, sobre superficies estrechas o saltando por encima de obstáculos bajos, siempre que supere una prueba de Piruetas con CD 15.",
   },
   {
     level: 9,
@@ -335,7 +335,7 @@ const NINJA_OF_THE_CRESCENT_MOON_FEATURES = [
   {
     level: 1,
     name: "Camuflaje Lunar",
-    description: "Durante la noche o bajo luz tenue, el ninja de la luna creciente obtiene un bonificador de +4 de competencia a las pruebas de Esconderse y Moverse en Silencio.",
+    description: "Durante la noche o bajo luz tenue, el ninja de la luna creciente obtiene un bonificador de +4 de competencia a las pruebas de Esconderse y Moverse Sigilosamente.",
   },
   {
     level: 2,
@@ -378,7 +378,7 @@ const SPYMASTER_FEATURES = [
   {
     level: 1,
     name: "Farsa Perfecta",
-    description: "El maestro de espías obtiene un bonificador de +2 de competencia a las pruebas de Farolear, Disfraz y Obtener Información.",
+    description: "El maestro de espías obtiene un bonificador de +2 de competencia a las pruebas de Engañar, Disfrazarse y Reunir Información.",
   },
   {
     level: 2,
@@ -393,7 +393,7 @@ const SPYMASTER_FEATURES = [
   {
     level: 4,
     name: "Identidad Falsa",
-    description: "El maestro de espías puede mantener una identidad alternativa completa; mientras la interpreta, las pruebas de Sentir Motivaciones u otros medios para desenmascararlo sufren una CD adicional de +5.",
+    description: "El maestro de espías puede mantener una identidad alternativa completa; mientras la interpreta, las pruebas de Averiguar Intenciones u otros medios para desenmascararlo sufren una CD adicional de +5.",
   },
   {
     level: 6,
@@ -611,7 +611,7 @@ export const CAD_CLASSES: ClassDef[] = [
         check: (ctx) => (ctx.skillRanks["hide"] ?? 0) >= 8,
       },
       {
-        description: "Moverse en Silencio 8 rangos",
+        description: "Moverse Sigilosamente 8 rangos",
         check: (ctx) => (ctx.skillRanks["move-silently"] ?? 0) >= 8,
       },
       {
@@ -661,7 +661,7 @@ export const CAD_CLASSES: ClassDef[] = [
         check: (ctx) => (ctx.skillRanks["hide"] ?? 0) >= 8,
       },
       {
-        description: "Moverse en Silencio 8 rangos",
+        description: "Moverse Sigilosamente 8 rangos",
         check: (ctx) => (ctx.skillRanks["move-silently"] ?? 0) >= 8,
       },
       {
@@ -712,7 +712,7 @@ export const CAD_CLASSES: ClassDef[] = [
     isPrestige: true,
     prerequisites: [
       {
-        description: "Farolear 9 rangos",
+        description: "Engañar 9 rangos",
         check: (ctx) => (ctx.skillRanks["bluff"] ?? 0) >= 9,
       },
       {
@@ -720,11 +720,11 @@ export const CAD_CLASSES: ClassDef[] = [
         check: (ctx) => (ctx.skillRanks["diplomacy"] ?? 0) >= 9,
       },
       {
-        description: "Obtener Información 9 rangos",
+        description: "Reunir Información 9 rangos",
         check: (ctx) => (ctx.skillRanks["gather-information"] ?? 0) >= 9,
       },
       {
-        description: "Sentir Motivaciones 4 rangos",
+        description: "Averiguar Intenciones 4 rangos",
         check: (ctx) => (ctx.skillRanks["sense-motive"] ?? 0) >= 4,
       },
       {

@@ -44,7 +44,7 @@ export const CAD_FEATS: Feat[] = [
     types: ["general"],
     description: "Se mueve con la misma discreción tanto si camina despacio como si corre.",
     benefit:
-      "Puede moverse a su velocidad normal completa mientras usa las habilidades de Esconderse y Moverse en Silencio, sin el penalizador de -5 que normalmente se aplica por moverse a más de la mitad de la velocidad.",
+      "Puede moverse a su velocidad normal completa mientras usa las habilidades de Esconderse y Moverse Sigilosamente, sin el penalizador de -5 que normalmente se aplica por moverse a más de la mitad de la velocidad.",
     prerequisites: [],
     fighterBonusFeat: false,
     stackable: false,
@@ -134,8 +134,8 @@ export const CAD_FEATS: Feat[] = [
     types: ["general"],
     description: "Sus dedos leen los mecanismos de una trampa mejor de lo que sus ojos podrían nunca verlos.",
     benefit:
-      "Puede usar Buscar y Desactivar Mecanismo para detectar y desactivar trampas por el tacto sin penalizador, incluso si está cegado o no puede ver el mecanismo en cuestión.",
-    prerequisites: [{ description: "Rangos en Buscar y en Desactivar Mecanismo" }],
+      "Puede usar Buscar y Inutilizar Mecanismo para detectar y desactivar trampas por el tacto sin penalizador, incluso si está cegado o no puede ver el mecanismo en cuestión.",
+    prerequisites: [{ description: "Rangos en Buscar y en Inutilizar Mecanismo" }],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -146,8 +146,8 @@ export const CAD_FEATS: Feat[] = [
     types: ["general"],
     description: "Cae con gracia y se pone en pie con la misma facilidad, sin perder el ritmo del combate.",
     benefit:
-      "Puede levantarse de la posición de derribado como una acción libre en lugar de una acción de movimiento, siempre que supere una prueba de Acrobacias (CD 15).",
-    prerequisites: [{ description: "Rangos en Acrobacias" }],
+      "Puede levantarse de la posición de derribado como una acción libre en lugar de una acción de movimiento, siempre que supere una prueba de Piruetas (CD 15).",
+    prerequisites: [{ description: "Rangos en Piruetas" }],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -205,7 +205,7 @@ export const CAD_FEATS: Feat[] = [
     types: ["general"],
     description: "Ha aprendido en las calles que un puño en alto convence tanto como las palabras.",
     benefit:
-      "Puede usar su modificador de Fuerza en lugar del de Carisma en las pruebas de Intimidar, y gana un bonificador de competencia +2 en las pruebas de Obtener Información.",
+      "Puede usar su modificador de Fuerza en lugar del de Carisma en las pruebas de Intimidar, y gana un bonificador de competencia +2 en las pruebas de Reunir Información.",
     prerequisites: [],
     fighterBonusFeat: false,
     stackable: false,
@@ -217,8 +217,8 @@ export const CAD_FEATS: Feat[] = [
     types: ["general"],
     description: "En una ciudad, un rastro se sigue preguntando, no oliendo el suelo.",
     benefit:
-      "En una población o ciudad, puede usar Obtener Información en lugar de Supervivencia para seguir el rastro reciente de una persona concreta, invirtiendo 1 hora por intento.",
-    prerequisites: [{ description: "Rangos en Obtener Información" }],
+      "En una población o ciudad, puede usar Reunir Información en lugar de Supervivencia para seguir el rastro reciente de una persona concreta, invirtiendo 1 hora por intento.",
+    prerequisites: [{ description: "Rangos en Reunir Información" }],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -229,7 +229,7 @@ export const CAD_FEATS: Feat[] = [
     types: ["general"],
     description: "Conoce una comunidad concreta como la palma de su mano: sus rincones, sus rumores y su gente.",
     benefit:
-      "Al elegir esta dote, designa una comunidad concreta. Dentro de ella obtiene un bonificador de competencia +4 en las pruebas de Conocimiento (Local) y Obtener Información relacionadas con dicha comunidad.",
+      "Al elegir esta dote, designa una comunidad concreta. Dentro de ella obtiene un bonificador de competencia +4 en las pruebas de Saber (Local) y Reunir Información relacionadas con dicha comunidad.",
     prerequisites: [{ description: "Debe designar una comunidad concreta al obtener la dote" }],
     fighterBonusFeat: false,
     stackable: true,

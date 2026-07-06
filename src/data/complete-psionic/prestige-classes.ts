@@ -226,11 +226,11 @@ export const CPS_PRESTIGE_CLASSES: ClassDef[] = [
     isPrestige: true,
     prerequisites: [
       {
-        description: "Conocimiento (Arcano): 8 rangos",
+        description: "Saber (Arcano): 8 rangos",
         check: (ctx) => (ctx.skillRanks["knowledge-arcana"] ?? 0) >= 8,
       },
       {
-        description: "Conocimiento (Psiónica): 8 rangos",
+        description: "Saber (Psiónica): 8 rangos",
       },
       {
         description: "Manifestación en Combate",
@@ -366,7 +366,7 @@ export const CPS_PRESTIGE_CLASSES: ClassDef[] = [
         check: (ctx) => ctx.abilityScores.cha >= 15,
       },
       {
-        description: "Conocimiento (cualquiera): 9 rangos",
+        description: "Saber (cualquiera): 9 rangos",
         check: (ctx) => hasAnyKnowledgeRanks(ctx.skillRanks, 9),
       },
       {

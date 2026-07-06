@@ -32,7 +32,7 @@ export const DMG2_VARIANT_RULES: VariantRule[] = [
     source: "dmg2",
     category: "otro",
     description:
-      "El personaje tiene una puntuación de Reputación, inicialmente baja, que crece cuando sus hazañas se hacen conocidas (derrotar a enemigos peligrosos, completar misiones destacadas, actos públicos notables). La Reputación otorga un bonificador en pruebas de Diplomacia y Farolear frente a PNJ que hayan oído hablar del personaje, y puede provocar reacciones iniciales distintas (admiración, temor) al conocerlo.",
+      "El personaje tiene una puntuación de Reputación, inicialmente baja, que crece cuando sus hazañas se hacen conocidas (derrotar a enemigos peligrosos, completar misiones destacadas, actos públicos notables). La Reputación otorga un bonificador en pruebas de Diplomacia y Engañar frente a PNJ que hayan oído hablar del personaje, y puede provocar reacciones iniciales distintas (admiración, temor) al conocerlo.",
     defaultEnabled: false,
   },
   {

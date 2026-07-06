@@ -19,6 +19,15 @@ import { CAD_CLASSES } from "./complete-adventurer/classes";
 import { CAD_FEATS } from "./complete-adventurer/feats";
 import { CC_CLASSES } from "./complete-champion/classes";
 import { CC_FEATS } from "./complete-champion/feats";
+import { CS_CLASSES } from "./complete-scoundrel/classes";
+import { CS_FEATS } from "./complete-scoundrel/feats";
+import { CM_CLASSES } from "./complete-mage/classes";
+import { CM_FEATS } from "./complete-mage/feats";
+import { CM_SPELLS } from "./complete-mage/spells";
+import { CPS_CLASSES } from "./complete-psionic/classes";
+import { CPS_PRESTIGE_CLASSES } from "./complete-psionic/prestige-classes";
+import { CPS_FEATS } from "./complete-psionic/feats";
+import { CPS_POWERS } from "./complete-psionic/powers";
 
 export const ALL_RACES: Race[] = [...SRD_RACES];
 export const ALL_CLASSES: ClassDef[] = [
@@ -30,15 +39,28 @@ export const ALL_CLASSES: ClassDef[] = [
   ...CDV_CLASSES,
   ...CAD_CLASSES,
   ...CC_CLASSES,
+  ...CS_CLASSES,
+  ...CM_CLASSES,
+  ...CPS_CLASSES,
+  ...CPS_PRESTIGE_CLASSES,
 ];
-export const ALL_FEATS: Feat[] = [...SRD_FEATS, ...CW_FEATS, ...CA_FEATS, ...CDV_FEATS, ...CAD_FEATS, ...CC_FEATS];
+export const ALL_FEATS: Feat[] = [
+  ...SRD_FEATS,
+  ...CW_FEATS,
+  ...CA_FEATS,
+  ...CDV_FEATS,
+  ...CAD_FEATS,
+  ...CC_FEATS,
+  ...CS_FEATS,
+  ...CM_FEATS,
+  ...CPS_FEATS,
+];
 export const ALL_SKILLS: Skill[] = [...SRD_SKILLS];
-export const ALL_SPELLS: Spell[] = [...SRD_SPELLS, ...CA_SPELLS, ...CDV_SPELLS];
+export const ALL_SPELLS: Spell[] = [...SRD_SPELLS, ...CA_SPELLS, ...CDV_SPELLS, ...CM_SPELLS];
 export const ALL_WEAPONS: Weapon[] = [...SRD_WEAPONS];
 export const ALL_ARMORS: Armor[] = [...SRD_ARMORS];
 export const ALL_GEAR: GearItem[] = [...SRD_GEAR];
-// TODO: se completa cuando se generen los datos de Complete Psionic (poderes).
-export const ALL_POWERS: PsionicPower[] = [];
+export const ALL_POWERS: PsionicPower[] = [...CPS_POWERS];
 
 function bySource<T extends { source: SourceBookId }>(items: T[], enabled: SourceBookId[]): T[] {
   return items.filter((item) => enabled.includes(item.source));

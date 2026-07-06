@@ -66,7 +66,7 @@ export const SOURCE_BOOKS: SourceBook[] = [
     name: "Complete Scoundrel",
     shortName: "C. Scoundrel",
     description: "Dotes de suerte y clases de prestigio para bribones, timadores y villanos encantadores.",
-    implemented: false,
+    implemented: true,
     defaultEnabled: false,
   },
   {
@@ -74,7 +74,7 @@ export const SOURCE_BOOKS: SourceBook[] = [
     name: "Complete Mage",
     shortName: "C. Mage",
     description: "Dotes, conjuros y clases de prestigio adicionales para lanzadores arcanos.",
-    implemented: false,
+    implemented: true,
     defaultEnabled: false,
   },
   {
@@ -83,7 +83,7 @@ export const SOURCE_BOOKS: SourceBook[] = [
     shortName: "C. Psionic",
     description:
       "Sistema psiónico completo: Psíon, Guerrero Psíquico, Silvestre y Hoja del Alma, con puntos de poder en vez de conjuros por día.",
-    implemented: false,
+    implemented: true,
     defaultEnabled: false,
   },
   {

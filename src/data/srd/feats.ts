@@ -1243,7 +1243,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "maximize-spell",
-    name: "Conjuro Maximizado",
+    name: "Maximizar Conjuro",
     source: "srd",
     types: ["metamagia"],
     description: "El lanzador exprime el máximo efecto posible de su conjuro.",
@@ -1255,7 +1255,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "quicken-spell",
-    name: "Conjuro Acelerado",
+    name: "Apresurar Conjuros",
     source: "srd",
     types: ["metamagia"],
     description: "El lanzador puede recurrir a su magia en un instante, en pleno turno de acción.",
@@ -1267,7 +1267,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "silent-spell",
-    name: "Conjuro Silencioso",
+    name: "Conjurar en Silencio",
     source: "srd",
     types: ["metamagia"],
     description: "El lanzador prescinde de las palabras mágicas.",
@@ -1278,7 +1278,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "still-spell",
-    name: "Conjuro Sigiloso",
+    name: "Conjurar sin Moverse",
     source: "srd",
     types: ["metamagia"],
     description: "El lanzador prescinde de los gestos rituales de su magia.",
@@ -1289,7 +1289,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "widen-spell",
-    name: "Conjuro Expandido",
+    name: "Extender Conjuro",
     source: "srd",
     types: ["metamagia"],
     description: "El lanzador hace que el área de su conjuro cubra un espacio mucho mayor.",

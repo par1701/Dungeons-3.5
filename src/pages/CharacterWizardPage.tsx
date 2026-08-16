@@ -5,6 +5,7 @@ import type { Character } from "../types";
 import StepRules from "../components/wizard/StepRules";
 import StepRace from "../components/wizard/StepRace";
 import StepClass from "../components/wizard/StepClass";
+import StepClassChoices from "../components/wizard/StepClassChoices";
 import StepAbilities from "../components/wizard/StepAbilities";
 import StepSkills from "../components/wizard/StepSkills";
 import StepFeats from "../components/wizard/StepFeats";
@@ -18,6 +19,7 @@ const STEPS = [
   { id: "reglas", label: "Reglas", Component: StepRules },
   { id: "raza", label: "Raza", Component: StepRace },
   { id: "clase", label: "Clase", Component: StepClass },
+  { id: "elecciones", label: "Elecciones de clase", Component: StepClassChoices },
   { id: "caracteristicas", label: "Características", Component: StepAbilities },
   { id: "habilidades", label: "Habilidades", Component: StepSkills },
   { id: "dotes", label: "Dotes", Component: StepFeats },

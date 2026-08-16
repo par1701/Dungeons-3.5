@@ -105,6 +105,51 @@ export interface CompanionGrant {
   effectiveLevelOffset: number;
 }
 
+/**
+ * Elección propia de un rasgo de clase (p.ej. enemigo predilecto del
+ * explorador, estilo de combate, dominios de clérigo, habilidad especial de
+ * pícaro...). `levels` indica en qué niveles de esta clase se desbloquea una
+ * nueva instancia de la elección (una elección repetible como "enemigo
+ * predilecto" tiene varios niveles; una elección única como "dominios" solo
+ * tiene uno).
+ */
+export type ClassFeatureChoiceKind = "texto_libre" | "lista_fija" | "dote_restringida";
+
+export interface ClassFeatureChoiceOption {
+  id: string;
+  label: string;
+  /** Texto adicional opcional (p.ej. el poder otorgado por un dominio). */
+  description?: string;
+}
+
+export interface ClassFeatureChoice {
+  /** Id único dentro de la clase (p.ej. "enemigo-predilecto", "estilo-combate"). */
+  id: string;
+  /** Nombre del rasgo de clase asociado, solo para mostrarlo junto a la elección. */
+  featureName: string;
+  levels: number[];
+  label: string;
+  kind: ClassFeatureChoiceKind;
+  /** Para kind "lista_fija". */
+  options?: ClassFeatureChoiceOption[];
+  /** Para kind "dote_restringida": ids de dote entre los que elegir; se conceden como dote real sin ocupar hueco normal. */
+  featOptionIds?: string[];
+  /**
+   * Para kind "dote_restringida" cuando la lista de dotes disponibles depende
+   * del valor elegido en otra elección anterior de la misma clase (p.ej. las
+   * dotes de estilo de combate del explorador dependen de si eligió arquería
+   * o dos armas). `dependsOn` es el id de esa otra elección.
+   */
+  featOptionsByDependency?: { dependsOn: string; options: Record<string, string[]> };
+  placeholder?: string;
+}
+
+/** Dote de bonificación automática (sin elección) otorgada por una clase, p.ej. Seguir Rastro del explorador. */
+export interface ClassBonusFeatGrant {
+  level: number;
+  featId: string;
+}
+
 export interface ClassDef {
   id: string;
   name: string;
@@ -121,6 +166,10 @@ export interface ClassDef {
   manifesting?: ManifestingInfo;
   companionGrant?: CompanionGrant;
   features: ClassFeature[]; // rasgos de clase por nivel (texto)
+  /** Elecciones propias de esta clase que el jugador debe hacer al alcanzar ciertos niveles. */
+  choices?: ClassFeatureChoice[];
+  /** Dotes de bonificación automáticas (sin elección) otorgadas por esta clase. */
+  bonusFeatGrants?: ClassBonusFeatGrant[];
   maxLevel: number;
   isPrestige?: boolean;
   /** Requisitos de entrada (solo relevante para clases de prestigio). */
@@ -388,6 +437,16 @@ export interface CharacterPowerSelection {
   level: number;
 }
 
+/** Valor elegido por el jugador para una `ClassFeatureChoice` concreta de una clase. */
+export interface CharacterClassFeatureChoice {
+  classId: string;
+  choiceId: string;
+  /** Nivel de esta clase en el que se tomó esta instancia (para elecciones repetibles). */
+  level: number;
+  /** Texto libre, id de opción de lista fija, o id de dote, según el "kind" de la elección. */
+  value: string;
+}
+
 export interface CharacterEquipmentItem {
   itemId: string;
   itemKind: "weapon" | "armor" | "gear";
@@ -424,6 +483,7 @@ export interface Character {
   feats: CharacterFeatChoice[];
   spells: CharacterSpellSelection[];
   powers: CharacterPowerSelection[];
+  classFeatureChoices: CharacterClassFeatureChoice[];
   companions: CharacterCompanion[];
   equipment: CharacterEquipmentItem[];
   gold: number;

@@ -3,8 +3,10 @@ import type {
   AbilityScores,
   Armor,
   Character,
+  CharacterClassFeatureChoice,
   CharacterClassLevel,
   ClassDef,
+  ClassFeatureChoice,
   Race,
   SaveProgression,
   Weapon,
@@ -455,6 +457,83 @@ export function getUnlockedClassFeatures(
     }
     return features.sort((a, b) => a.level - b.level);
   });
+}
+
+export interface UnlockedClassFeatureChoice {
+  classId: string;
+  className: string;
+  /** Nivel de esta clase en el que se desbloqueó esta instancia concreta (para elecciones repetibles). */
+  level: number;
+  choice: ClassFeatureChoice;
+}
+
+/** Instancias de elecciones de rasgo de clase (enemigo predilecto, dominios, dotes de lista restringida...) ya desbloqueadas según el nivel actual. */
+export function getUnlockedClassFeatureChoices(
+  classLevels: CharacterClassLevel[],
+  classes: ClassDef[],
+): UnlockedClassFeatureChoice[] {
+  return classLevels.flatMap((cl) => {
+    const def = classes.find((c) => c.id === cl.classId);
+    if (!def?.choices) return [];
+    return def.choices.flatMap((choice) =>
+      choice.levels
+        .filter((level) => level <= cl.level)
+        .map((level) => ({ classId: def.id, className: def.name, level, choice })),
+    );
+  });
+}
+
+/** Valor guardado por el jugador para una instancia concreta de elección, si existe. */
+export function findChoiceValue(
+  choices: CharacterClassFeatureChoice[],
+  classId: string,
+  choiceId: string,
+  level: number,
+): string | undefined {
+  return choices.find((c) => c.classId === classId && c.choiceId === choiceId && c.level === level)?.value;
+}
+
+export interface BonusFeatEntry {
+  classId: string;
+  className: string;
+  level: number;
+  featId: string;
+  /** Nombre de la elección/rasgo que la concede, para mostrarla en la ficha. */
+  sourceLabel: string;
+}
+
+/**
+ * Todas las dotes de bonificación que el personaje ya tiene "gratis" gracias a
+ * sus clases: tanto las automáticas (`bonusFeatGrants`, p.ej. Seguir Rastro)
+ * como las elegidas de una lista restringida (`ClassFeatureChoice` de tipo
+ * "dote_restringida", p.ej. artes marciales del monje). No ocupan hueco de
+ * dote normal, así que se mantienen aparte de `character.feats`.
+ */
+export function getBonusFeatsFromClasses(
+  classLevels: CharacterClassLevel[],
+  classes: ClassDef[],
+  classFeatureChoices: CharacterClassFeatureChoice[],
+): BonusFeatEntry[] {
+  const entries: BonusFeatEntry[] = [];
+  classLevels.forEach((cl) => {
+    const def = classes.find((c) => c.id === cl.classId);
+    if (!def) return;
+    for (const grant of def.bonusFeatGrants ?? []) {
+      if (grant.level <= cl.level) {
+        entries.push({ classId: def.id, className: def.name, level: grant.level, featId: grant.featId, sourceLabel: def.name });
+      }
+    }
+    for (const choice of def.choices ?? []) {
+      if (choice.kind !== "dote_restringida") continue;
+      for (const level of choice.levels.filter((l) => l <= cl.level)) {
+        const value = findChoiceValue(classFeatureChoices, def.id, choice.id, level);
+        if (value) {
+          entries.push({ classId: def.id, className: def.name, level, featId: value, sourceLabel: choice.label });
+        }
+      }
+    }
+  });
+  return entries;
 }
 
 const FIGHTER_BONUS_FEAT_LEVELS = [1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20];

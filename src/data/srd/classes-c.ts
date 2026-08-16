@@ -1,4 +1,45 @@
-import type { ClassDef } from "../../types";
+import type { ClassDef, ClassFeatureChoice } from "../../types";
+
+const ROGUE_SPECIAL_ABILITY_OPTIONS = [
+  {
+    id: "golpe-lisiante",
+    label: "Golpe lisiante",
+    description: "El ataque furtivo del pícaro también inflige 2 puntos de daño a la Fuerza del objetivo.",
+  },
+  {
+    id: "tirada-defensiva",
+    label: "Tirada defensiva",
+    description:
+      "Una vez al día, cuando un ataque reduciría al pícaro a 0 o menos puntos de golpe, puede intentar una salvación de Reflejos (CD = daño infligido) para sufrir solo la mitad del daño.",
+  },
+  {
+    id: "oportunista",
+    label: "Oportunista",
+    description:
+      "Una vez por asalto, el pícaro puede realizar un ataque de oportunidad contra un enemigo que acaba de ser golpeado en combate cuerpo a cuerpo por otro personaje.",
+  },
+  {
+    id: "dominio-de-habilidad",
+    label: "Dominio de habilidad",
+    description:
+      "El pícaro elige un número de habilidades igual a 3 + su modificador de Inteligencia; con esas habilidades puede sacar 10 incluso bajo amenaza o distracción.",
+  },
+  {
+    id: "mente-escurridiza",
+    label: "Mente escurridiza",
+    description:
+      "Si el pícaro falla una tirada de salvación de Voluntad contra un efecto de encantamiento, puede intentarla de nuevo un asalto después con el mismo CD.",
+  },
+];
+
+const ROGUE_CHOICES: ClassFeatureChoice[] = [10, 13, 16, 19].map((level, i) => ({
+  id: `habilidad-especial-${i + 1}`,
+  featureName: "Habilidad Especial de Pícaro",
+  levels: [level],
+  label: `Habilidad especial de pícaro (nivel ${level})`,
+  kind: "lista_fija" as const,
+  options: ROGUE_SPECIAL_ABILITY_OPTIONS,
+}));
 
 // Clases del SRD 3.5 (contenido de juego abierto) — bloque C: Pícaro, Hechicero, Mago.
 
@@ -240,6 +281,7 @@ export const SRD_CLASSES_C: ClassDef[] = [
     // especiales que requieren ausencia de armadura pesada (p. ej. Evasión).
     armorProficiencies: ["Armadura ligera"],
     features: ROGUE_FEATURES,
+    choices: ROGUE_CHOICES,
     maxLevel: 20,
   },
   {

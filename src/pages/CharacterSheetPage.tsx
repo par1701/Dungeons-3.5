@@ -89,7 +89,7 @@ export default function CharacterSheetPage() {
   const classSummary = character.classLevels
     .map((cl) => `${findClass(cl.classId)?.name ?? cl.classId} ${cl.level}`)
     .join(" / ");
-  const unlockedFeatures = getUnlockedClassFeatures(character.classLevels, classes);
+  const unlockedFeatures = getUnlockedClassFeatures(character.classLevels, classes, character.activeVariantRules);
 
   const equippedArmorItems = character.equipment
     .filter((e) => e.equipped && e.itemKind === "armor")

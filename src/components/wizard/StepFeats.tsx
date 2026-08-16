@@ -19,7 +19,11 @@ export default function StepFeats({ character, onChange }: StepProps) {
   const race = findRace(character.raceId);
   const finalScores = applyRacialAdjustments(character.abilityScores, race);
 
-  const featSlots = computeFeatSlots(character.classLevels, isHumanRace(race));
+  const featSlots = computeFeatSlots(
+    character.classLevels,
+    isHumanRace(race),
+    character.activeVariantRules.includes("vr-cc-champion-of-the-wild"),
+  );
   const takenIds = new Set(character.feats.map((f) => f.featId));
 
   const ctx: FeatPrereqContext = {

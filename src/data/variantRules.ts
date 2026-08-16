@@ -2,6 +2,7 @@ import type { VariantRule } from "../types";
 import { PHB2_VARIANT_RULES } from "./phb2/variant-rules";
 import { DMG2_VARIANT_RULES } from "./dmg2/variant-rules";
 import { UNEARTHED_ARCANA_VARIANT_RULES } from "./unearthed-arcana/variant-rules";
+import { COMPLETE_CHAMPION_VARIANT_RULES } from "./complete-champion/variant-rules";
 
 // Reglas variantes disponibles para activar/desactivar al crear un personaje.
 // Cada libro (Complete X, PHB2, DMG2) añade las suyas en su propio archivo
@@ -97,6 +98,7 @@ export const VARIANT_RULES: VariantRule[] = [
     vr.id === "vr-dmg2-action-points" ? { ...vr, exclusiveGroup: ACTION_POINTS_GROUP } : vr,
   ),
   ...UNEARTHED_ARCANA_VARIANT_RULES,
+  ...COMPLETE_CHAMPION_VARIANT_RULES,
 ];
 
 export function getEnabledVariantIds(overrides?: Record<string, boolean>): string[] {

@@ -367,23 +367,48 @@ export interface UnlockedClassFeature {
   description: string;
 }
 
+// Complete Champion: rasgo de clase alternativo "Campeón de lo Salvaje" del
+// explorador, que cambia sus conjuros divinos por dotes de bonificación.
+const CHAMPION_OF_THE_WILD_FEAT_LEVELS = [4, 8, 11, 14];
+
 /** Rasgos de clase ya obtenidos según el nivel actual de cada clase del personaje. */
 export function getUnlockedClassFeatures(
   classLevels: CharacterClassLevel[],
   classes: ClassDef[],
+  activeVariantRules: string[] = [],
 ): UnlockedClassFeature[] {
+  const championOfTheWild = activeVariantRules.includes("vr-cc-champion-of-the-wild");
   return classLevels.flatMap((cl) => {
     const def = classes.find((c) => c.id === cl.classId);
     if (!def) return [];
-    return def.features
+    const isRangerVariant = championOfTheWild && def.id === "ranger";
+    const features: UnlockedClassFeature[] = def.features
       .filter((f) => f.level <= cl.level)
+      .filter((f) => !(isRangerVariant && f.name === "Conjuros divinos"))
       .map((f) => ({ classId: def.id, className: def.name, level: f.level, name: f.name, description: f.description }));
+    if (isRangerVariant) {
+      for (const level of CHAMPION_OF_THE_WILD_FEAT_LEVELS.filter((l) => l <= cl.level)) {
+        features.push({
+          classId: def.id,
+          className: def.name,
+          level,
+          name: "Dote de bonificación (Campeón de lo Salvaje)",
+          description:
+            "El explorador ha renunciado a sus conjuros divinos para convertirse en un maestro de las armas. Obtiene una dote de bonificación elegida entre Combate a Ciegas, Amaño en Combate, Ojos en la Nuca, Desarmar Mejorado, Enemigo Predilecto Mejorado, Finta Mejorada, Derribar Mejorado, o de la lista propia de su estilo de combate.",
+        });
+      }
+    }
+    return features.sort((a, b) => a.level - b.level);
   });
 }
 
 const FIGHTER_BONUS_FEAT_LEVELS = [1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20];
 
-export function computeFeatSlots(classLevels: CharacterClassLevel[], isHuman: boolean): number {
+export function computeFeatSlots(
+  classLevels: CharacterClassLevel[],
+  isHuman: boolean,
+  championOfTheWildRanger = false,
+): number {
   const level = totalCharacterLevel(classLevels);
   if (level <= 0) return 0;
   let slots = 1;
@@ -391,6 +416,10 @@ export function computeFeatSlots(classLevels: CharacterClassLevel[], isHuman: bo
   if (isHuman) slots++;
   const fighterLevel = classLevels.find((cl) => cl.classId === "fighter")?.level ?? 0;
   slots += FIGHTER_BONUS_FEAT_LEVELS.filter((l) => l <= fighterLevel).length;
+  if (championOfTheWildRanger) {
+    const rangerLevel = classLevels.find((cl) => cl.classId === "ranger")?.level ?? 0;
+    slots += CHAMPION_OF_THE_WILD_FEAT_LEVELS.filter((l) => l <= rangerLevel).length;
+  }
   return slots;
 }
 

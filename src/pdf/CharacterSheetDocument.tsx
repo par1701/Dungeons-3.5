@@ -78,12 +78,13 @@ export default function CharacterSheetDocument({ character }: { character: Chara
     finalScores.con,
     character.activeVariantRules.includes("vr-hp-average"),
     character.activeVariantRules.includes("vr-max-hp-first-level"),
+    character.activeVariantRules.includes("vr-cm-stalwart-sorcerer"),
   );
   const carrying = computeCarryingCapacity(finalScores.str, size);
   const classSummary = character.classLevels
     .map((cl) => `${findClass(cl.classId)?.name ?? cl.classId} ${cl.level}`)
     .join(" / ");
-  const unlockedFeatures = getUnlockedClassFeatures(character.classLevels, classes);
+  const unlockedFeatures = getUnlockedClassFeatures(character.classLevels, classes, character.activeVariantRules);
 
   const equippedArmorItems = character.equipment
     .filter((e) => e.equipped && e.itemKind === "armor")
@@ -91,7 +92,12 @@ export default function CharacterSheetDocument({ character }: { character: Chara
     .filter((a): a is NonNullable<typeof a> => Boolean(a));
   const bodyArmor = equippedArmorItems.find((a) => a.category !== "escudo");
   const shield = equippedArmorItems.find((a) => a.category === "escudo");
-  const ac = computeCharacterArmorClass(finalScores, size, { bodyArmor, shield });
+  const ac = computeCharacterArmorClass(
+    finalScores,
+    size,
+    { bodyArmor, shield },
+    character.activeVariantRules.includes("vr-ua-armor-as-dr"),
+  );
   const dexMod = abilityModifier(finalScores.dex);
   const grapple = bab + abilityModifier(finalScores.str) - sizeModifier(size);
 
@@ -154,6 +160,9 @@ export default function CharacterSheetDocument({ character }: { character: Chara
               <Text style={{ fontSize: 7, textAlign: "center" }}>
                 Tocar {ac.touch} · Desprevenido {ac.flatFooted}
               </Text>
+              {ac.damageReduction > 0 && (
+                <Text style={{ fontSize: 7, textAlign: "center" }}>RD por armadura: {ac.damageReduction}/-</Text>
+              )}
             </Panel>
             <Panel title="Salvaciones">
               <Text>Fortaleza: {saves.fort >= 0 ? `+${saves.fort}` : saves.fort}</Text>

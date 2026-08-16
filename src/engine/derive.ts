@@ -167,6 +167,7 @@ export function computeMaxHp(
   conScore: number,
   useAverage: boolean,
   maxFirstLevel: boolean,
+  stalwartSorcerer = false,
 ): number {
   const conMod = abilityModifier(conScore);
   let hp = 0;
@@ -174,6 +175,9 @@ export function computeMaxHp(
   classLevels.forEach((cl) => {
     const def = classDefFor(cl.classId, classes);
     if (!def) return;
+    // Complete Mage: rasgo alternativo "Hechicero Firme" (reduce el máximo de
+    // conjuros conocidos en 1, mínimo 1, a cambio de +2 pg por nivel de hechicero).
+    const bonusHp = stalwartSorcerer && cl.classId === "sorcerer" ? 2 : 0;
     for (let lvl = 1; lvl <= cl.level; lvl++) {
       const isFirstOverall = levelIndex === 0;
       let roll: number;
@@ -184,7 +188,7 @@ export function computeMaxHp(
       } else {
         roll = hpRolls[levelIndex] ?? Math.floor(def.hitDie / 2) + 1;
       }
-      hp += roll + conMod;
+      hp += roll + conMod + bonusHp;
       levelIndex++;
     }
   });
@@ -367,23 +371,99 @@ export interface UnlockedClassFeature {
   description: string;
 }
 
+// Complete Champion: rasgo de clase alternativo "Campeón de lo Salvaje" del
+// explorador, que cambia sus conjuros divinos por dotes de bonificación.
+const CHAMPION_OF_THE_WILD_FEAT_LEVELS = [4, 8, 11, 14];
+
+// Complete Warrior (2003): variantes de explorador y paladín sin conjuros,
+// que cambian su lanzamiento de conjuros divinos por un pequeño número de
+// dones fijos a niveles concretos, en vez de dotes de bonificación.
+const CW_RANGER_NO_SPELLS_FEATURES: { level: number; name: string; description: string }[] = [
+  {
+    level: 6,
+    name: "Movimiento rápido",
+    description:
+      "El explorador ha renunciado a sus conjuros divinos. A cambio, obtiene un bonificador de +3 m (+10 pies) a su velocidad base, siempre que no lleve armadura pesada ni carga pesada.",
+  },
+  {
+    level: 11,
+    name: "Bendición de la naturaleza",
+    description:
+      "Una vez al día, como acción estándar, el explorador obtiene un bonificador de +4 a Constitución, Destreza o Sabiduría (a elegir en el momento de usarlo), que dura 1 minuto por nivel de explorador.",
+  },
+];
+
+const CW_PALADIN_NO_SPELLS_FEATURES: { level: number; name: string; description: string }[] = [
+  {
+    level: 6,
+    name: "Arma bendita",
+    description:
+      "El paladín ha renunciado a sus conjuros divinos. A cambio, las armas cuerpo a cuerpo que empuña se consideran de alineamiento bueno a efectos de superar la reducción de daño.",
+  },
+  {
+    level: 11,
+    name: "Poder divino",
+    description:
+      "Una vez al día, como acción estándar, el paladín obtiene un bonificador de +4 a Fuerza, Sabiduría o Carisma (a elegir en el momento de usarlo), que dura 1 minuto por nivel de paladín.",
+  },
+  {
+    level: 13,
+    name: "Atender a la montura",
+    description:
+      "Cuando el paladín usa Imposición de manos para curar a su montura especial, cada punto de curación gastado restaura 5 puntos de golpe en vez de 1.",
+  },
+];
+
 /** Rasgos de clase ya obtenidos según el nivel actual de cada clase del personaje. */
 export function getUnlockedClassFeatures(
   classLevels: CharacterClassLevel[],
   classes: ClassDef[],
+  activeVariantRules: string[] = [],
 ): UnlockedClassFeature[] {
+  const championOfTheWild = activeVariantRules.includes("vr-cc-champion-of-the-wild");
+  const cwRangerNoSpells = activeVariantRules.includes("vr-cw-ranger-no-spells");
+  const cwPaladinNoSpells = activeVariantRules.includes("vr-cw-paladin-no-spells");
   return classLevels.flatMap((cl) => {
     const def = classes.find((c) => c.id === cl.classId);
     if (!def) return [];
-    return def.features
+    const isRangerSpellless = (championOfTheWild || cwRangerNoSpells) && def.id === "ranger";
+    const features: UnlockedClassFeature[] = def.features
       .filter((f) => f.level <= cl.level)
+      .filter((f) => !(isRangerSpellless && f.name === "Conjuros divinos"))
       .map((f) => ({ classId: def.id, className: def.name, level: f.level, name: f.name, description: f.description }));
+    if (championOfTheWild && def.id === "ranger") {
+      for (const level of CHAMPION_OF_THE_WILD_FEAT_LEVELS.filter((l) => l <= cl.level)) {
+        features.push({
+          classId: def.id,
+          className: def.name,
+          level,
+          name: "Dote de bonificación (Campeón de lo Salvaje)",
+          description:
+            "El explorador ha renunciado a sus conjuros divinos para convertirse en un maestro de las armas. Obtiene una dote de bonificación elegida entre Combate a Ciegas, Amaño en Combate, Ojos en la Nuca, Desarmar Mejorado, Enemigo Predilecto Mejorado, Finta Mejorada, Derribar Mejorado, o de la lista propia de su estilo de combate.",
+        });
+      }
+    }
+    if (cwRangerNoSpells && def.id === "ranger") {
+      for (const f of CW_RANGER_NO_SPELLS_FEATURES.filter((f) => f.level <= cl.level)) {
+        features.push({ classId: def.id, className: def.name, level: f.level, name: f.name, description: f.description });
+      }
+    }
+    if (cwPaladinNoSpells && def.id === "paladin") {
+      for (const f of CW_PALADIN_NO_SPELLS_FEATURES.filter((f) => f.level <= cl.level)) {
+        features.push({ classId: def.id, className: def.name, level: f.level, name: f.name, description: f.description });
+      }
+    }
+    return features.sort((a, b) => a.level - b.level);
   });
 }
 
 const FIGHTER_BONUS_FEAT_LEVELS = [1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20];
 
-export function computeFeatSlots(classLevels: CharacterClassLevel[], isHuman: boolean): number {
+export function computeFeatSlots(
+  classLevels: CharacterClassLevel[],
+  isHuman: boolean,
+  championOfTheWildRanger = false,
+): number {
   const level = totalCharacterLevel(classLevels);
   if (level <= 0) return 0;
   let slots = 1;
@@ -391,6 +471,10 @@ export function computeFeatSlots(classLevels: CharacterClassLevel[], isHuman: bo
   if (isHuman) slots++;
   const fighterLevel = classLevels.find((cl) => cl.classId === "fighter")?.level ?? 0;
   slots += FIGHTER_BONUS_FEAT_LEVELS.filter((l) => l <= fighterLevel).length;
+  if (championOfTheWildRanger) {
+    const rangerLevel = classLevels.find((cl) => cl.classId === "ranger")?.level ?? 0;
+    slots += CHAMPION_OF_THE_WILD_FEAT_LEVELS.filter((l) => l <= rangerLevel).length;
+  }
   return slots;
 }
 
@@ -410,6 +494,7 @@ export function deriveCharacterSummary(
     finalAbilityScores.con,
     character.activeVariantRules.includes("vr-hp-average"),
     character.activeVariantRules.includes("vr-max-hp-first-level"),
+    character.activeVariantRules.includes("vr-cm-stalwart-sorcerer"),
   );
   const carrying = computeCarryingCapacity(finalAbilityScores.str, race?.size ?? "Mediano");
   return { finalAbilityScores, bab, saves, level, hp, carrying };
@@ -420,13 +505,42 @@ export interface EquippedArmorPieces {
   shield?: Armor;
 }
 
+/**
+ * Regla variante de Unearthed Arcana "Armadura como reducción de daño":
+ * la mitad del bonificador de armadura (redondeando hacia abajo) se convierte
+ * en RD/-, y el resto sigue sumando a la CA.
+ */
+function splitArmorBonusForDamageReduction(bonus: number): { acBonus: number; damageReduction: number } {
+  const damageReduction = Math.floor(bonus / 2);
+  return { acBonus: bonus - damageReduction, damageReduction };
+}
+
 export function computeCharacterArmorClass(
   finalScores: AbilityScores,
   size: string,
   equipped: EquippedArmorPieces,
-): { total: number; touch: number; flatFooted: number; armorBonus: number; shieldBonus: number; maxDexBonus: number | null } {
-  const armorBonus = equipped.bodyArmor?.armorBonus ?? 0;
-  const shieldBonus = equipped.shield?.armorBonus ?? 0;
+  armorAsDamageReduction = false,
+): {
+  total: number;
+  touch: number;
+  flatFooted: number;
+  armorBonus: number;
+  shieldBonus: number;
+  maxDexBonus: number | null;
+  damageReduction: number;
+} {
+  const rawArmorBonus = equipped.bodyArmor?.armorBonus ?? 0;
+  const rawShieldBonus = equipped.shield?.armorBonus ?? 0;
+  let armorBonus = rawArmorBonus;
+  let shieldBonus = rawShieldBonus;
+  let damageReduction = 0;
+  if (armorAsDamageReduction) {
+    const bodySplit = splitArmorBonusForDamageReduction(rawArmorBonus);
+    const shieldSplit = splitArmorBonusForDamageReduction(rawShieldBonus);
+    armorBonus = bodySplit.acBonus;
+    shieldBonus = shieldSplit.acBonus;
+    damageReduction = bodySplit.damageReduction + shieldSplit.damageReduction;
+  }
   const maxDexLimits = [equipped.bodyArmor?.maxDexBonus, equipped.shield?.maxDexBonus].filter(
     (v): v is number => v !== undefined && v !== null,
   );
@@ -441,7 +555,7 @@ export function computeCharacterArmorClass(
     deflection: 0,
     misc: 0,
   });
-  return { ...ac, armorBonus, shieldBonus, maxDexBonus };
+  return { ...ac, armorBonus, shieldBonus, maxDexBonus, damageReduction };
 }
 
 export interface WeaponAttackSummary {

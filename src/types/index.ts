@@ -29,7 +29,8 @@ export type SourceBookId =
   | "complete-mage"
   | "complete-psionic"
   | "phb2"
-  | "dmg2";
+  | "dmg2"
+  | "unearthed-arcana";
 
 export interface SourceBook {
   id: SourceBookId;

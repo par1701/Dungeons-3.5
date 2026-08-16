@@ -84,12 +84,13 @@ export default function CharacterSheetPage() {
     finalScores.con,
     character.activeVariantRules.includes("vr-hp-average"),
     character.activeVariantRules.includes("vr-max-hp-first-level"),
+    character.activeVariantRules.includes("vr-cm-stalwart-sorcerer"),
   );
   const carrying = computeCarryingCapacity(finalScores.str, size);
   const classSummary = character.classLevels
     .map((cl) => `${findClass(cl.classId)?.name ?? cl.classId} ${cl.level}`)
     .join(" / ");
-  const unlockedFeatures = getUnlockedClassFeatures(character.classLevels, classes);
+  const unlockedFeatures = getUnlockedClassFeatures(character.classLevels, classes, character.activeVariantRules);
 
   const equippedArmorItems = character.equipment
     .filter((e) => e.equipped && e.itemKind === "armor")
@@ -97,7 +98,12 @@ export default function CharacterSheetPage() {
     .filter((a): a is NonNullable<typeof a> => Boolean(a));
   const bodyArmor = equippedArmorItems.find((a) => a.category !== "escudo");
   const shield = equippedArmorItems.find((a) => a.category === "escudo");
-  const ac = computeCharacterArmorClass(finalScores, size, { bodyArmor, shield });
+  const ac = computeCharacterArmorClass(
+    finalScores,
+    size,
+    { bodyArmor, shield },
+    character.activeVariantRules.includes("vr-ua-armor-as-dr"),
+  );
 
   const equippedWeapons = character.equipment
     .filter((e) => e.equipped && e.itemKind === "weapon")
@@ -194,6 +200,11 @@ export default function CharacterSheetPage() {
               <p className="muted" style={{ textAlign: "center", margin: 0 }}>
                 CA a distancia: {ac.touch} · CA desprevenido: {ac.flatFooted}
               </p>
+              {ac.damageReduction > 0 && (
+                <p className="muted" style={{ textAlign: "center", margin: 0 }}>
+                  Reducción de daño por armadura: {ac.damageReduction}/-
+                </p>
+              )}
             </Panel>
 
             <Panel title="Salvaciones">

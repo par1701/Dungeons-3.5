@@ -420,13 +420,42 @@ export interface EquippedArmorPieces {
   shield?: Armor;
 }
 
+/**
+ * Regla variante de Unearthed Arcana "Armadura como reducción de daño":
+ * la mitad del bonificador de armadura (redondeando hacia abajo) se convierte
+ * en RD/-, y el resto sigue sumando a la CA.
+ */
+function splitArmorBonusForDamageReduction(bonus: number): { acBonus: number; damageReduction: number } {
+  const damageReduction = Math.floor(bonus / 2);
+  return { acBonus: bonus - damageReduction, damageReduction };
+}
+
 export function computeCharacterArmorClass(
   finalScores: AbilityScores,
   size: string,
   equipped: EquippedArmorPieces,
-): { total: number; touch: number; flatFooted: number; armorBonus: number; shieldBonus: number; maxDexBonus: number | null } {
-  const armorBonus = equipped.bodyArmor?.armorBonus ?? 0;
-  const shieldBonus = equipped.shield?.armorBonus ?? 0;
+  armorAsDamageReduction = false,
+): {
+  total: number;
+  touch: number;
+  flatFooted: number;
+  armorBonus: number;
+  shieldBonus: number;
+  maxDexBonus: number | null;
+  damageReduction: number;
+} {
+  const rawArmorBonus = equipped.bodyArmor?.armorBonus ?? 0;
+  const rawShieldBonus = equipped.shield?.armorBonus ?? 0;
+  let armorBonus = rawArmorBonus;
+  let shieldBonus = rawShieldBonus;
+  let damageReduction = 0;
+  if (armorAsDamageReduction) {
+    const bodySplit = splitArmorBonusForDamageReduction(rawArmorBonus);
+    const shieldSplit = splitArmorBonusForDamageReduction(rawShieldBonus);
+    armorBonus = bodySplit.acBonus;
+    shieldBonus = shieldSplit.acBonus;
+    damageReduction = bodySplit.damageReduction + shieldSplit.damageReduction;
+  }
   const maxDexLimits = [equipped.bodyArmor?.maxDexBonus, equipped.shield?.maxDexBonus].filter(
     (v): v is number => v !== undefined && v !== null,
   );
@@ -441,7 +470,7 @@ export function computeCharacterArmorClass(
     deflection: 0,
     misc: 0,
   });
-  return { ...ac, armorBonus, shieldBonus, maxDexBonus };
+  return { ...ac, armorBonus, shieldBonus, maxDexBonus, damageReduction };
 }
 
 export interface WeaponAttackSummary {

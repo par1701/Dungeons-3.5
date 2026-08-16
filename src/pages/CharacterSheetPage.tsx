@@ -97,7 +97,12 @@ export default function CharacterSheetPage() {
     .filter((a): a is NonNullable<typeof a> => Boolean(a));
   const bodyArmor = equippedArmorItems.find((a) => a.category !== "escudo");
   const shield = equippedArmorItems.find((a) => a.category === "escudo");
-  const ac = computeCharacterArmorClass(finalScores, size, { bodyArmor, shield });
+  const ac = computeCharacterArmorClass(
+    finalScores,
+    size,
+    { bodyArmor, shield },
+    character.activeVariantRules.includes("vr-ua-armor-as-dr"),
+  );
 
   const equippedWeapons = character.equipment
     .filter((e) => e.equipped && e.itemKind === "weapon")
@@ -194,6 +199,11 @@ export default function CharacterSheetPage() {
               <p className="muted" style={{ textAlign: "center", margin: 0 }}>
                 CA a distancia: {ac.touch} · CA desprevenido: {ac.flatFooted}
               </p>
+              {ac.damageReduction > 0 && (
+                <p className="muted" style={{ textAlign: "center", margin: 0 }}>
+                  Reducción de daño por armadura: {ac.damageReduction}/-
+                </p>
+              )}
             </Panel>
 
             <Panel title="Salvaciones">

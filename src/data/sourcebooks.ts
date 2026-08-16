@@ -103,6 +103,15 @@ export const SOURCE_BOOKS: SourceBook[] = [
     implemented: true,
     defaultEnabled: false,
   },
+  {
+    id: "unearthed-arcana",
+    name: "Unearthed Arcana",
+    shortName: "UA",
+    description:
+      "Reglas variantes y opcionales para remodelar subsistemas del juego (armadura como reducción de daño, entre otras).",
+    implemented: true,
+    defaultEnabled: false,
+  },
 ];
 
 export function getSourceBook(id: string): SourceBook | undefined {

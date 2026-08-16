@@ -32,6 +32,27 @@ const ROGUE_SPECIAL_ABILITY_OPTIONS = [
   },
 ];
 
+const WIZARD_CHOICES: ClassFeatureChoice[] = [
+  {
+    id: "especializacion-escuela",
+    featureName: "Especialización en Escuela (opcional)",
+    levels: [1],
+    label: "Escuela de especialización (opcional)",
+    kind: "lista_fija",
+    options: [
+      { id: "generalista", label: "Generalista (sin especializarse)" },
+      { id: "abjuracion", label: "Abjuración" },
+      { id: "adivinacion", label: "Adivinación" },
+      { id: "conjuracion", label: "Conjuración" },
+      { id: "encantamiento", label: "Encantamiento" },
+      { id: "evocacion", label: "Evocación" },
+      { id: "ilusion", label: "Ilusión" },
+      { id: "nigromancia", label: "Nigromancia" },
+      { id: "transmutacion", label: "Transmutación" },
+    ],
+  },
+];
+
 const ROGUE_CHOICES: ClassFeatureChoice[] = [10, 13, 16, 19].map((level, i) => ({
   id: `habilidad-especial-${i + 1}`,
   featureName: "Habilidad Especial de Pícaro",
@@ -382,6 +403,8 @@ export const SRD_CLASSES_C: ClassDef[] = [
       spellsPerDay: WIZARD_SPELLS_PER_DAY,
     },
     companionGrant: { kind: "familiar", startLevel: 1, effectiveLevelOffset: 0 },
+    choices: WIZARD_CHOICES,
+    bonusFeatGrants: [{ level: 1, featId: "scribe-scroll" }],
     maxLevel: 20,
   },
 ];

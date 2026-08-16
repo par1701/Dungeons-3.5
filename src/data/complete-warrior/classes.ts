@@ -1,4 +1,68 @@
-import type { ClassDef, ClassFeature } from "../../types";
+import type { ClassDef, ClassFeature, ClassFeatureChoice } from "../../types";
+
+const DERVISH_BONUS_FEAT_LIST = ["dodge", "improved-initiative", "mobility", "combat-reflexes"];
+const DERVISH_CHOICES: ClassFeatureChoice[] = [
+  {
+    id: "dote-bonificacion-1",
+    featureName: "Dote de bonificación (4º nivel)",
+    levels: [4],
+    label: "Dote de bonificación (1.ª)",
+    kind: "dote_restringida",
+    featOptionIds: DERVISH_BONUS_FEAT_LIST,
+  },
+  {
+    id: "dote-bonificacion-2",
+    featureName: "Dote de bonificación (7º nivel)",
+    levels: [7],
+    label: "Dote de bonificación (2.ª)",
+    kind: "dote_restringida",
+    featOptionIds: DERVISH_BONUS_FEAT_LIST,
+  },
+];
+
+const BLOODHOUND_BONUS_FEAT_LIST = ["alertness", "iron-will", "improved-initiative", "investigator", "negotiator", "run"];
+const BLOODHOUND_CHOICES: ClassFeatureChoice[] = [
+  {
+    id: "presa-predilecta",
+    featureName: "Presa predilecta",
+    levels: [1],
+    label: "Presa predilecta",
+    kind: "texto_libre",
+    placeholder: "Nombre o descripción del individuo elegido como presa",
+  },
+  {
+    id: "dote-bonificacion-1",
+    featureName: "Dote de bonificación (1er nivel)",
+    levels: [1],
+    label: "Dote de bonificación (1.ª)",
+    kind: "dote_restringida",
+    featOptionIds: BLOODHOUND_BONUS_FEAT_LIST,
+  },
+  {
+    id: "dote-bonificacion-2",
+    featureName: "Dote de bonificación (3er nivel)",
+    levels: [3],
+    label: "Dote de bonificación (2.ª)",
+    kind: "dote_restringida",
+    featOptionIds: BLOODHOUND_BONUS_FEAT_LIST,
+  },
+];
+
+const BOW_INITIATE_CHOICES: ClassFeatureChoice[] = [
+  {
+    id: "tipo-arco",
+    featureName: "Maestría con el arco elegido",
+    levels: [1],
+    label: "Tipo de arco elegido",
+    kind: "lista_fija",
+    options: [
+      { id: "corto", label: "Arco corto" },
+      { id: "corto-compuesto", label: "Arco corto compuesto" },
+      { id: "largo", label: "Arco largo" },
+      { id: "largo-compuesto", label: "Arco largo compuesto" },
+    ],
+  },
+];
 
 // Clases de prestigio de Complete Warrior (2003).
 //
@@ -328,6 +392,7 @@ export const CW_CLASSES: ClassDef[] = [
     weaponProficiencies: [],
     armorProficiencies: [],
     features: DERVISH_FEATURES,
+    choices: DERVISH_CHOICES,
     maxLevel: 10,
     isPrestige: true,
     prerequisites: [
@@ -436,6 +501,7 @@ export const CW_CLASSES: ClassDef[] = [
     weaponProficiencies: [],
     armorProficiencies: [],
     features: ORDER_OF_THE_BOW_INITIATE_FEATURES,
+    choices: BOW_INITIATE_CHOICES,
     maxLevel: 5,
     isPrestige: true,
     prerequisites: [
@@ -556,6 +622,7 @@ export const CW_CLASSES: ClassDef[] = [
     weaponProficiencies: [],
     armorProficiencies: [],
     features: BLOODHOUND_FEATURES,
+    choices: BLOODHOUND_CHOICES,
     maxLevel: 5,
     isPrestige: true,
     prerequisites: [

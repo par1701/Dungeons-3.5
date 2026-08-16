@@ -62,6 +62,34 @@ export default function StepDetails({ character, onChange }: StepProps) {
         <label>Notas / trasfondo</label>
         <textarea rows={6} value={character.notes} onChange={(e) => set("notes", e.target.value)} />
       </div>
+
+      <h3 style={{ marginTop: 24 }}>Ajustes manuales del DJ</h3>
+      <p className="muted">
+        Bonificadores adicionales fuera de las reglas normales (recompensas de campaña, plantillas no modeladas,
+        correcciones puntuales...). Se suman a lo calculado automáticamente por nivel, raza y clase.
+      </p>
+      <div className="grid grid-3">
+        <div className="form-row">
+          <label>Dotes adicionales</label>
+          <input
+            type="number"
+            value={character.bonusFeatSlots}
+            onChange={(e) => set("bonusFeatSlots", Number(e.target.value))}
+          />
+        </div>
+        <div className="form-row">
+          <label>Puntos de golpe adicionales</label>
+          <input type="number" value={character.bonusHp} onChange={(e) => set("bonusHp", Number(e.target.value))} />
+        </div>
+        <div className="form-row">
+          <label>Puntos de habilidad adicionales</label>
+          <input
+            type="number"
+            value={character.bonusSkillPoints}
+            onChange={(e) => set("bonusSkillPoints", Number(e.target.value))}
+          />
+        </div>
+      </div>
     </div>
   );
 }

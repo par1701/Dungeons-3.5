@@ -29,6 +29,7 @@ export default function StepSkills({ character, onChange }: StepProps) {
     classes,
     character.abilityScores.int,
     isHumanRace(race),
+    character.bonusSkillPoints,
   );
 
   const spentPoints = Object.entries(character.skillRanks).reduce((sum, [key, ranks]) => {

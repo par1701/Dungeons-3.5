@@ -142,6 +142,7 @@ export function computeTotalSkillPoints(
   classes: ClassDef[],
   intScore: number,
   isHuman: boolean,
+  bonusSkillPoints = 0,
 ): number {
   const intMod = abilityModifier(intScore);
   let firstClassHandled = false;
@@ -160,7 +161,7 @@ export function computeTotalSkillPoints(
       }
     }
   });
-  return total;
+  return total + bonusSkillPoints;
 }
 
 export function computeMaxHp(
@@ -171,6 +172,7 @@ export function computeMaxHp(
   useAverage: boolean,
   maxFirstLevel: boolean,
   stalwartSorcerer = false,
+  manualBonusHp = 0,
 ): number {
   const conMod = abilityModifier(conScore);
   let hp = 0;
@@ -195,7 +197,7 @@ export function computeMaxHp(
       levelIndex++;
     }
   });
-  return Math.max(1, hp);
+  return Math.max(1, hp + manualBonusHp);
 }
 
 // Bonificador de competencia unificado (regla 3.5: siempre +2 desde nivel 1).
@@ -564,9 +566,10 @@ export function computeFeatSlots(
   classLevels: CharacterClassLevel[],
   isHuman: boolean,
   championOfTheWildRanger = false,
+  bonusFeatSlots = 0,
 ): number {
   const level = totalCharacterLevel(classLevels);
-  if (level <= 0) return 0;
+  if (level <= 0) return bonusFeatSlots;
   let slots = 1;
   for (let l = 3; l <= level; l += 3) slots++;
   if (isHuman) slots++;
@@ -576,7 +579,7 @@ export function computeFeatSlots(
     const rangerLevel = classLevels.find((cl) => cl.classId === "ranger")?.level ?? 0;
     slots += CHAMPION_OF_THE_WILD_FEAT_LEVELS.filter((l) => l <= rangerLevel).length;
   }
-  return slots;
+  return slots + bonusFeatSlots;
 }
 
 export function deriveCharacterSummary(
@@ -596,6 +599,7 @@ export function deriveCharacterSummary(
     character.activeVariantRules.includes("vr-hp-average"),
     character.activeVariantRules.includes("vr-max-hp-first-level"),
     character.activeVariantRules.includes("vr-cm-stalwart-sorcerer"),
+    character.bonusHp,
   );
   const carrying = computeCarryingCapacity(finalAbilityScores.str, race?.size ?? "Mediano");
   return { finalAbilityScores, bab, saves, level, hp, carrying };
@@ -666,6 +670,20 @@ export interface WeaponAttackSummary {
   damage: string;
   critical: string;
   rangeIncrement?: number;
+  /** Bonificadores de ataque de cada ataque iterativo en un ataque completo (p.ej. [+12, +7, +2]). */
+  fullAttackSequence: number[];
+}
+
+/**
+ * Secuencia de ataques de un ataque completo según el bonificador base de
+ * ataque (regla SRD: un ataque adicional por cada +5 de BBA completo, cada
+ * uno con -5 acumulativo respecto al anterior). El número de ataques depende
+ * del BBA puro; los valores de cada ataque parten del bonificador de ataque
+ * ya modificado del arma (con característica, tamaño, etc.).
+ */
+export function computeFullAttackSequence(weaponAttackBonus: number, bab: number): number[] {
+  const count = bab > 0 ? Math.floor((bab - 1) / 5) + 1 : 1;
+  return Array.from({ length: count }, (_, i) => weaponAttackBonus - 5 * i);
 }
 
 export function computeWeaponAttack(
@@ -685,6 +703,7 @@ export function computeWeaponAttack(
     damage,
     critical: weapon.critical,
     rangeIncrement: weapon.rangeIncrement,
+    fullAttackSequence: computeFullAttackSequence(attackBonus, bab),
   };
 }
 

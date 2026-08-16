@@ -83,6 +83,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
     character.activeVariantRules.includes("vr-hp-average"),
     character.activeVariantRules.includes("vr-max-hp-first-level"),
     character.activeVariantRules.includes("vr-cm-stalwart-sorcerer"),
+    character.bonusHp,
   );
   const carrying = computeCarryingCapacity(finalScores.str, size);
   const classSummary = character.classLevels
@@ -200,7 +201,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
             <>
               <View style={styles.tableHeaderRow}>
                 <Text style={styles.cell}>Arma</Text>
-                <Text style={styles.smallCell}>Bonif.</Text>
+                <Text style={styles.smallCell}>Ataque completo</Text>
                 <Text style={styles.cell}>Daño</Text>
                 <Text style={styles.smallCell}>Crítico</Text>
                 <Text style={styles.smallCell}>Alcance</Text>
@@ -208,7 +209,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
               {equippedWeapons.map((w) => (
                 <View style={styles.tableRow} key={w.itemId}>
                   <Text style={styles.cell}>{w.name}</Text>
-                  <Text style={styles.smallCell}>{w.attackBonus >= 0 ? `+${w.attackBonus}` : w.attackBonus}</Text>
+                  <Text style={styles.smallCell}>{w.fullAttackSequence.map((b) => (b >= 0 ? `+${b}` : b)).join("/")}</Text>
                   <Text style={styles.cell}>{w.damage}</Text>
                   <Text style={styles.smallCell}>{w.critical}</Text>
                   <Text style={styles.smallCell}>{w.rangeIncrement ? `${w.rangeIncrement} p` : "—"}</Text>

@@ -25,6 +25,7 @@ export default function StepFeats({ character, onChange }: StepProps) {
     character.classLevels,
     isHumanRace(race),
     character.activeVariantRules.includes("vr-cc-champion-of-the-wild"),
+    character.bonusFeatSlots,
   );
   const ctx: FeatPrereqContext = {
     abilityScores: finalScores,

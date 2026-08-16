@@ -89,6 +89,7 @@ export default function CharacterSheetPage() {
     character.activeVariantRules.includes("vr-hp-average"),
     character.activeVariantRules.includes("vr-max-hp-first-level"),
     character.activeVariantRules.includes("vr-cm-stalwart-sorcerer"),
+    character.bonusHp,
   );
   const carrying = computeCarryingCapacity(finalScores.str, size);
   const classSummary = character.classLevels
@@ -285,7 +286,7 @@ export default function CharacterSheetPage() {
               <thead>
                 <tr>
                   <th>Arma</th>
-                  <th>Bonif. ataque</th>
+                  <th>Ataque completo</th>
                   <th>Daño</th>
                   <th>Crítico</th>
                   <th>Alcance</th>
@@ -295,7 +296,7 @@ export default function CharacterSheetPage() {
                 {equippedWeapons.map((w) => (
                   <tr key={w.itemId}>
                     <td>{w.name}</td>
-                    <td>{w.attackBonus >= 0 ? `+${w.attackBonus}` : w.attackBonus}</td>
+                    <td>{w.fullAttackSequence.map((b) => (b >= 0 ? `+${b}` : b)).join("/")}</td>
                     <td>{w.damage}</td>
                     <td>{w.critical}</td>
                     <td>{w.rangeIncrement ? `${w.rangeIncrement} pies` : "—"}</td>

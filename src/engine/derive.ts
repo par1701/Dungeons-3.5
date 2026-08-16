@@ -5,6 +5,7 @@ import type {
   Character,
   CharacterClassFeatureChoice,
   CharacterClassLevel,
+  CharacterFeatChoice,
   ClassDef,
   ClassFeatureChoice,
   Race,
@@ -536,6 +537,27 @@ export function getBonusFeatsFromClasses(
   return entries;
 }
 
+/**
+ * Ids de todas las dotes que el personaje posee, ya sean elegidas normalmente
+ * o concedidas gratis por sus clases (automáticas o de lista restringida).
+ * Debe usarse para comprobar prerrequisitos de otras dotes o de clases de
+ * prestigio, para que una dote de bonificación (p.ej. Disparo Rápido del
+ * estilo de combate del explorador) cuente igual que si se hubiera elegido
+ * como dote normal.
+ */
+export function getAllKnownFeatIds(
+  feats: CharacterFeatChoice[],
+  classLevels: CharacterClassLevel[],
+  classes: ClassDef[],
+  classFeatureChoices: CharacterClassFeatureChoice[],
+): Set<string> {
+  const ids = new Set(feats.map((f) => f.featId));
+  for (const bf of getBonusFeatsFromClasses(classLevels, classes, classFeatureChoices)) {
+    ids.add(bf.featId);
+  }
+  return ids;
+}
+
 const FIGHTER_BONUS_FEAT_LEVELS = [1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20];
 
 export function computeFeatSlots(
@@ -664,4 +686,24 @@ export function computeWeaponAttack(
     critical: weapon.critical,
     rangeIncrement: weapon.rangeIncrement,
   };
+}
+
+/**
+ * Bonificador de ataque a distancia según el incremento de alcance (regla
+ * SRD: -2 acumulativo por cada incremento completo más allá del primero,
+ * hasta un máximo de 10 incrementos).
+ */
+export function computeRangeIncrementAttackBonuses(
+  baseAttackBonus: number,
+  rangeIncrement: number,
+): { increment: number; distanceFeet: number; attackBonus: number }[] {
+  const results: { increment: number; distanceFeet: number; attackBonus: number }[] = [];
+  for (let increment = 1; increment <= 10; increment++) {
+    results.push({
+      increment,
+      distanceFeet: rangeIncrement * increment,
+      attackBonus: baseAttackBonus - 2 * (increment - 1),
+    });
+  }
+  return results;
 }

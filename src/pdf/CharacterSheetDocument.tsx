@@ -21,6 +21,7 @@ import {
   computeCharacterArmorClass,
   computeMaxHp,
   computeSaveTotals,
+  computeRangeIncrementAttackBonuses,
   computeWeaponAttack,
   findChoiceValue,
   getBonusFeatsFromClasses,
@@ -202,6 +203,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                 <Text style={styles.smallCell}>Bonif.</Text>
                 <Text style={styles.cell}>Daño</Text>
                 <Text style={styles.smallCell}>Crítico</Text>
+                <Text style={styles.smallCell}>Alcance</Text>
               </View>
               {equippedWeapons.map((w) => (
                 <View style={styles.tableRow} key={w.itemId}>
@@ -209,8 +211,19 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                   <Text style={styles.smallCell}>{w.attackBonus >= 0 ? `+${w.attackBonus}` : w.attackBonus}</Text>
                   <Text style={styles.cell}>{w.damage}</Text>
                   <Text style={styles.smallCell}>{w.critical}</Text>
+                  <Text style={styles.smallCell}>{w.rangeIncrement ? `${w.rangeIncrement} p` : "—"}</Text>
                 </View>
               ))}
+              {equippedWeapons
+                .filter((w) => w.rangeIncrement)
+                .map((w) => (
+                  <Text key={w.itemId} style={{ fontSize: 7 }}>
+                    {w.name} por distancia (-2/incremento de {w.rangeIncrement} pies):{" "}
+                    {computeRangeIncrementAttackBonuses(w.attackBonus, w.rangeIncrement!)
+                      .map((r) => `${r.distanceFeet}p ${r.attackBonus >= 0 ? "+" : ""}${r.attackBonus}`)
+                      .join(" · ")}
+                  </Text>
+                ))}
             </>
           )}
         </Panel>
@@ -278,11 +291,12 @@ export default function CharacterSheetDocument({ character }: { character: Chara
         )}
 
         <Text style={styles.sectionTitle}>Dotes</Text>
-        {character.feats.map((f) => {
+        {character.feats.map((f, i) => {
           const feat = findFeat(f.featId);
           return (
-            <Text key={f.featId}>
-              • {feat?.name ?? f.featId}: {feat?.benefit ?? ""}
+            <Text key={`${f.featId}-${i}`}>
+              • {feat?.name ?? f.featId}
+              {f.selection ? ` (${f.selection})` : ""}: {feat?.benefit ?? ""}
             </Text>
           );
         })}

@@ -23,6 +23,7 @@ import {
   computeCharacterArmorClass,
   computeMaxHp,
   computeSaveTotals,
+  computeRangeIncrementAttackBonuses,
   computeWeaponAttack,
   findChoiceValue,
   getBonusFeatsFromClasses,
@@ -303,6 +304,17 @@ export default function CharacterSheetPage() {
               </tbody>
             </table>
           )}
+          {equippedWeapons
+            .filter((w) => w.rangeIncrement)
+            .map((w) => (
+              <p key={w.itemId} className="muted" style={{ marginTop: 8, marginBottom: 0 }}>
+                <strong>{w.name} por distancia</strong> (-2 acumulativo por incremento de {w.rangeIncrement} pies,
+                máx. 10):{" "}
+                {computeRangeIncrementAttackBonuses(w.attackBonus, w.rangeIncrement!)
+                  .map((r) => `${r.distanceFeet}p ${r.attackBonus >= 0 ? "+" : ""}${r.attackBonus}`)
+                  .join(" · ")}
+              </p>
+            ))}
         </Panel>
 
         <Panel title="Habilidades">
@@ -402,11 +414,15 @@ export default function CharacterSheetPage() {
 
         <Panel title="Dotes">
           <ul>
-            {character.feats.map((f) => {
+            {character.feats.map((f, i) => {
               const feat = findFeat(f.featId);
               return (
-                <li key={f.featId}>
-                  <strong>{feat?.name ?? f.featId}:</strong> {feat?.benefit ?? ""}
+                <li key={`${f.featId}-${i}`}>
+                  <strong>
+                    {feat?.name ?? f.featId}
+                    {f.selection ? ` (${f.selection})` : ""}:
+                  </strong>{" "}
+                  {feat?.benefit ?? ""}
                 </li>
               );
             })}

@@ -1,4 +1,93 @@
-import type { ClassDef, ClassFeature } from "../../types";
+import type { ClassDef, ClassFeature, ClassFeatureChoice } from "../../types";
+
+const RANGER_CHOICES: ClassFeatureChoice[] = [
+  {
+    id: "enemigo-predilecto",
+    featureName: "Enemigo predilecto",
+    levels: [1, 5, 10, 15, 20],
+    label: "Enemigo predilecto",
+    kind: "texto_libre",
+    placeholder: "p.ej. No muertos, Gigantes, Humanos (tipo o subtipo de criatura)",
+  },
+  {
+    id: "estilo-combate",
+    featureName: "Estilo de combate (arquería o dos armas)",
+    levels: [2],
+    label: "Estilo de combate",
+    kind: "lista_fija",
+    options: [
+      { id: "arqueria", label: "Arquería (combate a distancia)" },
+      { id: "dos-armas", label: "Combate con dos armas" },
+    ],
+  },
+  {
+    id: "estilo-combate-dote-1",
+    featureName: "Estilo de combate (arquería o dos armas)",
+    levels: [2],
+    label: "Dote de estilo de combate (1.ª)",
+    kind: "dote_restringida",
+    featOptionsByDependency: {
+      dependsOn: "estilo-combate",
+      options: { arqueria: ["rapid-shot"], "dos-armas": ["two-weapon-fighting"] },
+    },
+  },
+  {
+    id: "estilo-combate-dote-2",
+    featureName: "Estilo de combate mejorado",
+    levels: [6],
+    label: "Dote de estilo de combate (2.ª)",
+    kind: "dote_restringida",
+    featOptionsByDependency: {
+      dependsOn: "estilo-combate",
+      options: { arqueria: ["manyshot"], "dos-armas": ["improved-two-weapon-fighting"] },
+    },
+  },
+  {
+    id: "estilo-combate-dote-3",
+    featureName: "Maestría en el estilo de combate",
+    levels: [11],
+    label: "Dote de estilo de combate (3.ª)",
+    kind: "dote_restringida",
+    featOptionsByDependency: {
+      dependsOn: "estilo-combate",
+      options: { arqueria: ["improved-precise-shot"], "dos-armas": ["greater-two-weapon-fighting"] },
+    },
+  },
+];
+
+const RANGER_BONUS_FEAT_GRANTS = [
+  { level: 1, featId: "track" },
+  { level: 3, featId: "endurance" },
+];
+
+const MONK_MARTIAL_ARTS_FEATS = ["improved-grapple", "deflect-arrows", "improved-trip", "stunning-fist", "combat-reflexes"];
+
+const MONK_CHOICES: ClassFeatureChoice[] = [
+  {
+    id: "artes-marciales-1",
+    featureName: "Artes marciales (1.ª dote de bonificación)",
+    levels: [1],
+    label: "Dote de artes marciales (1.ª)",
+    kind: "dote_restringida",
+    featOptionIds: MONK_MARTIAL_ARTS_FEATS,
+  },
+  {
+    id: "artes-marciales-2",
+    featureName: "Artes marciales (2.ª dote de bonificación)",
+    levels: [2],
+    label: "Dote de artes marciales (2.ª)",
+    kind: "dote_restringida",
+    featOptionIds: MONK_MARTIAL_ARTS_FEATS,
+  },
+  {
+    id: "artes-marciales-3",
+    featureName: "Artes marciales (3.ª dote de bonificación)",
+    levels: [6],
+    label: "Dote de artes marciales (3.ª)",
+    kind: "dote_restringida",
+    featOptionIds: MONK_MARTIAL_ARTS_FEATS,
+  },
+];
 
 // Progresión de conjuros por día compartida por Paladín y Explorador (Ranger).
 // Ambas clases son conjuradores divinos de "media casta": empiezan a lanzar
@@ -243,6 +332,8 @@ export const SRD_CLASSES_A: ClassDef[] = [
     ],
     armorProficiencies: ["ninguna"],
     features: monkFeatures,
+    choices: MONK_CHOICES,
+    bonusFeatGrants: [{ level: 1, featId: "improved-unarmed-strike" }],
     maxLevel: 20,
   },
   {
@@ -325,6 +416,8 @@ export const SRD_CLASSES_A: ClassDef[] = [
     },
     companionGrant: { kind: "animal_companion", startLevel: 4, effectiveLevelOffset: -3 },
     features: rangerFeatures,
+    choices: RANGER_CHOICES,
+    bonusFeatGrants: RANGER_BONUS_FEAT_GRANTS,
     maxLevel: 20,
   },
 ];

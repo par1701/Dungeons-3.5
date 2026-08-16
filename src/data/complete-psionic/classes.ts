@@ -1,4 +1,23 @@
-import type { ClassDef } from "../../types";
+import type { ClassDef, ClassFeatureChoice } from "../../types";
+
+const PSION_CHOICES: ClassFeatureChoice[] = [
+  {
+    id: "especializacion-disciplina",
+    featureName: "Especialización en Disciplina (opcional)",
+    levels: [1],
+    label: "Disciplina de especialización (opcional)",
+    kind: "lista_fija",
+    options: [
+      { id: "generalista", label: "Generalista (sin especializarse)" },
+      { id: "clarividencia", label: "Clarividencia" },
+      { id: "metacreatividad", label: "Metacreatividad" },
+      { id: "psicocinesis", label: "Psicocinesis" },
+      { id: "psicometabolismo", label: "Psicometabolismo" },
+      { id: "psicoportacion", label: "Psicoportación" },
+      { id: "telepatia", label: "Telepatía" },
+    ],
+  },
+];
 
 // Clases base psiónicas de Complete Psionic (2006), construidas sobre el sistema
 // del Expanded Psionics Handbook: puntos de poder por día en vez de conjuros por
@@ -158,6 +177,7 @@ export const CPS_CLASSES: ClassDef[] = [
       powerPointsPerDay: PSION_POWER_POINTS_PER_DAY,
       powersKnown: PSION_POWERS_KNOWN,
     },
+    choices: PSION_CHOICES,
     maxLevel: 20,
   },
   {

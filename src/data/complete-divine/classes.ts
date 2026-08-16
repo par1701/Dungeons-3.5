@@ -1,4 +1,21 @@
-import type { ClassDef, ClassFeature } from "../../types";
+import type { ClassDef, ClassFeature, ClassFeatureChoice } from "../../types";
+
+const FAVORED_SOUL_CHOICES: ClassFeatureChoice[] = [
+  {
+    id: "resistencia-energia",
+    featureName: "Resistencia a la energía",
+    levels: [2],
+    label: "Tipo de energía",
+    kind: "lista_fija",
+    options: [
+      { id: "acido", label: "Ácido" },
+      { id: "electricidad", label: "Electricidad" },
+      { id: "frio", label: "Frío" },
+      { id: "fuego", label: "Fuego" },
+      { id: "sonico", label: "Sónico" },
+    ],
+  },
+];
 
 // Clases de Complete Divine (2004).
 //
@@ -424,6 +441,7 @@ export const CDV_CLASSES: ClassDef[] = [
       startLevel: 1,
     },
     features: FAVORED_SOUL_FEATURES,
+    choices: FAVORED_SOUL_CHOICES,
     maxLevel: 20,
   },
   {

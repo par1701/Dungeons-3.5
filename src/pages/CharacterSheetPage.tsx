@@ -24,6 +24,9 @@ import {
   computeMaxHp,
   computeSaveTotals,
   computeWeaponAttack,
+  findChoiceValue,
+  getBonusFeatsFromClasses,
+  getUnlockedClassFeatureChoices,
   getUnlockedClassFeatures,
   parseSkillKey,
   sizeModifier,
@@ -91,6 +94,9 @@ export default function CharacterSheetPage() {
     .map((cl) => `${findClass(cl.classId)?.name ?? cl.classId} ${cl.level}`)
     .join(" / ");
   const unlockedFeatures = getUnlockedClassFeatures(character.classLevels, classes, character.activeVariantRules);
+  const classFeatureChoices = character.classFeatureChoices ?? [];
+  const unlockedChoices = getUnlockedClassFeatureChoices(character.classLevels, classes);
+  const bonusFeats = getBonusFeatsFromClasses(character.classLevels, classes, classFeatureChoices);
 
   const equippedArmorItems = character.equipment
     .filter((e) => e.equipped && e.itemKind === "armor")
@@ -367,6 +373,33 @@ export default function CharacterSheetPage() {
           </Panel>
         )}
 
+        {unlockedChoices.filter((uc) => uc.choice.kind !== "dote_restringida").length > 0 && (
+          <Panel title="Elecciones de clase">
+            <ul>
+              {unlockedChoices
+                .filter((uc) => uc.choice.kind !== "dote_restringida")
+                .map((uc, i) => {
+                  const value = findChoiceValue(classFeatureChoices, uc.classId, uc.choice.id, uc.level);
+                  const selectedOption = uc.choice.options?.find((o) => o.id === value);
+                  const optionLabel = uc.choice.kind === "lista_fija" ? selectedOption?.label : value;
+                  return (
+                    <li key={i}>
+                      <strong>
+                        {uc.choice.label} ({uc.className} {uc.level}):
+                      </strong>{" "}
+                      {optionLabel || <span className="muted">sin elegir</span>}
+                      {selectedOption?.description && (
+                        <div className="muted" style={{ marginTop: 2 }}>
+                          {selectedOption.description}
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+            </ul>
+          </Panel>
+        )}
+
         <Panel title="Dotes">
           <ul>
             {character.feats.map((f) => {
@@ -374,6 +407,18 @@ export default function CharacterSheetPage() {
               return (
                 <li key={f.featId}>
                   <strong>{feat?.name ?? f.featId}:</strong> {feat?.benefit ?? ""}
+                </li>
+              );
+            })}
+            {bonusFeats.map((bf, i) => {
+              const feat = findFeat(bf.featId);
+              return (
+                <li key={`bonus-${i}`}>
+                  <strong>{feat?.name ?? bf.featId}</strong>{" "}
+                  <span className="muted">
+                    (dote de bonificación — {bf.sourceLabel}, {bf.className} {bf.level})
+                  </span>
+                  : {feat?.benefit ?? ""}
                 </li>
               );
             })}

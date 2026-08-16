@@ -26,6 +26,7 @@ export function createBlankCharacter(overrides?: Partial<Character>): Character 
     feats: [],
     spells: [],
     powers: [],
+    classFeatureChoices: [],
     companions: [],
     equipment: [],
     gold: 0,

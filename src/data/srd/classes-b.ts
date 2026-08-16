@@ -1,4 +1,24 @@
-import type { ClassDef, ClassFeature } from "../../types";
+import type { ClassDef, ClassFeature, ClassFeatureChoice } from "../../types";
+import { SRD_DOMAIN_OPTIONS } from "./domains";
+
+const CLERIC_CHOICES: ClassFeatureChoice[] = [
+  {
+    id: "dominio-1",
+    featureName: "Dominios",
+    levels: [1],
+    label: "Primer dominio",
+    kind: "lista_fija",
+    options: SRD_DOMAIN_OPTIONS,
+  },
+  {
+    id: "dominio-2",
+    featureName: "Dominios",
+    levels: [1],
+    label: "Segundo dominio",
+    kind: "lista_fija",
+    options: SRD_DOMAIN_OPTIONS,
+  },
+];
 
 // Progresión de conjuros por día del Bardo (conjurador arcano espontáneo,
 // nivel de conjuro máximo 6). Índice = nivel de clase (0 sin usar);
@@ -230,6 +250,7 @@ export const SRD_CLASSES_B: ClassDef[] = [
       startLevel: 1,
     },
     features: clericFeatures,
+    choices: CLERIC_CHOICES,
     maxLevel: 20,
   },
   {

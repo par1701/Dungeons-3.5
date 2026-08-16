@@ -22,6 +22,9 @@ import {
   computeMaxHp,
   computeSaveTotals,
   computeWeaponAttack,
+  findChoiceValue,
+  getBonusFeatsFromClasses,
+  getUnlockedClassFeatureChoices,
   getUnlockedClassFeatures,
   parseSkillKey,
   sizeModifier,
@@ -85,6 +88,9 @@ export default function CharacterSheetDocument({ character }: { character: Chara
     .map((cl) => `${findClass(cl.classId)?.name ?? cl.classId} ${cl.level}`)
     .join(" / ");
   const unlockedFeatures = getUnlockedClassFeatures(character.classLevels, classes, character.activeVariantRules);
+  const classFeatureChoices = character.classFeatureChoices ?? [];
+  const unlockedChoices = getUnlockedClassFeatureChoices(character.classLevels, classes);
+  const bonusFeats = getBonusFeatsFromClasses(character.classLevels, classes, classFeatureChoices);
 
   const equippedArmorItems = character.equipment
     .filter((e) => e.equipped && e.itemKind === "armor")
@@ -252,12 +258,40 @@ export default function CharacterSheetDocument({ character }: { character: Chara
           </>
         )}
 
+        {unlockedChoices.filter((uc) => uc.choice.kind !== "dote_restringida").length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>Elecciones de clase</Text>
+            {unlockedChoices
+              .filter((uc) => uc.choice.kind !== "dote_restringida")
+              .map((uc, i) => {
+                const value = findChoiceValue(classFeatureChoices, uc.classId, uc.choice.id, uc.level);
+                const selectedOption = uc.choice.options?.find((o) => o.id === value);
+                const optionLabel = uc.choice.kind === "lista_fija" ? selectedOption?.label : value;
+                return (
+                  <Text key={i} style={{ fontSize: 7 }}>
+                    • {uc.choice.label} ({uc.className} {uc.level}): {optionLabel || "sin elegir"}
+                    {selectedOption?.description ? ` — ${selectedOption.description}` : ""}
+                  </Text>
+                );
+              })}
+          </>
+        )}
+
         <Text style={styles.sectionTitle}>Dotes</Text>
         {character.feats.map((f) => {
           const feat = findFeat(f.featId);
           return (
             <Text key={f.featId}>
               • {feat?.name ?? f.featId}: {feat?.benefit ?? ""}
+            </Text>
+          );
+        })}
+        {bonusFeats.map((bf, i) => {
+          const feat = findFeat(bf.featId);
+          return (
+            <Text key={`bonus-${i}`}>
+              • {feat?.name ?? bf.featId} (dote de bonificación — {bf.sourceLabel}, {bf.className} {bf.level}):{" "}
+              {feat?.benefit ?? ""}
             </Text>
           );
         })}

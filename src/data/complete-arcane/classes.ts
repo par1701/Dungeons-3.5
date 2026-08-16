@@ -1,4 +1,20 @@
-import type { ClassDef } from "../../types";
+import type { ClassDef, ClassFeatureChoice } from "../../types";
+
+const ELEMENTAL_SAVANT_CHOICES: ClassFeatureChoice[] = [
+  {
+    id: "vinculo-elemental",
+    featureName: "Vínculo Elemental",
+    levels: [1],
+    label: "Elemento vinculado",
+    kind: "lista_fija",
+    options: [
+      { id: "aire", label: "Aire", description: "Energía asociada: electricidad." },
+      { id: "agua", label: "Agua", description: "Energía asociada: frío." },
+      { id: "fuego", label: "Fuego", description: "Energía asociada: fuego." },
+      { id: "tierra", label: "Tierra", description: "Energía asociada: ácido." },
+    ],
+  },
+];
 
 // Clases de Complete Arcane (2004).
 //
@@ -419,6 +435,7 @@ export const CA_CLASSES: ClassDef[] = [
     weaponProficiencies: [],
     armorProficiencies: [],
     features: ELEMENTAL_SAVANT_FEATURES,
+    choices: ELEMENTAL_SAVANT_CHOICES,
     maxLevel: 5,
     isPrestige: true,
     prerequisites: [

@@ -1,4 +1,26 @@
-import type { ClassDef } from "../../types";
+import type { ClassDef, ClassFeatureChoice } from "../../types";
+
+const SWASHBUCKLER_CHOICES: ClassFeatureChoice[] = [
+  {
+    id: "amenaza-con-arma",
+    featureName: "Amenaza con Arma (dote de bonificación)",
+    levels: [1],
+    label: "Dote de amenaza con arma",
+    kind: "dote_restringida",
+    featOptionIds: ["weapon-finesse", "weapon-focus"],
+  },
+];
+
+const EXEMPLAR_CHOICES: ClassFeatureChoice[] = [
+  {
+    id: "habilidad-insigne",
+    featureName: "Habilidad Insigne",
+    levels: [1],
+    label: "Habilidad insigne (mínimo 12 rangos)",
+    kind: "texto_libre",
+    placeholder: "p.ej. Escalar, Buscar, Diplomacia...",
+  },
+];
 
 // Clases de Complete Adventurer (2005).
 //
@@ -523,6 +545,7 @@ export const CAD_CLASSES: ClassDef[] = [
     weaponProficiencies: ["Armas simples", "Armas marciales"],
     armorProficiencies: ["Armadura ligera"],
     features: SWASHBUCKLER_FEATURES,
+    choices: SWASHBUCKLER_CHOICES,
     maxLevel: 20,
   },
   {
@@ -556,6 +579,7 @@ export const CAD_CLASSES: ClassDef[] = [
     weaponProficiencies: [],
     armorProficiencies: [],
     features: EXEMPLAR_FEATURES,
+    choices: EXEMPLAR_CHOICES,
     maxLevel: 10,
     isPrestige: true,
     prerequisites: [

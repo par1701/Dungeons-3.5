@@ -89,6 +89,21 @@ export const useCharacterStore = create<CharacterStoreState>()(
         }
       },
     }),
-    { name: "dnd35-characters" },
+    {
+      name: "dnd35-characters",
+      // Los personajes guardados por versiones anteriores de la app pueden
+      // carecer de campos añadidos después (p.ej. classFeatureChoices). Se
+      // completan con los valores por defecto de createBlankCharacter() para
+      // que ningún campo llegue como undefined a los componentes.
+      merge: (persistedState, currentState) => {
+        const persisted = persistedState as Partial<CharacterStoreState> | undefined;
+        if (!persisted || !Array.isArray(persisted.characters)) return currentState;
+        return {
+          ...currentState,
+          ...persisted,
+          characters: persisted.characters.map((c) => ({ ...createBlankCharacter(), ...c })),
+        };
+      },
+    },
   ),
 );

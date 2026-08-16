@@ -28,13 +28,15 @@ function featOptionsFor(
 export default function StepClassChoices({ character, onChange }: StepProps) {
   const classes = getEnabledClasses(character.activeSourceBooks);
   const unlocked = getUnlockedClassFeatureChoices(character.classLevels, classes);
+  const classFeatureChoices = character.classFeatureChoices ?? [];
 
   function setChoice(classId: string, choiceId: string, level: number, value: string) {
     onChange((c) => {
-      const idx = c.classFeatureChoices.findIndex(
+      const existing = c.classFeatureChoices ?? [];
+      const idx = existing.findIndex(
         (cc) => cc.classId === classId && cc.choiceId === choiceId && cc.level === level,
       );
-      const next = [...c.classFeatureChoices];
+      const next = [...existing];
       if (idx >= 0) next[idx] = { ...next[idx], value };
       else next.push({ classId, choiceId, level, value });
       return { ...c, classFeatureChoices: next };
@@ -62,7 +64,7 @@ export default function StepClassChoices({ character, onChange }: StepProps) {
       {unlocked
         .sort((a, b) => a.level - b.level)
         .map(({ classId, className, level, choice }) => {
-          const current = findChoiceValue(character.classFeatureChoices, classId, choice.id, level) ?? "";
+          const current = findChoiceValue(classFeatureChoices, classId, choice.id, level) ?? "";
           const key = `${classId}-${choice.id}-${level}`;
           return (
             <div className="card" key={key}>
@@ -107,7 +109,7 @@ export default function StepClassChoices({ character, onChange }: StepProps) {
               )}
               {choice.kind === "dote_restringida" &&
                 (() => {
-                  const featIds = featOptionsFor(choice, classId, character.classFeatureChoices);
+                  const featIds = featOptionsFor(choice, classId, classFeatureChoices);
                   if (featIds.length === 0) {
                     return (
                       <p className="muted">

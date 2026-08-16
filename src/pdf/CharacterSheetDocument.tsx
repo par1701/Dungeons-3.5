@@ -78,6 +78,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
     finalScores.con,
     character.activeVariantRules.includes("vr-hp-average"),
     character.activeVariantRules.includes("vr-max-hp-first-level"),
+    character.activeVariantRules.includes("vr-cm-stalwart-sorcerer"),
   );
   const carrying = computeCarryingCapacity(finalScores.str, size);
   const classSummary = character.classLevels

@@ -18,9 +18,12 @@ export default function StepSpells({ character, onChange }: StepProps) {
   const finalScores = applyRacialAdjustments(character.abilityScores, race);
 
   const championOfTheWild = character.activeVariantRules.includes("vr-cc-champion-of-the-wild");
+  const cwRangerNoSpells = character.activeVariantRules.includes("vr-cw-ranger-no-spells");
+  const cwPaladinNoSpells = character.activeVariantRules.includes("vr-cw-paladin-no-spells");
   const casterClassLevels = character.classLevels.filter((cl) => {
     const def = classes.find((c) => c.id === cl.classId);
-    if (championOfTheWild && cl.classId === "ranger") return false;
+    if ((championOfTheWild || cwRangerNoSpells) && cl.classId === "ranger") return false;
+    if (cwPaladinNoSpells && cl.classId === "paladin") return false;
     return def?.spellcasting && cl.level >= (def.spellcasting.startLevel ?? 1);
   });
 

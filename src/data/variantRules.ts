@@ -3,6 +3,9 @@ import { PHB2_VARIANT_RULES } from "./phb2/variant-rules";
 import { DMG2_VARIANT_RULES } from "./dmg2/variant-rules";
 import { UNEARTHED_ARCANA_VARIANT_RULES } from "./unearthed-arcana/variant-rules";
 import { COMPLETE_CHAMPION_VARIANT_RULES } from "./complete-champion/variant-rules";
+import { COMPLETE_WARRIOR_VARIANT_RULES } from "./complete-warrior/variant-rules";
+import { COMPLETE_MAGE_VARIANT_RULES } from "./complete-mage/variant-rules";
+import { COMPLETE_DIVINE_VARIANT_RULES } from "./complete-divine/variant-rules";
 
 // Reglas variantes disponibles para activar/desactivar al crear un personaje.
 // Cada libro (Complete X, PHB2, DMG2) añade las suyas en su propio archivo
@@ -99,6 +102,9 @@ export const VARIANT_RULES: VariantRule[] = [
   ),
   ...UNEARTHED_ARCANA_VARIANT_RULES,
   ...COMPLETE_CHAMPION_VARIANT_RULES,
+  ...COMPLETE_WARRIOR_VARIANT_RULES,
+  ...COMPLETE_MAGE_VARIANT_RULES,
+  ...COMPLETE_DIVINE_VARIANT_RULES,
 ];
 
 export function getEnabledVariantIds(overrides?: Record<string, boolean>): string[] {

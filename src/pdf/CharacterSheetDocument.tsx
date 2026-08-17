@@ -19,14 +19,19 @@ import {
   computeBabTotal,
   computeCarryingCapacity,
   computeCharacterArmorClass,
+  computeFlurryOfBlowsSequence,
   computeMaxHp,
+  computeRapidShotSequence,
   computeSaveTotals,
   computeRangeIncrementAttackBonuses,
+  computeTwoWeaponFightingOption,
   computeWeaponAttack,
   findChoiceValue,
+  getAllKnownFeatIds,
   getBonusFeatsFromClasses,
   getUnlockedClassFeatureChoices,
   getUnlockedClassFeatures,
+  monkUnarmedDamage,
   parseSkillKey,
   sizeModifier,
   totalCharacterLevel,
@@ -114,6 +119,42 @@ export default function CharacterSheetDocument({ character }: { character: Chara
     .map((e) => findWeapon(e.itemId))
     .filter((w): w is NonNullable<typeof w> => Boolean(w))
     .map((w) => computeWeaponAttack(w, bab, finalScores, size));
+
+  const knownFeatIds = getAllKnownFeatIds(character.feats, character.classLevels, classes, classFeatureChoices);
+  const rangedWeapons = equippedWeapons.filter((w) => w.type === "distancia" && w.rangeIncrement);
+  const meleeWeapons = equippedWeapons.filter((w) => w.type === "cuerpo_a_cuerpo");
+  const monkLevel = character.classLevels.find((cl) => cl.classId === "monk")?.level ?? 0;
+  const unarmedAttackBonus = bab + abilityModifier(finalScores.str) + sizeModifier(size);
+  const twoWeaponOption =
+    meleeWeapons.length >= 2
+      ? computeTwoWeaponFightingOption(
+          meleeWeapons[0].attackBonus,
+          meleeWeapons[1].attackBonus,
+          bab,
+          false,
+          knownFeatIds.has("two-weapon-fighting"),
+          knownFeatIds.has("improved-two-weapon-fighting"),
+          knownFeatIds.has("greater-two-weapon-fighting"),
+        )
+      : null;
+  const twoWeaponOptionLight =
+    meleeWeapons.length >= 2
+      ? computeTwoWeaponFightingOption(
+          meleeWeapons[0].attackBonus,
+          meleeWeapons[1].attackBonus,
+          bab,
+          true,
+          knownFeatIds.has("two-weapon-fighting"),
+          knownFeatIds.has("improved-two-weapon-fighting"),
+          knownFeatIds.has("greater-two-weapon-fighting"),
+        )
+      : null;
+  const fmtSeq = (seq: number[]) => seq.map((b) => (b >= 0 ? `+${b}` : b)).join("/");
+  const showAttackOptions =
+    (knownFeatIds.has("rapid-shot") && rangedWeapons.length > 0) ||
+    (knownFeatIds.has("manyshot") && rangedWeapons.length > 0) ||
+    monkLevel > 0 ||
+    Boolean(twoWeaponOption);
 
   const abilities: [string, number][] = [
     ["Fuerza", finalScores.str],
@@ -228,6 +269,49 @@ export default function CharacterSheetDocument({ character }: { character: Chara
             </>
           )}
         </Panel>
+
+        {showAttackOptions && (
+          <Panel title="Opciones de ataque">
+            <Text style={{ fontSize: 7, marginBottom: 4 }}>
+              Rutinas de ataque alternativas por dotes o rasgos de clase, en vez del ataque completo normal.
+            </Text>
+            {knownFeatIds.has("rapid-shot") &&
+              rangedWeapons.map((w) => (
+                <Text key={`rapid-${w.itemId}`}>
+                  Disparo Rápido ({w.name}): {fmtSeq(computeRapidShotSequence(w.attackBonus, bab))}
+                </Text>
+              ))}
+            {knownFeatIds.has("manyshot") &&
+              rangedWeapons.map((w) => (
+                <Text key={`manyshot-${w.itemId}`}>
+                  Multidisparo ({w.name}): ataque único a {w.attackBonus >= 0 ? "+" : ""}
+                  {w.attackBonus} con 2 flechas{bab >= 11 ? " (3 si el objetivo está a 9 m o menos)" : ""}, objetivo a
+                  9 m o menos.
+                </Text>
+              ))}
+            {monkLevel > 0 && (
+              <Text>
+                Ráfaga de Golpes (desarmado, {monkUnarmedDamage(monkLevel)}):{" "}
+                {fmtSeq(computeFlurryOfBlowsSequence(unarmedAttackBonus, monkLevel, bab))}
+              </Text>
+            )}
+            {twoWeaponOption && twoWeaponOptionLight && (
+              <>
+                <Text>
+                  Combate con dos armas ({meleeWeapons[0].name} / {meleeWeapons[1].name}):
+                </Text>
+                <Text style={{ fontSize: 7 }}>
+                  Mano secundaria no ligera: principal {fmtSeq(twoWeaponOption.primary)} · secundaria{" "}
+                  {fmtSeq(twoWeaponOption.offHand)}
+                </Text>
+                <Text style={{ fontSize: 7 }}>
+                  Mano secundaria ligera: principal {fmtSeq(twoWeaponOptionLight.primary)} · secundaria{" "}
+                  {fmtSeq(twoWeaponOptionLight.offHand)}
+                </Text>
+              </>
+            )}
+          </Panel>
+        )}
 
         <Text style={styles.sectionTitle}>Habilidades</Text>
         {Object.entries(character.skillRanks)

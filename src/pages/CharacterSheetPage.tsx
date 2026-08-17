@@ -21,13 +21,19 @@ import {
   computeBabTotal,
   computeCarryingCapacity,
   computeCharacterArmorClass,
+  computeFlurryOfBlowsSequence,
   computeMaxHp,
+  computeRapidShotSequence,
   computeSaveTotals,
+  computeRangeIncrementAttackBonuses,
+  computeTwoWeaponFightingOption,
   computeWeaponAttack,
   findChoiceValue,
+  getAllKnownFeatIds,
   getBonusFeatsFromClasses,
   getUnlockedClassFeatureChoices,
   getUnlockedClassFeatures,
+  monkUnarmedDamage,
   parseSkillKey,
   sizeModifier,
   totalCharacterLevel,
@@ -88,6 +94,7 @@ export default function CharacterSheetPage() {
     character.activeVariantRules.includes("vr-hp-average"),
     character.activeVariantRules.includes("vr-max-hp-first-level"),
     character.activeVariantRules.includes("vr-cm-stalwart-sorcerer"),
+    character.bonusHp,
   );
   const carrying = computeCarryingCapacity(finalScores.str, size);
   const classSummary = character.classLevels
@@ -119,6 +126,42 @@ export default function CharacterSheetPage() {
 
   const grapple = bab + abilityModifier(finalScores.str) + sizeModifier(size) * -1;
   const dexMod = abilityModifier(finalScores.dex);
+
+  // Opciones de ataque activables por dotes/estilos de combate.
+  const knownFeatIds = getAllKnownFeatIds(character.feats, character.classLevels, classes, classFeatureChoices);
+  const rangedWeapons = equippedWeapons.filter((w) => w.type === "distancia" && w.rangeIncrement);
+  const meleeWeapons = equippedWeapons.filter((w) => w.type === "cuerpo_a_cuerpo");
+  const monkLevel = character.classLevels.find((cl) => cl.classId === "monk")?.level ?? 0;
+  const unarmedAttackBonus = bab + abilityModifier(finalScores.str) + sizeModifier(size);
+  const twoWeaponOption =
+    meleeWeapons.length >= 2
+      ? computeTwoWeaponFightingOption(
+          meleeWeapons[0].attackBonus,
+          meleeWeapons[1].attackBonus,
+          bab,
+          false,
+          knownFeatIds.has("two-weapon-fighting"),
+          knownFeatIds.has("improved-two-weapon-fighting"),
+          knownFeatIds.has("greater-two-weapon-fighting"),
+        )
+      : null;
+  const twoWeaponOptionLight =
+    meleeWeapons.length >= 2
+      ? computeTwoWeaponFightingOption(
+          meleeWeapons[0].attackBonus,
+          meleeWeapons[1].attackBonus,
+          bab,
+          true,
+          knownFeatIds.has("two-weapon-fighting"),
+          knownFeatIds.has("improved-two-weapon-fighting"),
+          knownFeatIds.has("greater-two-weapon-fighting"),
+        )
+      : null;
+  const fmtSeq = (seq: number[]) => seq.map((b) => (b >= 0 ? `+${b}` : b)).join("/");
+  const showAttackOptions =
+    (rangedWeapons.length > 0 && (knownFeatIds.has("rapid-shot") || knownFeatIds.has("manyshot"))) ||
+    monkLevel > 0 ||
+    Boolean(twoWeaponOption);
 
   const abilities: [string, keyof typeof finalScores][] = [
     ["Fuerza", "str"],
@@ -284,7 +327,7 @@ export default function CharacterSheetPage() {
               <thead>
                 <tr>
                   <th>Arma</th>
-                  <th>Bonif. ataque</th>
+                  <th>Ataque completo</th>
                   <th>Daño</th>
                   <th>Crítico</th>
                   <th>Alcance</th>
@@ -294,7 +337,7 @@ export default function CharacterSheetPage() {
                 {equippedWeapons.map((w) => (
                   <tr key={w.itemId}>
                     <td>{w.name}</td>
-                    <td>{w.attackBonus >= 0 ? `+${w.attackBonus}` : w.attackBonus}</td>
+                    <td>{w.fullAttackSequence.map((b) => (b >= 0 ? `+${b}` : b)).join("/")}</td>
                     <td>{w.damage}</td>
                     <td>{w.critical}</td>
                     <td>{w.rangeIncrement ? `${w.rangeIncrement} pies` : "—"}</td>
@@ -303,8 +346,64 @@ export default function CharacterSheetPage() {
               </tbody>
             </table>
           )}
+          {equippedWeapons
+            .filter((w) => w.rangeIncrement)
+            .map((w) => (
+              <p key={w.itemId} className="muted" style={{ marginTop: 8, marginBottom: 0 }}>
+                <strong>{w.name} por distancia</strong> (-2 acumulativo por incremento de {w.rangeIncrement} pies,
+                máx. 10):{" "}
+                {computeRangeIncrementAttackBonuses(w.attackBonus, w.rangeIncrement!)
+                  .map((r) => `${r.distanceFeet}p ${r.attackBonus >= 0 ? "+" : ""}${r.attackBonus}`)
+                  .join(" · ")}
+              </p>
+            ))}
         </Panel>
 
+        {showAttackOptions && (
+          <Panel title="Opciones de ataque">
+            <p className="muted" style={{ marginTop: 0 }}>
+              Rutinas de ataque alternativas disponibles por dotes o rasgos de clase, en vez del ataque completo
+              normal de arriba.
+            </p>
+            {knownFeatIds.has("rapid-shot") &&
+              rangedWeapons.map((w) => (
+                <p key={`rapid-${w.itemId}`}>
+                  <strong>Disparo Rápido ({w.name}):</strong> {fmtSeq(computeRapidShotSequence(w.attackBonus, bab))}
+                </p>
+              ))}
+            {knownFeatIds.has("manyshot") &&
+              rangedWeapons.map((w) => (
+                <p key={`manyshot-${w.itemId}`}>
+                  <strong>Multidisparo ({w.name}):</strong> ataque único a {w.attackBonus >= 0 ? "+" : ""}
+                  {w.attackBonus} con 2 flechas{bab >= 11 ? " (3 si el objetivo está a 9 m o menos)" : ""}, objetivo a
+                  9 m o menos.
+                </p>
+              ))}
+            {monkLevel > 0 && (
+              <p>
+                <strong>Ráfaga de Golpes (desarmado, {monkUnarmedDamage(monkLevel)}):</strong>{" "}
+                {fmtSeq(computeFlurryOfBlowsSequence(unarmedAttackBonus, monkLevel, bab))}
+              </p>
+            )}
+            {twoWeaponOption && twoWeaponOptionLight && (
+              <div>
+                <p style={{ marginBottom: 4 }}>
+                  <strong>
+                    Combate con dos armas ({meleeWeapons[0].name} / {meleeWeapons[1].name}):
+                  </strong>
+                </p>
+                <p className="muted" style={{ margin: 0 }}>
+                  Mano secundaria no ligera: mano principal {fmtSeq(twoWeaponOption.primary)} · mano secundaria{" "}
+                  {fmtSeq(twoWeaponOption.offHand)}
+                </p>
+                <p className="muted" style={{ margin: 0 }}>
+                  Mano secundaria ligera: mano principal {fmtSeq(twoWeaponOptionLight.primary)} · mano secundaria{" "}
+                  {fmtSeq(twoWeaponOptionLight.offHand)}
+                </p>
+              </div>
+            )}
+          </Panel>
+        )}
         <Panel title="Habilidades">
           <table className="data-table sheet-skills">
             <thead>
@@ -402,11 +501,15 @@ export default function CharacterSheetPage() {
 
         <Panel title="Dotes">
           <ul>
-            {character.feats.map((f) => {
+            {character.feats.map((f, i) => {
               const feat = findFeat(f.featId);
               return (
-                <li key={f.featId}>
-                  <strong>{feat?.name ?? f.featId}:</strong> {feat?.benefit ?? ""}
+                <li key={`${f.featId}-${i}`}>
+                  <strong>
+                    {feat?.name ?? f.featId}
+                    {f.selection ? ` (${f.selection})` : ""}:
+                  </strong>{" "}
+                  {feat?.benefit ?? ""}
                 </li>
               );
             })}

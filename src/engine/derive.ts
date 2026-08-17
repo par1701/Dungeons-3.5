@@ -5,11 +5,13 @@ import type {
   Character,
   CharacterClassFeatureChoice,
   CharacterClassLevel,
+  CharacterFeatChoice,
   ClassDef,
   ClassFeatureChoice,
   Race,
   SaveProgression,
   Weapon,
+  WeaponType,
 } from "../types";
 
 const SKILL_KEY_SEPARATOR = "::";
@@ -141,6 +143,7 @@ export function computeTotalSkillPoints(
   classes: ClassDef[],
   intScore: number,
   isHuman: boolean,
+  bonusSkillPoints = 0,
 ): number {
   const intMod = abilityModifier(intScore);
   let firstClassHandled = false;
@@ -159,7 +162,7 @@ export function computeTotalSkillPoints(
       }
     }
   });
-  return total;
+  return total + bonusSkillPoints;
 }
 
 export function computeMaxHp(
@@ -170,6 +173,7 @@ export function computeMaxHp(
   useAverage: boolean,
   maxFirstLevel: boolean,
   stalwartSorcerer = false,
+  manualBonusHp = 0,
 ): number {
   const conMod = abilityModifier(conScore);
   let hp = 0;
@@ -194,7 +198,7 @@ export function computeMaxHp(
       levelIndex++;
     }
   });
-  return Math.max(1, hp);
+  return Math.max(1, hp + manualBonusHp);
 }
 
 // Bonificador de competencia unificado (regla 3.5: siempre +2 desde nivel 1).
@@ -536,15 +540,37 @@ export function getBonusFeatsFromClasses(
   return entries;
 }
 
+/**
+ * Ids de todas las dotes que el personaje posee, ya sean elegidas normalmente
+ * o concedidas gratis por sus clases (automáticas o de lista restringida).
+ * Debe usarse para comprobar prerrequisitos de otras dotes o de clases de
+ * prestigio, para que una dote de bonificación (p.ej. Disparo Rápido del
+ * estilo de combate del explorador) cuente igual que si se hubiera elegido
+ * como dote normal.
+ */
+export function getAllKnownFeatIds(
+  feats: CharacterFeatChoice[],
+  classLevels: CharacterClassLevel[],
+  classes: ClassDef[],
+  classFeatureChoices: CharacterClassFeatureChoice[],
+): Set<string> {
+  const ids = new Set(feats.map((f) => f.featId));
+  for (const bf of getBonusFeatsFromClasses(classLevels, classes, classFeatureChoices)) {
+    ids.add(bf.featId);
+  }
+  return ids;
+}
+
 const FIGHTER_BONUS_FEAT_LEVELS = [1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20];
 
 export function computeFeatSlots(
   classLevels: CharacterClassLevel[],
   isHuman: boolean,
   championOfTheWildRanger = false,
+  bonusFeatSlots = 0,
 ): number {
   const level = totalCharacterLevel(classLevels);
-  if (level <= 0) return 0;
+  if (level <= 0) return bonusFeatSlots;
   let slots = 1;
   for (let l = 3; l <= level; l += 3) slots++;
   if (isHuman) slots++;
@@ -554,7 +580,7 @@ export function computeFeatSlots(
     const rangerLevel = classLevels.find((cl) => cl.classId === "ranger")?.level ?? 0;
     slots += CHAMPION_OF_THE_WILD_FEAT_LEVELS.filter((l) => l <= rangerLevel).length;
   }
-  return slots;
+  return slots + bonusFeatSlots;
 }
 
 export function deriveCharacterSummary(
@@ -574,6 +600,7 @@ export function deriveCharacterSummary(
     character.activeVariantRules.includes("vr-hp-average"),
     character.activeVariantRules.includes("vr-max-hp-first-level"),
     character.activeVariantRules.includes("vr-cm-stalwart-sorcerer"),
+    character.bonusHp,
   );
   const carrying = computeCarryingCapacity(finalAbilityScores.str, race?.size ?? "Mediano");
   return { finalAbilityScores, bab, saves, level, hp, carrying };
@@ -640,10 +667,25 @@ export function computeCharacterArmorClass(
 export interface WeaponAttackSummary {
   itemId: string;
   name: string;
+  type: WeaponType;
   attackBonus: number;
   damage: string;
   critical: string;
   rangeIncrement?: number;
+  /** Bonificadores de ataque de cada ataque iterativo en un ataque completo (p.ej. [+12, +7, +2]). */
+  fullAttackSequence: number[];
+}
+
+/**
+ * Secuencia de ataques de un ataque completo según el bonificador base de
+ * ataque (regla SRD: un ataque adicional por cada +5 de BBA completo, cada
+ * uno con -5 acumulativo respecto al anterior). El número de ataques depende
+ * del BBA puro; los valores de cada ataque parten del bonificador de ataque
+ * ya modificado del arma (con característica, tamaño, etc.).
+ */
+export function computeFullAttackSequence(weaponAttackBonus: number, bab: number): number[] {
+  const count = bab > 0 ? Math.floor((bab - 1) / 5) + 1 : 1;
+  return Array.from({ length: count }, (_, i) => weaponAttackBonus - 5 * i);
 }
 
 export function computeWeaponAttack(
@@ -659,9 +701,115 @@ export function computeWeaponAttack(
   return {
     itemId: weapon.id,
     name: weapon.name,
+    type: weapon.type,
     attackBonus,
     damage,
     critical: weapon.critical,
     rangeIncrement: weapon.rangeIncrement,
+    fullAttackSequence: computeFullAttackSequence(attackBonus, bab),
   };
+}
+
+/**
+ * Bonificador de ataque a distancia según el incremento de alcance (regla
+ * SRD: -2 acumulativo por cada incremento completo más allá del primero,
+ * hasta un máximo de 10 incrementos).
+ */
+export function computeRangeIncrementAttackBonuses(
+  baseAttackBonus: number,
+  rangeIncrement: number,
+): { increment: number; distanceFeet: number; attackBonus: number }[] {
+  const results: { increment: number; distanceFeet: number; attackBonus: number }[] = [];
+  for (let increment = 1; increment <= 10; increment++) {
+    results.push({
+      increment,
+      distanceFeet: rangeIncrement * increment,
+      attackBonus: baseAttackBonus - 2 * (increment - 1),
+    });
+  }
+  return results;
+}
+
+// ---------------------------------------------------------------------------
+// Opciones de ataque activables por dotes o estilos de combate: rutinas de
+// ataque alternativas de mecánica fija (no las que reparten un bonificador
+// variable entre ataque y otra cosa, como Ataque Poderoso o Amaño en
+// Combate, que dependen de cuánto decida ceder el jugador cada turno).
+// ---------------------------------------------------------------------------
+
+/**
+ * Disparo Rápido (Rapid Shot): un ataque a distancia adicional a la mayor
+ * bonificación, y -2 a todos los ataques a distancia de ese turno.
+ */
+export function computeRapidShotSequence(weaponAttackBonus: number, bab: number): number[] {
+  const iterative = computeFullAttackSequence(weaponAttackBonus, bab).map((b) => b - 2);
+  return [weaponAttackBonus - 2, ...iterative];
+}
+
+/** Daño desarmado del monje por nivel de monje (tamaño Mediano). */
+const MONK_UNARMED_DAMAGE: Record<number, string> = {
+  1: "1d6",
+  4: "1d8",
+  8: "1d10",
+  12: "2d6",
+  16: "2d8",
+  20: "2d10",
+};
+
+export function monkUnarmedDamage(monkLevel: number): string {
+  if (monkLevel <= 0) return "1d3";
+  const thresholds = [20, 16, 12, 8, 4, 1];
+  const level = thresholds.find((t) => monkLevel >= t) ?? 1;
+  return MONK_UNARMED_DAMAGE[level];
+}
+
+/**
+ * Ráfaga de Golpes (Flurry of Blows) del monje: un ataque desarmado
+ * adicional a la mayor bonificación; penalizador de -2 a todos los ataques
+ * de ese turno en niveles 1-4, -1 en niveles 5-8, sin penalizador desde el 9.
+ */
+export function computeFlurryOfBlowsSequence(unarmedAttackBonus: number, monkLevel: number, bab: number): number[] {
+  const penalty = monkLevel >= 9 ? 0 : monkLevel >= 5 ? 1 : 2;
+  const iterative = computeFullAttackSequence(unarmedAttackBonus, bab).map((b) => b - penalty);
+  return [unarmedAttackBonus - penalty, ...iterative];
+}
+
+export interface TwoWeaponFightingOption {
+  primary: number[];
+  offHand: number[];
+}
+
+/**
+ * Combate con dos armas: penalizadores según la Tabla de combate con dos
+ * armas del SRD (mano principal/mano secundaria), y ataques adicionales de
+ * mano secundaria por Combate con Dos Armas Mejorado/Superior.
+ */
+export function computeTwoWeaponFightingOption(
+  primaryBaseBonus: number,
+  offHandBaseBonus: number,
+  bab: number,
+  offHandLight: boolean,
+  hasTwoWeaponFightingFeat: boolean,
+  hasImproved: boolean,
+  hasGreater: boolean,
+): TwoWeaponFightingOption {
+  let primaryPenalty: number;
+  let offHandPenalty: number;
+  if (hasTwoWeaponFightingFeat && offHandLight) {
+    primaryPenalty = 2;
+    offHandPenalty = 2;
+  } else if (hasTwoWeaponFightingFeat) {
+    primaryPenalty = 4;
+    offHandPenalty = 4;
+  } else if (offHandLight) {
+    primaryPenalty = 4;
+    offHandPenalty = 8;
+  } else {
+    primaryPenalty = 6;
+    offHandPenalty = 10;
+  }
+  const primary = computeFullAttackSequence(primaryBaseBonus - primaryPenalty, bab);
+  const offHandCount = 1 + (hasImproved ? 1 : 0) + (hasGreater ? 1 : 0);
+  const offHand = Array.from({ length: offHandCount }, (_, i) => offHandBaseBonus - offHandPenalty - 5 * i);
+  return { primary, offHand };
 }

@@ -1,7 +1,13 @@
 import { findRace, getEnabledClasses } from "../../data";
 import type { StepProps } from "./types";
 import type { ClassDef, FeatPrereqContext } from "../../types";
-import { applyRacialAdjustments, computeBabTotal, flattenSkillRanksForPrereqs, totalCharacterLevel } from "../../engine/derive";
+import {
+  applyRacialAdjustments,
+  computeBabTotal,
+  flattenSkillRanksForPrereqs,
+  getAllKnownFeatIds,
+  totalCharacterLevel,
+} from "../../engine/derive";
 
 export default function StepClass({ character, onChange }: StepProps) {
   const allClasses = getEnabledClasses(character.activeSourceBooks);
@@ -33,7 +39,7 @@ export default function StepClass({ character, onChange }: StepProps) {
     babTotal: computeBabTotal(character.classLevels, allClasses),
     classLevels: Object.fromEntries(character.classLevels.map((cl) => [cl.classId, cl.level])),
     totalCharacterLevel: totalLevel,
-    featIds: new Set(character.feats.map((f) => f.featId)),
+    featIds: getAllKnownFeatIds(character.feats, character.classLevels, allClasses, character.classFeatureChoices ?? []),
     skillRanks: flattenSkillRanksForPrereqs(character.skillRanks),
     casterLevel: totalLevel,
   };

@@ -7,6 +7,7 @@ import {
   computeBabTotal,
   computeFeatSlots,
   flattenSkillRanksForPrereqs,
+  getAllKnownFeatIds,
   isHumanRace,
   totalCharacterLevel,
 } from "../../engine/derive";
@@ -14,6 +15,7 @@ import { findRace } from "../../data";
 
 export default function StepFeats({ character, onChange }: StepProps) {
   const [search, setSearch] = useState("");
+  const [drafts, setDrafts] = useState<Record<string, string>>({});
   const feats = getEnabledFeats(character.activeSourceBooks);
   const classes = getEnabledClasses(character.activeSourceBooks);
   const race = findRace(character.raceId);
@@ -23,15 +25,14 @@ export default function StepFeats({ character, onChange }: StepProps) {
     character.classLevels,
     isHumanRace(race),
     character.activeVariantRules.includes("vr-cc-champion-of-the-wild"),
+    character.bonusFeatSlots,
   );
-  const takenIds = new Set(character.feats.map((f) => f.featId));
-
   const ctx: FeatPrereqContext = {
     abilityScores: finalScores,
     babTotal: computeBabTotal(character.classLevels, classes),
     classLevels: Object.fromEntries(character.classLevels.map((cl) => [cl.classId, cl.level])),
     totalCharacterLevel: totalCharacterLevel(character.classLevels),
-    featIds: takenIds,
+    featIds: getAllKnownFeatIds(character.feats, character.classLevels, classes, character.classFeatureChoices ?? []),
     skillRanks: flattenSkillRanksForPrereqs(character.skillRanks),
     casterLevel: totalCharacterLevel(character.classLevels),
   };
@@ -44,6 +45,28 @@ export default function StepFeats({ character, onChange }: StepProps) {
         feats: taken
           ? c.feats.filter((f) => f.featId !== featId)
           : [...c.feats, { featId, levelTaken: totalCharacterLevel(c.classLevels) }],
+      };
+    });
+  }
+
+  function addFeatInstance(featId: string, selection: string) {
+    onChange((c) => ({
+      ...c,
+      feats: [...c.feats, { featId, selection: selection || undefined, levelTaken: totalCharacterLevel(c.classLevels) }],
+    }));
+    setDrafts((d) => ({ ...d, [featId]: "" }));
+  }
+
+  function removeFeatInstance(featId: string, instanceIndex: number) {
+    onChange((c) => {
+      let seen = -1;
+      return {
+        ...c,
+        feats: c.feats.filter((f) => {
+          if (f.featId !== featId) return true;
+          seen++;
+          return seen !== instanceIndex;
+        }),
       };
     });
   }
@@ -65,13 +88,17 @@ export default function StepFeats({ character, onChange }: StepProps) {
       />
       <div className="grid grid-2">
         {filtered.map((feat) => {
-          const taken = takenIds.has(feat.id);
+          const instances = character.feats
+            .map((f, i) => ({ ...f, index: i }))
+            .filter((f) => f.featId === feat.id);
+          const taken = instances.length > 0;
           const unmet = feat.prerequisites.filter((p) => p.check && !p.check(ctx));
           return (
             <div
               key={feat.id}
               className={`card selectable-row ${taken ? "selected" : ""}`}
-              onClick={() => toggleFeat(feat.id)}
+              onClick={feat.stackable ? undefined : () => toggleFeat(feat.id)}
+              style={feat.stackable ? {} : { cursor: "pointer" }}
             >
               <h3>{feat.name}</h3>
               <p className="muted">{feat.benefit}</p>
@@ -83,6 +110,37 @@ export default function StepFeats({ character, onChange }: StepProps) {
               {unmet.length > 0 && (
                 <div style={{ color: "var(--danger)", fontSize: "0.85rem" }}>
                   ⚠ No cumple: {unmet.map((p) => p.description).join("; ")}
+                </div>
+              )}
+              {feat.stackable && (
+                <div onClick={(e) => e.stopPropagation()} style={{ marginTop: 8 }}>
+                  {instances.length > 0 && (
+                    <ul style={{ margin: "0 0 8px", paddingLeft: 18 }}>
+                      {instances.map((inst, order) => (
+                        <li key={inst.index}>
+                          {inst.selection || <span className="muted">(sin especificar)</span>}{" "}
+                          <button
+                            className="btn btn-danger"
+                            style={{ padding: "0 6px", fontSize: "0.75rem" }}
+                            onClick={() => removeFeatInstance(feat.id, order)}
+                          >
+                            Quitar
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <div style={{ display: "flex", gap: 6 }}>
+                    <input
+                      style={{ flex: 1, padding: 6, border: "1px solid var(--border)", borderRadius: 6 }}
+                      placeholder="Arma, habilidad, escuela... (opcional)"
+                      value={drafts[feat.id] ?? ""}
+                      onChange={(e) => setDrafts((d) => ({ ...d, [feat.id]: e.target.value }))}
+                    />
+                    <button className="btn" onClick={() => addFeatInstance(feat.id, (drafts[feat.id] ?? "").trim())}>
+                      + Añadir
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

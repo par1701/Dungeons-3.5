@@ -25,6 +25,7 @@ import type { Feat, FeatPrereqContext } from "../../types";
 //   con precisión.
 
 const hasFeat = (id: string) => (ctx: FeatPrereqContext) => ctx.featIds.has(id);
+const hasClassLevel = (classId: string, min: number) => (ctx: FeatPrereqContext) => (ctx.classLevels[classId] ?? 0) >= min;
 
 export const CS_FEATS: Feat[] = [
   // ---------------------------------------------------------------------
@@ -194,6 +195,41 @@ export const CS_FEATS: Feat[] = [
     benefit:
       "Durante el primer asalto de sorpresa de un combate (o cualquier ataque contra un enemigo desprevenido), el daño adicional por ataque furtivo del personaje, si lo posee, aumenta en 1d6 puntos.",
     prerequisites: [{ description: "Capacidad de infligir daño de ataque furtivo" }],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+
+  // ---------------------------------------------------------------------
+  // SINERGIA MULTICLASE (explorador / batidor / pícaro)
+  // ---------------------------------------------------------------------
+  {
+    id: "cs-swift-hunter",
+    name: "Cazador Veloz (Swift Hunter)",
+    source: "complete-scoundrel",
+    types: ["general"],
+    description:
+      "El personaje combina su instinto de rastreador con la movilidad táctica del batidor, fundiendo ambos entrenamientos en un único estilo de caza.",
+    benefit:
+      "A efectos de determinar el daño adicional y el bonificador a la Clase de Armadura del Golpe de Escaramuza, así como el número de enemigos predilectos y el bonificador total contra ellos, los niveles de explorador y de batidor del personaje se suman entre sí. Además, el daño adicional del Golpe de Escaramuza se aplica contra cualquier enemigo predilecto del personaje, incluso si esa criatura sería normalmente inmune al daño adicional por golpe crítico o por Golpe de Escaramuza (muertos vivientes, constructos, elementales, etc.).",
+    prerequisites: [
+      { description: "Enemigo predilecto (rasgo de clase de explorador)", check: hasClassLevel("ranger", 1) },
+      { description: "Golpe de Escaramuza +1d6/+1 CA (rasgo de clase de batidor)", check: hasClassLevel("cad-scout", 1) },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cs-swift-ambusher",
+    name: "Emboscador Veloz (Swift Ambusher)",
+    source: "complete-scoundrel",
+    types: ["general"],
+    description: "El personaje combina el entrenamiento del batidor con el sigilo del pícaro para abrir nuevas formas de tender emboscadas.",
+    benefit:
+      "A efectos de determinar el daño adicional y el bonificador a la Clase de Armadura del Golpe de Escaramuza, los niveles de pícaro y de batidor del personaje se suman entre sí. Además, el personaje puede cumplir los requisitos de dotes que exijan un bonificador de ataque furtivo tratando su daño adicional por ataque furtivo como si incluyera también su daño adicional por Golpe de Escaramuza.",
+    prerequisites: [
+      { description: "Golpe de Escaramuza +1d6/+1 CA (rasgo de clase de batidor)", check: hasClassLevel("cad-scout", 1) },
+      { description: "Capacidad de infligir daño de ataque furtivo +1d6" },
+    ],
     fighterBonusFeat: false,
     stackable: false,
   },

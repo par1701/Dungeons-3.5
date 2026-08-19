@@ -118,7 +118,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
     .filter((e) => e.equipped && e.itemKind === "weapon")
     .map((e) => findWeapon(e.itemId))
     .filter((w): w is NonNullable<typeof w> => Boolean(w))
-    .map((w) => computeWeaponAttack(w, bab, finalScores, size));
+    .map((w) => computeWeaponAttack(w, bab, finalScores, size, character.feats));
 
   const knownFeatIds = getAllKnownFeatIds(character.feats, character.classLevels, classes, classFeatureChoices);
   const rangedWeapons = equippedWeapons.filter((w) => w.type === "distancia" && w.rangeIncrement);
@@ -260,9 +260,13 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                 .filter((w) => w.rangeIncrement)
                 .map((w) => (
                   <Text key={w.itemId} style={{ fontSize: 7 }}>
-                    {w.name} por distancia (-2/incremento de {w.rangeIncrement} pies):{" "}
-                    {computeRangeIncrementAttackBonuses(w.attackBonus, w.rangeIncrement!)
-                      .map((r) => `${r.distanceFeet}p ${r.attackBonus >= 0 ? "+" : ""}${r.attackBonus}`)
+                    {w.name} por distancia (-2/incremento de {w.rangeIncrement} pies
+                    {knownFeatIds.has("point-blank-shot") ? "; +1 ataque/daño a 30 pies o menos" : ""}):{" "}
+                    {computeRangeIncrementAttackBonuses(w.attackBonus, w.rangeIncrement!, knownFeatIds.has("point-blank-shot"))
+                      .map(
+                        (r) =>
+                          `${r.distanceFeet}p ${r.attackBonus >= 0 ? "+" : ""}${r.attackBonus}${r.damageBonus > 0 ? ` (d+${r.damageBonus})` : ""}`,
+                      )
                       .join(" · ")}
                   </Text>
                 ))}

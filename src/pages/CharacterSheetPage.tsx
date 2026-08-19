@@ -122,7 +122,7 @@ export default function CharacterSheetPage() {
     .filter((e) => e.equipped && e.itemKind === "weapon")
     .map((e) => findWeapon(e.itemId))
     .filter((w): w is NonNullable<typeof w> => Boolean(w))
-    .map((w) => computeWeaponAttack(w, bab, finalScores, size));
+    .map((w) => computeWeaponAttack(w, bab, finalScores, size, character.feats));
 
   const grapple = bab + abilityModifier(finalScores.str) + sizeModifier(size) * -1;
   const dexMod = abilityModifier(finalScores.dex);
@@ -351,9 +351,13 @@ export default function CharacterSheetPage() {
             .map((w) => (
               <p key={w.itemId} className="muted" style={{ marginTop: 8, marginBottom: 0 }}>
                 <strong>{w.name} por distancia</strong> (-2 acumulativo por incremento de {w.rangeIncrement} pies,
-                máx. 10):{" "}
-                {computeRangeIncrementAttackBonuses(w.attackBonus, w.rangeIncrement!)
-                  .map((r) => `${r.distanceFeet}p ${r.attackBonus >= 0 ? "+" : ""}${r.attackBonus}`)
+                máx. 10{knownFeatIds.has("point-blank-shot") ? "; incluye +1 ataque/daño de Disparo a Bocajarro a 9 m (30 pies) o menos" : ""}
+                ):{" "}
+                {computeRangeIncrementAttackBonuses(w.attackBonus, w.rangeIncrement!, knownFeatIds.has("point-blank-shot"))
+                  .map(
+                    (r) =>
+                      `${r.distanceFeet}p ${r.attackBonus >= 0 ? "+" : ""}${r.attackBonus}${r.damageBonus > 0 ? ` (daño +${r.damageBonus})` : ""}`,
+                  )
                   .join(" · ")}
               </p>
             ))}

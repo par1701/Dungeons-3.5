@@ -144,6 +144,18 @@ export const SRD_FEATS: Feat[] = [
     stackable: false,
   },
   {
+    id: "diehard",
+    name: "Tenacidad",
+    source: "srd",
+    types: ["general"],
+    description: "El personaje se aferra a la vida incluso cuando su cuerpo debería haber sucumbido.",
+    benefit:
+      "Cuando sus puntos de golpe caen por debajo de 0 pero no ha muerto, se estabiliza automáticamente sin necesidad de superar una prueba de Constitución. Además, puede optar por actuar con normalidad (con un penalizador de -1 a las tiradas de ataque, pruebas de habilidad y de característica) en vez de quedar inconsciente, mientras sus puntos de golpe negativos no lleguen a -10.",
+    prerequisites: [{ description: "Resistencia", check: hasFeat("endurance") }],
+    fighterBonusFeat: true,
+    stackable: false,
+  },
+  {
     id: "eschew-materials",
     name: "Abstención de Materiales",
     source: "srd",
@@ -693,6 +705,22 @@ export const SRD_FEATS: Feat[] = [
       "Una vez por asalto, si tiene al menos una mano libre, puede desviar un ataque a distancia con arma que le alcanzaría, anulando el impacto.",
     prerequisites: [
       { description: "Destreza 13", check: (ctx) => ctx.abilityScores.dex >= 13 },
+      { description: "Impacto sin Arma Mejorado", check: hasFeat("improved-unarmed-strike") },
+    ],
+    fighterBonusFeat: true,
+    stackable: false,
+  },
+  {
+    id: "snatch-arrows",
+    name: "Atrapar Flechas",
+    source: "srd",
+    types: ["combate"],
+    description: "En vez de limitarse a desviar los proyectiles, el personaje los atrapa al vuelo.",
+    benefit:
+      "Cuando desvía con éxito un ataque a distancia con arma gracias a Desviar Flechas, puede atraparlo en vez de simplemente anular su impacto. Si el proyectil es un arma arrojadiza, puede lanzarlo de vuelta contra cualquier objetivo dentro de su alcance como parte de la misma reacción, usando su propio bonificador de ataque.",
+    prerequisites: [
+      { description: "Destreza 15", check: (ctx) => ctx.abilityScores.dex >= 15 },
+      { description: "Desviar Flechas", check: hasFeat("deflect-arrows") },
       { description: "Impacto sin Arma Mejorado", check: hasFeat("improved-unarmed-strike") },
     ],
     fighterBonusFeat: true,

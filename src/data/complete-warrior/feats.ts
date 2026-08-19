@@ -199,7 +199,7 @@ export const CW_FEATS: Feat[] = [
   // ---------------------------------------------------------------------
   {
     id: "cw-adaptable-flanker",
-    name: "Flanqueador Adaptable",
+    name: "Flanqueador Adaptable (Complete Warrior)",
     source: "complete-warrior",
     types: ["combate"],
     description: "Un luchador que ajusta su posición en pleno combate para aprovechar cualquier flanqueo posible.",
@@ -421,21 +421,6 @@ export const CW_FEATS: Feat[] = [
     stackable: false,
   },
   {
-    id: "cw-robilars-gambit",
-    name: "Estratagema de Robilar",
-    source: "complete-warrior",
-    types: ["combate"],
-    description: "Un duelista temerario que se deja golpear a propósito para asegurar su propia venganza.",
-    benefit:
-      "Puede renunciar a impedir que un enemigo complete una acción que normalmente provocaría un ataque de oportunidad de su parte; a cambio, siempre puede realizar dicho ataque de oportunidad contra él, incluso si normalmente no podría hacerlo, aunque el enemigo obtiene su propia acción u ataque contra usted con total normalidad.",
-    prerequisites: [
-      { description: "Reflejos de Combate", check: hasFeat("combat-reflexes") },
-      { description: "Bonificador base de ataque +6", check: (ctx) => ctx.babTotal >= 6 },
-    ],
-    fighterBonusFeat: true,
-    stackable: false,
-  },
-  {
     id: "cw-roundabout-kick",
     name: "Patada Circular",
     source: "complete-warrior",
@@ -568,7 +553,7 @@ export const CW_FEATS: Feat[] = [
   },
   {
     id: "cw-rapid-blitz",
-    name: "Embestida Rápida",
+    name: "Embestida Rápida (Complete Warrior)",
     source: "complete-warrior",
     types: ["combate"],
     description: "Un combatiente capaz de recorrer el campo de batalla sin perder ímpetu ofensivo.",
@@ -695,6 +680,81 @@ export const CW_FEATS: Feat[] = [
     prerequisites: [
       { description: "Combatir desde Montura", check: hasFeat("mounted-combat") },
       { description: "1 rango en Montar", check: (ctx) => (ctx.skillRanks["ride"] ?? 0) >= 1 },
+    ],
+    fighterBonusFeat: true,
+    stackable: false,
+  },
+
+  // ---------------------------------------------------------------------
+  // COMBATE — estilos de doble arma (Soltura combinada)
+  // ---------------------------------------------------------------------
+  {
+    id: "cw-anvil-of-thunder",
+    name: "Yunque de Trueno",
+    source: "complete-warrior",
+    types: ["combate"],
+    description: "Un estilo que combina el filo de un hacha con la contundencia de un martillo para aturdir a golpes.",
+    benefit:
+      "Si impacta al mismo objetivo con su hacha y con su martillo en el mismo asalto, ese objetivo debe superar una salvación de Fortaleza o quedar aturdido durante 1 asalto.",
+    prerequisites: [
+      { description: "Soltura con un arma tipo hacha (hacha de batalla, hacha de mano o hacha arrojadiza enana)" },
+      { description: "Soltura con un arma tipo martillo (martillo de guerra o martillo ligero)" },
+      { description: "Ataque Poderoso", check: hasFeat("power-attack") },
+      { description: "Desarmar Mejorado", check: hasFeat("improved-sunder") },
+      { description: "Combate con Dos Armas", check: hasFeat("two-weapon-fighting") },
+      { description: "Fuerza 13", check: (ctx) => ctx.abilityScores.str >= 13 },
+    ],
+    fighterBonusFeat: true,
+    stackable: false,
+  },
+  {
+    id: "cw-bear-fang",
+    name: "Colmillo de Oso",
+    source: "complete-warrior",
+    types: ["combate"],
+    description: "Un estilo brutal que combina el tajo de un hacha con la daga oculta para inmovilizar al enemigo.",
+    benefit:
+      "Si impacta al mismo objetivo con su hacha y con su daga en el mismo asalto, puede intentar de inmediato una prueba de presa gratuita contra ese objetivo sin provocar ataque de oportunidad.",
+    prerequisites: [
+      { description: "Soltura con un arma tipo hacha (hacha de batalla, hacha de mano o hacha arrojadiza enana)" },
+      { description: "Soltura con Daga", check: hasFeat("weapon-focus") },
+      { description: "Ataque Poderoso", check: hasFeat("power-attack") },
+      { description: "Combate con Dos Armas", check: hasFeat("two-weapon-fighting") },
+      { description: "Fuerza 15", check: (ctx) => ctx.abilityScores.str >= 15 },
+    ],
+    fighterBonusFeat: true,
+    stackable: false,
+  },
+  {
+    id: "cw-high-sword-low-axe",
+    name: "Espada Alta, Hacha Baja",
+    source: "complete-warrior",
+    types: ["combate"],
+    description: "Un estilo que combina la precisión de la espada con el peso del hacha para desequilibrar al rival.",
+    benefit:
+      "Si impacta al mismo objetivo con su espada y con su hacha en el mismo asalto, obtiene un intento de derribo gratuito contra ese objetivo.",
+    prerequisites: [
+      { description: "Soltura con un arma tipo espada (bastarda, larga, cimitarra o corta)" },
+      { description: "Soltura con un arma tipo hacha (hacha de batalla, hacha de mano o hacha arrojadiza enana)" },
+      { description: "Derribo Mejorado", check: hasFeat("improved-trip") },
+      { description: "Combate con Dos Armas", check: hasFeat("two-weapon-fighting") },
+    ],
+    fighterBonusFeat: true,
+    stackable: false,
+  },
+  {
+    id: "cw-lightning-mace",
+    name: "Maza Relampagueante",
+    source: "complete-warrior",
+    types: ["combate"],
+    description: "Un estilo vertiginoso con dos mazas ligeras que aprovecha cada amenaza de crítico para golpear de nuevo.",
+    benefit:
+      "Mientras empuñe dos mazas ligeras, una en cada mano, cada vez que amenace un golpe crítico gana un ataque adicional ese mismo asalto con su bonificador de ataque más alto.",
+    prerequisites: [
+      { description: "Soltura con Maza Ligera", check: hasFeat("weapon-focus") },
+      { description: "Reflejos de Combate", check: hasFeat("combat-reflexes") },
+      { description: "Combate con Dos Armas", check: hasFeat("two-weapon-fighting") },
+      { description: "Debe estar empuñando dos mazas ligeras" },
     ],
     fighterBonusFeat: true,
     stackable: false,

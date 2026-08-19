@@ -583,6 +583,110 @@ export const CPS_FEATS: Feat[] = [
     fighterBonusFeat: false,
     stackable: false,
   },
+
+  // ---------------------------------------------------------------------
+  // OTRAS DOTES PSIÓNICAS
+  // ---------------------------------------------------------------------
+  {
+    id: "cps-psicrystal-containment",
+    name: "Contención de Psicristal",
+    source: "complete-psionic",
+    types: ["especial"],
+    description: "El manifestador aprende a delegar su enfoque psiónico en su psicristal en momentos de necesidad.",
+    benefit:
+      "Como acción estándar, puede gastar el enfoque psiónico de su psicristal en lugar del propio, siempre que el psicristal se encuentre a 1,5 metros (5 pies) o menos de él.",
+    prerequisites: [
+      { description: "Afinidad con Psicristal", check: hasFeat("cps-psicrystal-affinity") },
+      { description: "Capacidad de manifestar poderes psiónicos de nivel 3", check: (ctx) => ctx.casterLevel >= 3 },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cps-deep-vision",
+    name: "Visión Profunda",
+    source: "complete-psionic",
+    types: ["especial"],
+    description: "La disciplina mental del personaje agudiza su visión en la oscuridad.",
+    benefit: "Mientras esté enfocado psiónicamente, el alcance de su visión en la oscuridad aumenta en 9 metros (30 pies).",
+    prerequisites: [
+      { description: "Visión en la oscuridad (racial u otorgada)" },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cps-psionic-mastery",
+    name: "Maestría Psiónica",
+    source: "complete-psionic",
+    types: ["general"],
+    description: "El manifestador ha ejercitado su disciplina mental hasta el punto de mantenerla firme bajo cualquier circunstancia.",
+    benefit:
+      "Puede sacar 10 en las pruebas de nivel de manifestador, incluso en circunstancias que normalmente se lo impedirían.",
+    prerequisites: [
+      { description: "Capacidad de manifestar poderes psiónicos o usar habilidades psi-símiles", check: (ctx) => ctx.casterLevel >= 1 },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cps-dorje-mastery",
+    name: "Maestría del Dorje",
+    source: "complete-psionic",
+    types: ["creacion_objetos"],
+    description: "El manifestador aprende a extraer un rendimiento superior de los dorjes que activa.",
+    benefit:
+      "Los dorjes que active funcionan como si estuvieran aumentados con 4 puntos de poder adicionales; si el poder almacenado no puede aumentarse, su CD de salvación aumenta en 2 en su lugar.",
+    prerequisites: [
+      { description: "Elaborar Vara Psiónica", check: hasFeat("cps-craft-dorje") },
+      { description: "Capacidad de manifestar poderes psiónicos de nivel 9", check: (ctx) => ctx.casterLevel >= 9 },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cps-dual-dorje",
+    name: "Dorje Dual",
+    source: "complete-psionic",
+    types: ["combate"],
+    description: "El combatiente aprende a blandir y activar un dorje en cada mano al mismo tiempo.",
+    benefit:
+      "Puede blandir y activar un dorje en cada mano; activar el dorje de la mano torpe forma parte de la misma acción de asalto completo que activar el de la mano hábil, pero cada uso del dorje de la mano torpe consume 2 cargas en lugar de 1.",
+    prerequisites: [
+      { description: "Elaborar Vara Psiónica", check: hasFeat("cps-craft-dorje") },
+      { description: "Combate con Dos Armas", check: hasFeat("two-weapon-fighting") },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cps-hostile-mind",
+    name: "Mente Hostil",
+    source: "complete-psionic",
+    types: ["especial"],
+    description: "La mente del personaje repele con violencia las intrusiones telepáticas ajenas.",
+    benefit:
+      "Cuando una criatura manifiesta con éxito un poder telepático (un poder de efecto mental que se dirige a una mente concreta) contra él sin su consentimiento y él resiste o anula dicho poder, esa criatura sufre 1d4 puntos de daño por la reacción psíquica.",
+    prerequisites: [
+      { description: "Sabiduría 13", check: (ctx) => ctx.abilityScores.wis >= 13 },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cps-improved-hostile-mind",
+    name: "Mente Hostil Mejorada",
+    source: "complete-psionic",
+    types: ["especial"],
+    description: "La reacción psíquica del personaje ante las intrusiones mentales se vuelve mucho más dañina.",
+    benefit: "El daño de la reacción psíquica de Mente Hostil aumenta de 1d4 a 2d6.",
+    prerequisites: [
+      { description: "Mente Hostil", check: hasFeat("cps-hostile-mind") },
+      { description: "Carisma 15", check: (ctx) => ctx.abilityScores.cha >= 15 },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
 ];
 
 export const CPS_FEAT_IDS = CPS_FEATS.map((f) => f.id);

@@ -51,7 +51,7 @@ export const CAD_FEATS: Feat[] = [
   },
   {
     id: "cad-staggering-strike",
-    name: "Golpe Aturdidor",
+    name: "Golpe Aturdidor (Staggering Strike)",
     source: "complete-adventurer",
     types: ["general"],
     description: "Sabe colocar el ataque furtivo justo donde más aturde al cuerpo del enemigo.",
@@ -82,18 +82,6 @@ export const CAD_FEATS: Feat[] = [
     benefit:
       "Cuando inflige daño por ataque furtivo, el objetivo debe superar una salvación de Fortaleza (CD 10 + la mitad del nivel de personaje + modificador de Destreza) o quedar desconcertado durante 1 asalto, perdiendo cualquier bonificador que obtendría por flanquear o ser ayudado por sus aliados.",
     prerequisites: [{ description: "Ataque furtivo +3d6 o superior" }],
-    fighterBonusFeat: false,
-    stackable: false,
-  },
-  {
-    id: "cad-telling-blow",
-    name: "Golpe Certero",
-    source: "complete-adventurer",
-    types: ["general"],
-    description: "Cuando su hoja encuentra un punto vital desprevenido, el golpe es letal casi con seguridad.",
-    benefit:
-      "Siempre que inflige daño por ataque furtivo con un golpe crítico, se considera que ha confirmado automáticamente el crítico, sin necesidad de realizar la tirada de confirmación.",
-    prerequisites: [{ description: "Capacidad de infligir daño por ataque furtivo" }],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -180,20 +168,6 @@ export const CAD_FEATS: Feat[] = [
   // ---------------------------------------------------------------------
   // FAMILIARES ALTERNATIVOS
   // ---------------------------------------------------------------------
-  {
-    id: "cad-obtain-familiar",
-    name: "Obtener Familiar",
-    source: "complete-adventurer",
-    types: ["especial"],
-    description: "Un lanzador de conjuros que normalmente no vincularía un familiar consigue atraer a uno igualmente.",
-    benefit:
-      "Obtiene un familiar como si fuera un mago, usando su nivel de personaje como nivel de mago efectivo para determinar las capacidades del familiar (mínimo nivel 1).",
-    prerequisites: [
-      { description: "Capacidad de lanzar conjuros y no disponer ya de un familiar" },
-    ],
-    fighterBonusFeat: false,
-    stackable: false,
-  },
 
   // ---------------------------------------------------------------------
   // ESTILO URBANO
@@ -260,17 +234,212 @@ export const CAD_FEATS: Feat[] = [
   },
 
   // ---------------------------------------------------------------------
-  // ARTIMAÑAS EN COMBATE
+  // DOTES MULTICLASE ASCÉTICAS (monje + otra clase)
   // ---------------------------------------------------------------------
   {
-    id: "cad-vexing-flanker",
-    name: "Flanqueador Exasperante",
+    id: "cad-ascetic-knight",
+    name: "Caballero Ascético",
+    source: "complete-adventurer",
+    types: ["especial"],
+    description: "El paladín que también se disciplina como monje combina ambas tradiciones marciales sin diluir ninguna.",
+    benefit: "A efectos de determinar su daño con ataques sin armas, sus niveles de paladín cuentan como niveles de monje.",
+    prerequisites: [
+      { description: "Impacto sin Arma Mejorado", check: hasFeat("improved-unarmed-strike") },
+      { description: "Capacidad de castigar al malvado" },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cad-ascetic-mage",
+    name: "Mago Ascético",
+    source: "complete-adventurer",
+    types: ["especial"],
+    description: "El hechicero que también se disciplina como monje aprende a canalizar su fuerza de voluntad arcana en defensa y golpes desarmados.",
+    benefit:
+      "A efectos de determinar su bonificador a la Clase de Armadura sin armadura, sus niveles de hechicero cuentan como niveles de monje. Además, usa su modificador de Carisma en vez de Sabiduría para ese bonificador. Como acción rápida, puede sacrificar uno de sus espacios de conjuro diarios para obtener un bonificador igual al nivel de ese conjuro a sus tiradas de ataque y daño sin armas durante 1 asalto. Puede cambiar libremente de clase entre hechicero y monje sin penalización por multiclase.",
+    prerequisites: [
+      { description: "Impacto sin Arma Mejorado", check: hasFeat("improved-unarmed-strike") },
+      { description: "Capacidad de lanzar conjuros de hechicero" },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cad-ascetic-rogue",
+    name: "Pícaro Ascético",
+    source: "complete-adventurer",
+    types: ["especial"],
+    description: "El pícaro que también se disciplina como monje combina la astucia furtiva con la maestría marcial desarmada.",
+    benefit:
+      "A efectos de determinar su daño con ataques sin armas, sus niveles de pícaro cuentan como niveles de monje. Puede cambiar libremente de clase entre pícaro y monje sin penalización por multiclase.",
+    prerequisites: [
+      { description: "Impacto sin Arma Mejorado", check: hasFeat("improved-unarmed-strike") },
+      { description: "Capacidad de infligir daño por ataque furtivo" },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cad-ascetic-hunter",
+    name: "Cazador Ascético",
+    source: "complete-adventurer",
+    types: ["especial"],
+    description: "El explorador que también se disciplina como monje funde el rastreo y la caza con la maestría marcial desarmada.",
+    benefit:
+      "A efectos de determinar su daño con ataques sin armas, sus niveles de explorador cuentan como niveles de monje. Puede cambiar libremente de clase entre explorador y monje sin penalización por multiclase.",
+    prerequisites: [
+      { description: "Impacto sin Arma Mejorado", check: hasFeat("improved-unarmed-strike") },
+      { description: "Enemigo predilecto" },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cad-ascetic-performer",
+    name: "Intérprete Ascético",
+    source: "complete-adventurer",
+    types: ["especial"],
+    description: "El bardo que también se disciplina como monje une la música y el combate desarmado en una sola tradición.",
+    benefit:
+      "A efectos de determinar su nivel de lanzador de bardo, sus usos diarios de música de bardo, la evasión (pero no la evasión mejorada), Inspirar Valor, Sugestión, Lengua del Sol y la Luna, y su daño con ataques sin armas, sus niveles de bardo y de monje se suman entre sí. Puede cambiar libremente de clase entre bardo y monje sin penalización por multiclase.",
+    prerequisites: [
+      { description: "Impacto sin Arma Mejorado", check: hasFeat("improved-unarmed-strike") },
+      { description: "Capacidad de música de bardo" },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+
+  // ---------------------------------------------------------------------
+  // DOTES MULTICLASE DEVOTAS (paladín + otra clase)
+  // ---------------------------------------------------------------------
+  {
+    id: "cad-devoted-inquisitor",
+    name: "Inquisidor Devoto (Complete Adventurer)",
+    source: "complete-adventurer",
+    types: ["especial"],
+    description: "El paladín que también se disciplina como pícaro combina el castigo divino con el golpe certero de la traición.",
+    benefit:
+      "Cuando inflige daño por ataque furtivo y castigo divino con el mismo golpe, el objetivo debe superar una salvación de Voluntad (CD 10 + la mitad del nivel de personaje + su modificador de Carisma) o quedar aturdido 1 asalto.",
+    prerequisites: [
+      { description: "Capacidad de castigar al malvado" },
+      { description: "Capacidad de infligir daño por ataque furtivo" },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cad-devoted-performer",
+    name: "Intérprete Devoto",
+    source: "complete-adventurer",
+    types: ["especial"],
+    description: "El paladín que también es bardo pone su música al servicio de la fe.",
+    benefit:
+      "A efectos de determinar el daño adicional de su castigo divino y sus usos diarios de música de bardo, sus niveles de paladín y de bardo se suman entre sí.",
+    prerequisites: [
+      { description: "Capacidad de castigar al malvado" },
+      { description: "Capacidad de música de bardo" },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cad-devoted-tracker",
+    name: "Rastreador Devoto",
+    source: "complete-adventurer",
+    types: ["especial"],
+    description: "El paladín que también se forma como explorador pone su montura especial y su empatía salvaje al servicio de una causa mayor.",
+    benefit:
+      "A efectos de determinar el daño adicional de su castigo divino y su empatía con los animales, sus niveles de paladín y de explorador se suman entre sí. Además, su montura especial de paladín puede servir también como compañero animal, usando el nivel efectivo más alto entre ambas capacidades.",
+    prerequisites: [
+      { description: "Capacidad de castigar al malvado" },
+      { description: "Enemigo predilecto" },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+
+  // ---------------------------------------------------------------------
+  // GENERALES ADICIONALES
+  // ---------------------------------------------------------------------
+  {
+    id: "cad-deft-opportunist",
+    name: "Oportunista Diestro",
+    source: "complete-adventurer",
+    types: ["combate"],
+    description: "El personaje aprovecha con especial destreza cualquier resquicio que le brinde un enemigo.",
+    benefit: "+4 de bonificador a las tiradas de ataque de oportunidad.",
+    prerequisites: [
+      { description: "Destreza 15", check: (ctx) => ctx.abilityScores.dex >= 15 },
+      { description: "Reflejos de Combate", check: hasFeat("combat-reflexes") },
+    ],
+    fighterBonusFeat: true,
+    stackable: false,
+  },
+  {
+    id: "cad-deft-strike",
+    name: "Golpe Diestro",
+    source: "complete-adventurer",
+    types: ["combate"],
+    description: "Un ojo entrenado para detectar el hueco exacto en la guardia de un rival antes de golpear.",
+    benefit:
+      "Como acción rápida, puede realizar una prueba de Avistar enfrentada a la Clase de Armadura de un enemigo. Si supera el resultado, su siguiente ataque cuerpo a cuerpo contra ese enemigo este mismo asalto ignora cualquier bonificador a la CA por armadura o armadura natural.",
+    prerequisites: [
+      { description: "Inteligencia 13", check: (ctx) => ctx.abilityScores.int >= 13 },
+      { description: "Pericia en Combate", check: hasFeat("combat-expertise") },
+      { description: "Avistar 10 rangos", check: (ctx) => (ctx.skillRanks["spot"] ?? 0) >= 10 },
+      { description: "Capacidad de infligir daño por ataque furtivo" },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cad-improved-diversion",
+    name: "Distracción Mejorada",
     source: "complete-adventurer",
     types: ["general"],
-    description: "Sabe colocarse en el flanqueo de tal manera que ni siquiera los reflejos más entrenados evitan quedar expuestos.",
+    description: "El personaje domina el arte de desviar la atención ajena en el momento justo para desaparecer.",
     benefit:
-      "Cuando flanquea a un oponente junto con un aliado, ese oponente se considera flanqueado por él a todos los efectos (incluida la posibilidad de sufrir ataque furtivo), incluso si normalmente sería capaz de negar el bonificador de flanqueo o el estado de indefenso mediante alguna capacidad especial.",
-    prerequisites: [],
+      "Cuando usa Engañar para crear una distracción y esconderse, puede hacerlo como acción de movimiento en vez de acción estándar, y obtiene +4 de bonificador de competencia a esa prueba de Engañar.",
+    prerequisites: [{ description: "Engañar 4 rangos", check: (ctx) => (ctx.skillRanks["bluff"] ?? 0) >= 4 }],
+    fighterBonusFeat: true,
+    stackable: false,
+  },
+  {
+    id: "cad-savage-grapple",
+    name: "Presa Salvaje",
+    source: "complete-adventurer",
+    types: ["especial"],
+    description: "El cambiante de forma convierte cada presa en una oportunidad para golpear los puntos débiles de su presa.",
+    benefit:
+      "Mientras se encuentre bajo los efectos de forma salvaje y ya esté agarrando a un enemigo, puede sumar su daño adicional por ataque furtivo a cualquier prueba de daño por presa que supere con éxito contra ese enemigo.",
+    prerequisites: [
+      { description: "Capacidad de adoptar forma salvaje" },
+      { description: "Capacidad de infligir daño por ataque furtivo" },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cad-extra-music",
+    name: "Música Adicional",
+    source: "complete-adventurer",
+    types: ["general"],
+    description: "El bardo encuentra reservas de inspiración más allá de lo habitual.",
+    benefit: "Obtiene 4 usos adicionales al día de música de bardo.",
+    prerequisites: [{ description: "Capacidad de música de bardo" }],
+    fighterBonusFeat: false,
+    stackable: true,
+  },
+  {
+    id: "cad-obscure-lore",
+    name: "Saber Oscuro",
+    source: "complete-adventurer",
+    types: ["general"],
+    description: "El personaje atesora fragmentos de conocimiento que la mayoría considera olvidados o irrelevantes.",
+    benefit: "+4 de bonificador de perspicacia a las pruebas de Conocimiento Bárdico o de capacidades de saber similares.",
+    prerequisites: [{ description: "Capacidad de Conocimiento Bárdico o similar" }],
     fighterBonusFeat: false,
     stackable: false,
   },

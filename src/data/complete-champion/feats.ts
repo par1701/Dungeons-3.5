@@ -112,39 +112,6 @@ export const CC_FEATS: Feat[] = [
     stackable: false,
   },
 
-  // ---------------------------------------------------------------------
-  // DISCIPLINA ASCÉTICA Y ESPIRITUAL
-  // ---------------------------------------------------------------------
-  {
-    id: "cc-ascetic-devotion",
-    name: "Devoción Ascética",
-    source: "complete-champion",
-    types: ["general"],
-    description: "El monje que también sirve a una fe combina disciplina corporal y espiritual.",
-    benefit:
-      "A efectos de determinar su ataque desarmado, Clase de Armadura sin armadura y velocidad de monje, suma la mitad de sus niveles en una clase de lanzador divino a su nivel de monje.",
-    prerequisites: [
-      { description: "Impacto sin Arma Mejorado", check: hasFeat("improved-unarmed-strike") },
-      { description: "Capacidad de lanzar conjuros divinos" },
-    ],
-    fighterBonusFeat: false,
-    stackable: false,
-  },
-  {
-    id: "cc-ascetic-mage",
-    name: "Mago Ascético",
-    source: "complete-champion",
-    types: ["general"],
-    description: "El monje que también estudia la magia arcana equilibra ambas disciplinas.",
-    benefit:
-      "A efectos de determinar su ataque desarmado, Clase de Armadura sin armadura y velocidad de monje, suma la mitad de sus niveles en una clase de lanzador arcano a su nivel de monje.",
-    prerequisites: [
-      { description: "Impacto sin Arma Mejorado", check: hasFeat("improved-unarmed-strike") },
-      { description: "Capacidad de lanzar conjuros arcanos" },
-    ],
-    fighterBonusFeat: false,
-    stackable: false,
-  },
   {
     id: "cc-force-of-personality",
     name: "Fuerza de Personalidad",
@@ -241,8 +208,9 @@ export const CC_FEATS: Feat[] = [
     name: "Bendición de Batalla",
     source: "complete-champion",
     types: ["general"],
-    description: "El favor divino permite al paladín lanzar sus conjuros incluso en pleno fragor del combate.",
-    benefit: "Al lanzar un conjuro de paladín (o de clase similar de lista corta), se le considera automáticamente competente en Concentración en Combate sin necesidad de realizar la prueba de Concentración correspondiente.",
+    description: "El favor divino permite al paladín invocar sus conjuros con un gesto casi instantáneo, incluso en pleno fragor del combate.",
+    benefit:
+      "Al lanzar un conjuro de paladín (o de una clase con la misma lista corta de conjuros), su tiempo de lanzamiento se reduce en una categoría: los conjuros de acción estándar pasan a lanzarse como acción rápida, y los de acción de asalto completo pasan a lanzarse como acción estándar.",
     prerequisites: [{ description: "Capacidad de lanzar conjuros de paladín" }],
     fighterBonusFeat: false,
     stackable: false,
@@ -579,6 +547,192 @@ export const CC_FEATS: Feat[] = [
     prerequisites: [
       { description: "Acceso al dominio del Agua" },
       { description: "Capacidad de expulsar o reprender no muertos" },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+
+  // ---------------------------------------------------------------------
+  // OTRAS DOTES GENERALES
+  // ---------------------------------------------------------------------
+  {
+    id: "cc-awesome-smite",
+    name: "Castigo Imponente",
+    source: "complete-champion",
+    types: ["combate"],
+    description: "El paladín combina la furia sagrada de su castigo divino con la fuerza bruta del Ataque Poderoso.",
+    benefit:
+      "Cuando usa castigo divino junto con Ataque Poderoso en el mismo ataque, elige un efecto adicional: el objetivo pierde la posibilidad de fallo por ocultación frente a ese ataque, la reducción de daño del objetivo se reduce en una cantidad igual a su bonificador de Carisma, o (si el ataque impacta) puede intentar de inmediato una prueba de derribo gratuita contra el objetivo sin provocar ataque de oportunidad.",
+    prerequisites: [
+      { description: "Capacidad de usar castigo divino" },
+      { description: "Ataque Poderoso", check: hasFeat("power-attack") },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cc-bestial-charge",
+    name: "Carga Bestial",
+    source: "complete-champion",
+    types: ["combate"],
+    description: "El metamorfo aprende a aprovechar el ímpetu de una carga con su forma bestial para desatar un golpe adicional.",
+    benefit:
+      "Mientras se encuentre bajo los efectos de metamorfosis salvaje y realice una carga, gana un ataque adicional con un arma natural a su bonificador de ataque más alto como parte de esa carga.",
+    prerequisites: [
+      { description: "Bonificador base de ataque +4", check: (ctx) => ctx.babTotal >= 4 },
+      { description: "Capacidad de usar metamorfosis salvaje" },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cc-elemental-essence",
+    name: "Esencia Elemental",
+    source: "complete-champion",
+    types: ["general"],
+    description: "El metamorfo aprende a imbuir sus armas naturales con energía elemental, eligiendo ácido, frío, electricidad o fuego al adoptar esta dote.",
+    benefit:
+      "Al elegir esta dote, selecciona ácido, frío, electricidad o fuego. Como acción rápida, puede gastar un uso diario de metamorfosis salvaje para envolver sus armas naturales en esa energía hasta el final de su turno: sus ataques cuerpo a cuerpo causan +1d6 puntos de daño adicional de energía del tipo elegido, y gana resistencia 5 a esa energía durante la misma duración.",
+    prerequisites: [{ description: "Capacidad de usar metamorfosis salvaje" }],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cc-spontaneous-domains",
+    name: "Dominios Espontáneos",
+    source: "complete-champion",
+    types: ["general"],
+    description: "El sacerdote aprende a improvisar un conjuro de dominio con la misma facilidad con la que convierte sus conjuros preparados en curación o daño.",
+    benefit:
+      "Una vez al día, puede dejar sin usar un espacio de conjuro preparado y, más tarde ese mismo día, lanzar de forma espontánea en su lugar cualquier conjuro de dominio que hubiera podido preparar (esto no incrementa el límite normal de un conjuro de dominio por nivel de personaje y día).",
+    prerequisites: [
+      { description: "Acceso a al menos un dominio" },
+      { description: "Capacidad de lanzar de forma espontánea conjuros de curar o infligir heridas" },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cc-imbued-healing",
+    name: "Curación Imbuida",
+    source: "complete-champion",
+    types: ["general"],
+    description: "Los conjuros de curación del sacerdote llevan impresa la naturaleza de sus dominios divinos.",
+    benefit:
+      "Cada vez que lanza un conjuro de curar, elige uno de sus dominios; además del efecto normal, el objetivo obtiene un pequeño beneficio secundario ligado a la temática de ese dominio durante 1 minuto por nivel de lanzador (por ejemplo, el dominio del Viaje otorga +5 pies de velocidad). El Director de Juego determina el beneficio exacto según el dominio elegido.",
+    prerequisites: [{ description: "Acceso a al menos un dominio" }],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+
+  // ---------------------------------------------------------------------
+  // DOTES DE RESERVA
+  // ---------------------------------------------------------------------
+  // Subsistema propio de Complete Champion: permiten gastar un espacio de
+  // conjuro de dominio no utilizado ese día para producir un efecto menor,
+  // disponible en cualquier momento mientras quede un espacio de dominio sin
+  // gastar.
+  {
+    id: "cc-charnel-miasma",
+    name: "Miasma Sepulcral",
+    source: "complete-champion",
+    types: ["especial"],
+    description: "El fiel del dominio de Muerte puede liberar en cualquier momento un hálito de terror mortuorio.",
+    benefit:
+      "Como acción estándar, gasta un espacio de conjuro de dominio no utilizado de nivel 1 o superior para obligar a una criatura viva a 9 metros a realizar una salvación de Voluntad o quedar conmocionada durante 1 minuto.",
+    prerequisites: [
+      { description: "Acceso al dominio de Muerte" },
+      { description: "Un espacio de conjuro de dominio de nivel 1 o superior sin utilizar" },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cc-fragile-construct",
+    name: "Constructo Frágil",
+    source: "complete-champion",
+    types: ["especial"],
+    description: "El fiel del dominio de Destrucción sabe encontrar y explotar los puntos débiles de constructos y objetos.",
+    benefit:
+      "Con un ataque de contacto cuerpo a cuerpo contra un constructo o un objeto, gasta un espacio de conjuro de dominio no utilizado para reducir su dureza o su reducción de daño en una cantidad igual al nivel del espacio de conjuro gastado, durante 1 minuto.",
+    prerequisites: [
+      { description: "Acceso al dominio de Destrucción" },
+      { description: "Un espacio de conjuro de dominio sin utilizar" },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cc-holy-warrior",
+    name: "Guerrero Sagrado",
+    source: "complete-champion",
+    types: ["especial"],
+    description: "El fiel del dominio de la Guerra invoca la furia de su fe para reforzar sus golpes.",
+    benefit:
+      "Como acción rápida, gasta un espacio de conjuro de dominio no utilizado para ganar un bonificador a sus tiradas de daño con arma durante 1 asalto igual al nivel del espacio de conjuro de dominio de la Guerra más alto que aún tenga disponible.",
+    prerequisites: [
+      { description: "Acceso al dominio de la Guerra" },
+      { description: "Un espacio de conjuro de dominio sin utilizar" },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cc-mitigate-suffering",
+    name: "Mitigar el Sufrimiento",
+    source: "complete-champion",
+    types: ["especial"],
+    description: "El fiel del dominio de Curación puede aliviar temporalmente el desgaste de las características de un aliado herido.",
+    benefit:
+      "Con un toque, gasta un espacio de conjuro de dominio no utilizado sobre una criatura que sufra daño de característica, concediéndole puntos de característica temporales iguales al nivel del espacio de conjuro gastado, durante 1 hora, compensando así el daño sufrido.",
+    prerequisites: [
+      { description: "Acceso al dominio de Curación" },
+      { description: "Un espacio de conjuro de dominio sin utilizar" },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cc-protective-ward",
+    name: "Guardia Protectora",
+    source: "complete-champion",
+    types: ["especial"],
+    description: "El fiel del dominio de Protección puede envolver a un aliado en una barrera de fe.",
+    benefit:
+      "Como acción estándar, gasta un espacio de conjuro de dominio no utilizado para conceder a sí mismo o a un aliado a 9 metros un bonificador sagrado (o profano, si es de alineamiento Malo) a la Clase de Armadura igual al nivel del espacio de conjuro gastado, durante 1 minuto.",
+    prerequisites: [
+      { description: "Acceso al dominio de Protección" },
+      { description: "Un espacio de conjuro de dominio sin utilizar" },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cc-touch-of-healing",
+    name: "Toque Curativo",
+    source: "complete-champion",
+    types: ["especial"],
+    description: "El fiel del dominio de Curación puede restaurar la vitalidad de un aliado malherido con un simple contacto.",
+    benefit:
+      "Con un ataque de contacto cuerpo a cuerpo contra una criatura que se encuentre a la mitad de sus puntos de golpe o menos, gasta un espacio de conjuro de dominio no utilizado para curarle un número de puntos de golpe igual al doble del nivel del espacio de conjuro gastado.",
+    prerequisites: [
+      { description: "Acceso al dominio de Curación" },
+      { description: "Un espacio de conjuro de dominio sin utilizar" },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cc-umbral-shroud",
+    name: "Manto de Sombras",
+    source: "complete-champion",
+    types: ["especial"],
+    description: "El fiel del dominio de Oscuridad puede envolver en tinieblas a un enemigo y agudizar su propia vista en la penumbra.",
+    benefit:
+      "Como acción estándar, gasta un espacio de conjuro de dominio no utilizado para imponer una posibilidad de fallo del 20% a un enemigo situado a 9 metros durante 1 asalto por nivel del espacio de conjuro gastado, y gana (o extiende el alcance de) visión en la oscuridad de 18 metros durante 1 hora.",
+    prerequisites: [
+      { description: "Acceso al dominio de Oscuridad" },
+      { description: "Un espacio de conjuro de dominio sin utilizar" },
     ],
     fighterBonusFeat: false,
     stackable: false,

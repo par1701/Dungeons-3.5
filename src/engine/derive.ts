@@ -5,6 +5,7 @@ import type {
   Character,
   CharacterClassFeatureChoice,
   CharacterClassLevel,
+  CharacterEquipmentItem,
   CharacterFeatChoice,
   ClassDef,
   ClassFeatureChoice,
@@ -13,6 +14,7 @@ import type {
   Weapon,
   WeaponType,
 } from "../types";
+import { computeArmorEquipmentBonuses, computeItemDisplayName, computeWeaponEquipmentBonuses } from "./itemEnhancements";
 
 const SKILL_KEY_SEPARATOR = "::";
 
@@ -606,9 +608,14 @@ export function deriveCharacterSummary(
   return { finalAbilityScores, bab, saves, level, hp, carrying };
 }
 
+export interface EquippedArmorPiece {
+  armor: Armor;
+  item?: CharacterEquipmentItem;
+}
+
 export interface EquippedArmorPieces {
-  bodyArmor?: Armor;
-  shield?: Armor;
+  bodyArmor?: EquippedArmorPiece;
+  shield?: EquippedArmorPiece;
 }
 
 /**
@@ -637,21 +644,30 @@ export function computeCharacterArmorClass(
   damageReduction: number;
   insightBonus: number;
 } {
-  const rawArmorBonus = equipped.bodyArmor?.armorBonus ?? 0;
-  const rawShieldBonus = equipped.shield?.armorBonus ?? 0;
+  const bodyEquip = equipped.bodyArmor?.item ? computeArmorEquipmentBonuses(equipped.bodyArmor.item, equipped.bodyArmor.armor.category) : undefined;
+  const shieldEquip = equipped.shield?.item ? computeArmorEquipmentBonuses(equipped.shield.item, equipped.shield.armor.category) : undefined;
+  const rawArmorBonus = equipped.bodyArmor?.armor.armorBonus ?? 0;
+  const rawShieldBonus = equipped.shield?.armor.armorBonus ?? 0;
   let armorBonus = rawArmorBonus;
   let shieldBonus = rawShieldBonus;
-  let damageReduction = 0;
+  let damageReduction = (bodyEquip?.damageReduction ?? 0) + (shieldEquip?.damageReduction ?? 0);
   if (armorAsDamageReduction) {
     const bodySplit = splitArmorBonusForDamageReduction(rawArmorBonus);
     const shieldSplit = splitArmorBonusForDamageReduction(rawShieldBonus);
     armorBonus = bodySplit.acBonus;
     shieldBonus = shieldSplit.acBonus;
-    damageReduction = bodySplit.damageReduction + shieldSplit.damageReduction;
+    damageReduction += bodySplit.damageReduction + shieldSplit.damageReduction;
   }
-  const maxDexLimits = [equipped.bodyArmor?.maxDexBonus, equipped.shield?.maxDexBonus].filter(
-    (v): v is number => v !== undefined && v !== null,
-  );
+  armorBonus += bodyEquip?.acBonus ?? 0;
+  shieldBonus += shieldEquip?.acBonus ?? 0;
+  const maxDexLimits = [
+    equipped.bodyArmor?.armor.maxDexBonus === null || equipped.bodyArmor?.armor.maxDexBonus === undefined
+      ? undefined
+      : equipped.bodyArmor.armor.maxDexBonus + (bodyEquip?.maxDexBonusIncrease ?? 0),
+    equipped.shield?.armor.maxDexBonus === null || equipped.shield?.armor.maxDexBonus === undefined
+      ? undefined
+      : equipped.shield.armor.maxDexBonus + (shieldEquip?.maxDexBonusIncrease ?? 0),
+  ].filter((v): v is number => v !== undefined);
   const maxDexBonus = maxDexLimits.length > 0 ? Math.min(...maxDexLimits) : null;
   const ac = computeArmorClass({
     armorBonus,
@@ -769,17 +785,26 @@ export function computeWeaponAttack(
   finalScores: AbilityScores,
   size: string,
   feats: CharacterFeatChoice[] = [],
+  equipmentItem?: CharacterEquipmentItem,
 ): WeaponAttackSummary {
   const abilityMod = weapon.type === "distancia" ? abilityModifier(finalScores.dex) : abilityModifier(finalScores.str);
   const featBonuses = getWeaponFeatBonuses(weapon, feats);
-  const attackBonus = bab + abilityMod + sizeModifier(size) + featBonuses.attackBonus;
-  const damageMod = (weapon.type === "distancia" ? 0 : abilityModifier(finalScores.str)) + featBonuses.damageBonus;
+  const equipBonuses = equipmentItem
+    ? computeWeaponEquipmentBonuses(equipmentItem)
+    : { attackBonus: 0, damageBonus: 0, doubledThreatRange: false, rangeIncrementMultiplier: 1 };
+  const attackBonus = bab + abilityMod + sizeModifier(size) + featBonuses.attackBonus + equipBonuses.attackBonus;
+  const damageMod =
+    (weapon.type === "distancia" ? 0 : abilityModifier(finalScores.str)) + featBonuses.damageBonus + equipBonuses.damageBonus;
   const damage = damageMod === 0 ? weapon.damageMedium : `${weapon.damageMedium}${damageMod > 0 ? "+" : ""}${damageMod}`;
-  const critical = featBonuses.doubledThreatRange ? doubleCriticalThreatRange(weapon.critical) : weapon.critical;
-  const rangeIncrement = weapon.rangeIncrement ? weapon.rangeIncrement + featBonuses.extraRangeIncrementFeet : weapon.rangeIncrement;
+  const critical =
+    featBonuses.doubledThreatRange || equipBonuses.doubledThreatRange ? doubleCriticalThreatRange(weapon.critical) : weapon.critical;
+  const rangeIncrement = weapon.rangeIncrement
+    ? (weapon.rangeIncrement + featBonuses.extraRangeIncrementFeet) * equipBonuses.rangeIncrementMultiplier
+    : weapon.rangeIncrement;
+  const name = equipmentItem ? computeItemDisplayName(weapon.name, equipmentItem) : weapon.name;
   return {
     itemId: weapon.id,
-    name: weapon.name,
+    name,
     type: weapon.type,
     attackBonus,
     damage,

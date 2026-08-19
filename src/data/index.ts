@@ -1,4 +1,18 @@
-import type { Armor, ClassDef, CompanionBaseCreature, Feat, GearItem, PsionicPower, Race, Skill, SourceBookId, Spell, Weapon } from "../types";
+import type {
+  Armor,
+  ClassDef,
+  CompanionBaseCreature,
+  Feat,
+  GearItem,
+  MagicItemProperty,
+  PsionicPower,
+  Race,
+  Skill,
+  SourceBookId,
+  SpecialMaterial,
+  Spell,
+  Weapon,
+} from "../types";
 import { SRD_RACES } from "./srd/races";
 import { SRD_COMPANIONS } from "./srd/companions";
 import { SRD_SKILLS } from "./srd/skills";
@@ -8,6 +22,8 @@ import { SRD_CLASSES_B } from "./srd/classes-b";
 import { SRD_CLASSES_C } from "./srd/classes-c";
 import { SRD_FEATS } from "./srd/feats";
 import { SRD_WEAPONS, SRD_ARMORS, SRD_GEAR } from "./srd/equipment";
+import { SRD_SPECIAL_MATERIALS } from "./srd/special-materials";
+import { SRD_MAGIC_ITEM_PROPERTIES } from "./srd/magic-item-properties";
 import { CW_CLASSES } from "./complete-warrior/classes";
 import { CW_FEATS } from "./complete-warrior/feats";
 import { CA_CLASSES } from "./complete-arcane/classes";
@@ -63,6 +79,8 @@ export const ALL_SPELLS: Spell[] = [...SRD_SPELLS, ...CA_SPELLS, ...CDV_SPELLS, 
 export const ALL_WEAPONS: Weapon[] = [...SRD_WEAPONS];
 export const ALL_ARMORS: Armor[] = [...SRD_ARMORS];
 export const ALL_GEAR: GearItem[] = [...SRD_GEAR];
+export const ALL_SPECIAL_MATERIALS: SpecialMaterial[] = [...SRD_SPECIAL_MATERIALS];
+export const ALL_MAGIC_ITEM_PROPERTIES: MagicItemProperty[] = [...SRD_MAGIC_ITEM_PROPERTIES];
 export const ALL_POWERS: PsionicPower[] = [...CPS_POWERS];
 export const ALL_COMPANIONS: CompanionBaseCreature[] = [...SRD_COMPANIONS];
 
@@ -93,6 +111,12 @@ export function getEnabledArmors(enabled: SourceBookId[]): Armor[] {
 }
 export function getEnabledGear(enabled: SourceBookId[]): GearItem[] {
   return bySource(ALL_GEAR, enabled);
+}
+export function getEnabledSpecialMaterials(enabled: SourceBookId[]): SpecialMaterial[] {
+  return bySource(ALL_SPECIAL_MATERIALS, enabled);
+}
+export function getEnabledMagicItemProperties(enabled: SourceBookId[]): MagicItemProperty[] {
+  return bySource(ALL_MAGIC_ITEM_PROPERTIES, enabled);
 }
 export function getEnabledPowers(enabled: SourceBookId[]): PsionicPower[] {
   return bySource(ALL_POWERS, enabled);
@@ -130,4 +154,10 @@ export function findArmor(id: string): Armor | undefined {
 }
 export function findGear(id: string): GearItem | undefined {
   return ALL_GEAR.find((g) => g.id === id);
+}
+export function findSpecialMaterial(id: string): SpecialMaterial | undefined {
+  return ALL_SPECIAL_MATERIALS.find((m) => m.id === id);
+}
+export function findMagicItemProperty(id: string): MagicItemProperty | undefined {
+  return ALL_MAGIC_ITEM_PROPERTIES.find((p) => p.id === id);
 }

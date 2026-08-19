@@ -1,16 +1,34 @@
-import { useState } from "react";
-import { getEnabledArmors, getEnabledGear, getEnabledWeapons, findRace } from "../../data";
+import { Fragment, useState } from "react";
+import {
+  getEnabledArmors,
+  getEnabledGear,
+  getEnabledMagicItemProperties,
+  getEnabledSpecialMaterials,
+  getEnabledWeapons,
+  findRace,
+} from "../../data";
 import type { StepProps } from "./types";
 import { applyRacialAdjustments, computeCarryingCapacity } from "../../engine/derive";
+import {
+  computeArmorMarketPrice,
+  computeItemDisplayName,
+  computeItemWeight,
+  computeWeaponMarketPrice,
+  isEnhancedItem,
+  propertiesApplicableTo,
+} from "../../engine/itemEnhancements";
 import type { CharacterEquipmentItem } from "../../types";
 
 type Tab = "weapon" | "armor" | "gear";
 
 export default function StepEquipment({ character, onChange }: StepProps) {
   const [tab, setTab] = useState<Tab>("weapon");
+  const [expanded, setExpanded] = useState<Set<number>>(new Set());
   const weapons = getEnabledWeapons(character.activeSourceBooks);
   const armors = getEnabledArmors(character.activeSourceBooks);
   const gear = getEnabledGear(character.activeSourceBooks);
+  const materials = getEnabledSpecialMaterials(character.activeSourceBooks);
+  const magicProperties = getEnabledMagicItemProperties(character.activeSourceBooks);
   const race = findRace(character.raceId);
   const finalScores = applyRacialAdjustments(character.abilityScores, race);
   const carrying = computeCarryingCapacity(finalScores.str, race?.size ?? "Mediano");
@@ -42,21 +60,49 @@ export default function StepEquipment({ character, onChange }: StepProps) {
     onChange((c) => ({ ...c, equipment: c.equipment.filter((_, i) => i !== index) }));
   }
 
+  function toggleExpanded(index: number) {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  }
+
+  function toggleMagicProperty(index: number, propertyId: string, current: CharacterEquipmentItem) {
+    const ids = current.magicPropertyIds ?? [];
+    const magicPropertyIds = ids.includes(propertyId) ? ids.filter((id) => id !== propertyId) : [...ids, propertyId];
+    updateItem(index, { magicPropertyIds });
+  }
+
   function findItemData(itemId: string, kind: Tab) {
     if (kind === "weapon") return weapons.find((w) => w.id === itemId);
     if (kind === "armor") return armors.find((a) => a.id === itemId);
     return gear.find((g) => g.id === itemId);
   }
 
-  const totalWeight = character.equipment.reduce((sum, e) => {
-    const data = findItemData(e.itemId, e.itemKind);
-    return sum + (data?.weight ?? 0) * e.quantity;
-  }, 0);
+  /** Coste unitario final de un objeto del inventario, incluyendo magistral/material/mejora mágica para armas y armaduras. */
+  function itemUnitPrice(e: CharacterEquipmentItem): number {
+    if (e.itemKind === "weapon") {
+      const w = weapons.find((x) => x.id === e.itemId);
+      return w ? computeWeaponMarketPrice(w, e) : 0;
+    }
+    if (e.itemKind === "armor") {
+      const a = armors.find((x) => x.id === e.itemId);
+      return a ? computeArmorMarketPrice(a, e) : 0;
+    }
+    return gear.find((g) => g.id === e.itemId)?.cost ?? 0;
+  }
 
-  const totalCost = character.equipment.reduce((sum, e) => {
+  /** Peso unitario final, aplicando el multiplicador de peso del material especial en armas/armaduras. */
+  function itemUnitWeight(e: CharacterEquipmentItem): number {
     const data = findItemData(e.itemId, e.itemKind);
-    return sum + (data?.cost ?? 0) * e.quantity;
-  }, 0);
+    if (!data) return 0;
+    return e.itemKind === "weapon" || e.itemKind === "armor" ? computeItemWeight(data.weight, e) : data.weight;
+  }
+
+  const totalWeight = character.equipment.reduce((sum, e) => sum + itemUnitWeight(e) * e.quantity, 0);
+  const totalCost = character.equipment.reduce((sum, e) => sum + itemUnitPrice(e) * e.quantity, 0);
 
   const catalog = tab === "weapon" ? weapons : tab === "armor" ? armors : gear;
 
@@ -124,37 +170,139 @@ export default function StepEquipment({ character, onChange }: StepProps) {
               <th>Objeto</th>
               <th>Cantidad</th>
               <th>Equipado</th>
+              <th>Coste</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             {character.equipment.map((e, i) => {
               const data = findItemData(e.itemId, e.itemKind);
+              const canEnhance = e.itemKind === "weapon" || e.itemKind === "armor";
+              const displayName = data && canEnhance ? computeItemDisplayName(data.name, e) : (data?.name ?? e.itemId);
+              const applicableMaterials = materials.filter((m) => m.appliesTo.includes(e.itemKind === "weapon" ? "arma" : "armadura"));
+              const applicableProperties = propertiesApplicableTo(
+                magicProperties,
+                e.itemKind === "weapon" ? "arma" : "armadura_o_escudo",
+              );
+              const enhancementBonus = e.enhancementBonus ?? 0;
               return (
-                <tr key={`${e.itemId}-${i}`}>
-                  <td>{data?.name ?? e.itemId}</td>
-                  <td>
-                    <input
-                      type="number"
-                      min={1}
-                      style={{ width: 60 }}
-                      value={e.quantity}
-                      onChange={(ev) => updateItem(i, { quantity: Math.max(1, Number(ev.target.value)) })}
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="checkbox"
-                      checked={e.equipped}
-                      onChange={(ev) => updateItem(i, { equipped: ev.target.checked })}
-                    />
-                  </td>
-                  <td>
-                    <button className="btn btn-danger" onClick={() => removeItem(i)}>
-                      Quitar
-                    </button>
-                  </td>
-                </tr>
+                <Fragment key={`${e.itemId}-${i}`}>
+                  <tr>
+                    <td>
+                      {displayName}
+                      {canEnhance && isEnhancedItem(e) && (
+                        <span className="tag" style={{ marginLeft: 6 }}>
+                          especial
+                        </span>
+                      )}
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        min={1}
+                        style={{ width: 60 }}
+                        value={e.quantity}
+                        onChange={(ev) => updateItem(i, { quantity: Math.max(1, Number(ev.target.value)) })}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={e.equipped}
+                        onChange={(ev) => updateItem(i, { equipped: ev.target.checked })}
+                      />
+                    </td>
+                    <td>{itemUnitPrice(e).toFixed(2)} po</td>
+                    <td style={{ display: "flex", gap: 6 }}>
+                      {canEnhance && (
+                        <button className="btn" onClick={() => toggleExpanded(i)}>
+                          {expanded.has(i) ? "Ocultar" : "Mejorar"}
+                        </button>
+                      )}
+                      <button className="btn btn-danger" onClick={() => removeItem(i)}>
+                        Quitar
+                      </button>
+                    </td>
+                  </tr>
+                  {canEnhance && expanded.has(i) && (
+                    <tr key={`${e.itemId}-${i}-detail`}>
+                      <td colSpan={5}>
+                        <div className="grid grid-3" style={{ alignItems: "start" }}>
+                          <div className="form-row">
+                            <label>
+                              <input
+                                type="checkbox"
+                                checked={e.masterwork ?? false}
+                                onChange={(ev) => updateItem(i, { masterwork: ev.target.checked })}
+                              />{" "}
+                              Calidad magistral
+                            </label>
+                            <p className="muted" style={{ margin: 0 }}>
+                              {e.itemKind === "weapon" ? "+300 po, +1 al ataque (no mágico)." : "+150 po."} Un bono de
+                              mejora mágica ya incluye la calidad magistral automáticamente.
+                            </p>
+                          </div>
+                          <div className="form-row">
+                            <label>Material especial</label>
+                            <select
+                              value={e.specialMaterialId ?? ""}
+                              onChange={(ev) => updateItem(i, { specialMaterialId: ev.target.value || undefined })}
+                            >
+                              <option value="">Ninguno</option>
+                              {applicableMaterials.map((m) => (
+                                <option key={m.id} value={m.id}>
+                                  {m.name}
+                                </option>
+                              ))}
+                            </select>
+                            {e.specialMaterialId && (
+                              <p className="muted" style={{ margin: 0 }}>
+                                {materials.find((m) => m.id === e.specialMaterialId)?.description}
+                              </p>
+                            )}
+                          </div>
+                          <div className="form-row">
+                            <label>Bono de mejora mágica</label>
+                            <select
+                              value={enhancementBonus}
+                              onChange={(ev) => updateItem(i, { enhancementBonus: Number(ev.target.value) || undefined })}
+                            >
+                              {[0, 1, 2, 3, 4, 5].map((n) => (
+                                <option key={n} value={n}>
+                                  {n === 0 ? "Ninguno" : `+${n}`}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                        {applicableProperties.length > 0 && (
+                          <div style={{ marginTop: 10 }}>
+                            <p className="muted" style={{ margin: "0 0 4px" }}>
+                              Propiedades mágicas especiales (requieren al menos +1 de mejora mágica en el objeto):
+                            </p>
+                            <div className="grid grid-3">
+                              {applicableProperties.map((p) => {
+                                const checked = (e.magicPropertyIds ?? []).includes(p.id);
+                                const disabled = !checked && enhancementBonus < (p.minEnhancementBonus ?? 1);
+                                return (
+                                  <label key={p.id} style={{ opacity: disabled ? 0.5 : 1 }} title={p.description}>
+                                    <input
+                                      type="checkbox"
+                                      checked={checked}
+                                      disabled={disabled}
+                                      onChange={() => toggleMagicProperty(i, p.id, e)}
+                                    />{" "}
+                                    {p.name} (+{p.bonusEquivalent})
+                                  </label>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
               );
             })}
           </tbody>

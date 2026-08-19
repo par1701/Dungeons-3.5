@@ -107,10 +107,10 @@ export default function CharacterSheetPage() {
 
   const equippedArmorItems = character.equipment
     .filter((e) => e.equipped && e.itemKind === "armor")
-    .map((e) => findArmor(e.itemId))
-    .filter((a): a is NonNullable<typeof a> => Boolean(a));
-  const bodyArmor = equippedArmorItems.find((a) => a.category !== "escudo");
-  const shield = equippedArmorItems.find((a) => a.category === "escudo");
+    .map((e) => ({ armor: findArmor(e.itemId), item: e }))
+    .filter((x): x is { armor: NonNullable<ReturnType<typeof findArmor>>; item: (typeof character.equipment)[number] } => Boolean(x.armor));
+  const bodyArmor = equippedArmorItems.find((x) => x.armor.category !== "escudo");
+  const shield = equippedArmorItems.find((x) => x.armor.category === "escudo");
   const ac = computeCharacterArmorClass(
     finalScores,
     size,
@@ -121,9 +121,9 @@ export default function CharacterSheetPage() {
 
   const equippedWeapons = character.equipment
     .filter((e) => e.equipped && e.itemKind === "weapon")
-    .map((e) => findWeapon(e.itemId))
-    .filter((w): w is NonNullable<typeof w> => Boolean(w))
-    .map((w) => computeWeaponAttack(w, bab, finalScores, size, character.feats));
+    .map((e) => ({ weapon: findWeapon(e.itemId), item: e }))
+    .filter((x): x is { weapon: NonNullable<ReturnType<typeof findWeapon>>; item: (typeof character.equipment)[number] } => Boolean(x.weapon))
+    .map((x) => computeWeaponAttack(x.weapon, bab, finalScores, size, character.feats, x.item));
 
   const grapple = bab + abilityModifier(finalScores.str) + sizeModifier(size) * -1;
   const dexMod = abilityModifier(finalScores.dex);

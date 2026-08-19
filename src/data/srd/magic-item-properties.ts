@@ -8,11 +8,10 @@ import type { MagicItemProperty } from "../../types";
 // (regla SRD: el objeto debe tener al menos +1 de bono de mejora para poder
 // llevar una propiedad especial, y el bono total no puede superar +10).
 //
-// Se han omitido deliberadamente varias propiedades reales pero con un
-// modelo de precio distinto (coste fijo en po en vez de equivalente de
-// bono, como Ceremonial/Glamered, Sombra/Shadow, Pasos Silenciosos/Silent
-// Moves o Resbaladiza/Slick) para no mezclar dos sistemas de precio sin
-// verificar con exactitud cada cifra; y "Captura de Flechas" (Arrow
+// Ceremonial/Glamered, Sombra/Shadow, Pasos Silenciosos/Silent Moves y
+// Resbaladiza/Slick usan un coste fijo en po (`flatCost`) en vez del sistema
+// de bono equivalente habitual, verificado por separado (2700/3750/3750/3750
+// po respectivamente). Se sigue omitiendo "Captura de Flechas" (Arrow
 // Catching) por no tener su precio exacto confirmado.
 
 export const SRD_WEAPON_PROPERTIES: MagicItemProperty[] = [
@@ -29,6 +28,7 @@ export const SRD_WEAPON_PROPERTIES: MagicItemProperty[] = [
   { id: "distance", name: "de Distancia", source: "srd", appliesTo: "arma", bonusEquivalent: 1, minEnhancementBonus: 1, description: "Duplica el incremento de alcance de un arma a distancia." },
   { id: "seeking", name: "Certera", source: "srd", appliesTo: "arma", bonusEquivalent: 1, minEnhancementBonus: 1, description: "Un arma a distancia ignora la probabilidad de fallo por ocultación (no total) del objetivo." },
   { id: "spell-storing", name: "Almacenaconjuros", source: "srd", appliesTo: "arma", bonusEquivalent: 1, minEnhancementBonus: 1, description: "Puede almacenar un único conjuro de nivel 1 a 3 (lanzado sobre el arma por su portador), que se libera automáticamente en el siguiente golpe con éxito si el portador lo desea." },
+  { id: "mighty-cleaving", name: "de Hendedura Portentosa", source: "srd", appliesTo: "arma", bonusEquivalent: 1, minEnhancementBonus: 1, description: "El portador con la dote Hendedura puede realizar un intento de hendedura adicional por asalto (solo uno adicional)." },
   { id: "bane", name: "Perdición", source: "srd", appliesTo: "arma", bonusEquivalent: 2, minEnhancementBonus: 1, description: "Elige un tipo y subtipo de criatura al crearla; +2 de mejora adicional y 2d6 de daño adicional contra ese tipo de criatura." },
   { id: "flaming-burst", name: "de Llamarada", source: "srd", appliesTo: "arma", bonusEquivalent: 2, minEnhancementBonus: 1, description: "Como Flamígera, y además inflige 1d10 puntos de daño de fuego adicional al confirmar un golpe crítico." },
   { id: "icy-burst", name: "de Ventisca", source: "srd", appliesTo: "arma", bonusEquivalent: 2, minEnhancementBonus: 1, description: "Como Helada, y además inflige 1d10 puntos de daño de frío adicional al confirmar un golpe crítico." },
@@ -48,9 +48,14 @@ export const SRD_WEAPON_PROPERTIES: MagicItemProperty[] = [
 export const SRD_ARMOR_PROPERTIES: MagicItemProperty[] = [
   { id: "light-fortification", name: "Fortificación Ligera", source: "srd", appliesTo: "armadura_o_escudo", bonusEquivalent: 1, minEnhancementBonus: 1, description: "25% de probabilidad de anular un golpe crítico o ataque furtivo contra el portador, resolviéndolo como daño normal." },
   { id: "bashing", name: "de Golpe", source: "srd", appliesTo: "armadura_o_escudo", bonusEquivalent: 1, minEnhancementBonus: 1, description: "Solo escudos. El golpe con el escudo se trata como si fuera magistral y aplica el bono de mejora del escudo también al ataque y al daño del golpe con escudo.", restrictions: "Solo aplicable a escudos." },
+  { id: "arrow-deflection", name: "de Repulsión de Proyectiles", source: "srd", appliesTo: "armadura_o_escudo", bonusEquivalent: 2, minEnhancementBonus: 1, description: "Solo escudos. Una vez por asalto, el escudo anula por completo un ataque a distancia con arma o proyectil que impactaría al portador, de forma similar a la dote Desviar Flechas.", restrictions: "Solo aplicable a escudos." },
   { id: "moderate-fortification", name: "Fortificación Moderada", source: "srd", appliesTo: "armadura_o_escudo", bonusEquivalent: 3, minEnhancementBonus: 1, description: "75% de probabilidad de anular un golpe crítico o ataque furtivo contra el portador, resolviéndolo como daño normal." },
   { id: "ghost-touch-armor", name: "Toque Fantasmal", source: "srd", appliesTo: "armadura_o_escudo", bonusEquivalent: 3, minEnhancementBonus: 1, description: "El portador puede ser tocado con normalidad por criaturas incorpóreas, y la armadura protege incluso mientras el portador está parcialmente en el Plano Etéreo." },
   { id: "heavy-fortification", name: "Fortificación Pesada", source: "srd", appliesTo: "armadura_o_escudo", bonusEquivalent: 5, minEnhancementBonus: 1, description: "100% de probabilidad de anular un golpe crítico o ataque furtivo contra el portador, resolviéndolo como daño normal." },
+  { id: "glamered", name: "Ceremonial", source: "srd", appliesTo: "armadura_o_escudo", bonusEquivalent: 0, flatCost: 2700, minEnhancementBonus: 1, description: "Bajo una orden mental, la armadura cambia su aspecto al de una prenda de ropa normal (conservando su peso y propiedades), y puede revertirse igual de rápido." },
+  { id: "shadow", name: "de Sombra", source: "srd", appliesTo: "armadura_o_escudo", bonusEquivalent: 0, flatCost: 3750, minEnhancementBonus: 1, description: "Armadura de un negro absoluto que otorga +5 de bonificador de competencia a las pruebas de Esconderse." },
+  { id: "silent-moves", name: "Pasos Silenciosos", source: "srd", appliesTo: "armadura_o_escudo", bonusEquivalent: 0, flatCost: 3750, minEnhancementBonus: 1, description: "Armadura bien engrasada y construida para no hacer ruido, otorgando +5 de bonificador de competencia a las pruebas de Moverse Sigilosamente." },
+  { id: "slick", name: "Resbaladiza", source: "srd", appliesTo: "armadura_o_escudo", bonusEquivalent: 0, flatCost: 3750, minEnhancementBonus: 1, description: "Armadura cubierta de un aceite resbaladizo permanente que otorga +5 de bonificador de competencia a las pruebas de Escapismo." },
 ];
 
 export const SRD_MAGIC_ITEM_PROPERTIES: MagicItemProperty[] = [...SRD_WEAPON_PROPERTIES, ...SRD_ARMOR_PROPERTIES];

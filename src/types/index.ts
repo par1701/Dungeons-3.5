@@ -376,8 +376,10 @@ export interface MagicItemProperty {
   name: string;
   source: SourceBookId;
   appliesTo: "arma" | "armadura_o_escudo";
-  /** Bonificador de mejora equivalente que suma al total para el cálculo de precio ((bono total)² × 2000 po armas / × 1000 po armaduras). */
+  /** Bonificador de mejora equivalente que suma al total para el cálculo de precio ((bono total)² × 2000 po armas / × 1000 po armaduras). 0 si esta propiedad usa `flatCost` en su lugar. */
   bonusEquivalent: number;
+  /** Coste fijo en po, para propiedades que no usan el sistema de bono equivalente (p.ej. Ceremonial, Sombra). Se suma directamente al precio final, sin elevarlo al cuadrado. */
+  flatCost?: number;
   /** Bonificador de mejora mágica mínimo requerido en el objeto base para poder añadir esta propiedad. */
   minEnhancementBonus?: number;
   description: string;

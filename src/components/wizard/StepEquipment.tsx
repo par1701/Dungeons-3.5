@@ -292,7 +292,7 @@ export default function StepEquipment({ character, onChange }: StepProps) {
                                       disabled={disabled}
                                       onChange={() => toggleMagicProperty(i, p.id, e)}
                                     />{" "}
-                                    {p.name} (+{p.bonusEquivalent})
+                                    {p.name} ({p.flatCost ? `+${p.flatCost} po` : `+${p.bonusEquivalent}`})
                                   </label>
                                 );
                               })}

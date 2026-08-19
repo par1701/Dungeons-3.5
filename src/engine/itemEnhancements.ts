@@ -86,6 +86,11 @@ function magicBonusEquivalent(item: CharacterEquipmentItem): number {
   return enhancement + properties.reduce((sum, p) => sum + p.bonusEquivalent, 0);
 }
 
+/** Suma de los costes fijos (no equivalentes de bono) de las propiedades mágicas del objeto, p.ej. Ceremonial o Sombra. */
+function flatPropertyCost(item: CharacterEquipmentItem): number {
+  return resolveProperties(item).reduce((sum, p) => sum + (p.flatCost ?? 0), 0);
+}
+
 /** Precio de mercado final de un arma equipada, incluyendo magistral, material especial y mejora/propiedades mágicas. */
 export function computeWeaponMarketPrice(weapon: Weapon, item: CharacterEquipmentItem): number {
   const material = resolveMaterial(item);
@@ -96,7 +101,7 @@ export function computeWeaponMarketPrice(weapon: Weapon, item: CharacterEquipmen
 
   const totalBonus = magicBonusEquivalent(item);
   if (totalBonus > 0) {
-    return base + MASTERWORK_WEAPON_COST + totalBonus * totalBonus * 2000;
+    return base + MASTERWORK_WEAPON_COST + totalBonus * totalBonus * 2000 + flatPropertyCost(item);
   }
   return base + (item.masterwork ? MASTERWORK_WEAPON_COST : 0);
 }
@@ -110,7 +115,7 @@ export function computeArmorMarketPrice(armor: Armor, item: CharacterEquipmentIt
 
   const totalBonus = magicBonusEquivalent(item);
   if (totalBonus > 0) {
-    return base + MASTERWORK_ARMOR_COST + totalBonus * totalBonus * 1000;
+    return base + MASTERWORK_ARMOR_COST + totalBonus * totalBonus * 1000 + flatPropertyCost(item);
   }
   return base + (item.masterwork ? MASTERWORK_ARMOR_COST : 0);
 }

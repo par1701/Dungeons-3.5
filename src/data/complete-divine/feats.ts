@@ -21,6 +21,66 @@ const minSkillRanks = (skillId: string, ranks: number) => (ctx: FeatPrereqContex
 
 export const CDV_FEATS: Feat[] = [
   // ---------------------------------------------------------------------
+  // DOMINIOS
+  // ---------------------------------------------------------------------
+  {
+    id: "cdv-arcane-disciple",
+    name: "Discípulo Arcano",
+    source: "complete-divine",
+    types: ["general"],
+    description:
+      "El lanzador arcano estudia las enseñanzas de una deidad y aprende a canalizar una fracción de su poder divino a través de su propia magia.",
+    benefit:
+      "Elige un dominio de una deidad a la que venere. Añade los conjuros de dominio de nivel igual o inferior al conjuro arcano más alto que pueda lanzar a la lista de conjuros de su clase, y obtiene el poder de dominio de nivel 1 asociado. Además, puede lanzar una vez al día el conjuro de dominio de mayor nivel al que tenga acceso como un conjuro de dominio adicional.",
+    prerequisites: [
+      {
+        description: "Saber (Religión) 4 rangos o Conjurar 4 rangos",
+        check: (ctx) => (ctx.skillRanks["knowledge-religion"] ?? 0) >= 4 || (ctx.skillRanks["spellcraft"] ?? 0) >= 4,
+      },
+      { description: "Debe venerar a una deidad" },
+      { description: "Capacidad de lanzar conjuros arcanos" },
+    ],
+    fighterBonusFeat: false,
+    stackable: true,
+  },
+  {
+    id: "cdv-domain-focus",
+    name: "Enfoque de Dominio",
+    source: "complete-divine",
+    types: ["general"],
+    description: "El personaje concentra su devoción en uno de sus dominios hasta dominarlo por completo.",
+    benefit:
+      "Elige uno de sus dominios. Lanza los conjuros de ese dominio a nivel de lanzador +1 (lo que también afecta a las pruebas de nivel de lanzador para superar resistencia a conjuros, duración, alcance, etc.). Puede tomar esta dote varias veces, cada vez para un dominio distinto; sus efectos no se acumulan sobre un mismo dominio.",
+    prerequisites: [{ description: "Acceso al dominio elegido" }],
+    fighterBonusFeat: false,
+    stackable: true,
+  },
+  {
+    id: "cdv-disciple-of-the-sun",
+    name: "Discípulo del Sol",
+    source: "complete-divine",
+    types: ["general"],
+    description: "El personaje canaliza toda la fuerza de su fe en destruir a los no muertos en vez de limitarse a ahuyentarlos.",
+    benefit:
+      "Puede gastar dos intentos de expulsar no muertos en vez de uno para destruir directamente a los no muertos que expulsaría con éxito, en lugar de solo obligarlos a huir.",
+    prerequisites: [{ description: "Capacidad de expulsar no muertos" }],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cdv-sacred-boost",
+    name: "Impulso Sagrado",
+    source: "complete-divine",
+    types: ["general"],
+    description: "El personaje envuelve a sus aliados en un aura que perfecciona cualquier curación que reciban.",
+    benefit:
+      "Como acción estándar, puede gastar un intento de expulsar no muertos para crear un aura en un estallido de 18 metros centrado en él. Cualquier conjuro de curación lanzado sobre una criatura afectada por el aura antes de su siguiente turno se considera maximizado automáticamente, sin aumentar su nivel de conjuro ni su tiempo de lanzamiento.",
+    prerequisites: [{ description: "Capacidad de expulsar no muertos" }],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+
+  // ---------------------------------------------------------------------
   // DOTES DIVINAS (cadena de expulsión/reprensión)
   // ---------------------------------------------------------------------
   {
@@ -137,7 +197,7 @@ export const CDV_FEATS: Feat[] = [
   },
   {
     id: "cdv-nimbus-of-light",
-    name: "Nimbo de Luz",
+    name: "Nimbo de Luz (Complete Divine)",
     source: "complete-divine",
     types: ["general"],
     description: "El personaje puede rodearse de un resplandor divino que hiere a los no muertos cercanos.",
@@ -240,21 +300,6 @@ export const CDV_FEATS: Feat[] = [
     stackable: false,
   },
   {
-    id: "cdv-sanctify-martial-strike",
-    name: "Santificar Golpe Marcial",
-    source: "complete-divine",
-    types: ["combate"],
-    description: "Las armas del personaje se impregnan del poder de las fuerzas del bien.",
-    benefit:
-      "Sus ataques cuerpo a cuerpo y sus proyectiles disparados se consideran de alineamiento Bueno a efectos de superar la reducción de daño.",
-    prerequisites: [
-      { description: "Acceso al dominio del Bien" },
-      { description: "Base de ataque +6", check: minBab(6) },
-    ],
-    fighterBonusFeat: false,
-    stackable: false,
-  },
-  {
     id: "cdv-corrupt-martial-strike",
     name: "Corromper Golpe Marcial",
     source: "complete-divine",
@@ -271,47 +316,13 @@ export const CDV_FEATS: Feat[] = [
   },
   {
     id: "cdv-sanctum-spell",
-    name: "Conjuro de Santuario",
+    name: "Conjuro de Santuario (Complete Divine)",
     source: "complete-divine",
     types: ["metamagia"],
     description: "El personaje ha consagrado un lugar donde sus conjuros se ven reforzados por su fe.",
     benefit:
       "Define un santuario personal (un espacio consagrado ligado a su fe). Mientras se encuentre dentro de él, puede aplicar los efectos de una dote de metamagia que posea a sus conjuros sin que aumenten de nivel ni de tiempo de lanzamiento.",
     prerequisites: [{ description: "Al menos una dote de metamagia" }],
-    fighterBonusFeat: false,
-    stackable: false,
-  },
-
-  // ---------------------------------------------------------------------
-  // MULTICLASE ASCÉTICA
-  // ---------------------------------------------------------------------
-  {
-    id: "cdv-ascetic-mage",
-    name: "Mago Ascético",
-    source: "complete-divine",
-    types: ["especial"],
-    description: "El personaje combina la disciplina del monje con el estudio arcano sin perder su progresión marcial.",
-    benefit:
-      "A efectos de determinar el bonificador de ataque sin armas, el bonificador a la CA sin armadura y la velocidad de movimiento del monje, sus niveles de lanzador de conjuros arcanos cuentan como niveles de monje. Esto no afecta a su progresión de lanzamiento de conjuros ni a otros rasgos de monje.",
-    prerequisites: [
-      { description: "Nivel de monje 1" },
-      { description: "Capacidad de lanzar conjuros arcanos" },
-    ],
-    fighterBonusFeat: false,
-    stackable: false,
-  },
-  {
-    id: "cdv-ascetic-rogue",
-    name: "Pícaro Ascético",
-    source: "complete-divine",
-    types: ["especial"],
-    description: "El personaje combina la disciplina del monje con la astucia furtiva de un pícaro.",
-    benefit:
-      "A efectos de determinar el bonificador de ataque sin armas, el bonificador a la CA sin armadura y la velocidad de movimiento del monje, sus niveles de pícaro cuentan como niveles de monje. Esto no afecta a su progresión de ataque furtivo ni a otros rasgos de pícaro.",
-    prerequisites: [
-      { description: "Nivel de monje 1" },
-      { description: "Nivel de pícaro 1" },
-    ],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -510,7 +521,7 @@ export const CDV_FEATS: Feat[] = [
   },
   {
     id: "cdv-devoted-inquisitor",
-    name: "Inquisidor Devoto",
+    name: "Inquisidor Devoto (Complete Divine)",
     source: "complete-divine",
     types: ["general"],
     description: "El personaje ha entrenado su mente para detectar el engaño y la herejía en nombre de su fe.",
@@ -555,18 +566,6 @@ export const CDV_FEATS: Feat[] = [
     benefit:
       "Mientras respete fielmente los preceptos de su fe, gana un bonificador de moral +1 a todas las tiradas de salvación. Si viola gravemente sus votos, pierde este beneficio hasta que realice una expiación.",
     prerequisites: [{ description: "Debe venerar activamente a una deidad" }],
-    fighterBonusFeat: false,
-    stackable: false,
-  },
-  {
-    id: "cdv-battle-blessing",
-    name: "Bendición de Batalla",
-    source: "complete-divine",
-    types: ["metamagia"],
-    description: "El personaje puede pedir la bendición de su deidad justo antes del combate sin perder la iniciativa.",
-    benefit:
-      "Puede lanzar cualquier conjuro de la escuela de Abjuración con el descriptor de bendición y un tiempo de lanzamiento de 1 acción estándar como una acción de movimiento en su lugar, sin aumentar su nivel de conjuro.",
-    prerequisites: [{ description: "Capacidad de lanzar conjuros divinos de nivel 1 o superior" }],
     fighterBonusFeat: false,
     stackable: false,
   },

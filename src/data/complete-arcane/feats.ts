@@ -24,23 +24,6 @@ export const CA_FEATS: Feat[] = [
   // GENERALES
   // ---------------------------------------------------------------------
   {
-    id: "ca-arcane-disciple",
-    name: "Discípulo Arcano",
-    source: "complete-arcane",
-    types: ["general"],
-    description:
-      "El lanzador arcano estudia las enseñanzas de una deidad y aprende a canalizar una fracción de su poder divino a través de su propia magia.",
-    benefit:
-      "Elige un dominio de una deidad a la que venere. Añade los conjuros de dominio de nivel igual o inferior al conjuro arcano más alto que pueda lanzar a la lista de conjuros de su clase, y obtiene el poder de dominio de nivel 1 asociado. Además, puede lanzar una vez al día el conjuro de dominio de mayor nivel al que tenga acceso como un conjuro de dominio adicional.",
-    prerequisites: [
-      { description: "Saber (Religión) 8 rangos", check: (ctx) => (ctx.skillRanks["knowledge-religion"] ?? 0) >= 8 },
-      { description: "Debe venerar a una deidad" },
-      { description: "Capacidad de lanzar conjuros arcanos" },
-    ],
-    fighterBonusFeat: false,
-    stackable: true,
-  },
-  {
     id: "ca-arcane-mastery",
     name: "Maestría Arcana",
     source: "complete-arcane",
@@ -164,6 +147,93 @@ export const CA_FEATS: Feat[] = [
     fighterBonusFeat: false,
     stackable: false,
   },
+  {
+    id: "ca-collegiate-wizard",
+    name: "Mago Colegial",
+    source: "complete-arcane",
+    types: ["general"],
+    description: "El mago que se formó en una academia arcana conserva un repertorio de conjuros más amplio que sus compañeros autodidactas.",
+    benefit:
+      "Su libro de conjuros inicial contiene 6 conjuros adicionales de 1er nivel (además del bonificador por Inteligencia habitual). Cada vez que sube de nivel y aprende conjuros nuevos gracias a su progresión de mago, aprende 1 conjuro adicional del nivel más alto que pueda lanzar. Además, obtiene un bonificador de competencia +2 a las pruebas de Saber relacionadas con la arcana.",
+    prerequisites: [{ description: "Capacidad de lanzar conjuros de mago" }],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "ca-extra-invocation",
+    name: "Invocación Adicional",
+    source: "complete-arcane",
+    types: ["general"],
+    description: "El brujo amplía su repertorio de invocaciones más allá de lo habitual para su nivel.",
+    benefit:
+      "Aprende una invocación adicional, de un grado como máximo un escalón inferior al grado de invocación más alto que ya conozca. Esta dote puede tomarse varias veces; cada vez aprende una invocación adicional distinta.",
+    prerequisites: [{ description: "Capacidad de usar invocaciones de brujo" }],
+    fighterBonusFeat: false,
+    stackable: true,
+  },
+  {
+    id: "ca-battle-caster",
+    name: "Combatiente Arcano",
+    source: "complete-arcane",
+    types: ["general"],
+    description: "El lanzador acostumbrado a conjurar en pleno combate extiende su inmunidad al fallo de conjuros hasta protecciones más pesadas.",
+    benefit:
+      "Si posee una capacidad de clase que le permite ignorar la probabilidad de fallo arcano por llevar cierta categoría de armadura (como el brujo, el mago de guerra o el espadachín místico con armadura ligera), esa inmunidad se extiende a la siguiente categoría de armadura más pesada.",
+    prerequisites: [{ description: "Capacidad de clase que ignore el fallo de conjuros arcanos por llevar una categoría de armadura" }],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "ca-mage-slayer",
+    name: "Cazador de Magos",
+    source: "complete-arcane",
+    types: ["combate"],
+    description: "El personaje ha aprendido a hostigar a los lanzadores de conjuros hasta el punto de quebrar su concentración.",
+    benefit:
+      "+1 de bonificador a las tiradas de salvación de Voluntad. Además, cualquier lanzador de conjuros al que amenace en combate cuerpo a cuerpo falla automáticamente las pruebas de Concentración que intente para lanzar conjuros defensivamente.",
+    prerequisites: [],
+    fighterBonusFeat: true,
+    stackable: false,
+  },
+  {
+    id: "ca-pierce-magical-concealment",
+    name: "Perforar Ocultación Mágica",
+    source: "complete-arcane",
+    types: ["combate"],
+    description: "El personaje distingue la silueta real de un enemigo incluso a través de efectos mágicos que deberían camuflarla.",
+    benefit:
+      "Ignora la probabilidad de fallo por ocultación otorgada por conjuros o efectos mágicos (como invisibilidad, borrosidad o imagen especular), aunque sigue sufriendo la ocultación normal no mágica.",
+    prerequisites: [
+      { description: "Combate a Ciegas", check: hasFeat("blind-fight") },
+      { description: "Cazador de Magos", check: hasFeat("ca-mage-slayer") },
+    ],
+    fighterBonusFeat: true,
+    stackable: false,
+  },
+  {
+    id: "ca-pierce-magical-protection",
+    name: "Perforar Protección Mágica",
+    source: "complete-arcane",
+    types: ["combate"],
+    description: "El personaje sabe dirigir un golpe certero contra el aura mágica que protege a un enemigo, no contra su cuerpo.",
+    benefit:
+      "Como acción estándar, puede realizar un único ataque cuerpo a cuerpo que ignora cualquier bonificador mágico a la Clase de Armadura del objetivo. Si el ataque impacta, además dispersa (como Dispersar Magia, a su nivel de lanzador o nivel de personaje, lo que sea mayor) el conjuro o efecto que otorgaba ese bonificador.",
+    prerequisites: [{ description: "Cazador de Magos", check: hasFeat("ca-mage-slayer") }],
+    fighterBonusFeat: true,
+    stackable: false,
+  },
+  {
+    id: "ca-precocious-apprentice",
+    name: "Aprendiz Precoz",
+    source: "complete-arcane",
+    types: ["general"],
+    description: "El joven lanzador se adelanta a su propio desarrollo, forzando el acceso a magia más avanzada de lo habitual.",
+    benefit:
+      "Obtiene un espacio de conjuro adicional de 2º nivel, que solo puede usarse para un conjuro concreto de 2º nivel elegido al tomar esta dote. Si aún no tendría acceso normal a conjuros de 2º nivel, debe superar una prueba de nivel de lanzador (CD 20 + nivel del conjuro) cada vez que quiera lanzarlo con este espacio.",
+    prerequisites: [{ description: "Capacidad de lanzar conjuros arcanos de 1er nivel" }],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
 
   // ---------------------------------------------------------------------
   // METAMAGIA
@@ -251,7 +321,7 @@ export const CA_FEATS: Feat[] = [
   },
   {
     id: "ca-sanctum-spell",
-    name: "Conjuro de Santuario",
+    name: "Conjuro de Santuario (Complete Arcane)",
     source: "complete-arcane",
     types: ["metamagia"],
     description:
@@ -367,6 +437,18 @@ export const CA_FEATS: Feat[] = [
     benefit:
       "Una vez al día, puede aplicar el efecto de Conjuro Expandido a un conjuro que esté lanzando sin necesidad de haberlo preparado con esa dote y sin aumentar el tiempo de lanzamiento (aunque sigue ocupando un espacio de conjuro tres niveles más alto que el real).",
     prerequisites: [{ description: "Conjuro Expandido", check: hasFeat("widen-spell") }],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "ca-split-ray",
+    name: "Rayo Dividido",
+    source: "complete-arcane",
+    types: ["metamagia"],
+    description: "El lanzador aprende a bifurcar un conjuro de rayo para golpear a dos objetivos distintos a la vez.",
+    benefit:
+      "Un conjuro de tipo rayo con un único proyectil puede dividirse en dos rayos idénticos, cada uno dirigido a un objetivo distinto dentro del alcance del conjuro; cada rayo se resuelve como un ataque de toque a distancia independiente con el efecto completo del conjuro. Usa un espacio de conjuro dos niveles más alto que el real.",
+    prerequisites: [{ description: "Capacidad de lanzar al menos un conjuro de tipo rayo" }],
     fighterBonusFeat: false,
     stackable: false,
   },

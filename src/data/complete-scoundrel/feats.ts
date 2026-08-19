@@ -64,10 +64,13 @@ export const CS_FEATS: Feat[] = [
     name: "Forajido Audaz",
     source: "complete-scoundrel",
     types: ["general"],
-    description: "El personaje se ha criado entre proscritos y ha aprendido a manejar el arsenal típico del bajo mundo.",
+    description: "El pícaro que también cultiva el garbo del espadachín funde ambas tradiciones en una sola.",
     benefit:
-      "Obtiene competencia con la ballesta de mano, el estoque, la espada corta, el arco corto, la porra y el látigo. Además, si posee la capacidad de infligir daño de ataque furtivo, puede aplicarlo con cualquiera de estas armas incluso en circunstancias en las que normalmente no podría (como un ataque a distancia contra un enemigo que no esté flanqueado).",
-    prerequisites: [],
+      "A efectos de determinar el bonificador de Gracia y el bonificador de esquiva Ágil del espadachín, así como sus dados de daño por ataque furtivo, sus niveles de pícaro y de espadachín se suman entre sí.",
+    prerequisites: [
+      { description: "Bonificador de Gracia +1 (rasgo de clase de espadachín)" },
+      { description: "Ataque furtivo +2d6" },
+    ],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -200,6 +203,106 @@ export const CS_FEATS: Feat[] = [
   },
 
   // ---------------------------------------------------------------------
+  // DOTES DE EMBOSCADA (sacrifican dados de ataque furtivo por un efecto especial)
+  // ---------------------------------------------------------------------
+  {
+    id: "cs-concussion-attack",
+    name: "Ataque de Conmoción",
+    source: "complete-scoundrel",
+    types: ["combate"],
+    description: "El pícaro dirige su golpe furtivo a un punto que aturde los sentidos en vez de simplemente herir.",
+    benefit:
+      "Cuando inflige daño por ataque furtivo, puede sacrificar 2d6 de esos dados de daño para imponer una penalización de -2 a las pruebas de Inteligencia y Sabiduría del objetivo durante 10 asaltos.",
+    prerequisites: [{ description: "Ataque furtivo +3d6" }],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cs-deafening-strike",
+    name: "Golpe Ensordecedor",
+    source: "complete-scoundrel",
+    types: ["combate"],
+    description: "Un golpe furtivo dirigido a los oídos del enemigo deja un pitido que ahoga cualquier otro sonido.",
+    benefit: "Cuando inflige daño por ataque furtivo, puede sacrificar 3d6 de esos dados de daño para dejar sordo al objetivo durante 3 asaltos.",
+    prerequisites: [{ description: "Ataque furtivo +3d6" }],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cs-impeding-attack",
+    name: "Ataque Incapacitante",
+    source: "complete-scoundrel",
+    types: ["combate"],
+    description: "El golpe furtivo alcanza tendones y articulaciones, entorpeciendo cada movimiento posterior del objetivo.",
+    benefit:
+      "Cuando inflige daño por ataque furtivo, puede sacrificar 3d6 de esos dados de daño para imponer una penalización de -2 a las pruebas de Fuerza y Destreza del objetivo durante 10 asaltos.",
+    prerequisites: [{ description: "Ataque furtivo +4d6" }],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cs-head-shot",
+    name: "Golpe a la Cabeza",
+    source: "complete-scoundrel",
+    types: ["combate"],
+    description: "El pícaro apunta su golpe furtivo directamente a la cabeza del objetivo, buscando dejarlo confuso.",
+    benefit:
+      "Cuando inflige daño por ataque furtivo con un arma contundente, puede sacrificar 5d6 de esos dados de daño para que el objetivo deba superar una salvación de Voluntad o quede confuso durante 1 asalto.",
+    prerequisites: [
+      { description: "Ataque furtivo +6d6" },
+      { description: "Soltura con un Arma (arma contundente)", check: hasFeat("weapon-focus") },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cs-disemboweling-strike",
+    name: "Golpe Destripador",
+    source: "complete-scoundrel",
+    types: ["combate"],
+    description: "Con un arma cortante, el pícaro dirige su golpe furtivo directamente a las vísceras del objetivo.",
+    benefit:
+      "Una vez al día por objetivo, cuando inflige daño por ataque furtivo con un arma cortante, puede sacrificar 4d6 de esos dados de daño para infligir 1d4 puntos de daño de Constitución adicionales.",
+    prerequisites: [
+      { description: "Ataque furtivo +4d6" },
+      { description: "Soltura con un Arma (arma cortante)", check: hasFeat("weapon-focus") },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cs-throat-punch",
+    name: "Puñetazo a la Garganta",
+    source: "complete-scoundrel",
+    types: ["combate"],
+    description: "Un golpe furtivo sin armas dirigido a la garganta deja al objetivo sin aliento para hablar o conjurar con claridad.",
+    benefit:
+      "Cuando inflige daño por ataque furtivo con un ataque sin armas, puede sacrificar 2d6 de esos dados de daño para imponer al objetivo una penalización de -5 a las pruebas de habilidad basadas en el habla y una probabilidad de fallo del 50% al lanzar conjuros con componente verbal durante 3 asaltos.",
+    prerequisites: [
+      { description: "Ataque furtivo +2d6" },
+      { description: "Impacto sin Arma Mejorado", check: hasFeat("improved-unarmed-strike") },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+
+  // ---------------------------------------------------------------------
+  // GENERALES ADICIONALES
+  // ---------------------------------------------------------------------
+  {
+    id: "cs-daredevil-athlete",
+    name: "Atleta Temerario",
+    source: "complete-scoundrel",
+    types: ["general"],
+    description: "El personaje arriesga el cuerpo en el último instante para lograr una proeza física imposible.",
+    benefit:
+      "Hasta 3 veces al día, como acción inmediata, obtiene un bonificador de competencia +5 a una prueba de Equilibrio, Escalar, Escapismo, Saltar, Montar o Acrobacias.",
+    prerequisites: [],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+
+  // ---------------------------------------------------------------------
   // SINERGIA MULTICLASE (explorador / batidor / pícaro)
   // ---------------------------------------------------------------------
   {
@@ -230,6 +333,18 @@ export const CS_FEATS: Feat[] = [
       { description: "Golpe de Escaramuza +1d6/+1 CA (rasgo de clase de batidor)", check: hasClassLevel("cad-scout", 1) },
       { description: "Capacidad de infligir daño de ataque furtivo +1d6" },
     ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cs-improved-skirmish",
+    name: "Escaramuza Mejorada",
+    source: "complete-scoundrel",
+    types: ["combate"],
+    description: "El batidor aprende a golpear con más fuerza cuanto más terreno recorre antes de atacar.",
+    benefit:
+      "Si se mueve al menos 6 metros durante su turno antes de realizar un ataque (en vez de los 3 metros habituales que exige el Golpe de Escaramuza), el daño adicional de su Golpe de Escaramuza aumenta en 2d6 y el bonificador a la Clase de Armadura aumenta en +2, ambos por encima de lo que ya obtendría normalmente ese asalto.",
+    prerequisites: [{ description: "Golpe de Escaramuza +2d6/+1 CA (rasgo de clase de batidor)", check: hasClassLevel("cad-scout", 4) }],
     fighterBonusFeat: false,
     stackable: false,
   },

@@ -82,18 +82,6 @@ export const CM_FEATS: Feat[] = [
     stackable: false,
   },
   {
-    id: "cm-collegiate-wizard",
-    name: "Mago Colegial",
-    source: "complete-mage",
-    types: ["general"],
-    description: "El personaje se formó en una academia arcana con un plan de estudios riguroso y bien documentado.",
-    benefit:
-      "Gana +2 de bonificador de competencia en las pruebas de Conocimiento de Conjuros y Saber (Arcano). Además, una vez al día puede repetir una prueba de Conocimiento de Conjuros fallida para identificar un conjuro o un objeto mágico, quedándose con el segundo resultado.",
-    prerequisites: [],
-    fighterBonusFeat: false,
-    stackable: false,
-  },
-  {
     id: "cm-enhance-familiar",
     name: "Mejorar Familiar",
     source: "complete-mage",
@@ -142,7 +130,7 @@ export const CM_FEATS: Feat[] = [
   },
   {
     id: "cm-nimbus-of-light",
-    name: "Nimbo de Luz",
+    name: "Nimbo de Luz (Complete Mage)",
     source: "complete-mage",
     types: ["general"],
     description: "Un lanzador de alineamiento bueno aprende a manifestar una tenue aura de luz sagrada a voluntad.",
@@ -259,18 +247,6 @@ export const CM_FEATS: Feat[] = [
     stackable: false,
   },
   {
-    id: "cm-split-ray",
-    name: "Rayo Dividido",
-    source: "complete-mage",
-    types: ["metamagia"],
-    description: "El lanzador aprende a bifurcar un conjuro de rayo para golpear a dos objetivos distintos a la vez.",
-    benefit:
-      "Un conjuro de tipo rayo con un único proyectil puede dividirse en dos rayos idénticos, cada uno dirigido a un objetivo distinto dentro del alcance del conjuro; cada rayo se resuelve como un ataque de toque a distancia independiente con el efecto completo del conjuro. Usa un espacio de conjuro dos niveles más alto que el real.",
-    prerequisites: [{ description: "Capacidad de lanzar al menos un conjuro de tipo rayo" }],
-    fighterBonusFeat: false,
-    stackable: false,
-  },
-  {
     id: "cm-signature-spell",
     name: "Conjuro Distintivo",
     source: "complete-mage",
@@ -293,6 +269,76 @@ export const CM_FEATS: Feat[] = [
     prerequisites: [{ description: "Sustitución de Energía", check: hasFeat("ca-energy-substitution") }],
     fighterBonusFeat: false,
     stackable: true,
+  },
+
+  // ---------------------------------------------------------------------
+  // METAMAGIA ADICIONALES
+  // ---------------------------------------------------------------------
+  {
+    id: "cm-alacritous-cogitation",
+    name: "Cogitación Presurosa",
+    source: "complete-mage",
+    types: ["metamagia"],
+    description: "El lanzador preparado aprende a reservar parte de su magia diaria para improvisar sobre la marcha.",
+    benefit:
+      "Una vez al día, al preparar sus conjuros, puede dejar un espacio de conjuro sin asignar. Más tarde ese mismo día, como acción de asalto completo, puede llenar ese espacio vacío lanzando de forma espontánea cualquier conjuro de ese nivel o inferior que conozca o tenga en su libro de conjuros, sin necesidad de haberlo preparado específicamente.",
+    prerequisites: [{ description: "Capacidad de preparar conjuros arcanos", check: (ctx) => ctx.casterLevel >= 1 }],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cm-captivating-melody",
+    name: "Melodía Cautivadora",
+    source: "complete-mage",
+    types: ["metamagia"],
+    description: "El intérprete aprende a entrelazar su música con sus conjuros de encantamiento e ilusión para hacerlos más difíciles de resistir.",
+    benefit:
+      "Como acción rápida, puede gastar un uso diario de música de bardo y superar una prueba de Interpretar (CD 15 + el nivel del conjuro) para añadir +2 a la CD de salvación del siguiente conjuro de encantamiento o ilusión que lance ese mismo asalto.",
+    prerequisites: [
+      { description: "Capacidad de usar música de bardo" },
+      {
+        description:
+          "Capacidad de lanzar conjuros arcanos de encantamiento o ilusión de la misma clase que otorga música de bardo",
+      },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cm-cloudy-conjuration",
+    name: "Conjuración Nublada",
+    source: "complete-mage",
+    types: ["metamagia"],
+    description: "El lanzador aprende a envolver sus conjuros de conjuración en una densa nube de humo negro.",
+    benefit:
+      "Un conjuro de conjuración puede lanzarse de modo que, además de su efecto normal, quede rodeado durante 1 asalto por una densa nube de humo negro en un radio de 1,5 m alrededor de su área o del propio lanzador (a elección de este). Cualquier criatura viva que comience su turno dentro de la nube queda enfermiza durante 1 asalto. No cambia el nivel del conjuro.",
+    prerequisites: [{ description: "Capacidad de lanzar conjuros de conjuración" }],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cm-dazzling-illusion",
+    name: "Ilusión Deslumbrante",
+    source: "complete-mage",
+    types: ["metamagia"],
+    description: "El lanzador aprende a acompañar sus ilusiones de un destello que deslumbra a quienes las presencian.",
+    benefit:
+      "Un conjuro de ilusión puede lanzarse de modo que, además de su efecto normal, todos los enemigos en un radio de 9 m desde el punto de origen queden deslumbrados durante 1 asalto. No cambia el nivel del conjuro.",
+    prerequisites: [{ description: "Capacidad de lanzar conjuros de ilusión" }],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "cm-delay-potion",
+    name: "Retrasar Poción",
+    source: "complete-mage",
+    types: ["general"],
+    description: "El personaje aprende a beber una poción sin activar de inmediato su efecto.",
+    benefit:
+      "Al beber una poción, puede posponer el inicio de su efecto hasta un número de horas igual a su modificador de Constitución (mínimo 1). Activar el efecto retrasado es una acción rápida.",
+    prerequisites: [],
+    fighterBonusFeat: false,
+    stackable: false,
   },
 ];
 

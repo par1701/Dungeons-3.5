@@ -110,6 +110,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
     size,
     { bodyArmor, shield },
     character.activeVariantRules.includes("vr-ua-armor-as-dr"),
+    character.bonusInsightAC,
   );
   const dexMod = abilityModifier(finalScores.dex);
   const grapple = bab + abilityModifier(finalScores.str) - sizeModifier(size);
@@ -205,6 +206,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
               <Text style={{ fontSize: 7, textAlign: "center" }}>
                 10 base + {ac.armorBonus} armadura + {ac.shieldBonus} escudo +{" "}
                 {ac.maxDexBonus === null ? dexMod : Math.min(dexMod, ac.maxDexBonus)} Des + {sizeModifier(size)} tamaño
+                {ac.insightBonus !== 0 ? ` + ${ac.insightBonus} perspicacia` : ""}
               </Text>
               <Text style={{ fontSize: 7, textAlign: "center" }}>
                 Tocar {ac.touch} · Desprevenido {ac.flatFooted}

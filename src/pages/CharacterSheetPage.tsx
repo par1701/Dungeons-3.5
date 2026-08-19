@@ -116,6 +116,7 @@ export default function CharacterSheetPage() {
     size,
     { bodyArmor, shield },
     character.activeVariantRules.includes("vr-ua-armor-as-dr"),
+    character.bonusInsightAC,
   );
 
   const equippedWeapons = character.equipment
@@ -244,7 +245,7 @@ export default function CharacterSheetPage() {
                 <div className="part"><span className="num">{ac.maxDexBonus === null ? dexMod : Math.min(dexMod, ac.maxDexBonus)}</span><span className="lbl">Des</span></div>
                 <div className="part"><span className="num">{sizeModifier(size)}</span><span className="lbl">Tamaño</span></div>
                 <div className="part"><span className="num">0</span><span className="lbl">Natural</span></div>
-                <div className="part"><span className="num">0</span><span className="lbl">Otros</span></div>
+                <div className="part"><span className="num">{ac.insightBonus}</span><span className="lbl">Perspicacia</span></div>
               </div>
               <p className="muted" style={{ textAlign: "center", margin: 0 }}>
                 CA a distancia: {ac.touch} · CA desprevenido: {ac.flatFooted}

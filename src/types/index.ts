@@ -491,10 +491,11 @@ export interface Character {
   notes: string;
   activeSourceBooks: SourceBookId[];
   activeVariantRules: string[];
-  /** Ajustes manuales del DJ: dotes, puntos de golpe y puntos de habilidad adicionales fuera de las reglas normales. */
+  /** Ajustes manuales del DJ: dotes, puntos de golpe, puntos de habilidad y bonificador de perspicacia a la CA adicionales fuera de las reglas normales. */
   bonusFeatSlots: number;
   bonusHp: number;
   bonusSkillPoints: number;
+  bonusInsightAC: number;
   createdAt: string;
   updatedAt: string;
 }

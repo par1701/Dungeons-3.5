@@ -626,6 +626,7 @@ export function computeCharacterArmorClass(
   size: string,
   equipped: EquippedArmorPieces,
   armorAsDamageReduction = false,
+  insightBonus = 0,
 ): {
   total: number;
   touch: number;
@@ -634,6 +635,7 @@ export function computeCharacterArmorClass(
   shieldBonus: number;
   maxDexBonus: number | null;
   damageReduction: number;
+  insightBonus: number;
 } {
   const rawArmorBonus = equipped.bodyArmor?.armorBonus ?? 0;
   const rawShieldBonus = equipped.shield?.armorBonus ?? 0;
@@ -659,9 +661,9 @@ export function computeCharacterArmorClass(
     sizeModifier: sizeModifier(size),
     naturalArmor: 0,
     deflection: 0,
-    misc: 0,
+    misc: insightBonus,
   });
-  return { ...ac, armorBonus, shieldBonus, maxDexBonus, damageReduction };
+  return { ...ac, armorBonus, shieldBonus, maxDexBonus, damageReduction, insightBonus };
 }
 
 export interface WeaponAttackSummary {

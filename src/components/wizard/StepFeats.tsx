@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getEnabledFeats, getEnabledClasses, getEnabledWeapons } from "../../data";
+import { findFeat, getEnabledFeats, getEnabledClasses, getEnabledWeapons } from "../../data";
 import { getSourceBook } from "../../data/sourcebooks";
 import type { StepProps } from "./types";
 import type { FeatPrereqContext, FeatType } from "../../types";
@@ -9,6 +9,7 @@ import {
   computeFinalAbilityScores,
   flattenSkillRanksForPrereqs,
   getAllKnownFeatIds,
+  getBonusFeatsFromClasses,
   isHumanRace,
   totalCharacterLevel,
 } from "../../engine/derive";
@@ -56,18 +57,15 @@ export default function StepFeats({ character, onChange }: StepProps) {
   const finalScores = computeFinalAbilityScores(character.abilityScores, race, character.equipment);
 
   const featSlots = computeFeatSlots(character.classLevels, isHumanRace(race), character.bonusFeatSlots);
+  const classFeatureChoices = character.classFeatureChoices ?? [];
+  const bonusFeats = getBonusFeatsFromClasses(character.classLevels, classes, classFeatureChoices, character.activeVariantRules);
+  const bonusFeatByFeatId = new Map(bonusFeats.map((bf) => [bf.featId, bf]));
   const ctx: FeatPrereqContext = {
     abilityScores: finalScores,
     babTotal: computeBabTotal(character.classLevels, classes),
     classLevels: Object.fromEntries(character.classLevels.map((cl) => [cl.classId, cl.level])),
     totalCharacterLevel: totalCharacterLevel(character.classLevels),
-    featIds: getAllKnownFeatIds(
-      character.feats,
-      character.classLevels,
-      classes,
-      character.classFeatureChoices ?? [],
-      character.activeVariantRules,
-    ),
+    featIds: getAllKnownFeatIds(character.feats, character.classLevels, classes, classFeatureChoices, character.activeVariantRules),
     skillRanks: flattenSkillRanksForPrereqs(character.skillRanks),
     casterLevel: totalCharacterLevel(character.classLevels),
   };
@@ -152,6 +150,24 @@ export default function StepFeats({ character, onChange }: StepProps) {
       <p className={character.feats.length > featSlots ? "" : "muted"} style={character.feats.length > featSlots ? { color: "var(--danger)" } : {}}>
         Dotes seleccionadas: {character.feats.length} / {featSlots} disponibles según nivel y raza
       </p>
+      {bonusFeats.length > 0 && (
+        <div className="card" style={{ marginBottom: 16 }}>
+          <h3 style={{ marginTop: 0 }}>Dotes obtenidas gratis por clase ({bonusFeats.length})</h3>
+          <p className="muted" style={{ marginTop: 0 }}>
+            No ocupan hueco de dote normal; se eligen en "Elecciones de clase".
+          </p>
+          <ul style={{ margin: 0, paddingLeft: 18 }}>
+            {bonusFeats.map((bf, i) => {
+              const feat = findFeat(bf.featId);
+              return (
+                <li key={i}>
+                  <strong>{feat?.name ?? bf.featId}</strong> — {bf.sourceLabel} ({bf.className} {bf.level})
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
       <input
         className="form-row"
         style={{ padding: 8, border: "1px solid var(--border)", borderRadius: 6, width: "100%", marginBottom: 12 }}
@@ -197,12 +213,14 @@ export default function StepFeats({ character, onChange }: StepProps) {
             .filter((f) => f.featId === feat.id);
           const taken = instances.length > 0;
           const unmet = feat.prerequisites.filter((p) => p.check && !p.check(ctx));
+          const grantedElsewhere = !feat.stackable ? bonusFeatByFeatId.get(feat.id) : undefined;
+          const blocked = Boolean(grantedElsewhere) && !taken;
           return (
             <div
               key={feat.id}
               className={`card selectable-row ${taken ? "selected" : ""}`}
-              onClick={feat.stackable ? undefined : () => toggleFeat(feat.id)}
-              style={feat.stackable ? {} : { cursor: "pointer" }}
+              onClick={feat.stackable || blocked ? undefined : () => toggleFeat(feat.id)}
+              style={feat.stackable || blocked ? { opacity: blocked ? 0.6 : 1 } : { cursor: "pointer" }}
             >
               <h3>{feat.name}</h3>
               <p className="muted">{feat.benefit}</p>
@@ -214,6 +232,12 @@ export default function StepFeats({ character, onChange }: StepProps) {
               {unmet.length > 0 && (
                 <div style={{ color: "var(--danger)", fontSize: "0.85rem" }}>
                   ⚠ No cumple: {unmet.map((p) => p.description).join("; ")}
+                </div>
+              )}
+              {grantedElsewhere && (
+                <div className="muted" style={{ fontSize: "0.85rem" }}>
+                  {taken ? "⚠ También la tienes gratis por: " : "Ya la tienes gratis por: "}
+                  {grantedElsewhere.sourceLabel} ({grantedElsewhere.className} {grantedElsewhere.level})
                 </div>
               )}
               {feat.stackable && (

@@ -323,6 +323,8 @@ export interface Weapon {
   weight: number;
   cost: number; // en po
   damageType: string; // C, P, E o combinaciones
+  /** Arco compuesto: puede fabricarse con una calificación de Fuerza (ver `CharacterEquipmentItem.strengthRating`) que añade el bono de Fuerza al daño hasta ese límite. */
+  isComposite?: boolean;
 }
 
 /**
@@ -520,6 +522,8 @@ export interface CharacterEquipmentItem {
   enhancementBonus?: number;
   /** Ids de `MagicItemProperty` aplicadas a este objeto. */
   magicPropertyIds?: string[];
+  /** Solo arcos compuestos: calificación de Fuerza fabricada (0 por defecto), +100 po por punto. */
+  strengthRating?: number;
 }
 
 export interface CharacterCompanion {

@@ -113,6 +113,8 @@ export default function CharacterSheetDocument({ character }: { character: Chara
     character.bonusInsightAC,
   );
   const dexMod = abilityModifier(finalScores.dex);
+  const meleeAttackBonus = bab + abilityModifier(finalScores.str) + sizeModifier(size);
+  const rangedAttackBonus = bab + abilityModifier(finalScores.dex) + sizeModifier(size);
   const grapple = bab + abilityModifier(finalScores.str) - sizeModifier(size);
 
   const equippedWeapons = character.equipment
@@ -224,6 +226,8 @@ export default function CharacterSheetDocument({ character }: { character: Chara
           <View style={{ flex: 1 }}>
             <Panel title="Ataque">
               <Text>Bonif. ataque base: +{bab}</Text>
+              <Text>Cuerpo a cuerpo: {meleeAttackBonus >= 0 ? `+${meleeAttackBonus}` : meleeAttackBonus}</Text>
+              <Text>A distancia: {rangedAttackBonus >= 0 ? `+${rangedAttackBonus}` : rangedAttackBonus}</Text>
               <Text>Golpe de presa: {grapple >= 0 ? `+${grapple}` : grapple}</Text>
               <Text>Iniciativa: {dexMod >= 0 ? `+${dexMod}` : dexMod}</Text>
               <Text>Velocidad: {race?.speed ?? 30} pies</Text>

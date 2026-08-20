@@ -274,6 +274,21 @@ export default function StepEquipment({ character, onChange }: StepProps) {
                               ))}
                             </select>
                           </div>
+                          {e.itemKind === "weapon" && data && "isComposite" in data && data.isComposite && (
+                            <div className="form-row">
+                              <label>Calificación de Fuerza (arco compuesto)</label>
+                              <input
+                                type="number"
+                                min={0}
+                                value={e.strengthRating ?? 0}
+                                onChange={(ev) => updateItem(i, { strengthRating: Math.max(0, Number(ev.target.value)) || undefined })}
+                              />
+                              <p className="muted" style={{ margin: 0 }}>
+                                +100 po por punto. Añade el bono de Fuerza al daño hasta este límite; si tu bono de
+                                Fuerza real es menor, sufres -2 al ataque con este arco.
+                              </p>
+                            </div>
+                          )}
                         </div>
                         {applicableProperties.length > 0 && (
                           <div style={{ marginTop: 10 }}>

@@ -125,6 +125,8 @@ export default function CharacterSheetPage() {
     .filter((x): x is { weapon: NonNullable<ReturnType<typeof findWeapon>>; item: (typeof character.equipment)[number] } => Boolean(x.weapon))
     .map((x) => computeWeaponAttack(x.weapon, bab, finalScores, size, character.feats, x.item));
 
+  const meleeAttackBonus = bab + abilityModifier(finalScores.str) + sizeModifier(size);
+  const rangedAttackBonus = bab + abilityModifier(finalScores.dex) + sizeModifier(size);
   const grapple = bab + abilityModifier(finalScores.str) + sizeModifier(size) * -1;
   const dexMod = abilityModifier(finalScores.dex);
 
@@ -302,6 +304,10 @@ export default function CharacterSheetPage() {
             <Panel title="Ataque">
               <p style={{ margin: 0 }}>
                 Bonif. ataque base: <strong>+{bab}</strong>
+                <br />
+                Cuerpo a cuerpo: <strong>{meleeAttackBonus >= 0 ? `+${meleeAttackBonus}` : meleeAttackBonus}</strong>
+                <br />
+                A distancia: <strong>{rangedAttackBonus >= 0 ? `+${rangedAttackBonus}` : rangedAttackBonus}</strong>
                 <br />
                 Golpe de presa: <strong>{grapple >= 0 ? `+${grapple}` : grapple}</strong>
               </p>

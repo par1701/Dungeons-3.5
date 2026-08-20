@@ -48,6 +48,28 @@ export function computeWeaponEquipmentBonuses(item: CharacterEquipmentItem): Wea
   };
 }
 
+export interface CompositeBowEffect {
+  damageBonus: number;
+  attackPenalty: number;
+}
+
+/**
+ * Efecto de la calificación de Fuerza de un arco compuesto (regla SRD): el
+ * arco añade al daño el bono de Fuerza del portador hasta el límite de su
+ * calificación (0 por defecto en un arco comprado sin especificar, +100 po
+ * por cada punto de calificación adicional). Si el bono de Fuerza real del
+ * portador es menor que la calificación del arco, sufre -2 a las tiradas de
+ * ataque con él por no poder tensarlo del todo.
+ */
+export function computeCompositeBowEffect(weapon: Weapon, item: CharacterEquipmentItem, strMod: number): CompositeBowEffect {
+  if (!weapon.isComposite) return { damageBonus: 0, attackPenalty: 0 };
+  const rating = item.strengthRating ?? 0;
+  return {
+    damageBonus: Math.max(0, Math.min(strMod, rating)),
+    attackPenalty: strMod < rating ? -2 : 0,
+  };
+}
+
 export interface ArmorEquipmentBonuses {
   acBonus: number;
   armorCheckPenaltyReduction: number;
@@ -84,6 +106,7 @@ export function computeItemDisplayName(baseName: string, item: CharacterEquipmen
   for (const p of properties) parts.push(p.name);
   if (!enhancement && properties.length === 0 && item.masterwork) parts.push("(magistral)");
   if (material) parts.push(`de ${material.name}`);
+  if (item.strengthRating) parts.push(`(Fuerza +${item.strengthRating})`);
   return parts.join(" ");
 }
 
@@ -107,13 +130,16 @@ function flatPropertyCost(item: CharacterEquipmentItem): number {
   return resolveProperties(item).reduce((sum, p) => sum + (p.flatCost ?? 0), 0);
 }
 
-/** Precio de mercado final de un arma equipada, incluyendo magistral, material especial y mejora/propiedades mágicas. */
+const COMPOSITE_BOW_COST_PER_STRENGTH_POINT = 100;
+
+/** Precio de mercado final de un arma equipada, incluyendo magistral, material especial, calificación de Fuerza (arcos compuestos) y mejora/propiedades mágicas. */
 export function computeWeaponMarketPrice(weapon: Weapon, item: CharacterEquipmentItem): number {
   const material = resolveMaterial(item);
   let base = weapon.cost;
   if (material?.weaponCostMultiplier) base *= material.weaponCostMultiplier;
   if (material?.weaponCostBonus) base += material.weaponCostBonus;
   if (material?.weaponCostPerPound) base += material.weaponCostPerPound * weapon.weight;
+  if (weapon.isComposite) base += (item.strengthRating ?? 0) * COMPOSITE_BOW_COST_PER_STRENGTH_POINT;
 
   const totalBonus = magicBonusEquivalent(item);
   if (totalBonus > 0) {

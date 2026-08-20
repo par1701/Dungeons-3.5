@@ -61,9 +61,9 @@ export const SRD_WEAPONS: Weapon[] = [
 
   // ----- Armas Marciales: a distancia -----
   { id: "longbow", name: "Arco Largo", source: "srd", category: "marcial", type: "distancia", damageSmall: "1d6", damageMedium: "1d8", critical: "x3", rangeIncrement: 100, weight: 3, cost: 75, damageType: "P" },
-  { id: "composite-longbow", name: "Arco Largo Compuesto", source: "srd", category: "marcial", type: "distancia", damageSmall: "1d6", damageMedium: "1d8", critical: "x3", rangeIncrement: 110, weight: 3, cost: 100, damageType: "P" },
+  { id: "composite-longbow", name: "Arco Largo Compuesto", source: "srd", category: "marcial", type: "distancia", damageSmall: "1d6", damageMedium: "1d8", critical: "x3", rangeIncrement: 110, weight: 3, cost: 100, damageType: "P", isComposite: true },
   { id: "shortbow", name: "Arco Corto", source: "srd", category: "marcial", type: "distancia", damageSmall: "1d4", damageMedium: "1d6", critical: "x3", rangeIncrement: 60, weight: 2, cost: 30, damageType: "P" },
-  { id: "composite-shortbow", name: "Arco Corto Compuesto", source: "srd", category: "marcial", type: "distancia", damageSmall: "1d4", damageMedium: "1d6", critical: "x3", rangeIncrement: 70, weight: 2, cost: 75, damageType: "P" },
+  { id: "composite-shortbow", name: "Arco Corto Compuesto", source: "srd", category: "marcial", type: "distancia", damageSmall: "1d4", damageMedium: "1d6", critical: "x3", rangeIncrement: 70, weight: 2, cost: 75, damageType: "P", isComposite: true },
 
   // ----- Armas Exóticas: cuerpo a cuerpo ligeras -----
   { id: "kama", name: "Kama", source: "srd", category: "exotica", type: "cuerpo_a_cuerpo", damageSmall: "1d4", damageMedium: "1d6", critical: "x2", weight: 2, cost: 2, damageType: "E" },

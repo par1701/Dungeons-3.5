@@ -18,6 +18,7 @@ import type {
 } from "../types";
 import {
   computeArmorEquipmentBonuses,
+  computeCompositeBowEffect,
   computeItemDisplayName,
   computeWeaponEquipmentBonuses,
   resolveMaterial,
@@ -804,9 +805,16 @@ export function computeWeaponAttack(
   const equipBonuses = equipmentItem
     ? computeWeaponEquipmentBonuses(equipmentItem)
     : { attackBonus: 0, damageBonus: 0, doubledThreatRange: false, rangeIncrementMultiplier: 1 };
-  const attackBonus = bab + abilityMod + sizeModifier(size) + featBonuses.attackBonus + equipBonuses.attackBonus;
+  const compositeBow = equipmentItem
+    ? computeCompositeBowEffect(weapon, equipmentItem, abilityModifier(finalScores.str))
+    : { damageBonus: 0, attackPenalty: 0 };
+  const attackBonus =
+    bab + abilityMod + sizeModifier(size) + featBonuses.attackBonus + equipBonuses.attackBonus + compositeBow.attackPenalty;
   const damageMod =
-    (weapon.type === "distancia" ? 0 : abilityModifier(finalScores.str)) + featBonuses.damageBonus + equipBonuses.damageBonus;
+    (weapon.type === "distancia" ? 0 : abilityModifier(finalScores.str)) +
+    featBonuses.damageBonus +
+    equipBonuses.damageBonus +
+    compositeBow.damageBonus;
   const damage = damageMod === 0 ? weapon.damageMedium : `${weapon.damageMedium}${damageMod > 0 ? "+" : ""}${damageMod}`;
   const critical =
     featBonuses.doubledThreatRange || equipBonuses.doubledThreatRange ? doubleCriticalThreatRange(weapon.critical) : weapon.critical;

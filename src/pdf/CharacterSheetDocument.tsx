@@ -11,14 +11,16 @@ import {
   findSkill,
   findSpell,
   findWeapon,
+  findWondrousItem,
   getEnabledClasses,
 } from "../data";
 import {
   abilityModifier,
-  applyRacialAdjustments,
   computeBabTotal,
   computeCarryingCapacity,
   computeCharacterArmorClass,
+  computeEquipmentPassiveBonuses,
+  computeFinalAbilityScores,
   computeFlurryOfBlowsSequence,
   computeMaxHp,
   computeRapidShotSequence,
@@ -36,6 +38,7 @@ import {
   sizeModifier,
   totalCharacterLevel,
 } from "../engine/derive";
+import { computeWondrousItemMarketPrice } from "../engine/itemEnhancements";
 import {
   computeAnimalCompanionBonus,
   computeFamiliarGrantedAbilities,
@@ -76,10 +79,11 @@ export default function CharacterSheetDocument({ character }: { character: Chara
   const classes = getEnabledClasses(character.activeSourceBooks);
   const race = findRace(character.raceId);
   const size = race?.size ?? "Mediano";
-  const finalScores = applyRacialAdjustments(character.abilityScores, race);
+  const finalScores = computeFinalAbilityScores(character.abilityScores, race, character.equipment);
+  const equipmentBonuses = computeEquipmentPassiveBonuses(character.equipment);
   const level = totalCharacterLevel(character.classLevels);
   const bab = computeBabTotal(character.classLevels, classes);
-  const saves = computeSaveTotals(character.classLevels, classes, finalScores);
+  const saves = computeSaveTotals(character.classLevels, classes, finalScores, equipmentBonuses.saveResistance);
   const hp = computeMaxHp(
     character.classLevels,
     classes,
@@ -111,6 +115,8 @@ export default function CharacterSheetDocument({ character }: { character: Chara
     { bodyArmor, shield },
     character.activeVariantRules.includes("vr-ua-armor-as-dr"),
     character.bonusInsightAC,
+    equipmentBonuses.deflection,
+    equipmentBonuses.naturalArmor,
   );
   const dexMod = abilityModifier(finalScores.dex);
   const meleeAttackBonus = bab + abilityModifier(finalScores.str) + sizeModifier(size);
@@ -171,6 +177,10 @@ export default function CharacterSheetDocument({ character }: { character: Chara
   const totalGold =
     character.gold -
     character.equipment.reduce((sum, e) => {
+      if (e.itemKind === "maravilloso") {
+        const w = findWondrousItem(e.itemId);
+        return sum + (w ? computeWondrousItemMarketPrice(w, e) : 0) * e.quantity;
+      }
       const data =
         e.itemKind === "weapon" ? findWeapon(e.itemId) : e.itemKind === "armor" ? findArmor(e.itemId) : findGear(e.itemId);
       return sum + (data?.cost ?? 0) * e.quantity;
@@ -208,6 +218,8 @@ export default function CharacterSheetDocument({ character }: { character: Chara
               <Text style={{ fontSize: 7, textAlign: "center" }}>
                 10 base + {ac.armorBonus} armadura + {ac.shieldBonus} escudo +{" "}
                 {ac.maxDexBonus === null ? dexMod : Math.min(dexMod, ac.maxDexBonus)} Des + {sizeModifier(size)} tamaño
+                {ac.naturalArmorBonus !== 0 ? ` + ${ac.naturalArmorBonus} natural` : ""}
+                {ac.deflectionBonus !== 0 ? ` + ${ac.deflectionBonus} desviación` : ""}
                 {ac.insightBonus !== 0 ? ` + ${ac.insightBonus} perspicacia` : ""}
               </Text>
               <Text style={{ fontSize: 7, textAlign: "center" }}>
@@ -506,6 +518,15 @@ export default function CharacterSheetDocument({ character }: { character: Chara
 
         <Text style={styles.sectionTitle}>Equipo</Text>
         {character.equipment.map((e, i) => {
+          if (e.itemKind === "maravilloso") {
+            const w = findWondrousItem(e.itemId);
+            const bonus = e.enhancementBonus ?? w?.minBonus ?? 0;
+            return (
+              <Text key={i}>
+                • {w ? `${w.name} +${bonus}` : e.itemId} x{e.quantity} {e.equipped ? "(equipado)" : ""}
+              </Text>
+            );
+          }
           const data =
             e.itemKind === "weapon" ? findWeapon(e.itemId) : e.itemKind === "armor" ? findArmor(e.itemId) : findGear(e.itemId);
           return (

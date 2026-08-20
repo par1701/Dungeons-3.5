@@ -23,7 +23,9 @@ import {
   computeWeaponEquipmentBonuses,
   resolveMaterial,
   resolveProperties,
+  wondrousItemBonus,
 } from "./itemEnhancements";
+import { findWondrousItem } from "../data";
 
 const SKILL_KEY_SEPARATOR = "::";
 
@@ -89,6 +91,61 @@ export function applyRacialAdjustments(base: AbilityScores, race?: Race): Abilit
   return result;
 }
 
+export interface EquipmentPassiveBonuses {
+  /** Bonificador de desviación a la CA (p.ej. Anillo de Protección). */
+  deflection: number;
+  /** Bonificador de armadura natural (p.ej. Amuleto de Armadura Natural). */
+  naturalArmor: number;
+  /** Bonificador de resistencia a las tiradas de salvación (p.ej. Capa de Resistencia). */
+  saveResistance: number;
+  /** Bonificadores de mejora a características por objetos maravillosos equipados. */
+  abilityBonuses: Partial<Record<Ability, number>>;
+}
+
+/**
+ * Bonificadores "pasivos" que aportan los objetos maravillosos equipados
+ * (itemKind "maravilloso"): CA de desviación/armadura natural, resistencia a
+ * salvaciones, y mejora de características. Como todos son bonificadores de
+ * tipo mejora/desviación/armadura natural/resistencia, dos objetos que
+ * afecten al mismo apartado no se suman entre sí: solo se aplica el mayor
+ * (esto además es coherente con las ranuras de cuerpo, que ya impiden llevar
+ * dos objetos que compitan por la misma ranura salvo los anillos).
+ */
+export function computeEquipmentPassiveBonuses(equipment: CharacterEquipmentItem[]): EquipmentPassiveBonuses {
+  let deflection = 0;
+  let naturalArmor = 0;
+  let saveResistance = 0;
+  const abilityBonuses: Partial<Record<Ability, number>> = {};
+  for (const item of equipment) {
+    if (!item.equipped || item.itemKind !== "maravilloso") continue;
+    const def = findWondrousItem(item.itemId);
+    if (!def) continue;
+    const bonus = wondrousItemBonus(def, item);
+    if (def.category === "ca_desviacion") deflection = Math.max(deflection, bonus);
+    else if (def.category === "ca_natural") naturalArmor = Math.max(naturalArmor, bonus);
+    else if (def.category === "salvaciones_resistencia") saveResistance = Math.max(saveResistance, bonus);
+    else if (def.category === "caracteristica" && def.ability) {
+      abilityBonuses[def.ability] = Math.max(abilityBonuses[def.ability] ?? 0, bonus);
+    }
+  }
+  return { deflection, naturalArmor, saveResistance, abilityBonuses };
+}
+
+/** Puntuaciones de característica finales: base + ajustes raciales + mejora de objetos maravillosos equipados. */
+export function computeFinalAbilityScores(
+  base: AbilityScores,
+  race: Race | undefined,
+  equipment: CharacterEquipmentItem[] = [],
+): AbilityScores {
+  const racial = applyRacialAdjustments(base, race);
+  const { abilityBonuses } = computeEquipmentPassiveBonuses(equipment);
+  const result: AbilityScores = { ...racial };
+  (Object.entries(abilityBonuses) as [Ability, number][]).forEach(([ability, bonus]) => {
+    result[ability] = result[ability] + bonus;
+  });
+  return result;
+}
+
 function classDefFor(classId: string, classes: ClassDef[]): ClassDef | undefined {
   return classes.find((c) => c.id === classId);
 }
@@ -140,11 +197,12 @@ export function computeSaveTotals(
   classLevels: CharacterClassLevel[],
   classes: ClassDef[],
   abilityScores: AbilityScores,
+  resistanceBonus = 0,
 ): SaveTotals {
   return {
-    fort: computeBaseSave("fort", classLevels, classes) + abilityModifier(abilityScores.con),
-    ref: computeBaseSave("ref", classLevels, classes) + abilityModifier(abilityScores.dex),
-    will: computeBaseSave("will", classLevels, classes) + abilityModifier(abilityScores.wis),
+    fort: computeBaseSave("fort", classLevels, classes) + abilityModifier(abilityScores.con) + resistanceBonus,
+    ref: computeBaseSave("ref", classLevels, classes) + abilityModifier(abilityScores.dex) + resistanceBonus,
+    will: computeBaseSave("will", classLevels, classes) + abilityModifier(abilityScores.wis) + resistanceBonus,
   };
 }
 
@@ -599,9 +657,10 @@ export function deriveCharacterSummary(
   classes: ClassDef[],
   race: Race | undefined,
 ) {
-  const finalAbilityScores = applyRacialAdjustments(character.abilityScores, race);
+  const finalAbilityScores = computeFinalAbilityScores(character.abilityScores, race, character.equipment);
+  const equipmentBonuses = computeEquipmentPassiveBonuses(character.equipment);
   const bab = computeBabTotal(character.classLevels, classes);
-  const saves = computeSaveTotals(character.classLevels, classes, finalAbilityScores);
+  const saves = computeSaveTotals(character.classLevels, classes, finalAbilityScores, equipmentBonuses.saveResistance);
   const level = totalCharacterLevel(character.classLevels);
   const hp = computeMaxHp(
     character.classLevels,
@@ -643,6 +702,8 @@ export function computeCharacterArmorClass(
   equipped: EquippedArmorPieces,
   armorAsDamageReduction = false,
   insightBonus = 0,
+  deflectionBonus = 0,
+  naturalArmorBonus = 0,
 ): {
   total: number;
   touch: number;
@@ -652,6 +713,8 @@ export function computeCharacterArmorClass(
   maxDexBonus: number | null;
   damageReduction: number;
   insightBonus: number;
+  deflectionBonus: number;
+  naturalArmorBonus: number;
 } {
   const bodyEquip = equipped.bodyArmor?.item ? computeArmorEquipmentBonuses(equipped.bodyArmor.item, equipped.bodyArmor.armor.category) : undefined;
   const shieldEquip = equipped.shield?.item ? computeArmorEquipmentBonuses(equipped.shield.item, equipped.shield.armor.category) : undefined;
@@ -684,11 +747,11 @@ export function computeCharacterArmorClass(
     dexScore: finalScores.dex,
     maxDexBonus,
     sizeModifier: sizeModifier(size),
-    naturalArmor: 0,
-    deflection: 0,
+    naturalArmor: naturalArmorBonus,
+    deflection: deflectionBonus,
     misc: insightBonus,
   });
-  return { ...ac, armorBonus, shieldBonus, maxDexBonus, damageReduction, insightBonus };
+  return { ...ac, armorBonus, shieldBonus, maxDexBonus, damageReduction, insightBonus, deflectionBonus, naturalArmorBonus };
 }
 
 export interface WeaponAttackSummary {

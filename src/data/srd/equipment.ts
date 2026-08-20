@@ -99,6 +99,8 @@ export const SRD_ARMORS: Armor[] = [
   { id: "leather", name: "Armadura de Cuero", source: "srd", category: "ligera", armorBonus: 2, maxDexBonus: 6, armorCheckPenalty: 0, arcaneSpellFailure: 10, speed30: 30, speed20: 20, weight: 15, cost: 10 },
   { id: "studded-leather", name: "Cuero Tachonado", source: "srd", category: "ligera", armorBonus: 3, maxDexBonus: 5, armorCheckPenalty: -1, arcaneSpellFailure: 15, speed30: 30, speed20: 20, weight: 20, cost: 25 },
   { id: "chain-shirt", name: "Camisote de Mallas", source: "srd", category: "ligera", armorBonus: 4, maxDexBonus: 4, armorCheckPenalty: -2, arcaneSpellFailure: 20, speed30: 30, speed20: 20, weight: 25, cost: 100 },
+  // Objeto específico del SRD: cota de mallas de fabricación élfica, tratada como armadura ligera pese a su bonificador (no mágica de por sí; puede encantarse encima con el sistema habitual).
+  { id: "elven-chain", name: "Mallas Élficas", source: "srd", category: "ligera", armorBonus: 5, maxDexBonus: 4, armorCheckPenalty: -2, arcaneSpellFailure: 20, speed30: 30, speed20: 20, weight: 20, cost: 4150 },
 
   // ----- Armaduras Medias -----
   { id: "hide", name: "Armadura de Pieles", source: "srd", category: "media", armorBonus: 3, maxDexBonus: 4, armorCheckPenalty: -3, arcaneSpellFailure: 20, speed30: 20, speed20: 15, weight: 25, cost: 15 },

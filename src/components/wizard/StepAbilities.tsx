@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { StepProps } from "./types";
 import type { Ability } from "../../types";
-import { abilityModifier, applyRacialAdjustments, pointBuyTotalCost } from "../../engine/derive";
+import { abilityModifier, computeFinalAbilityScores, pointBuyTotalCost } from "../../engine/derive";
 import { findRace } from "../../data";
 
 const ABILITY_LABELS: Record<Ability, string> = {
@@ -32,7 +32,7 @@ export default function StepAbilities({ character, onChange }: StepProps) {
 
   const method = character.abilityGenerationMethod;
   const race = findRace(character.raceId);
-  const finalScores = applyRacialAdjustments(character.abilityScores, race);
+  const finalScores = computeFinalAbilityScores(character.abilityScores, race, character.equipment);
 
   function setScore(ability: Ability, value: number) {
     onChange((c) => ({ ...c, abilityScores: { ...c.abilityScores, [ability]: value } }));

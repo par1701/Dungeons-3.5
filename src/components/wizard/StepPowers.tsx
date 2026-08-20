@@ -1,6 +1,6 @@
 import { getEnabledClasses, getEnabledPowers, findRace } from "../../data";
 import type { StepProps } from "./types";
-import { applyRacialAdjustments, powerPointsForClassLevel } from "../../engine/derive";
+import { computeFinalAbilityScores, powerPointsForClassLevel } from "../../engine/derive";
 
 function reachableMaxLevel(powersKnownRow: number[] | undefined, fallbackMax: number): number {
   if (!powersKnownRow) return fallbackMax;
@@ -14,7 +14,7 @@ export default function StepPowers({ character, onChange }: StepProps) {
   const classes = getEnabledClasses(character.activeSourceBooks);
   const powers = getEnabledPowers(character.activeSourceBooks);
   const race = findRace(character.raceId);
-  const finalScores = applyRacialAdjustments(character.abilityScores, race);
+  const finalScores = computeFinalAbilityScores(character.abilityScores, race, character.equipment);
 
   const manifesterClassLevels = character.classLevels.filter((cl) => {
     const def = classes.find((c) => c.id === cl.classId);

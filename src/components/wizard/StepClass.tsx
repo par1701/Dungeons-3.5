@@ -2,8 +2,8 @@ import { findRace, getEnabledClasses } from "../../data";
 import type { StepProps } from "./types";
 import type { ClassDef, FeatPrereqContext } from "../../types";
 import {
-  applyRacialAdjustments,
   computeBabTotal,
+  computeFinalAbilityScores,
   flattenSkillRanksForPrereqs,
   getAllKnownFeatIds,
   totalCharacterLevel,
@@ -14,7 +14,7 @@ export default function StepClass({ character, onChange }: StepProps) {
   const baseClasses = allClasses.filter((c) => !c.isPrestige);
   const prestigeClasses = allClasses.filter((c) => c.isPrestige);
   const race = findRace(character.raceId);
-  const finalScores = applyRacialAdjustments(character.abilityScores, race);
+  const finalScores = computeFinalAbilityScores(character.abilityScores, race, character.equipment);
 
   function setLevel(classId: string, level: number, maxLevel: number) {
     onChange((c) => {

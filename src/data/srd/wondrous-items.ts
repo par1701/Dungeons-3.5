@@ -1,0 +1,132 @@
+import type { WondrousItem } from "../../types";
+
+// Objetos maravillosos "pasivos" del SRD (contenido abierto): se llevan
+// puestos en una ranura de cuerpo concreta y aportan un bonificador fijo
+// configurable, sin cargas ni usos diarios. Cada uno reproduce el precio
+// real de su tabla del DMG: (bono)² × 2000 po para bonificadores a la CA,
+// (bono)² × 1000 po para salvaciones y características.
+//
+// Los seis objetos de característica reproducen los seis clásicos del DMG,
+// cada uno en su ranura de cuerpo real (lo que hace que compitan de forma
+// correcta con otros objetos de la misma ranura, p. ej. no se pueden llevar
+// a la vez un Amuleto de Vigor y un Periapto de Sabiduría, ambos de cuello).
+// Solo se han incluido bonificadores en incrementos de 2 (el rango real con
+// el que se fabrican estos objetos según el DMG), no del 1 al 6 completo.
+export const SRD_WONDROUS_ITEMS: WondrousItem[] = [
+  {
+    id: "ring-of-protection",
+    name: "Anillo de Protección",
+    source: "srd",
+    bodySlot: "anillo",
+    category: "ca_desviacion",
+    description: "Un aura protectora invisible rodea al portador, otorgando un bonificador de desviación a la Clase de Armadura.",
+    minBonus: 1,
+    maxBonus: 5,
+    bonusStep: 1,
+    costPerBonusSquared: 2000,
+  },
+  {
+    id: "amulet-of-natural-armor",
+    name: "Amuleto de Armadura Natural",
+    source: "srd",
+    bodySlot: "cuello",
+    category: "ca_natural",
+    description: "Envuelve al portador en un campo de fuerza invisible que actúa como armadura natural, otorgando ese bonificador a la Clase de Armadura.",
+    minBonus: 1,
+    maxBonus: 5,
+    bonusStep: 1,
+    costPerBonusSquared: 2000,
+  },
+  {
+    id: "cloak-of-resistance",
+    name: "Capa de Resistencia",
+    source: "srd",
+    bodySlot: "hombros",
+    category: "salvaciones_resistencia",
+    description: "Protege al portador con un bonificador de resistencia a las tres tiradas de salvación (Fortaleza, Reflejos y Voluntad).",
+    minBonus: 1,
+    maxBonus: 5,
+    bonusStep: 1,
+    costPerBonusSquared: 1000,
+  },
+  {
+    id: "belt-of-giant-strength",
+    name: "Cinturón de Fuerza de Gigante",
+    source: "srd",
+    bodySlot: "cintura",
+    category: "caracteristica",
+    ability: "str",
+    description: "Otorga al portador un bonificador de mejora a su puntuación de Fuerza.",
+    minBonus: 2,
+    maxBonus: 6,
+    bonusStep: 2,
+    costPerBonusSquared: 1000,
+  },
+  {
+    id: "gloves-of-dexterity",
+    name: "Guantes de Destreza",
+    source: "srd",
+    bodySlot: "manos",
+    category: "caracteristica",
+    ability: "dex",
+    description: "Otorga al portador un bonificador de mejora a su puntuación de Destreza.",
+    minBonus: 2,
+    maxBonus: 6,
+    bonusStep: 2,
+    costPerBonusSquared: 1000,
+  },
+  {
+    id: "amulet-of-health",
+    name: "Amuleto de Vigor",
+    source: "srd",
+    bodySlot: "cuello",
+    category: "caracteristica",
+    ability: "con",
+    description: "Otorga al portador un bonificador de mejora a su puntuación de Constitución.",
+    minBonus: 2,
+    maxBonus: 6,
+    bonusStep: 2,
+    costPerBonusSquared: 1000,
+  },
+  {
+    id: "headband-of-intellect",
+    name: "Diadema de Intelecto",
+    source: "srd",
+    bodySlot: "cabeza",
+    category: "caracteristica",
+    ability: "int",
+    description: "Otorga al portador un bonificador de mejora a su puntuación de Inteligencia.",
+    minBonus: 2,
+    maxBonus: 6,
+    bonusStep: 2,
+    costPerBonusSquared: 1000,
+  },
+  {
+    id: "periapt-of-wisdom",
+    name: "Periapto de Sabiduría",
+    source: "srd",
+    bodySlot: "cuello",
+    category: "caracteristica",
+    ability: "wis",
+    description: "Otorga al portador un bonificador de mejora a su puntuación de Sabiduría.",
+    minBonus: 2,
+    maxBonus: 6,
+    bonusStep: 2,
+    costPerBonusSquared: 1000,
+  },
+  {
+    id: "cloak-of-charisma",
+    name: "Capa de Carisma",
+    source: "srd",
+    bodySlot: "hombros",
+    category: "caracteristica",
+    ability: "cha",
+    description: "Otorga al portador un bonificador de mejora a su puntuación de Carisma.",
+    minBonus: 2,
+    maxBonus: 6,
+    bonusStep: 2,
+    costPerBonusSquared: 1000,
+  },
+];
+
+export const SRD_WONDROUS_ITEM_IDS = SRD_WONDROUS_ITEMS.map((w) => w.id);

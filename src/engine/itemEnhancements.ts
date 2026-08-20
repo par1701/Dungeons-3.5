@@ -1,4 +1,4 @@
-import type { Armor, ArmorCategory, CharacterEquipmentItem, MagicItemProperty, SpecialMaterial, Weapon } from "../types";
+import type { Armor, ArmorCategory, CharacterEquipmentItem, MagicItemProperty, SpecialMaterial, Weapon, WondrousItem } from "../types";
 import { findMagicItemProperty, findSpecialMaterial } from "../data";
 
 /** Resuelve los ids de `magicPropertyIds` de un objeto equipado a sus `MagicItemProperty` completos. */
@@ -160,6 +160,18 @@ export function computeArmorMarketPrice(armor: Armor, item: CharacterEquipmentIt
     return base + MASTERWORK_ARMOR_COST + totalBonus * totalBonus * 1000 + flatPropertyCost(item);
   }
   return base + (item.masterwork ? MASTERWORK_ARMOR_COST : 0);
+}
+
+/** Bono efectivo de un objeto maravilloso equipado, dentro del rango [minBonus, maxBonus] del catálogo, en pasos de `bonusStep`. */
+export function wondrousItemBonus(wondrousItem: WondrousItem, item: CharacterEquipmentItem): number {
+  const chosen = item.enhancementBonus ?? wondrousItem.minBonus;
+  return Math.min(wondrousItem.maxBonus, Math.max(wondrousItem.minBonus, chosen));
+}
+
+/** Precio de mercado de un objeto maravilloso equipado, según la fórmula real del DMG: (bono)² × coste por bono². */
+export function computeWondrousItemMarketPrice(wondrousItem: WondrousItem, item: CharacterEquipmentItem): number {
+  const bonus = wondrousItemBonus(wondrousItem, item);
+  return bonus * bonus * wondrousItem.costPerBonusSquared;
 }
 
 /** Filtra qué propiedades mágicas de un catálogo son aplicables a un tipo de arma/armadura dados (para no ofrecer, p.ej., propiedades de armadura al configurar un arma). */

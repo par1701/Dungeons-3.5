@@ -20,13 +20,28 @@ export interface WeaponEquipmentBonuses {
   rangeIncrementMultiplier: number;
 }
 
-/** Bonificadores de ataque/daño/crítico/alcance que aporta el bono de mejora mágica, el material especial y las propiedades mágicas de un arma equipada. */
+/**
+ * Bonificadores de ataque/daño/crítico/alcance que aporta el bono de mejora
+ * mágica, el material especial y las propiedades mágicas de un arma
+ * equipada.
+ *
+ * El bonificador de competencia de la calidad magistral (+1 al ataque), el
+ * bonificador de mejora mágica y el bonificador de ataque inherente de la
+ * adamantina (+1, también de tipo "mejora" según el SRD) son todos del mismo
+ * tipo de bonificador y por tanto NO se suman entre sí: solo se aplica el
+ * mayor de los tres. La calidad magistral queda además implícita en
+ * cualquier objeto con bono de mejora mágica (los objetos mágicos son
+ * siempre magistrales), así que no hace falta comprobar `item.masterwork`
+ * por separado en ese caso.
+ */
 export function computeWeaponEquipmentBonuses(item: CharacterEquipmentItem): WeaponEquipmentBonuses {
   const enhancement = item.enhancementBonus ?? 0;
   const material = resolveMaterial(item);
   const properties = resolveProperties(item);
+  const masterworkAttackBonus = item.masterwork ? 1 : 0;
+  const attackBonus = Math.max(enhancement, material?.weaponAttackBonus ?? 0, masterworkAttackBonus);
   return {
-    attackBonus: enhancement + (material?.weaponAttackBonus ?? 0),
+    attackBonus,
     damageBonus: enhancement,
     doubledThreatRange: properties.some((p) => p.id === "keen"),
     rangeIncrementMultiplier: properties.some((p) => p.id === "distance") ? 2 : 1,

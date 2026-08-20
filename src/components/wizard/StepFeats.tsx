@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getEnabledFeats, getEnabledClasses } from "../../data";
+import { getEnabledFeats, getEnabledClasses, getEnabledWeapons } from "../../data";
 import { getSourceBook } from "../../data/sourcebooks";
 import type { StepProps } from "./types";
 import type { FeatPrereqContext, FeatType } from "../../types";
@@ -25,6 +25,22 @@ const CATEGORY_LABELS: Record<FeatType, string> = {
 
 type SortMode = "alfabetico" | "libro";
 
+// Dotes cuyo texto de "selection" debe coincidir con el nombre exacto de un
+// arma para que el motor de reglas le aplique el bonificador correspondiente
+// (Soltura/Especialización con un Arma, Crítico Mejorado/Potenciado...).
+const WEAPON_SELECTION_FEAT_IDS = new Set([
+  "weapon-focus",
+  "greater-weapon-focus",
+  "weapon-specialization",
+  "greater-weapon-specialization",
+  "improved-critical",
+  "cw-power-critical",
+]);
+
+// Dotes cuyo texto de "selection" debe ser uno de los tres tipos de daño.
+const DAMAGE_TYPE_SELECTION_FEAT_IDS = new Set(["phb2-melee-weapon-mastery", "phb2-ranged-weapon-mastery"]);
+const DAMAGE_TYPE_OPTIONS = ["Contundente", "Perforante", "Cortante"];
+
 export default function StepFeats({ character, onChange }: StepProps) {
   const [search, setSearch] = useState("");
   const [drafts, setDrafts] = useState<Record<string, string>>({});
@@ -33,6 +49,9 @@ export default function StepFeats({ character, onChange }: StepProps) {
   const [hideUnmet, setHideUnmet] = useState(false);
   const feats = getEnabledFeats(character.activeSourceBooks);
   const classes = getEnabledClasses(character.activeSourceBooks);
+  const weaponNames = [...new Set(getEnabledWeapons(character.activeSourceBooks).map((w) => w.name))].sort((a, b) =>
+    a.localeCompare(b, "es"),
+  );
   const race = findRace(character.raceId);
   const finalScores = applyRacialAdjustments(character.abilityScores, race);
 
@@ -128,6 +147,16 @@ export default function StepFeats({ character, onChange }: StepProps) {
 
   return (
     <div>
+      <datalist id="weapon-name-options">
+        {weaponNames.map((name) => (
+          <option key={name} value={name} />
+        ))}
+      </datalist>
+      <datalist id="damage-type-options">
+        {DAMAGE_TYPE_OPTIONS.map((name) => (
+          <option key={name} value={name} />
+        ))}
+      </datalist>
       <h2>Dotes</h2>
       <p className={character.feats.length > featSlots ? "" : "muted"} style={character.feats.length > featSlots ? { color: "var(--danger)" } : {}}>
         Dotes seleccionadas: {character.feats.length} / {featSlots} disponibles según nivel y raza
@@ -217,7 +246,20 @@ export default function StepFeats({ character, onChange }: StepProps) {
                   <div style={{ display: "flex", gap: 6 }}>
                     <input
                       style={{ flex: 1, padding: 6, border: "1px solid var(--border)", borderRadius: 6 }}
-                      placeholder="Arma, habilidad, escuela... (opcional)"
+                      placeholder={
+                        WEAPON_SELECTION_FEAT_IDS.has(feat.id)
+                          ? "Elige el arma exacta (debe coincidir para aplicarse en la hoja)"
+                          : DAMAGE_TYPE_SELECTION_FEAT_IDS.has(feat.id)
+                            ? "Elige el tipo de daño"
+                            : "Arma, habilidad, escuela... (opcional)"
+                      }
+                      list={
+                        WEAPON_SELECTION_FEAT_IDS.has(feat.id)
+                          ? "weapon-name-options"
+                          : DAMAGE_TYPE_SELECTION_FEAT_IDS.has(feat.id)
+                            ? "damage-type-options"
+                            : undefined
+                      }
                       value={drafts[feat.id] ?? ""}
                       onChange={(e) => setDrafts((d) => ({ ...d, [feat.id]: e.target.value }))}
                     />
@@ -225,6 +267,12 @@ export default function StepFeats({ character, onChange }: StepProps) {
                       + Añadir
                     </button>
                   </div>
+                  {WEAPON_SELECTION_FEAT_IDS.has(feat.id) && (
+                    <p className="muted" style={{ fontSize: "0.75rem", margin: "4px 0 0" }}>
+                      El nombre debe coincidir exactamente con el del arma en Equipo para que su bonificador se
+                      refleje en la hoja de personaje.
+                    </p>
+                  )}
                 </div>
               )}
             </div>

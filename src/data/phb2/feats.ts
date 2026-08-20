@@ -662,7 +662,7 @@ export const PHB2_FEATS: Feat[] = [
     types: ["combate"],
     description: "Ha llevado su dominio de un tipo de daño concreto hasta el límite con toda un arma a distancia que lo inflige.",
     benefit:
-      "Al tomar esta dote, elija un tipo de daño: contundente, cortante o perforante. Debe tener Soltura con un Arma y Especialización con un Arma con un arma a distancia que inflija ese tipo de daño. Al usar cualquier arma a distancia que inflija el tipo de daño elegido, obtiene un bonificador de +2 a las tiradas de ataque y +2 a las tiradas de daño, y su incremento de alcance aumenta en 6 m. Esta dote puede tomarse varias veces, eligiendo cada vez un tipo de daño distinto.",
+      "Al tomar esta dote, elija un tipo de daño: contundente, cortante o perforante. Debe tener Soltura con un Arma y Especialización con un Arma con un arma a distancia que inflija ese tipo de daño. Al usar cualquier arma a distancia que inflija el tipo de daño elegido, obtiene un bonificador de +2 a las tiradas de ataque y +2 a las tiradas de daño, y su incremento de alcance aumenta en 6 m (20 pies). Esta dote puede tomarse varias veces, eligiendo cada vez un tipo de daño distinto.",
     prerequisites: [
       { description: "Soltura con un Arma (con un arma a distancia del tipo de daño elegido)" },
       { description: "Especialización con un Arma (con esa misma arma)" },

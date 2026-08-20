@@ -89,6 +89,14 @@ export default function StepDetails({ character, onChange }: StepProps) {
             onChange={(e) => set("bonusSkillPoints", Number(e.target.value))}
           />
         </div>
+        <div className="form-row">
+          <label>Bonificador de perspicacia (insight) a la CA</label>
+          <input
+            type="number"
+            value={character.bonusInsightAC}
+            onChange={(e) => set("bonusInsightAC", Number(e.target.value))}
+          />
+        </div>
       </div>
     </div>
   );

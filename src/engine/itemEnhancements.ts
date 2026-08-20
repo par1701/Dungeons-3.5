@@ -1,0 +1,126 @@
+import type { Armor, ArmorCategory, CharacterEquipmentItem, MagicItemProperty, SpecialMaterial, Weapon } from "../types";
+import { findMagicItemProperty, findSpecialMaterial } from "../data";
+
+/** Bono de mejora + propiedades mágicas conocidas de un objeto equipado (sin resolver aún: solo lee las referencias del personaje). */
+function resolveProperties(item: CharacterEquipmentItem): MagicItemProperty[] {
+  return (item.magicPropertyIds ?? [])
+    .map((id) => findMagicItemProperty(id))
+    .filter((p): p is MagicItemProperty => Boolean(p));
+}
+
+function resolveMaterial(item: CharacterEquipmentItem): SpecialMaterial | undefined {
+  return item.specialMaterialId ? findSpecialMaterial(item.specialMaterialId) : undefined;
+}
+
+export interface WeaponEquipmentBonuses {
+  attackBonus: number;
+  damageBonus: number;
+  doubledThreatRange: boolean;
+  rangeIncrementMultiplier: number;
+}
+
+/** Bonificadores de ataque/daño/crítico/alcance que aporta el bono de mejora mágica, el material especial y las propiedades mágicas de un arma equipada. */
+export function computeWeaponEquipmentBonuses(item: CharacterEquipmentItem): WeaponEquipmentBonuses {
+  const enhancement = item.enhancementBonus ?? 0;
+  const material = resolveMaterial(item);
+  const properties = resolveProperties(item);
+  return {
+    attackBonus: enhancement + (material?.weaponAttackBonus ?? 0),
+    damageBonus: enhancement,
+    doubledThreatRange: properties.some((p) => p.id === "keen"),
+    rangeIncrementMultiplier: properties.some((p) => p.id === "distance") ? 2 : 1,
+  };
+}
+
+export interface ArmorEquipmentBonuses {
+  acBonus: number;
+  armorCheckPenaltyReduction: number;
+  maxDexBonusIncrease: number;
+  arcaneSpellFailureReduction: number;
+  damageReduction: number;
+}
+
+/** Bonificadores de CA/penalización/Destreza máxima/fallo arcano/RD que aporta el bono de mejora mágica y el material especial de una armadura o escudo equipado. */
+export function computeArmorEquipmentBonuses(item: CharacterEquipmentItem, category: ArmorCategory): ArmorEquipmentBonuses {
+  const enhancement = item.enhancementBonus ?? 0;
+  const material = resolveMaterial(item);
+  return {
+    acBonus: enhancement,
+    armorCheckPenaltyReduction: material?.armorCheckPenaltyReduction ?? 0,
+    maxDexBonusIncrease: material?.maxDexBonusIncrease ?? 0,
+    arcaneSpellFailureReduction: material?.arcaneSpellFailureReduction ?? 0,
+    damageReduction: material?.damageReductionByArmorCategory?.[category] ?? 0,
+  };
+}
+
+/** ¿El objeto tiene algún tipo de mejora especial (magistral, material especial o mágica)? */
+export function isEnhancedItem(item: CharacterEquipmentItem): boolean {
+  return Boolean(item.masterwork || item.specialMaterialId || (item.enhancementBonus ?? 0) > 0 || (item.magicPropertyIds?.length ?? 0) > 0);
+}
+
+/** Nombre para mostrar de un objeto equipado, incluyendo magistral/material/bono de mejora/propiedades ("Espada Larga +1 Flamígera de Adamantina"). */
+export function computeItemDisplayName(baseName: string, item: CharacterEquipmentItem): string {
+  const material = resolveMaterial(item);
+  const properties = resolveProperties(item);
+  const enhancement = item.enhancementBonus ?? 0;
+  const parts: string[] = [baseName];
+  if (enhancement > 0) parts.push(`+${enhancement}`);
+  for (const p of properties) parts.push(p.name);
+  if (!enhancement && properties.length === 0 && item.masterwork) parts.push("(magistral)");
+  if (material) parts.push(`de ${material.name}`);
+  return parts.join(" ");
+}
+
+/** Peso final de un objeto equipado, aplicando el multiplicador de peso del material especial, si tiene. */
+export function computeItemWeight(baseWeight: number, item: CharacterEquipmentItem): number {
+  const material = resolveMaterial(item);
+  return material?.weightMultiplier ? baseWeight * material.weightMultiplier : baseWeight;
+}
+
+const MASTERWORK_WEAPON_COST = 300;
+const MASTERWORK_ARMOR_COST = 150;
+
+function magicBonusEquivalent(item: CharacterEquipmentItem): number {
+  const enhancement = item.enhancementBonus ?? 0;
+  const properties = resolveProperties(item);
+  return enhancement + properties.reduce((sum, p) => sum + p.bonusEquivalent, 0);
+}
+
+/** Suma de los costes fijos (no equivalentes de bono) de las propiedades mágicas del objeto, p.ej. Ceremonial o Sombra. */
+function flatPropertyCost(item: CharacterEquipmentItem): number {
+  return resolveProperties(item).reduce((sum, p) => sum + (p.flatCost ?? 0), 0);
+}
+
+/** Precio de mercado final de un arma equipada, incluyendo magistral, material especial y mejora/propiedades mágicas. */
+export function computeWeaponMarketPrice(weapon: Weapon, item: CharacterEquipmentItem): number {
+  const material = resolveMaterial(item);
+  let base = weapon.cost;
+  if (material?.weaponCostMultiplier) base *= material.weaponCostMultiplier;
+  if (material?.weaponCostBonus) base += material.weaponCostBonus;
+  if (material?.weaponCostPerPound) base += material.weaponCostPerPound * weapon.weight;
+
+  const totalBonus = magicBonusEquivalent(item);
+  if (totalBonus > 0) {
+    return base + MASTERWORK_WEAPON_COST + totalBonus * totalBonus * 2000 + flatPropertyCost(item);
+  }
+  return base + (item.masterwork ? MASTERWORK_WEAPON_COST : 0);
+}
+
+/** Precio de mercado final de una armadura/escudo equipado, incluyendo magistral, material especial y mejora/propiedades mágicas. */
+export function computeArmorMarketPrice(armor: Armor, item: CharacterEquipmentItem): number {
+  const material = resolveMaterial(item);
+  let base = armor.cost;
+  if (material?.armorCostBonusByCategory?.[armor.category]) base += material.armorCostBonusByCategory[armor.category]!;
+  if (material?.armorCostPerPound) base += material.armorCostPerPound * armor.weight;
+
+  const totalBonus = magicBonusEquivalent(item);
+  if (totalBonus > 0) {
+    return base + MASTERWORK_ARMOR_COST + totalBonus * totalBonus * 1000 + flatPropertyCost(item);
+  }
+  return base + (item.masterwork ? MASTERWORK_ARMOR_COST : 0);
+}
+
+/** Filtra qué propiedades mágicas de un catálogo son aplicables a un tipo de arma/armadura dados (para no ofrecer, p.ej., propiedades de armadura al configurar un arma). */
+export function propertiesApplicableTo(properties: MagicItemProperty[], kind: "arma" | "armadura_o_escudo"): MagicItemProperty[] {
+  return properties.filter((p) => p.appliesTo === kind);
+}

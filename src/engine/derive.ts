@@ -5,6 +5,7 @@ import type {
   Character,
   CharacterClassFeatureChoice,
   CharacterClassLevel,
+  CharacterEquipmentItem,
   CharacterFeatChoice,
   ClassDef,
   ClassFeatureChoice,
@@ -13,6 +14,7 @@ import type {
   Weapon,
   WeaponType,
 } from "../types";
+import { computeArmorEquipmentBonuses, computeItemDisplayName, computeWeaponEquipmentBonuses } from "./itemEnhancements";
 
 const SKILL_KEY_SEPARATOR = "::";
 
@@ -606,9 +608,14 @@ export function deriveCharacterSummary(
   return { finalAbilityScores, bab, saves, level, hp, carrying };
 }
 
+export interface EquippedArmorPiece {
+  armor: Armor;
+  item?: CharacterEquipmentItem;
+}
+
 export interface EquippedArmorPieces {
-  bodyArmor?: Armor;
-  shield?: Armor;
+  bodyArmor?: EquippedArmorPiece;
+  shield?: EquippedArmorPiece;
 }
 
 /**
@@ -626,6 +633,7 @@ export function computeCharacterArmorClass(
   size: string,
   equipped: EquippedArmorPieces,
   armorAsDamageReduction = false,
+  insightBonus = 0,
 ): {
   total: number;
   touch: number;
@@ -634,22 +642,32 @@ export function computeCharacterArmorClass(
   shieldBonus: number;
   maxDexBonus: number | null;
   damageReduction: number;
+  insightBonus: number;
 } {
-  const rawArmorBonus = equipped.bodyArmor?.armorBonus ?? 0;
-  const rawShieldBonus = equipped.shield?.armorBonus ?? 0;
+  const bodyEquip = equipped.bodyArmor?.item ? computeArmorEquipmentBonuses(equipped.bodyArmor.item, equipped.bodyArmor.armor.category) : undefined;
+  const shieldEquip = equipped.shield?.item ? computeArmorEquipmentBonuses(equipped.shield.item, equipped.shield.armor.category) : undefined;
+  const rawArmorBonus = equipped.bodyArmor?.armor.armorBonus ?? 0;
+  const rawShieldBonus = equipped.shield?.armor.armorBonus ?? 0;
   let armorBonus = rawArmorBonus;
   let shieldBonus = rawShieldBonus;
-  let damageReduction = 0;
+  let damageReduction = (bodyEquip?.damageReduction ?? 0) + (shieldEquip?.damageReduction ?? 0);
   if (armorAsDamageReduction) {
     const bodySplit = splitArmorBonusForDamageReduction(rawArmorBonus);
     const shieldSplit = splitArmorBonusForDamageReduction(rawShieldBonus);
     armorBonus = bodySplit.acBonus;
     shieldBonus = shieldSplit.acBonus;
-    damageReduction = bodySplit.damageReduction + shieldSplit.damageReduction;
+    damageReduction += bodySplit.damageReduction + shieldSplit.damageReduction;
   }
-  const maxDexLimits = [equipped.bodyArmor?.maxDexBonus, equipped.shield?.maxDexBonus].filter(
-    (v): v is number => v !== undefined && v !== null,
-  );
+  armorBonus += bodyEquip?.acBonus ?? 0;
+  shieldBonus += shieldEquip?.acBonus ?? 0;
+  const maxDexLimits = [
+    equipped.bodyArmor?.armor.maxDexBonus === null || equipped.bodyArmor?.armor.maxDexBonus === undefined
+      ? undefined
+      : equipped.bodyArmor.armor.maxDexBonus + (bodyEquip?.maxDexBonusIncrease ?? 0),
+    equipped.shield?.armor.maxDexBonus === null || equipped.shield?.armor.maxDexBonus === undefined
+      ? undefined
+      : equipped.shield.armor.maxDexBonus + (shieldEquip?.maxDexBonusIncrease ?? 0),
+  ].filter((v): v is number => v !== undefined);
   const maxDexBonus = maxDexLimits.length > 0 ? Math.min(...maxDexLimits) : null;
   const ac = computeArmorClass({
     armorBonus,
@@ -659,9 +677,9 @@ export function computeCharacterArmorClass(
     sizeModifier: sizeModifier(size),
     naturalArmor: 0,
     deflection: 0,
-    misc: 0,
+    misc: insightBonus,
   });
-  return { ...ac, armorBonus, shieldBonus, maxDexBonus, damageReduction };
+  return { ...ac, armorBonus, shieldBonus, maxDexBonus, damageReduction, insightBonus };
 }
 
 export interface WeaponAttackSummary {
@@ -688,24 +706,110 @@ export function computeFullAttackSequence(weaponAttackBonus: number, bab: number
   return Array.from({ length: count }, (_, i) => weaponAttackBonus - 5 * i);
 }
 
+const DIACRITIC_MARKS_RE = /[̀-ͯ]/g;
+
+/** Normaliza un texto para comparaciones tolerantes a mayúsculas/acentos (nombres de arma, tipos de daño elegidos en dotes). */
+function normalizeForMatch(text: string): string {
+  return text.trim().toLowerCase().normalize("NFD").replace(DIACRITIC_MARKS_RE, "");
+}
+
+const DAMAGE_TYPE_LABEL_TO_CODE: Record<string, string> = {
+  contundente: "C",
+  perforante: "P",
+  cortante: "E",
+};
+
+/** Amplía el rango de amenaza de una notación de crítico ("x2", "19-20/x2") al doble de números que ya lo amenazan (Crítico Mejorado). */
+function doubleCriticalThreatRange(critical: string): string {
+  const rangeMatch = critical.match(/^(\d+)-20\/x(\d+)$/);
+  const simpleMatch = critical.match(/^x(\d+)$/);
+  let low: number;
+  let mult: string;
+  if (rangeMatch) {
+    low = parseInt(rangeMatch[1], 10);
+    mult = rangeMatch[2];
+  } else if (simpleMatch) {
+    low = 20;
+    mult = simpleMatch[1];
+  } else {
+    return critical;
+  }
+  const count = 20 - low + 1;
+  const newLow = Math.max(1, 20 - count * 2 + 1);
+  return newLow >= 20 ? `x${mult}` : `${newLow}-20/x${mult}`;
+}
+
+export interface WeaponFeatBonuses {
+  attackBonus: number;
+  damageBonus: number;
+  doubledThreatRange: boolean;
+  extraRangeIncrementFeet: number;
+}
+
+/**
+ * Bonificadores que las dotes de arma concreta (Soltura, Especialización,
+ * Crítico Mejorado, Maestría con Armas de PHB2) aportan a un arma dada,
+ * comparando el nombre del arma (o el tipo de daño elegido) con el texto
+ * libre guardado en `selection` de cada instancia de dote del personaje.
+ */
+export function getWeaponFeatBonuses(weapon: Weapon, feats: CharacterFeatChoice[]): WeaponFeatBonuses {
+  const weaponNameNorm = normalizeForMatch(weapon.name);
+  const weaponDamageCodes = weapon.damageType.split(/[^a-zA-Z]+/).filter(Boolean);
+  let attackBonus = 0;
+  let damageBonus = 0;
+  let doubledThreatRange = false;
+  let extraRangeIncrementFeet = 0;
+
+  for (const f of feats) {
+    const selection = f.selection ? normalizeForMatch(f.selection) : "";
+    if (selection && selection === weaponNameNorm) {
+      if (f.featId === "weapon-focus" || f.featId === "greater-weapon-focus") attackBonus += 1;
+      if (f.featId === "weapon-specialization" || f.featId === "greater-weapon-specialization") damageBonus += 2;
+      if (f.featId === "improved-critical") doubledThreatRange = true;
+    }
+    if (selection && (f.featId === "phb2-melee-weapon-mastery" || f.featId === "phb2-ranged-weapon-mastery")) {
+      const code = DAMAGE_TYPE_LABEL_TO_CODE[selection];
+      if (code && weaponDamageCodes.includes(code)) {
+        attackBonus += 2;
+        damageBonus += 2;
+        if (f.featId === "phb2-ranged-weapon-mastery") extraRangeIncrementFeet += 20;
+      }
+    }
+  }
+  return { attackBonus, damageBonus, doubledThreatRange, extraRangeIncrementFeet };
+}
+
 export function computeWeaponAttack(
   weapon: Weapon,
   bab: number,
   finalScores: AbilityScores,
   size: string,
+  feats: CharacterFeatChoice[] = [],
+  equipmentItem?: CharacterEquipmentItem,
 ): WeaponAttackSummary {
   const abilityMod = weapon.type === "distancia" ? abilityModifier(finalScores.dex) : abilityModifier(finalScores.str);
-  const attackBonus = bab + abilityMod + sizeModifier(size);
-  const damageMod = weapon.type === "distancia" ? 0 : abilityModifier(finalScores.str);
+  const featBonuses = getWeaponFeatBonuses(weapon, feats);
+  const equipBonuses = equipmentItem
+    ? computeWeaponEquipmentBonuses(equipmentItem)
+    : { attackBonus: 0, damageBonus: 0, doubledThreatRange: false, rangeIncrementMultiplier: 1 };
+  const attackBonus = bab + abilityMod + sizeModifier(size) + featBonuses.attackBonus + equipBonuses.attackBonus;
+  const damageMod =
+    (weapon.type === "distancia" ? 0 : abilityModifier(finalScores.str)) + featBonuses.damageBonus + equipBonuses.damageBonus;
   const damage = damageMod === 0 ? weapon.damageMedium : `${weapon.damageMedium}${damageMod > 0 ? "+" : ""}${damageMod}`;
+  const critical =
+    featBonuses.doubledThreatRange || equipBonuses.doubledThreatRange ? doubleCriticalThreatRange(weapon.critical) : weapon.critical;
+  const rangeIncrement = weapon.rangeIncrement
+    ? (weapon.rangeIncrement + featBonuses.extraRangeIncrementFeet) * equipBonuses.rangeIncrementMultiplier
+    : weapon.rangeIncrement;
+  const name = equipmentItem ? computeItemDisplayName(weapon.name, equipmentItem) : weapon.name;
   return {
     itemId: weapon.id,
-    name: weapon.name,
+    name,
     type: weapon.type,
     attackBonus,
     damage,
-    critical: weapon.critical,
-    rangeIncrement: weapon.rangeIncrement,
+    critical,
+    rangeIncrement,
     fullAttackSequence: computeFullAttackSequence(attackBonus, bab),
   };
 }
@@ -713,18 +817,32 @@ export function computeWeaponAttack(
 /**
  * Bonificador de ataque a distancia según el incremento de alcance (regla
  * SRD: -2 acumulativo por cada incremento completo más allá del primero,
- * hasta un máximo de 10 incrementos).
+ * hasta un máximo de 10 incrementos). Si el personaje tiene Disparo a
+ * Bocajarro, se suma +1 al ataque y al daño dentro de los 9 m (30 pies), con
+ * independencia del incremento de alcance propio del arma: dentro de un
+ * mismo incremento el penalizador por distancia es el mismo a cualquier
+ * distancia, pero Disparo a Bocajarro solo se aplica hasta 30 pies exactos,
+ * así que cuando el alcance del arma supera esa distancia (arcos, hondas,
+ * ballestas...) se añade una fila propia para ese caso, ya que de lo
+ * contrario nunca aparecería reflejado en la tabla de incrementos.
  */
 export function computeRangeIncrementAttackBonuses(
   baseAttackBonus: number,
   rangeIncrement: number,
-): { increment: number; distanceFeet: number; attackBonus: number }[] {
-  const results: { increment: number; distanceFeet: number; attackBonus: number }[] = [];
+  hasPointBlankShot = false,
+): { increment: number; distanceFeet: number; attackBonus: number; damageBonus: number }[] {
+  const results: { increment: number; distanceFeet: number; attackBonus: number; damageBonus: number }[] = [];
+  if (hasPointBlankShot && rangeIncrement > 30) {
+    results.push({ increment: 0, distanceFeet: 30, attackBonus: baseAttackBonus + 1, damageBonus: 1 });
+  }
   for (let increment = 1; increment <= 10; increment++) {
+    const distanceFeet = rangeIncrement * increment;
+    const pointBlankBonus = hasPointBlankShot && distanceFeet <= 30 ? 1 : 0;
     results.push({
       increment,
-      distanceFeet: rangeIncrement * increment,
-      attackBonus: baseAttackBonus - 2 * (increment - 1),
+      distanceFeet,
+      attackBonus: baseAttackBonus - 2 * (increment - 1) + pointBlankBonus,
+      damageBonus: pointBlankBonus,
     });
   }
   return results;

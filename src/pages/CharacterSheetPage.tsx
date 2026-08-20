@@ -107,22 +107,23 @@ export default function CharacterSheetPage() {
 
   const equippedArmorItems = character.equipment
     .filter((e) => e.equipped && e.itemKind === "armor")
-    .map((e) => findArmor(e.itemId))
-    .filter((a): a is NonNullable<typeof a> => Boolean(a));
-  const bodyArmor = equippedArmorItems.find((a) => a.category !== "escudo");
-  const shield = equippedArmorItems.find((a) => a.category === "escudo");
+    .map((e) => ({ armor: findArmor(e.itemId), item: e }))
+    .filter((x): x is { armor: NonNullable<ReturnType<typeof findArmor>>; item: (typeof character.equipment)[number] } => Boolean(x.armor));
+  const bodyArmor = equippedArmorItems.find((x) => x.armor.category !== "escudo");
+  const shield = equippedArmorItems.find((x) => x.armor.category === "escudo");
   const ac = computeCharacterArmorClass(
     finalScores,
     size,
     { bodyArmor, shield },
     character.activeVariantRules.includes("vr-ua-armor-as-dr"),
+    character.bonusInsightAC,
   );
 
   const equippedWeapons = character.equipment
     .filter((e) => e.equipped && e.itemKind === "weapon")
-    .map((e) => findWeapon(e.itemId))
-    .filter((w): w is NonNullable<typeof w> => Boolean(w))
-    .map((w) => computeWeaponAttack(w, bab, finalScores, size));
+    .map((e) => ({ weapon: findWeapon(e.itemId), item: e }))
+    .filter((x): x is { weapon: NonNullable<ReturnType<typeof findWeapon>>; item: (typeof character.equipment)[number] } => Boolean(x.weapon))
+    .map((x) => computeWeaponAttack(x.weapon, bab, finalScores, size, character.feats, x.item));
 
   const grapple = bab + abilityModifier(finalScores.str) + sizeModifier(size) * -1;
   const dexMod = abilityModifier(finalScores.dex);
@@ -244,7 +245,7 @@ export default function CharacterSheetPage() {
                 <div className="part"><span className="num">{ac.maxDexBonus === null ? dexMod : Math.min(dexMod, ac.maxDexBonus)}</span><span className="lbl">Des</span></div>
                 <div className="part"><span className="num">{sizeModifier(size)}</span><span className="lbl">Tamaño</span></div>
                 <div className="part"><span className="num">0</span><span className="lbl">Natural</span></div>
-                <div className="part"><span className="num">0</span><span className="lbl">Otros</span></div>
+                <div className="part"><span className="num">{ac.insightBonus}</span><span className="lbl">Perspicacia</span></div>
               </div>
               <p className="muted" style={{ textAlign: "center", margin: 0 }}>
                 CA a distancia: {ac.touch} · CA desprevenido: {ac.flatFooted}
@@ -351,9 +352,13 @@ export default function CharacterSheetPage() {
             .map((w) => (
               <p key={w.itemId} className="muted" style={{ marginTop: 8, marginBottom: 0 }}>
                 <strong>{w.name} por distancia</strong> (-2 acumulativo por incremento de {w.rangeIncrement} pies,
-                máx. 10):{" "}
-                {computeRangeIncrementAttackBonuses(w.attackBonus, w.rangeIncrement!)
-                  .map((r) => `${r.distanceFeet}p ${r.attackBonus >= 0 ? "+" : ""}${r.attackBonus}`)
+                máx. 10{knownFeatIds.has("point-blank-shot") ? "; incluye +1 ataque/daño de Disparo a Bocajarro a 9 m (30 pies) o menos" : ""}
+                ):{" "}
+                {computeRangeIncrementAttackBonuses(w.attackBonus, w.rangeIncrement!, knownFeatIds.has("point-blank-shot"))
+                  .map(
+                    (r) =>
+                      `${r.distanceFeet}p ${r.attackBonus >= 0 ? "+" : ""}${r.attackBonus}${r.damageBonus > 0 ? ` (daño +${r.damageBonus})` : ""}`,
+                  )
                   .join(" · ")}
               </p>
             ))}

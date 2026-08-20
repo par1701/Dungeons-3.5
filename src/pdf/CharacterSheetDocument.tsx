@@ -101,24 +101,25 @@ export default function CharacterSheetDocument({ character }: { character: Chara
 
   const equippedArmorItems = character.equipment
     .filter((e) => e.equipped && e.itemKind === "armor")
-    .map((e) => findArmor(e.itemId))
-    .filter((a): a is NonNullable<typeof a> => Boolean(a));
-  const bodyArmor = equippedArmorItems.find((a) => a.category !== "escudo");
-  const shield = equippedArmorItems.find((a) => a.category === "escudo");
+    .map((e) => ({ armor: findArmor(e.itemId), item: e }))
+    .filter((x): x is { armor: NonNullable<ReturnType<typeof findArmor>>; item: (typeof character.equipment)[number] } => Boolean(x.armor));
+  const bodyArmor = equippedArmorItems.find((x) => x.armor.category !== "escudo");
+  const shield = equippedArmorItems.find((x) => x.armor.category === "escudo");
   const ac = computeCharacterArmorClass(
     finalScores,
     size,
     { bodyArmor, shield },
     character.activeVariantRules.includes("vr-ua-armor-as-dr"),
+    character.bonusInsightAC,
   );
   const dexMod = abilityModifier(finalScores.dex);
   const grapple = bab + abilityModifier(finalScores.str) - sizeModifier(size);
 
   const equippedWeapons = character.equipment
     .filter((e) => e.equipped && e.itemKind === "weapon")
-    .map((e) => findWeapon(e.itemId))
-    .filter((w): w is NonNullable<typeof w> => Boolean(w))
-    .map((w) => computeWeaponAttack(w, bab, finalScores, size));
+    .map((e) => ({ weapon: findWeapon(e.itemId), item: e }))
+    .filter((x): x is { weapon: NonNullable<ReturnType<typeof findWeapon>>; item: (typeof character.equipment)[number] } => Boolean(x.weapon))
+    .map((x) => computeWeaponAttack(x.weapon, bab, finalScores, size, character.feats, x.item));
 
   const knownFeatIds = getAllKnownFeatIds(character.feats, character.classLevels, classes, classFeatureChoices);
   const rangedWeapons = equippedWeapons.filter((w) => w.type === "distancia" && w.rangeIncrement);
@@ -205,6 +206,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
               <Text style={{ fontSize: 7, textAlign: "center" }}>
                 10 base + {ac.armorBonus} armadura + {ac.shieldBonus} escudo +{" "}
                 {ac.maxDexBonus === null ? dexMod : Math.min(dexMod, ac.maxDexBonus)} Des + {sizeModifier(size)} tamaño
+                {ac.insightBonus !== 0 ? ` + ${ac.insightBonus} perspicacia` : ""}
               </Text>
               <Text style={{ fontSize: 7, textAlign: "center" }}>
                 Tocar {ac.touch} · Desprevenido {ac.flatFooted}
@@ -260,9 +262,13 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                 .filter((w) => w.rangeIncrement)
                 .map((w) => (
                   <Text key={w.itemId} style={{ fontSize: 7 }}>
-                    {w.name} por distancia (-2/incremento de {w.rangeIncrement} pies):{" "}
-                    {computeRangeIncrementAttackBonuses(w.attackBonus, w.rangeIncrement!)
-                      .map((r) => `${r.distanceFeet}p ${r.attackBonus >= 0 ? "+" : ""}${r.attackBonus}`)
+                    {w.name} por distancia (-2/incremento de {w.rangeIncrement} pies
+                    {knownFeatIds.has("point-blank-shot") ? "; +1 ataque/daño a 30 pies o menos" : ""}):{" "}
+                    {computeRangeIncrementAttackBonuses(w.attackBonus, w.rangeIncrement!, knownFeatIds.has("point-blank-shot"))
+                      .map(
+                        (r) =>
+                          `${r.distanceFeet}p ${r.attackBonus >= 0 ? "+" : ""}${r.attackBonus}${r.damageBonus > 0 ? ` (d+${r.damageBonus})` : ""}`,
+                      )
                       .join(" · ")}
                   </Text>
                 ))}

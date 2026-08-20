@@ -37,6 +37,7 @@ export function createBlankCharacter(overrides?: Partial<Character>): Character 
     bonusFeatSlots: 0,
     bonusHp: 0,
     bonusSkillPoints: 0,
+    bonusInsightAC: 0,
     createdAt: now,
     updatedAt: now,
     ...overrides,

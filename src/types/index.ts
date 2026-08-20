@@ -325,6 +325,67 @@ export interface Weapon {
   damageType: string; // C, P, E o combinaciones
 }
 
+/**
+ * Material especial de fabricación (mithral, adamantina, hierro frío...).
+ * El coste se modela como recargo fijo en po dependiente del tipo de objeto
+ * al que se aplica (un arma cuesta lo mismo sea cual sea su categoría; una
+ * armadura/escudo depende de su categoría, ya que el recargo real del SRD
+ * escala con el peso/tamaño del objeto base).
+ */
+export interface SpecialMaterial {
+  id: string;
+  name: string;
+  source: SourceBookId;
+  appliesTo: ("arma" | "armadura")[];
+  description: string;
+  /** Recargo fijo en po para un arma fabricada con este material. */
+  weaponCostBonus?: number;
+  /** Recargo en po por libra de peso del arma (p.ej. mithral, madera oscura). */
+  weaponCostPerPound?: number;
+  /** Multiplicador sobre el coste base del arma (p.ej. hierro frío: ×2); se aplica junto a los anteriores. */
+  weaponCostMultiplier?: number;
+  /** Bonificador de ataque plano, no mágico, inherente al material (p.ej. +1 de la adamantina). */
+  weaponAttackBonus?: number;
+  /** Recargo en po para una armadura/escudo, según su categoría (ArmorCategory). */
+  armorCostBonusByCategory?: Partial<Record<ArmorCategory, number>>;
+  /** Recargo en po por libra de peso de la armadura/escudo (p.ej. mithral, madera oscura). */
+  armorCostPerPound?: number;
+  /** Multiplicador de peso del objeto (p.ej. 0.5 para mithral o madera oscura). */
+  weightMultiplier?: number;
+  /** Reducción del penalizador de armadura (valor positivo que se resta al penalizador, p.ej. 3 para mithral). */
+  armorCheckPenaltyReduction?: number;
+  /** Incremento del bonificador máximo de Destreza permitido. */
+  maxDexBonusIncrease?: number;
+  /** Reducción del porcentaje de fallo de conjuros arcanos (puntos porcentuales). */
+  arcaneSpellFailureReduction?: number;
+  /** Reducción de daño natural (no mágica) que otorga una armadura de este material, según su categoría. */
+  damageReductionByArmorCategory?: Partial<Record<ArmorCategory, number>>;
+  /** Dureza y puntos de golpe especiales del objeto (informativo). */
+  hardnessNote?: string;
+  /** Requisitos o restricciones narrativas (p.ej. "solo armas cortantes o perforantes"). */
+  restrictions?: string;
+}
+
+/**
+ * Propiedad mágica especial de un arma o armadura/escudo (Flamígera, Hiriente,
+ * Guarnecida...), con su coste equivalente en bonificador de mejora para el
+ * cálculo de precio de objetos mágicos del DMG.
+ */
+export interface MagicItemProperty {
+  id: string;
+  name: string;
+  source: SourceBookId;
+  appliesTo: "arma" | "armadura_o_escudo";
+  /** Bonificador de mejora equivalente que suma al total para el cálculo de precio ((bono total)² × 2000 po armas / × 1000 po armaduras). 0 si esta propiedad usa `flatCost` en su lugar. */
+  bonusEquivalent: number;
+  /** Coste fijo en po, para propiedades que no usan el sistema de bono equivalente (p.ej. Ceremonial, Sombra). Se suma directamente al precio final, sin elevarlo al cuadrado. */
+  flatCost?: number;
+  /** Bonificador de mejora mágica mínimo requerido en el objeto base para poder añadir esta propiedad. */
+  minEnhancementBonus?: number;
+  description: string;
+  restrictions?: string;
+}
+
 export type ArmorCategory = "ligera" | "media" | "pesada" | "escudo";
 
 export interface Armor {
@@ -453,6 +514,12 @@ export interface CharacterEquipmentItem {
   quantity: number;
   equipped: boolean;
   masterwork?: boolean;
+  /** Id de un `SpecialMaterial` (solo aplicable a armas/armaduras). */
+  specialMaterialId?: string;
+  /** Bonificador de mejora mágica (0-5). Un valor > 0 implica calidad magistral. */
+  enhancementBonus?: number;
+  /** Ids de `MagicItemProperty` aplicadas a este objeto. */
+  magicPropertyIds?: string[];
 }
 
 export interface CharacterCompanion {
@@ -491,10 +558,11 @@ export interface Character {
   notes: string;
   activeSourceBooks: SourceBookId[];
   activeVariantRules: string[];
-  /** Ajustes manuales del DJ: dotes, puntos de golpe y puntos de habilidad adicionales fuera de las reglas normales. */
+  /** Ajustes manuales del DJ: dotes, puntos de golpe, puntos de habilidad y bonificador de perspicacia a la CA adicionales fuera de las reglas normales. */
   bonusFeatSlots: number;
   bonusHp: number;
   bonusSkillPoints: number;
+  bonusInsightAC: number;
   createdAt: string;
   updatedAt: string;
 }

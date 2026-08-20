@@ -129,7 +129,7 @@ export default function CharacterSheetPage() {
     .filter((e) => e.equipped && e.itemKind === "weapon")
     .map((e) => ({ weapon: findWeapon(e.itemId), item: e }))
     .filter((x): x is { weapon: NonNullable<ReturnType<typeof findWeapon>>; item: (typeof character.equipment)[number] } => Boolean(x.weapon))
-    .map((x) => computeWeaponAttack(x.weapon, bab, finalScores, size, character.feats, x.item));
+    .map((x) => computeWeaponAttack(x.weapon, bab, finalScores, size, character.feats, x.item, character.classLevels, classFeatureChoices));
 
   const meleeAttackBonus = bab + abilityModifier(finalScores.str) + sizeModifier(size);
   const rangedAttackBonus = bab + abilityModifier(finalScores.dex) + sizeModifier(size);
@@ -392,10 +392,12 @@ export default function CharacterSheetPage() {
             .filter((w) => w.rangeIncrement)
             .map((w) => (
               <p key={w.itemId} className="muted" style={{ marginTop: 8, marginBottom: 0 }}>
-                <strong>{w.name} por distancia</strong> (-2 acumulativo por incremento de {w.rangeIncrement} pies,
-                máx. 10{knownFeatIds.has("point-blank-shot") ? "; incluye +1 ataque/daño de Disparo a Bocajarro a 9 m (30 pies) o menos" : ""}
+                <strong>{w.name} por distancia</strong> (-{w.rangePenaltyHalved ? 1 : 2} acumulativo por incremento de{" "}
+                {w.rangeIncrement} pies, máx. 10
+                {w.rangePenaltyHalved ? " (penalizador reducido a la mitad por el Iniciado de la Orden del Arco)" : ""}
+                {knownFeatIds.has("point-blank-shot") ? "; incluye +1 ataque/daño de Disparo a Bocajarro a 9 m (30 pies) o menos" : ""}
                 ):{" "}
-                {computeRangeIncrementAttackBonuses(w.attackBonus, w.rangeIncrement!, knownFeatIds.has("point-blank-shot"))
+                {computeRangeIncrementAttackBonuses(w.attackBonus, w.rangeIncrement!, knownFeatIds.has("point-blank-shot"), w.rangePenaltyHalved)
                   .map(
                     (r) =>
                       `${r.distanceFeet}p ${r.attackBonus >= 0 ? "+" : ""}${r.attackBonus}${r.damageBonus > 0 ? ` (daño +${r.damageBonus})` : ""}`,

@@ -762,6 +762,8 @@ export interface WeaponAttackSummary {
   damage: string;
   critical: string;
   rangeIncrement?: number;
+  /** Iniciado de la Orden del Arco: penalizador por incremento de alcance reducido a la mitad para este arma. */
+  rangePenaltyHalved: boolean;
   /** Bonificadores de ataque de cada ataque iterativo en un ataque completo (p.ej. [+12, +7, +2]). */
   fullAttackSequence: number[];
   /** Propiedades mágicas especiales resueltas del arma equipada (Flamígera, Hiriente...), para mostrar su efecto en la hoja. */
@@ -855,6 +857,42 @@ export function getWeaponFeatBonuses(weapon: Weapon, feats: CharacterFeatChoice[
   return { attackBonus, damageBonus, doubledThreatRange, extraRangeIncrementFeet };
 }
 
+// Complete Warrior: nombres de arma reales que corresponden a cada opción de
+// "tipo de arco" elegida al entrar en la clase de prestigio Iniciado de la
+// Orden del Arco (rasgo "Maestría con el arco elegido", nivel 1).
+const BOW_INITIATE_WEAPON_NAMES: Record<string, string> = {
+  corto: "Arco corto",
+  "corto-compuesto": "Arco corto compuesto",
+  largo: "Arco largo",
+  "largo-compuesto": "Arco largo compuesto",
+};
+
+export interface BowInitiateBonuses {
+  attackBonus: number;
+  rangePenaltyHalved: boolean;
+}
+
+/**
+ * Bonificadores de "Maestría con el arco elegido" y "Reducción de
+ * penalizador por distancia" del Iniciado de la Orden del Arco (Complete
+ * Warrior, nivel 1): +1 de competencia a las tiradas de ataque a distancia
+ * con el tipo de arco elegido, y los penalizadores por incremento de alcance
+ * con ese arco se reducen a la mitad (redondeando hacia abajo).
+ */
+export function getBowInitiateBonuses(
+  weapon: Weapon,
+  classLevels: CharacterClassLevel[],
+  classFeatureChoices: CharacterClassFeatureChoice[],
+): BowInitiateBonuses {
+  const none = { attackBonus: 0, rangePenaltyHalved: false };
+  const level = classLevels.find((cl) => cl.classId === "cw-order-of-the-bow-initiate")?.level ?? 0;
+  if (level < 1) return none;
+  const chosenBowType = findChoiceValue(classFeatureChoices, "cw-order-of-the-bow-initiate", "tipo-arco", 1);
+  const chosenWeaponName = chosenBowType ? BOW_INITIATE_WEAPON_NAMES[chosenBowType] : undefined;
+  if (!chosenWeaponName || normalizeForMatch(weapon.name) !== normalizeForMatch(chosenWeaponName)) return none;
+  return { attackBonus: 1, rangePenaltyHalved: true };
+}
+
 export function computeWeaponAttack(
   weapon: Weapon,
   bab: number,
@@ -862,6 +900,8 @@ export function computeWeaponAttack(
   size: string,
   feats: CharacterFeatChoice[] = [],
   equipmentItem?: CharacterEquipmentItem,
+  classLevels: CharacterClassLevel[] = [],
+  classFeatureChoices: CharacterClassFeatureChoice[] = [],
 ): WeaponAttackSummary {
   const abilityMod = weapon.type === "distancia" ? abilityModifier(finalScores.dex) : abilityModifier(finalScores.str);
   const featBonuses = getWeaponFeatBonuses(weapon, feats);
@@ -871,8 +911,15 @@ export function computeWeaponAttack(
   const compositeBow = equipmentItem
     ? computeCompositeBowEffect(weapon, equipmentItem, abilityModifier(finalScores.str))
     : { damageBonus: 0, attackPenalty: 0 };
+  const bowInitiate = getBowInitiateBonuses(weapon, classLevels, classFeatureChoices);
   const attackBonus =
-    bab + abilityMod + sizeModifier(size) + featBonuses.attackBonus + equipBonuses.attackBonus + compositeBow.attackPenalty;
+    bab +
+    abilityMod +
+    sizeModifier(size) +
+    featBonuses.attackBonus +
+    equipBonuses.attackBonus +
+    compositeBow.attackPenalty +
+    bowInitiate.attackBonus;
   const damageMod =
     (weapon.type === "distancia" ? 0 : abilityModifier(finalScores.str)) +
     featBonuses.damageBonus +
@@ -893,6 +940,7 @@ export function computeWeaponAttack(
     damage,
     critical,
     rangeIncrement,
+    rangePenaltyHalved: bowInitiate.rangePenaltyHalved,
     fullAttackSequence: computeFullAttackSequence(attackBonus, bab),
     magicProperties: equipmentItem ? resolveProperties(equipmentItem) : [],
     specialMaterial: equipmentItem ? resolveMaterial(equipmentItem) : undefined,
@@ -915,8 +963,10 @@ export function computeRangeIncrementAttackBonuses(
   baseAttackBonus: number,
   rangeIncrement: number,
   hasPointBlankShot = false,
+  rangePenaltyHalved = false,
 ): { increment: number; distanceFeet: number; attackBonus: number; damageBonus: number }[] {
   const results: { increment: number; distanceFeet: number; attackBonus: number; damageBonus: number }[] = [];
+  const perIncrementPenalty = rangePenaltyHalved ? 1 : 2;
   if (hasPointBlankShot && rangeIncrement > 30) {
     results.push({ increment: 0, distanceFeet: 30, attackBonus: baseAttackBonus + 1, damageBonus: 1 });
   }
@@ -926,7 +976,7 @@ export function computeRangeIncrementAttackBonuses(
     results.push({
       increment,
       distanceFeet,
-      attackBonus: baseAttackBonus - 2 * (increment - 1) + pointBlankBonus,
+      attackBonus: baseAttackBonus - perIncrementPenalty * (increment - 1) + pointBlankBonus,
       damageBonus: pointBlankBonus,
     });
   }

@@ -127,7 +127,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
     .filter((e) => e.equipped && e.itemKind === "weapon")
     .map((e) => ({ weapon: findWeapon(e.itemId), item: e }))
     .filter((x): x is { weapon: NonNullable<ReturnType<typeof findWeapon>>; item: (typeof character.equipment)[number] } => Boolean(x.weapon))
-    .map((x) => computeWeaponAttack(x.weapon, bab, finalScores, size, character.feats, x.item));
+    .map((x) => computeWeaponAttack(x.weapon, bab, finalScores, size, character.feats, x.item, character.classLevels, classFeatureChoices));
 
   const knownFeatIds = getAllKnownFeatIds(character.feats, character.classLevels, classes, classFeatureChoices);
   const rangedWeapons = equippedWeapons.filter((w) => w.type === "distancia" && w.rangeIncrement);
@@ -287,9 +287,10 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                 .filter((w) => w.rangeIncrement)
                 .map((w) => (
                   <Text key={w.itemId} style={{ fontSize: 7 }}>
-                    {w.name} por distancia (-2/incremento de {w.rangeIncrement} pies
+                    {w.name} por distancia (-{w.rangePenaltyHalved ? 1 : 2}/incremento de {w.rangeIncrement} pies
+                    {w.rangePenaltyHalved ? "; penalizador a la mitad (Iniciado de la Orden del Arco)" : ""}
                     {knownFeatIds.has("point-blank-shot") ? "; +1 ataque/daño a 30 pies o menos" : ""}):{" "}
-                    {computeRangeIncrementAttackBonuses(w.attackBonus, w.rangeIncrement!, knownFeatIds.has("point-blank-shot"))
+                    {computeRangeIncrementAttackBonuses(w.attackBonus, w.rangeIncrement!, knownFeatIds.has("point-blank-shot"), w.rangePenaltyHalved)
                       .map(
                         (r) =>
                           `${r.distanceFeet}p ${r.attackBonus >= 0 ? "+" : ""}${r.attackBonus}${r.damageBonus > 0 ? ` (d+${r.damageBonus})` : ""}`,

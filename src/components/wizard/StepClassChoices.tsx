@@ -1,7 +1,15 @@
-import { findFeat, getEnabledClasses } from "../../data";
+import { findFeat, findRace, getEnabledClasses, getEnabledFeats } from "../../data";
 import type { StepProps } from "./types";
-import { getUnlockedClassFeatureChoices, findChoiceValue } from "../../engine/derive";
-import type { ClassFeatureChoice } from "../../types";
+import {
+  computeBabTotal,
+  computeFinalAbilityScores,
+  findChoiceValue,
+  flattenSkillRanksForPrereqs,
+  getAllKnownFeatIds,
+  getUnlockedClassFeatureChoices,
+  totalCharacterLevel,
+} from "../../engine/derive";
+import type { ClassFeatureChoice, FeatPrereqContext } from "../../types";
 
 /** Busca el valor de una elección de la misma clase sin importar el nivel (para elecciones únicas de las que dependen otras, p.ej. estilo de combate). */
 function findAnyChoiceValue(
@@ -27,8 +35,32 @@ function featOptionsFor(
 
 export default function StepClassChoices({ character, onChange }: StepProps) {
   const classes = getEnabledClasses(character.activeSourceBooks);
-  const unlocked = getUnlockedClassFeatureChoices(character.classLevels, classes);
+  const unlocked = getUnlockedClassFeatureChoices(character.classLevels, classes, character.activeVariantRules);
   const classFeatureChoices = character.classFeatureChoices ?? [];
+
+  const race = findRace(character.raceId);
+  const finalScores = computeFinalAbilityScores(character.abilityScores, race, character.equipment);
+  const totalLevel = totalCharacterLevel(character.classLevels);
+  const ctx: FeatPrereqContext = {
+    abilityScores: finalScores,
+    babTotal: computeBabTotal(character.classLevels, classes),
+    classLevels: Object.fromEntries(character.classLevels.map((cl) => [cl.classId, cl.level])),
+    totalCharacterLevel: totalLevel,
+    featIds: getAllKnownFeatIds(character.feats, character.classLevels, classes, classFeatureChoices, character.activeVariantRules),
+    skillRanks: flattenSkillRanksForPrereqs(character.skillRanks),
+    casterLevel: totalLevel,
+  };
+  const allFeats = getEnabledFeats(character.activeSourceBooks);
+
+  /** Dotes de una categoría (tipo) dada que el personaje ya cumple, para "dote_categoria" (a diferencia de "dote_restringida", aquí no se waivean los prerrequisitos). */
+  function categoryFeatOptions(choice: ClassFeatureChoice): string[] {
+    const categories = choice.featCategoryOptions ?? [];
+    return allFeats
+      .filter((f) => f.types.some((t) => categories.includes(t)))
+      .filter((f) => f.prerequisites.every((p) => !p.check || p.check(ctx)))
+      .sort((a, b) => a.name.localeCompare(b.name, "es"))
+      .map((f) => f.id);
+  }
 
   function setChoice(classId: string, choiceId: string, level: number, value: string) {
     onChange((c) => {
@@ -133,6 +165,32 @@ export default function StepClassChoices({ character, onChange }: StepProps) {
                         );
                       })}
                     </select>
+                  );
+                })()}
+              {choice.kind === "dote_categoria" &&
+                (() => {
+                  const featIds = categoryFeatOptions(choice);
+                  return (
+                    <>
+                      <select
+                        style={{ width: "100%", padding: 8, border: "1px solid var(--border)", borderRadius: 6 }}
+                        value={current}
+                        onChange={(e) => setChoice(classId, choice.id, level, e.target.value)}
+                      >
+                        <option value="">— Sin elegir —</option>
+                        {featIds.map((featId) => {
+                          const feat = findFeat(featId);
+                          return (
+                            <option key={featId} value={featId}>
+                              {feat?.name ?? featId}
+                            </option>
+                          );
+                        })}
+                      </select>
+                      <p className="muted" style={{ marginTop: 6 }}>
+                        Solo se listan las dotes cuyos prerrequisitos ya cumples.
+                      </p>
+                    </>
                   );
                 })()}
             </div>

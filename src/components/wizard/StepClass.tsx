@@ -39,7 +39,13 @@ export default function StepClass({ character, onChange }: StepProps) {
     babTotal: computeBabTotal(character.classLevels, allClasses),
     classLevels: Object.fromEntries(character.classLevels.map((cl) => [cl.classId, cl.level])),
     totalCharacterLevel: totalLevel,
-    featIds: getAllKnownFeatIds(character.feats, character.classLevels, allClasses, character.classFeatureChoices ?? []),
+    featIds: getAllKnownFeatIds(
+      character.feats,
+      character.classLevels,
+      allClasses,
+      character.classFeatureChoices ?? [],
+      character.activeVariantRules,
+    ),
     skillRanks: flattenSkillRanksForPrereqs(character.skillRanks),
     casterLevel: totalLevel,
   };

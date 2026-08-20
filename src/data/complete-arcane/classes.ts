@@ -1,5 +1,43 @@
 import type { ClassDef, ClassFeatureChoice } from "../../types";
 
+const SPELLSWORD_CHOICES: ClassFeatureChoice[] = [
+  {
+    id: "dote-combate-1",
+    featureName: "Dote de Combate Adicional",
+    levels: [4],
+    label: "Dote de combate adicional (1.ª)",
+    kind: "dote_categoria",
+    featCategoryOptions: ["combate"],
+  },
+  {
+    id: "dote-combate-2",
+    featureName: "Dote de Combate Adicional",
+    levels: [8],
+    label: "Dote de combate adicional (2.ª)",
+    kind: "dote_categoria",
+    featCategoryOptions: ["combate"],
+  },
+];
+
+const ULTIMATE_MAGUS_CHOICES: ClassFeatureChoice[] = [
+  {
+    id: "dote-adicional-1",
+    featureName: "Dote Adicional",
+    levels: [2],
+    label: "Dote adicional (1.ª): metamagia o creación de objetos",
+    kind: "dote_categoria",
+    featCategoryOptions: ["metamagia", "creacion_objetos"],
+  },
+  {
+    id: "dote-adicional-2",
+    featureName: "Dote Adicional",
+    levels: [4],
+    label: "Dote adicional (2.ª): metamagia o creación de objetos",
+    kind: "dote_categoria",
+    featCategoryOptions: ["metamagia", "creacion_objetos"],
+  },
+];
+
 const ELEMENTAL_SAVANT_CHOICES: ClassFeatureChoice[] = [
   {
     id: "vinculo-elemental",
@@ -550,6 +588,7 @@ export const CA_CLASSES: ClassDef[] = [
     weaponProficiencies: [],
     armorProficiencies: ["Armadura ligera"],
     features: SPELLSWORD_FEATURES,
+    choices: SPELLSWORD_CHOICES,
     maxLevel: 10,
     isPrestige: true,
     prerequisites: [
@@ -585,6 +624,7 @@ export const CA_CLASSES: ClassDef[] = [
     weaponProficiencies: [],
     armorProficiencies: [],
     features: ULTIMATE_MAGUS_FEATURES,
+    choices: ULTIMATE_MAGUS_CHOICES,
     maxLevel: 5,
     isPrestige: true,
     prerequisites: [

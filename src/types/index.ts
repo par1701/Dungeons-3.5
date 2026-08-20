@@ -113,7 +113,7 @@ export interface CompanionGrant {
  * predilecto" tiene varios niveles; una elección única como "dominios" solo
  * tiene uno).
  */
-export type ClassFeatureChoiceKind = "texto_libre" | "lista_fija" | "dote_restringida";
+export type ClassFeatureChoiceKind = "texto_libre" | "lista_fija" | "dote_restringida" | "dote_categoria";
 
 export interface ClassFeatureChoiceOption {
   id: string;
@@ -141,7 +141,22 @@ export interface ClassFeatureChoice {
    * o dos armas). `dependsOn` es el id de esa otra elección.
    */
   featOptionsByDependency?: { dependsOn: string; options: Record<string, string[]> };
+  /**
+   * Para kind "dote_categoria": la dote elegida puede ser cualquiera de estos
+   * tipos (p.ej. ["combate"] para "una dote de combate adicional que cumpla
+   * sus requisitos"), siempre que el personaje cumpla sus prerrequisitos. A
+   * diferencia de "dote_restringida", aquí no se waiven los prerrequisitos.
+   */
+  featCategoryOptions?: FeatType[];
   placeholder?: string;
+  /**
+   * Id de una regla variante (`VariantRule.id`) que debe estar activa para
+   * que esta elección se ofrezca. Se usa para elecciones que solo existen
+   * cuando un rasgo de clase alternativo sustituye al rasgo normal de la
+   * clase (p.ej. las dotes de bonificación de Campeón de lo Salvaje, que
+   * solo aplican si esa variante del explorador está activa).
+   */
+  requiresVariantRule?: string;
 }
 
 /** Dote de bonificación automática (sin elección) otorgada por una clase, p.ej. Seguir Rastro del explorador. */

@@ -711,6 +711,7 @@ export const CDV_CLASSES: ClassDef[] = [
     weaponProficiencies: [],
     armorProficiencies: [],
     features: STORMLORD_FEATURES,
+    bonusFeatGrants: [{ level: 3, featId: "lightning-reflexes" }],
     maxLevel: 10,
     isPrestige: true,
     prerequisites: [

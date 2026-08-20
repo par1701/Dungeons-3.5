@@ -221,6 +221,26 @@ export function getContemplativeStoneWillBonus(classLevels: CharacterClassLevel[
   return level >= CONTEMPLATIVE_STONE_WILL_LEVEL ? CONTEMPLATIVE_STONE_WILL_BONUS : 0;
 }
 
+const IMPROVED_INITIATIVE_BONUS = 4;
+const BLOODED_INITIATIVE_BONUS = 2;
+
+/**
+ * Bonificador total a las tiradas de iniciativa: Iniciativa Mejorada (+4),
+ * Curtido en Sangre (+2, Complete Scoundrel) y el Bono de Batalla del
+ * batidor (competencia, igual a la mitad de su nivel de batidor, mínimo
+ * +1). `knownFeatIds` debe incluir tanto las dotes elegidas normalmente
+ * como las concedidas gratis por clase (`getAllKnownFeatIds`), ya que
+ * Iniciativa Mejorada puede obtenerse como dote de bonificación restringida
+ * (p.ej. derviche, sabueso de sangre).
+ */
+export function computeInitiativeBonus(knownFeatIds: Set<string>, classLevels: CharacterClassLevel[]): number {
+  let bonus = 0;
+  if (knownFeatIds.has("improved-initiative")) bonus += IMPROVED_INITIATIVE_BONUS;
+  if (knownFeatIds.has("cs-blooded")) bonus += BLOODED_INITIATIVE_BONUS;
+  bonus += getScoutBattleBonus(classLevels);
+  return bonus;
+}
+
 export function computeSaveTotals(
   classLevels: CharacterClassLevel[],
   classes: ClassDef[],

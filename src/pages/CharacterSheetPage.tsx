@@ -25,6 +25,7 @@ import {
   computeEquipmentPassiveBonuses,
   computeFinalAbilityScores,
   computeFlurryOfBlowsSequence,
+  computeInitiativeBonus,
   computeMaxHp,
   computeRapidShotSequence,
   computeSaveTotals,
@@ -192,6 +193,8 @@ export default function CharacterSheetPage() {
 
   // Opciones de ataque activables por dotes/estilos de combate.
   const knownFeatIds = getAllKnownFeatIds(character.feats, character.classLevels, classes, classFeatureChoices, character.activeVariantRules);
+  const initiativeBonus = computeInitiativeBonus(knownFeatIds, character.classLevels);
+  const initiative = dexMod + initiativeBonus;
   const rangedWeapons = equippedWeapons.filter((w) => w.type === "distancia" && w.rangeIncrement);
   const meleeWeapons = equippedWeapons.filter((w) => w.type === "cuerpo_a_cuerpo");
   const monkLevel = character.classLevels.find((cl) => cl.classId === "monk")?.level ?? 0;
@@ -383,7 +386,8 @@ export default function CharacterSheetPage() {
 
             <Panel title="Iniciativa y velocidad">
               <p style={{ margin: 0 }}>
-                Iniciativa: <strong>{dexMod >= 0 ? `+${dexMod}` : dexMod}</strong> (Des) · Velocidad:{" "}
+                Iniciativa: <strong>{initiative >= 0 ? `+${initiative}` : initiative}</strong> ({dexMod >= 0 ? `+${dexMod}` : dexMod} Des
+                {initiativeBonus !== 0 ? `, ${initiativeBonus >= 0 ? "+" : ""}${initiativeBonus} otros` : ""}) · Velocidad:{" "}
                 <strong>{race?.speed ?? 30} pies</strong>
               </p>
             </Panel>

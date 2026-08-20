@@ -23,6 +23,7 @@ import {
   computeEquipmentPassiveBonuses,
   computeFinalAbilityScores,
   computeFlurryOfBlowsSequence,
+  computeInitiativeBonus,
   computeMaxHp,
   computeRapidShotSequence,
   computeSaveTotals,
@@ -181,6 +182,8 @@ export default function CharacterSheetDocument({ character }: { character: Chara
   const allAttacks = mindBladeAttack ? [...equippedWeapons, mindBladeAttack] : equippedWeapons;
 
   const knownFeatIds = getAllKnownFeatIds(character.feats, character.classLevels, classes, classFeatureChoices, character.activeVariantRules);
+  const initiativeBonus = computeInitiativeBonus(knownFeatIds, character.classLevels);
+  const initiative = dexMod + initiativeBonus;
   const rangedWeapons = equippedWeapons.filter((w) => w.type === "distancia" && w.rangeIncrement);
   const meleeWeapons = equippedWeapons.filter((w) => w.type === "cuerpo_a_cuerpo");
   const monkLevel = character.classLevels.find((cl) => cl.classId === "monk")?.level ?? 0;
@@ -323,7 +326,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
               <Text>Cuerpo a cuerpo: {meleeAttackBonus >= 0 ? `+${meleeAttackBonus}` : meleeAttackBonus}</Text>
               <Text>A distancia: {rangedAttackBonus >= 0 ? `+${rangedAttackBonus}` : rangedAttackBonus}</Text>
               <Text>Golpe de presa: {grapple >= 0 ? `+${grapple}` : grapple}</Text>
-              <Text>Iniciativa: {dexMod >= 0 ? `+${dexMod}` : dexMod}</Text>
+              <Text>Iniciativa: {initiative >= 0 ? `+${initiative}` : initiative}</Text>
               <Text>Velocidad: {race?.speed ?? 30} pies</Text>
             </Panel>
             <Panel title="Puntos de golpe y carga">

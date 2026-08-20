@@ -150,6 +150,32 @@ export default function StepFeats({ character, onChange }: StepProps) {
       <p className={character.feats.length > featSlots ? "" : "muted"} style={character.feats.length > featSlots ? { color: "var(--danger)" } : {}}>
         Dotes seleccionadas: {character.feats.length} / {featSlots} disponibles según nivel y raza
       </p>
+      {character.feats.length > 0 && (
+        <div className="card" style={{ marginBottom: 16 }}>
+          <h3 style={{ marginTop: 0 }}>Dotes ya seleccionadas ({character.feats.length})</h3>
+          <ul style={{ margin: 0, paddingLeft: 18 }}>
+            {character.feats
+              .map((cf, index) => ({ ...cf, index }))
+              .sort((a, b) => (findFeat(a.featId)?.name ?? a.featId).localeCompare(findFeat(b.featId)?.name ?? b.featId, "es"))
+              .map((cf) => {
+                const feat = findFeat(cf.featId);
+                return (
+                  <li key={cf.index} style={{ marginBottom: 4 }}>
+                    <strong>{feat?.name ?? cf.featId}</strong>
+                    {cf.selection ? ` (${cf.selection})` : ""}{" "}
+                    <button
+                      className="btn btn-danger"
+                      style={{ padding: "0 6px", fontSize: "0.75rem" }}
+                      onClick={() => onChange((c) => ({ ...c, feats: c.feats.filter((_, i) => i !== cf.index) }))}
+                    >
+                      Quitar
+                    </button>
+                  </li>
+                );
+              })}
+          </ul>
+        </div>
+      )}
       {bonusFeats.length > 0 && (
         <div className="card" style={{ marginBottom: 16 }}>
           <h3 style={{ marginTop: 0 }}>Dotes obtenidas gratis por clase ({bonusFeats.length})</h3>

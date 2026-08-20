@@ -264,10 +264,10 @@ const TEMPEST_FEATURES: ClassFeature[] = [
       "La tempestad obtiene Defensa con Dos Armas como dote de bonificación, aunque no cumpla sus prerrequisitos.",
   },
   {
-    level: 2,
-    name: "Gracia en el combate (+1 CA)",
+    level: 1,
+    name: "Defensa de la Tempestad (+1 CA)",
     description:
-      "Mientras luche empuñando un arma cuerpo a cuerpo distinta en cada mano, la tempestad obtiene un bonificador de esquiva de +1 a la Clase de Armadura.",
+      "Mientras empuñe un arma doble o dos armas (no cuentan las armas naturales ni los golpes desarmados), la tempestad obtiene un bonificador de esquiva de +1 a la Clase de Armadura. Pierde este bonificador si lleva armadura media o pesada.",
   },
   {
     level: 3,
@@ -276,15 +276,20 @@ const TEMPEST_FEATURES: ClassFeature[] = [
       "La tempestad obtiene Combate con Dos Armas Mejorado como dote de bonificación, aunque no cumpla sus prerrequisitos.",
   },
   {
-    level: 4,
-    name: "Gracia en el combate (+2 CA)",
-    description: "El bonificador de esquiva de la Gracia en el Combate aumenta a +2.",
+    level: 3,
+    name: "Defensa de la Tempestad (+2 CA)",
+    description: "El bonificador de esquiva de la Defensa de la Tempestad aumenta a +2.",
   },
   {
     level: 5,
     name: "Golpe gemelo",
     description:
       "Si en un mismo asalto ambas armas de la tempestad impactan al mismo objetivo, este sufre daño adicional igual a 1d6 más una vez y media su modificador de Fuerza. Además, obtiene Combate con Dos Armas Superior como dote de bonificación, aunque no cumpla sus prerrequisitos.",
+  },
+  {
+    level: 5,
+    name: "Defensa de la Tempestad (+3 CA)",
+    description: "El bonificador de esquiva de la Defensa de la Tempestad aumenta a +3.",
   },
 ];
 

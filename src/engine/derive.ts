@@ -2,6 +2,7 @@ import type {
   Ability,
   AbilityScores,
   Armor,
+  ArmorCategory,
   Character,
   CharacterClassFeatureChoice,
   CharacterClassLevel,
@@ -193,16 +194,56 @@ export interface SaveTotals {
   will: number;
 }
 
+const PALADIN_DIVINE_GRACE_LEVEL = 2;
+
+/** Gracia Divina (paladín, nivel 2): bono de Carisma (si es positivo) a las tres salvaciones. */
+export function getDivineGraceBonus(classLevels: CharacterClassLevel[], abilityScores: AbilityScores): number {
+  const level = classLevels.find((cl) => cl.classId === "paladin")?.level ?? 0;
+  if (level < PALADIN_DIVINE_GRACE_LEVEL) return 0;
+  return Math.max(0, abilityModifier(abilityScores.cha));
+}
+
+const SCOUT_BATTLE_BONUS_LEVEL = 2;
+
+/** Bono de Batalla (batidor, Complete Adventurer, nivel 2): bono de competencia a Fortaleza igual a la mitad del nivel de batidor (mínimo +1). */
+export function getScoutBattleBonus(classLevels: CharacterClassLevel[]): number {
+  const level = classLevels.find((cl) => cl.classId === "cad-scout")?.level ?? 0;
+  if (level < SCOUT_BATTLE_BONUS_LEVEL) return 0;
+  return Math.max(1, Math.floor(level / 2));
+}
+
+const CONTEMPLATIVE_STONE_WILL_LEVEL = 9;
+const CONTEMPLATIVE_STONE_WILL_BONUS = 4;
+
+/** Voluntad de Piedra (contemplativo, Complete Champion, nivel 9): +4 de competencia a Voluntad. */
+export function getContemplativeStoneWillBonus(classLevels: CharacterClassLevel[]): number {
+  const level = classLevels.find((cl) => cl.classId === "cc-contemplative")?.level ?? 0;
+  return level >= CONTEMPLATIVE_STONE_WILL_LEVEL ? CONTEMPLATIVE_STONE_WILL_BONUS : 0;
+}
+
 export function computeSaveTotals(
   classLevels: CharacterClassLevel[],
   classes: ClassDef[],
   abilityScores: AbilityScores,
   resistanceBonus = 0,
 ): SaveTotals {
+  const divineGrace = getDivineGraceBonus(classLevels, abilityScores);
+  const battleBonus = getScoutBattleBonus(classLevels);
+  const stoneWill = getContemplativeStoneWillBonus(classLevels);
   return {
-    fort: computeBaseSave("fort", classLevels, classes) + abilityModifier(abilityScores.con) + resistanceBonus,
-    ref: computeBaseSave("ref", classLevels, classes) + abilityModifier(abilityScores.dex) + resistanceBonus,
-    will: computeBaseSave("will", classLevels, classes) + abilityModifier(abilityScores.wis) + resistanceBonus,
+    fort:
+      computeBaseSave("fort", classLevels, classes) +
+      abilityModifier(abilityScores.con) +
+      resistanceBonus +
+      divineGrace +
+      battleBonus,
+    ref: computeBaseSave("ref", classLevels, classes) + abilityModifier(abilityScores.dex) + resistanceBonus + divineGrace,
+    will:
+      computeBaseSave("will", classLevels, classes) +
+      abilityModifier(abilityScores.wis) +
+      resistanceBonus +
+      divineGrace +
+      stoneWill,
   };
 }
 
@@ -301,6 +342,8 @@ export interface ArmorClassInputs {
   naturalArmor: number;
   deflection: number;
   misc: number;
+  /** Bonificador de esquiva estándar (se pierde igual que la Destreza cuando el personaje está desprevenido). */
+  dodge?: number;
 }
 
 export function computeArmorClass(inputs: ArmorClassInputs): {
@@ -310,6 +353,7 @@ export function computeArmorClass(inputs: ArmorClassInputs): {
 } {
   const dexMod = abilityModifier(inputs.dexScore);
   const cappedDex = inputs.maxDexBonus === null ? dexMod : Math.min(dexMod, inputs.maxDexBonus);
+  const dodge = inputs.dodge ?? 0;
   const total =
     10 +
     inputs.armorBonus +
@@ -318,9 +362,10 @@ export function computeArmorClass(inputs: ArmorClassInputs): {
     inputs.sizeModifier +
     inputs.naturalArmor +
     inputs.deflection +
-    inputs.misc;
-  const touch = 10 + cappedDex + inputs.sizeModifier + inputs.deflection + inputs.misc;
-  const flatFooted = total - (cappedDex > 0 ? cappedDex : 0);
+    inputs.misc +
+    dodge;
+  const touch = 10 + cappedDex + inputs.sizeModifier + inputs.deflection + inputs.misc + dodge;
+  const flatFooted = total - (cappedDex > 0 ? cappedDex : 0) - dodge;
   return { total, touch, flatFooted };
 }
 
@@ -696,6 +741,91 @@ function splitArmorBonusForDamageReduction(bonus: number): { acBonus: number; da
   return { acBonus: bonus - damageReduction, damageReduction };
 }
 
+const MONK_AC_BONUS_LEVEL = 1;
+const MONK_FLAT_AC_BONUS_LEVELS: [level: number, bonus: number][] = [
+  [5, 1],
+  [10, 2],
+  [15, 3],
+  [20, 4],
+];
+
+/**
+ * CA sin armadura (monje, nivel 1): bono de Sabiduría (si es positivo) a la
+ * CA mientras no lleve armadura ni escudo, más un bono fijo adicional de +1
+ * a +4 según el nivel de monje (desde nivel 5). Según el SRD este bono se
+ * aplica incluso contra ataques de toque o estando desprevenido (a
+ * diferencia de un bonificador de esquiva normal), así que se suma al
+ * bloque "misc" de `computeArmorClass`, no al de esquiva. No se modela aquí
+ * la pérdida del bono por llevar carga media o pesada, ya que la ficha no
+ * calcula la carga actual del personaje.
+ */
+function getMonkUnarmoredAcBonus(classLevels: CharacterClassLevel[], abilityScores: AbilityScores, wearingArmorOrShield: boolean): number {
+  const level = classLevels.find((cl) => cl.classId === "monk")?.level ?? 0;
+  if (level < MONK_AC_BONUS_LEVEL || wearingArmorOrShield) return 0;
+  let flatBonus = 0;
+  for (const [reqLevel, b] of MONK_FLAT_AC_BONUS_LEVELS) if (level >= reqLevel) flatBonus = b;
+  return Math.max(0, abilityModifier(abilityScores.wis)) + flatBonus;
+}
+
+const DERVISH_GRACE_LEVELS: [level: number, bonus: number][] = [
+  [3, 1],
+  [6, 2],
+  [8, 3],
+  [10, 4],
+];
+
+/**
+ * Gracia en la Danza (derviche, Complete Warrior, nivel 3+): bono de esquiva
+ * a la CA mientras lleve como máximo armadura ligera y ningún escudo. Según
+ * el SRD, este bono se aplica incluso contra ataques de toque o estando
+ * desprevenido, así que se suma al bloque "misc", no al de esquiva estándar.
+ */
+function getDervishGraceBonus(classLevels: CharacterClassLevel[], bodyArmorCategory: ArmorCategory | undefined, hasShield: boolean): number {
+  const level = classLevels.find((cl) => cl.classId === "cw-dervish")?.level ?? 0;
+  if (level < 3 || hasShield) return 0;
+  if (bodyArmorCategory && bodyArmorCategory !== "ligera") return 0;
+  let bonus = 0;
+  for (const [reqLevel, b] of DERVISH_GRACE_LEVELS) if (level >= reqLevel) bonus = b;
+  return bonus;
+}
+
+const TEMPEST_DEFENSE_LEVELS: [level: number, bonus: number][] = [
+  [1, 1],
+  [3, 2],
+  [5, 3],
+];
+
+/**
+ * Defensa de la Tempestad (tempestad, Complete Warrior, nivel 1+): bono de
+ * esquiva a la CA mientras empuñe un arma doble o dos armas; se pierde con
+ * armadura media o pesada. Es un bonificador de esquiva normal (se pierde
+ * estando desprevenido), a diferencia del de Gracia en la Danza del
+ * derviche. Se aproxima "empuñar dos armas" con el número de armas cuerpo a
+ * cuerpo equipadas simultáneamente, ya que el catálogo no distingue las
+ * armas dobles.
+ */
+function getTempestDefenseBonus(classLevels: CharacterClassLevel[], bodyArmorCategory: ArmorCategory | undefined, meleeWeaponCount: number): number {
+  const level = classLevels.find((cl) => cl.classId === "cw-tempest")?.level ?? 0;
+  if (level < 1 || meleeWeaponCount < 2) return 0;
+  if (bodyArmorCategory === "media" || bodyArmorCategory === "pesada") return 0;
+  let bonus = 0;
+  for (const [reqLevel, b] of TEMPEST_DEFENSE_LEVELS) if (level >= reqLevel) bonus = b;
+  return bonus;
+}
+
+const SUEL_ARCANAMACH_DR_LEVELS: [level: number, dr: number][] = [
+  [6, 2],
+  [10, 4],
+];
+
+/** Reducción de Daño del arcanamach suelio (Complete Mage, nivel 6+): RD X/- fija. */
+function getSuelArcanamachDamageReduction(classLevels: CharacterClassLevel[]): number {
+  const level = classLevels.find((cl) => cl.classId === "cm-suel-arcanamach")?.level ?? 0;
+  let dr = 0;
+  for (const [reqLevel, d] of SUEL_ARCANAMACH_DR_LEVELS) if (level >= reqLevel) dr = d;
+  return dr;
+}
+
 export function computeCharacterArmorClass(
   finalScores: AbilityScores,
   size: string,
@@ -704,6 +834,8 @@ export function computeCharacterArmorClass(
   insightBonus = 0,
   deflectionBonus = 0,
   naturalArmorBonus = 0,
+  classLevels: CharacterClassLevel[] = [],
+  meleeWeaponCount = 0,
 ): {
   total: number;
   touch: number;
@@ -715,6 +847,9 @@ export function computeCharacterArmorClass(
   insightBonus: number;
   deflectionBonus: number;
   naturalArmorBonus: number;
+  monkWisdomBonus: number;
+  dervishGraceBonus: number;
+  tempestDefenseBonus: number;
 } {
   const bodyEquip = equipped.bodyArmor?.item ? computeArmorEquipmentBonuses(equipped.bodyArmor.item, equipped.bodyArmor.armor.category) : undefined;
   const shieldEquip = equipped.shield?.item ? computeArmorEquipmentBonuses(equipped.shield.item, equipped.shield.armor.category) : undefined;
@@ -730,6 +865,7 @@ export function computeCharacterArmorClass(
     shieldBonus = shieldSplit.acBonus;
     damageReduction += bodySplit.damageReduction + shieldSplit.damageReduction;
   }
+  damageReduction = Math.max(damageReduction, getSuelArcanamachDamageReduction(classLevels));
   armorBonus += bodyEquip?.acBonus ?? 0;
   shieldBonus += shieldEquip?.acBonus ?? 0;
   const maxDexLimits = [
@@ -741,6 +877,11 @@ export function computeCharacterArmorClass(
       : equipped.shield.armor.maxDexBonus + (shieldEquip?.maxDexBonusIncrease ?? 0),
   ].filter((v): v is number => v !== undefined);
   const maxDexBonus = maxDexLimits.length > 0 ? Math.min(...maxDexLimits) : null;
+  const bodyArmorCategory = equipped.bodyArmor?.armor.category;
+  const wearingArmorOrShield = Boolean(equipped.bodyArmor) || Boolean(equipped.shield);
+  const monkWisdomBonus = getMonkUnarmoredAcBonus(classLevels, finalScores, wearingArmorOrShield);
+  const dervishGraceBonus = getDervishGraceBonus(classLevels, bodyArmorCategory, Boolean(equipped.shield));
+  const tempestDefenseBonus = getTempestDefenseBonus(classLevels, bodyArmorCategory, meleeWeaponCount);
   const ac = computeArmorClass({
     armorBonus,
     shieldBonus,
@@ -749,9 +890,22 @@ export function computeCharacterArmorClass(
     sizeModifier: sizeModifier(size),
     naturalArmor: naturalArmorBonus,
     deflection: deflectionBonus,
-    misc: insightBonus,
+    misc: insightBonus + monkWisdomBonus + dervishGraceBonus,
+    dodge: tempestDefenseBonus,
   });
-  return { ...ac, armorBonus, shieldBonus, maxDexBonus, damageReduction, insightBonus, deflectionBonus, naturalArmorBonus };
+  return {
+    ...ac,
+    armorBonus,
+    shieldBonus,
+    maxDexBonus,
+    damageReduction,
+    insightBonus,
+    deflectionBonus,
+    naturalArmorBonus,
+    monkWisdomBonus,
+    dervishGraceBonus,
+    tempestDefenseBonus,
+  };
 }
 
 export interface WeaponAttackSummary {
@@ -762,6 +916,8 @@ export interface WeaponAttackSummary {
   damage: string;
   critical: string;
   rangeIncrement?: number;
+  /** Iniciado de la Orden del Arco: penalizador por incremento de alcance reducido a la mitad para este arma. */
+  rangePenaltyHalved: boolean;
   /** Bonificadores de ataque de cada ataque iterativo en un ataque completo (p.ej. [+12, +7, +2]). */
   fullAttackSequence: number[];
   /** Propiedades mágicas especiales resueltas del arma equipada (Flamígera, Hiriente...), para mostrar su efecto en la hoja. */
@@ -855,6 +1011,65 @@ export function getWeaponFeatBonuses(weapon: Weapon, feats: CharacterFeatChoice[
   return { attackBonus, damageBonus, doubledThreatRange, extraRangeIncrementFeet };
 }
 
+// Complete Warrior: nombres de arma reales que corresponden a cada opción de
+// "tipo de arco" elegida al entrar en la clase de prestigio Iniciado de la
+// Orden del Arco (rasgo "Maestría con el arco elegido", nivel 1).
+const BOW_INITIATE_WEAPON_NAMES: Record<string, string> = {
+  corto: "Arco corto",
+  "corto-compuesto": "Arco corto compuesto",
+  largo: "Arco largo",
+  "largo-compuesto": "Arco largo compuesto",
+};
+
+export interface BowInitiateBonuses {
+  attackBonus: number;
+  rangePenaltyHalved: boolean;
+}
+
+/**
+ * Bonificadores de "Maestría con el arco elegido" y "Reducción de
+ * penalizador por distancia" del Iniciado de la Orden del Arco (Complete
+ * Warrior, nivel 1): +1 de competencia a las tiradas de ataque a distancia
+ * con el tipo de arco elegido, y los penalizadores por incremento de alcance
+ * con ese arco se reducen a la mitad (redondeando hacia abajo).
+ */
+export function getBowInitiateBonuses(
+  weapon: Weapon,
+  classLevels: CharacterClassLevel[],
+  classFeatureChoices: CharacterClassFeatureChoice[],
+): BowInitiateBonuses {
+  const none = { attackBonus: 0, rangePenaltyHalved: false };
+  const level = classLevels.find((cl) => cl.classId === "cw-order-of-the-bow-initiate")?.level ?? 0;
+  if (level < 1) return none;
+  const chosenBowType = findChoiceValue(classFeatureChoices, "cw-order-of-the-bow-initiate", "tipo-arco", 1);
+  const chosenWeaponName = chosenBowType ? BOW_INITIATE_WEAPON_NAMES[chosenBowType] : undefined;
+  if (!chosenWeaponName || normalizeForMatch(weapon.name) !== normalizeForMatch(chosenWeaponName)) return none;
+  return { attackBonus: 1, rangePenaltyHalved: true };
+}
+
+const SWASHBUCKLER_GRACE_LEVEL = 1;
+
+/**
+ * Gracia (espadachín, Complete Adventurer, nivel 1): suma el modificador de
+ * Destreza (si es positivo, además del de Fuerza) al daño cuerpo a cuerpo,
+ * mientras no lleve armadura media o pesada ni un escudo pesado. El
+ * catálogo no distingue si un arma cuerpo a cuerpo es ligera o se empuña a
+ * una mano, así que se aplica a cualquier arma cuerpo a cuerpo equipada
+ * (simplificación documentada, igual que otras aproximaciones de este
+ * motor cuando el catálogo no registra el dato exacto).
+ */
+function getSwashbucklerGraceDamageBonus(
+  weapon: Weapon,
+  classLevels: CharacterClassLevel[],
+  abilityScores: AbilityScores,
+  wearingMediumOrHeavyArmor: boolean,
+  wearingHeavyShield: boolean,
+): number {
+  const level = classLevels.find((cl) => cl.classId === "cad-swashbuckler")?.level ?? 0;
+  if (level < SWASHBUCKLER_GRACE_LEVEL || weapon.type !== "cuerpo_a_cuerpo" || wearingMediumOrHeavyArmor || wearingHeavyShield) return 0;
+  return Math.max(0, abilityModifier(abilityScores.dex));
+}
+
 export function computeWeaponAttack(
   weapon: Weapon,
   bab: number,
@@ -862,6 +1077,10 @@ export function computeWeaponAttack(
   size: string,
   feats: CharacterFeatChoice[] = [],
   equipmentItem?: CharacterEquipmentItem,
+  classLevels: CharacterClassLevel[] = [],
+  classFeatureChoices: CharacterClassFeatureChoice[] = [],
+  wearingMediumOrHeavyArmor = false,
+  wearingHeavyShield = false,
 ): WeaponAttackSummary {
   const abilityMod = weapon.type === "distancia" ? abilityModifier(finalScores.dex) : abilityModifier(finalScores.str);
   const featBonuses = getWeaponFeatBonuses(weapon, feats);
@@ -871,13 +1090,22 @@ export function computeWeaponAttack(
   const compositeBow = equipmentItem
     ? computeCompositeBowEffect(weapon, equipmentItem, abilityModifier(finalScores.str))
     : { damageBonus: 0, attackPenalty: 0 };
+  const bowInitiate = getBowInitiateBonuses(weapon, classLevels, classFeatureChoices);
+  const swashbucklerGrace = getSwashbucklerGraceDamageBonus(weapon, classLevels, finalScores, wearingMediumOrHeavyArmor, wearingHeavyShield);
   const attackBonus =
-    bab + abilityMod + sizeModifier(size) + featBonuses.attackBonus + equipBonuses.attackBonus + compositeBow.attackPenalty;
+    bab +
+    abilityMod +
+    sizeModifier(size) +
+    featBonuses.attackBonus +
+    equipBonuses.attackBonus +
+    compositeBow.attackPenalty +
+    bowInitiate.attackBonus;
   const damageMod =
     (weapon.type === "distancia" ? 0 : abilityModifier(finalScores.str)) +
     featBonuses.damageBonus +
     equipBonuses.damageBonus +
-    compositeBow.damageBonus;
+    compositeBow.damageBonus +
+    swashbucklerGrace;
   const damage = damageMod === 0 ? weapon.damageMedium : `${weapon.damageMedium}${damageMod > 0 ? "+" : ""}${damageMod}`;
   const critical =
     featBonuses.doubledThreatRange || equipBonuses.doubledThreatRange ? doubleCriticalThreatRange(weapon.critical) : weapon.critical;
@@ -893,6 +1121,7 @@ export function computeWeaponAttack(
     damage,
     critical,
     rangeIncrement,
+    rangePenaltyHalved: bowInitiate.rangePenaltyHalved,
     fullAttackSequence: computeFullAttackSequence(attackBonus, bab),
     magicProperties: equipmentItem ? resolveProperties(equipmentItem) : [],
     specialMaterial: equipmentItem ? resolveMaterial(equipmentItem) : undefined,
@@ -915,8 +1144,10 @@ export function computeRangeIncrementAttackBonuses(
   baseAttackBonus: number,
   rangeIncrement: number,
   hasPointBlankShot = false,
+  rangePenaltyHalved = false,
 ): { increment: number; distanceFeet: number; attackBonus: number; damageBonus: number }[] {
   const results: { increment: number; distanceFeet: number; attackBonus: number; damageBonus: number }[] = [];
+  const perIncrementPenalty = rangePenaltyHalved ? 1 : 2;
   if (hasPointBlankShot && rangeIncrement > 30) {
     results.push({ increment: 0, distanceFeet: 30, attackBonus: baseAttackBonus + 1, damageBonus: 1 });
   }
@@ -926,7 +1157,7 @@ export function computeRangeIncrementAttackBonuses(
     results.push({
       increment,
       distanceFeet,
-      attackBonus: baseAttackBonus - 2 * (increment - 1) + pointBlankBonus,
+      attackBonus: baseAttackBonus - perIncrementPenalty * (increment - 1) + pointBlankBonus,
       damageBonus: pointBlankBonus,
     });
   }
@@ -982,6 +1213,21 @@ export interface TwoWeaponFightingOption {
   offHand: number[];
 }
 
+const CAD_TEMPEST_STEEL_DANCE_LEVEL = 2;
+const CAD_TEMPEST_STEEL_DANCE_PRIMARY_REDUCTION = 2;
+const CAD_TEMPEST_STEEL_DANCE_OFFHAND_REDUCTION = 6;
+
+/**
+ * Danza de Acero (tempestad, Complete Adventurer, nivel 2): reduce en 2 la
+ * penalización de combate con dos armas al ataque de la mano principal, y en
+ * 6 la de la mano secundaria, además de cualquier reducción por dotes.
+ */
+export function getCadTempestSteelDanceReduction(classLevels: CharacterClassLevel[]): { primary: number; offHand: number } {
+  const level = classLevels.find((cl) => cl.classId === "cad-tempest")?.level ?? 0;
+  if (level < CAD_TEMPEST_STEEL_DANCE_LEVEL) return { primary: 0, offHand: 0 };
+  return { primary: CAD_TEMPEST_STEEL_DANCE_PRIMARY_REDUCTION, offHand: CAD_TEMPEST_STEEL_DANCE_OFFHAND_REDUCTION };
+}
+
 /**
  * Combate con dos armas: penalizadores según la Tabla de combate con dos
  * armas del SRD (mano principal/mano secundaria), y ataques adicionales de
@@ -995,6 +1241,8 @@ export function computeTwoWeaponFightingOption(
   hasTwoWeaponFightingFeat: boolean,
   hasImproved: boolean,
   hasGreater: boolean,
+  extraPrimaryReduction = 0,
+  extraOffHandReduction = 0,
 ): TwoWeaponFightingOption {
   let primaryPenalty: number;
   let offHandPenalty: number;
@@ -1011,8 +1259,32 @@ export function computeTwoWeaponFightingOption(
     primaryPenalty = 6;
     offHandPenalty = 10;
   }
+  primaryPenalty = Math.max(0, primaryPenalty - extraPrimaryReduction);
+  offHandPenalty = Math.max(0, offHandPenalty - extraOffHandReduction);
   const primary = computeFullAttackSequence(primaryBaseBonus - primaryPenalty, bab);
   const offHandCount = 1 + (hasImproved ? 1 : 0) + (hasGreater ? 1 : 0);
   const offHand = Array.from({ length: offHandCount }, (_, i) => offHandBaseBonus - offHandPenalty - 5 * i);
   return { primary, offHand };
+}
+
+const SOULKNIFE_MIND_BLADE_BONUS_LEVELS: [level: number, bonus: number][] = [
+  [4, 1],
+  [8, 2],
+  [12, 3],
+  [16, 4],
+  [20, 5],
+];
+
+/**
+ * Mejora de la Hoja Mental (cuchillo del alma, Complete Psionic, nivel 4+):
+ * bono de mejora al ataque y al daño de la hoja mental. La hoja mental en sí
+ * (disponible desde nivel 1, funciona como una espada corta) se representa
+ * reutilizando la "Espada Corta" del catálogo con este bono aplicado como si
+ * fuera un bono de mejora mágica, ya que no es un arma comprable normal.
+ */
+export function getSoulknifeMindBladeBonus(classLevels: CharacterClassLevel[]): number {
+  const level = classLevels.find((cl) => cl.classId === "cps-soulknife")?.level ?? 0;
+  let bonus = 0;
+  for (const [reqLevel, b] of SOULKNIFE_MIND_BLADE_BONUS_LEVELS) if (level >= reqLevel) bonus = b;
+  return bonus;
 }

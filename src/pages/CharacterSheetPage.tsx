@@ -19,6 +19,7 @@ import {
 import {
   abilityModifier,
   computeBabTotal,
+  computeBaseSave,
   computeCarryingCapacity,
   computeCharacterArmorClass,
   computeEquipmentPassiveBonuses,
@@ -33,6 +34,11 @@ import {
   findChoiceValue,
   getAllKnownFeatIds,
   getBonusFeatsFromClasses,
+  getCadTempestSteelDanceReduction,
+  getContemplativeStoneWillBonus,
+  getDivineGraceBonus,
+  getScoutBattleBonus,
+  getSoulknifeMindBladeBonus,
   getUnlockedClassFeatureChoices,
   getUnlockedClassFeatures,
   monkUnarmedDamage,
@@ -115,6 +121,15 @@ export default function CharacterSheetPage() {
     .filter((x): x is { armor: NonNullable<ReturnType<typeof findArmor>>; item: (typeof character.equipment)[number] } => Boolean(x.armor));
   const bodyArmor = equippedArmorItems.find((x) => x.armor.category !== "escudo");
   const shield = equippedArmorItems.find((x) => x.armor.category === "escudo");
+  const wearingMediumOrHeavyArmor = bodyArmor?.armor.category === "media" || bodyArmor?.armor.category === "pesada";
+  const wearingHeavyShield = Boolean(shield && shield.armor.armorBonus >= 2);
+
+  const rawEquippedWeapons = character.equipment
+    .filter((e) => e.equipped && e.itemKind === "weapon")
+    .map((e) => ({ weapon: findWeapon(e.itemId), item: e }))
+    .filter((x): x is { weapon: NonNullable<ReturnType<typeof findWeapon>>; item: (typeof character.equipment)[number] } => Boolean(x.weapon));
+  const meleeWeaponCount = rawEquippedWeapons.filter((x) => x.weapon.type === "cuerpo_a_cuerpo").length;
+
   const ac = computeCharacterArmorClass(
     finalScores,
     size,
@@ -123,13 +138,52 @@ export default function CharacterSheetPage() {
     character.bonusInsightAC,
     equipmentBonuses.deflection,
     equipmentBonuses.naturalArmor,
+    character.classLevels,
+    meleeWeaponCount,
   );
 
-  const equippedWeapons = character.equipment
-    .filter((e) => e.equipped && e.itemKind === "weapon")
-    .map((e) => ({ weapon: findWeapon(e.itemId), item: e }))
-    .filter((x): x is { weapon: NonNullable<ReturnType<typeof findWeapon>>; item: (typeof character.equipment)[number] } => Boolean(x.weapon))
-    .map((x) => computeWeaponAttack(x.weapon, bab, finalScores, size, character.feats, x.item, character.classLevels, classFeatureChoices));
+  const equippedWeapons = rawEquippedWeapons.map((x) =>
+    computeWeaponAttack(
+      x.weapon,
+      bab,
+      finalScores,
+      size,
+      character.feats,
+      x.item,
+      character.classLevels,
+      classFeatureChoices,
+      wearingMediumOrHeavyArmor,
+      wearingHeavyShield,
+    ),
+  );
+
+  // Cuchillo del Alma: la hoja mental no es un objeto del inventario, sino un
+  // arma psiónica siempre disponible desde nivel 1 (funciona como una espada
+  // corta), con un bono de mejora al ataque y al daño según el nivel.
+  const soulknifeLevel = character.classLevels.find((cl) => cl.classId === "cps-soulknife")?.level ?? 0;
+  const mindBladeBonus = getSoulknifeMindBladeBonus(character.classLevels);
+  const mindBladeBaseWeapon = soulknifeLevel > 0 ? findWeapon("short-sword") : undefined;
+  const mindBladeAttack = mindBladeBaseWeapon
+    ? {
+        ...computeWeaponAttack(
+          mindBladeBaseWeapon,
+          bab,
+          finalScores,
+          size,
+          character.feats,
+          mindBladeBonus > 0
+            ? { itemId: "short-sword", itemKind: "weapon" as const, quantity: 1, equipped: true, enhancementBonus: mindBladeBonus }
+            : undefined,
+          character.classLevels,
+          classFeatureChoices,
+          wearingMediumOrHeavyArmor,
+          wearingHeavyShield,
+        ),
+        itemId: "mind-blade",
+        name: mindBladeBonus > 0 ? `Hoja Mental +${mindBladeBonus}` : "Hoja Mental",
+      }
+    : undefined;
+  const allAttacks = mindBladeAttack ? [...equippedWeapons, mindBladeAttack] : equippedWeapons;
 
   const meleeAttackBonus = bab + abilityModifier(finalScores.str) + sizeModifier(size);
   const rangedAttackBonus = bab + abilityModifier(finalScores.dex) + sizeModifier(size);
@@ -142,6 +196,7 @@ export default function CharacterSheetPage() {
   const meleeWeapons = equippedWeapons.filter((w) => w.type === "cuerpo_a_cuerpo");
   const monkLevel = character.classLevels.find((cl) => cl.classId === "monk")?.level ?? 0;
   const unarmedAttackBonus = bab + abilityModifier(finalScores.str) + sizeModifier(size);
+  const steelDanceReduction = getCadTempestSteelDanceReduction(character.classLevels);
   const twoWeaponOption =
     meleeWeapons.length >= 2
       ? computeTwoWeaponFightingOption(
@@ -152,6 +207,8 @@ export default function CharacterSheetPage() {
           knownFeatIds.has("two-weapon-fighting"),
           knownFeatIds.has("improved-two-weapon-fighting"),
           knownFeatIds.has("greater-two-weapon-fighting"),
+          steelDanceReduction.primary,
+          steelDanceReduction.offHand,
         )
       : null;
   const twoWeaponOptionLight =
@@ -164,6 +221,8 @@ export default function CharacterSheetPage() {
           knownFeatIds.has("two-weapon-fighting"),
           knownFeatIds.has("improved-two-weapon-fighting"),
           knownFeatIds.has("greater-two-weapon-fighting"),
+          steelDanceReduction.primary,
+          steelDanceReduction.offHand,
         )
       : null;
   const fmtSeq = (seq: number[]) => seq.map((b) => (b >= 0 ? `+${b}` : b)).join("/");
@@ -259,13 +318,14 @@ export default function CharacterSheetPage() {
                 <div className="part"><span className="num">{ac.naturalArmorBonus}</span><span className="lbl">Natural</span></div>
                 <div className="part"><span className="num">{ac.deflectionBonus}</span><span className="lbl">Desviación</span></div>
                 <div className="part"><span className="num">{ac.insightBonus}</span><span className="lbl">Perspicacia</span></div>
+                <div className="part"><span className="num">{ac.monkWisdomBonus + ac.dervishGraceBonus + ac.tempestDefenseBonus}</span><span className="lbl">Clase</span></div>
               </div>
               <p className="muted" style={{ textAlign: "center", margin: 0 }}>
                 CA a distancia: {ac.touch} · CA desprevenido: {ac.flatFooted}
               </p>
               {ac.damageReduction > 0 && (
                 <p className="muted" style={{ textAlign: "center", margin: 0 }}>
-                  Reducción de daño por armadura: {ac.damageReduction}/-
+                  Reducción de daño: {ac.damageReduction}/-
                 </p>
               )}
             </Panel>
@@ -284,23 +344,41 @@ export default function CharacterSheetPage() {
                   <tr>
                     <td>Fortaleza (Con)</td>
                     <td><strong>{saves.fort >= 0 ? `+${saves.fort}` : saves.fort}</strong></td>
-                    <td>{saves.fort - abilityModifier(finalScores.con)}</td>
+                    <td>{computeBaseSave("fort", character.classLevels, classes)}</td>
                     <td>{abilityModifier(finalScores.con)}</td>
                   </tr>
                   <tr>
                     <td>Reflejos (Des)</td>
                     <td><strong>{saves.ref >= 0 ? `+${saves.ref}` : saves.ref}</strong></td>
-                    <td>{saves.ref - dexMod}</td>
+                    <td>{computeBaseSave("ref", character.classLevels, classes)}</td>
                     <td>{dexMod}</td>
                   </tr>
                   <tr>
                     <td>Voluntad (Sab)</td>
                     <td><strong>{saves.will >= 0 ? `+${saves.will}` : saves.will}</strong></td>
-                    <td>{saves.will - abilityModifier(finalScores.wis)}</td>
+                    <td>{computeBaseSave("will", character.classLevels, classes)}</td>
                     <td>{abilityModifier(finalScores.wis)}</td>
                   </tr>
                 </tbody>
               </table>
+              {(equipmentBonuses.saveResistance > 0 ||
+                getDivineGraceBonus(character.classLevels, finalScores) > 0 ||
+                getScoutBattleBonus(character.classLevels) > 0 ||
+                getContemplativeStoneWillBonus(character.classLevels) > 0) && (
+                <p className="muted" style={{ margin: "6px 0 0" }}>
+                  Incluye
+                  {equipmentBonuses.saveResistance > 0 ? ` resistencia +${equipmentBonuses.saveResistance} (equipo);` : ""}
+                  {getDivineGraceBonus(character.classLevels, finalScores) > 0
+                    ? ` Gracia Divina +${getDivineGraceBonus(character.classLevels, finalScores)} (Fort/Ref/Vol);`
+                    : ""}
+                  {getScoutBattleBonus(character.classLevels) > 0
+                    ? ` Bono de Batalla +${getScoutBattleBonus(character.classLevels)} (Fort);`
+                    : ""}
+                  {getContemplativeStoneWillBonus(character.classLevels) > 0
+                    ? ` Voluntad de Piedra +${getContemplativeStoneWillBonus(character.classLevels)} (Vol);`
+                    : ""}
+                </p>
+              )}
             </Panel>
 
             <Panel title="Iniciativa y velocidad">
@@ -338,7 +416,7 @@ export default function CharacterSheetPage() {
         </div>
 
         <Panel title="Ataques">
-          {equippedWeapons.length === 0 ? (
+          {allAttacks.length === 0 ? (
             <p className="muted">Sin armas equipadas.</p>
           ) : (
             <table className="data-table">
@@ -353,7 +431,7 @@ export default function CharacterSheetPage() {
                 </tr>
               </thead>
               <tbody>
-                {equippedWeapons.map((w) => (
+                {allAttacks.map((w) => (
                   <tr key={w.itemId}>
                     <td>{w.name}</td>
                     <td>{w.fullAttackSequence.map((b) => (b >= 0 ? `+${b}` : b)).join("/")}</td>
@@ -371,7 +449,7 @@ export default function CharacterSheetPage() {
               </tbody>
             </table>
           )}
-          {equippedWeapons
+          {allAttacks
             .filter((w) => w.magicProperties.length > 0 || w.specialMaterial)
             .map((w) => (
               <div key={`${w.itemId}-qualities`} className="muted" style={{ marginTop: 8, fontSize: "0.85rem" }}>
@@ -388,7 +466,7 @@ export default function CharacterSheetPage() {
                 ))}
               </div>
             ))}
-          {equippedWeapons
+          {allAttacks
             .filter((w) => w.rangeIncrement)
             .map((w) => (
               <p key={w.itemId} className="muted" style={{ marginTop: 8, marginBottom: 0 }}>

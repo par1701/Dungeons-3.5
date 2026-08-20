@@ -17,6 +17,7 @@ import {
 import {
   abilityModifier,
   computeBabTotal,
+  computeBaseSave,
   computeCarryingCapacity,
   computeCharacterArmorClass,
   computeEquipmentPassiveBonuses,
@@ -31,6 +32,11 @@ import {
   findChoiceValue,
   getAllKnownFeatIds,
   getBonusFeatsFromClasses,
+  getCadTempestSteelDanceReduction,
+  getContemplativeStoneWillBonus,
+  getDivineGraceBonus,
+  getScoutBattleBonus,
+  getSoulknifeMindBladeBonus,
   getUnlockedClassFeatureChoices,
   getUnlockedClassFeatures,
   monkUnarmedDamage,
@@ -109,6 +115,15 @@ export default function CharacterSheetDocument({ character }: { character: Chara
     .filter((x): x is { armor: NonNullable<ReturnType<typeof findArmor>>; item: (typeof character.equipment)[number] } => Boolean(x.armor));
   const bodyArmor = equippedArmorItems.find((x) => x.armor.category !== "escudo");
   const shield = equippedArmorItems.find((x) => x.armor.category === "escudo");
+  const wearingMediumOrHeavyArmor = bodyArmor?.armor.category === "media" || bodyArmor?.armor.category === "pesada";
+  const wearingHeavyShield = Boolean(shield && shield.armor.armorBonus >= 2);
+
+  const rawEquippedWeapons = character.equipment
+    .filter((e) => e.equipped && e.itemKind === "weapon")
+    .map((e) => ({ weapon: findWeapon(e.itemId), item: e }))
+    .filter((x): x is { weapon: NonNullable<ReturnType<typeof findWeapon>>; item: (typeof character.equipment)[number] } => Boolean(x.weapon));
+  const meleeWeaponCount = rawEquippedWeapons.filter((x) => x.weapon.type === "cuerpo_a_cuerpo").length;
+
   const ac = computeCharacterArmorClass(
     finalScores,
     size,
@@ -117,23 +132,60 @@ export default function CharacterSheetDocument({ character }: { character: Chara
     character.bonusInsightAC,
     equipmentBonuses.deflection,
     equipmentBonuses.naturalArmor,
+    character.classLevels,
+    meleeWeaponCount,
   );
   const dexMod = abilityModifier(finalScores.dex);
   const meleeAttackBonus = bab + abilityModifier(finalScores.str) + sizeModifier(size);
   const rangedAttackBonus = bab + abilityModifier(finalScores.dex) + sizeModifier(size);
   const grapple = bab + abilityModifier(finalScores.str) - sizeModifier(size);
 
-  const equippedWeapons = character.equipment
-    .filter((e) => e.equipped && e.itemKind === "weapon")
-    .map((e) => ({ weapon: findWeapon(e.itemId), item: e }))
-    .filter((x): x is { weapon: NonNullable<ReturnType<typeof findWeapon>>; item: (typeof character.equipment)[number] } => Boolean(x.weapon))
-    .map((x) => computeWeaponAttack(x.weapon, bab, finalScores, size, character.feats, x.item, character.classLevels, classFeatureChoices));
+  const equippedWeapons = rawEquippedWeapons.map((x) =>
+    computeWeaponAttack(
+      x.weapon,
+      bab,
+      finalScores,
+      size,
+      character.feats,
+      x.item,
+      character.classLevels,
+      classFeatureChoices,
+      wearingMediumOrHeavyArmor,
+      wearingHeavyShield,
+    ),
+  );
+
+  const soulknifeLevel = character.classLevels.find((cl) => cl.classId === "cps-soulknife")?.level ?? 0;
+  const mindBladeBonus = getSoulknifeMindBladeBonus(character.classLevels);
+  const mindBladeBaseWeapon = soulknifeLevel > 0 ? findWeapon("short-sword") : undefined;
+  const mindBladeAttack = mindBladeBaseWeapon
+    ? {
+        ...computeWeaponAttack(
+          mindBladeBaseWeapon,
+          bab,
+          finalScores,
+          size,
+          character.feats,
+          mindBladeBonus > 0
+            ? { itemId: "short-sword", itemKind: "weapon" as const, quantity: 1, equipped: true, enhancementBonus: mindBladeBonus }
+            : undefined,
+          character.classLevels,
+          classFeatureChoices,
+          wearingMediumOrHeavyArmor,
+          wearingHeavyShield,
+        ),
+        itemId: "mind-blade",
+        name: mindBladeBonus > 0 ? `Hoja Mental +${mindBladeBonus}` : "Hoja Mental",
+      }
+    : undefined;
+  const allAttacks = mindBladeAttack ? [...equippedWeapons, mindBladeAttack] : equippedWeapons;
 
   const knownFeatIds = getAllKnownFeatIds(character.feats, character.classLevels, classes, classFeatureChoices);
   const rangedWeapons = equippedWeapons.filter((w) => w.type === "distancia" && w.rangeIncrement);
   const meleeWeapons = equippedWeapons.filter((w) => w.type === "cuerpo_a_cuerpo");
   const monkLevel = character.classLevels.find((cl) => cl.classId === "monk")?.level ?? 0;
   const unarmedAttackBonus = bab + abilityModifier(finalScores.str) + sizeModifier(size);
+  const steelDanceReduction = getCadTempestSteelDanceReduction(character.classLevels);
   const twoWeaponOption =
     meleeWeapons.length >= 2
       ? computeTwoWeaponFightingOption(
@@ -144,6 +196,8 @@ export default function CharacterSheetDocument({ character }: { character: Chara
           knownFeatIds.has("two-weapon-fighting"),
           knownFeatIds.has("improved-two-weapon-fighting"),
           knownFeatIds.has("greater-two-weapon-fighting"),
+          steelDanceReduction.primary,
+          steelDanceReduction.offHand,
         )
       : null;
   const twoWeaponOptionLight =
@@ -156,6 +210,8 @@ export default function CharacterSheetDocument({ character }: { character: Chara
           knownFeatIds.has("two-weapon-fighting"),
           knownFeatIds.has("improved-two-weapon-fighting"),
           knownFeatIds.has("greater-two-weapon-fighting"),
+          steelDanceReduction.primary,
+          steelDanceReduction.offHand,
         )
       : null;
   const fmtSeq = (seq: number[]) => seq.map((b) => (b >= 0 ? `+${b}` : b)).join("/");
@@ -221,18 +277,44 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                 {ac.naturalArmorBonus !== 0 ? ` + ${ac.naturalArmorBonus} natural` : ""}
                 {ac.deflectionBonus !== 0 ? ` + ${ac.deflectionBonus} desviación` : ""}
                 {ac.insightBonus !== 0 ? ` + ${ac.insightBonus} perspicacia` : ""}
+                {ac.monkWisdomBonus + ac.dervishGraceBonus + ac.tempestDefenseBonus !== 0
+                  ? ` + ${ac.monkWisdomBonus + ac.dervishGraceBonus + ac.tempestDefenseBonus} clase`
+                  : ""}
               </Text>
               <Text style={{ fontSize: 7, textAlign: "center" }}>
                 Tocar {ac.touch} · Desprevenido {ac.flatFooted}
               </Text>
-              {ac.damageReduction > 0 && (
-                <Text style={{ fontSize: 7, textAlign: "center" }}>RD por armadura: {ac.damageReduction}/-</Text>
-              )}
+              {ac.damageReduction > 0 && <Text style={{ fontSize: 7, textAlign: "center" }}>RD: {ac.damageReduction}/-</Text>}
             </Panel>
             <Panel title="Salvaciones">
-              <Text>Fortaleza: {saves.fort >= 0 ? `+${saves.fort}` : saves.fort}</Text>
-              <Text>Reflejos: {saves.ref >= 0 ? `+${saves.ref}` : saves.ref}</Text>
-              <Text>Voluntad: {saves.will >= 0 ? `+${saves.will}` : saves.will}</Text>
+              <Text>
+                Fortaleza: {saves.fort >= 0 ? `+${saves.fort}` : saves.fort} (base{" "}
+                {computeBaseSave("fort", character.classLevels, classes)})
+              </Text>
+              <Text>
+                Reflejos: {saves.ref >= 0 ? `+${saves.ref}` : saves.ref} (base{" "}
+                {computeBaseSave("ref", character.classLevels, classes)})
+              </Text>
+              <Text>
+                Voluntad: {saves.will >= 0 ? `+${saves.will}` : saves.will} (base{" "}
+                {computeBaseSave("will", character.classLevels, classes)})
+              </Text>
+              {(equipmentBonuses.saveResistance > 0 ||
+                getDivineGraceBonus(character.classLevels, finalScores) > 0 ||
+                getScoutBattleBonus(character.classLevels) > 0 ||
+                getContemplativeStoneWillBonus(character.classLevels) > 0) && (
+                <Text style={{ fontSize: 6.5 }}>
+                  Incluye
+                  {equipmentBonuses.saveResistance > 0 ? ` resistencia +${equipmentBonuses.saveResistance};` : ""}
+                  {getDivineGraceBonus(character.classLevels, finalScores) > 0
+                    ? ` Gracia Divina +${getDivineGraceBonus(character.classLevels, finalScores)};`
+                    : ""}
+                  {getScoutBattleBonus(character.classLevels) > 0 ? ` Bono de Batalla +${getScoutBattleBonus(character.classLevels)};` : ""}
+                  {getContemplativeStoneWillBonus(character.classLevels) > 0
+                    ? ` Voluntad de Piedra +${getContemplativeStoneWillBonus(character.classLevels)};`
+                    : ""}
+                </Text>
+              )}
             </Panel>
           </View>
           <View style={{ flex: 1 }}>
@@ -254,7 +336,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
         </View>
 
         <Panel title="Ataques">
-          {equippedWeapons.length === 0 ? (
+          {allAttacks.length === 0 ? (
             <Text>Sin armas equipadas.</Text>
           ) : (
             <>
@@ -265,7 +347,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                 <Text style={styles.smallCell}>Crítico</Text>
                 <Text style={styles.smallCell}>Alcance</Text>
               </View>
-              {equippedWeapons.map((w) => (
+              {allAttacks.map((w) => (
                 <View style={styles.tableRow} key={w.itemId}>
                   <Text style={styles.cell}>{w.name}</Text>
                   <Text style={styles.smallCell}>{w.fullAttackSequence.map((b) => (b >= 0 ? `+${b}` : b)).join("/")}</Text>
@@ -274,7 +356,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                   <Text style={styles.smallCell}>{w.rangeIncrement ? `${w.rangeIncrement} p` : "—"}</Text>
                 </View>
               ))}
-              {equippedWeapons
+              {allAttacks
                 .filter((w) => w.magicProperties.length > 0 || w.specialMaterial)
                 .map((w) => (
                   <Text key={`${w.itemId}-qualities`} style={{ fontSize: 7 }}>
@@ -283,7 +365,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                       .join("; ")}
                   </Text>
                 ))}
-              {equippedWeapons
+              {allAttacks
                 .filter((w) => w.rangeIncrement)
                 .map((w) => (
                   <Text key={w.itemId} style={{ fontSize: 7 }}>

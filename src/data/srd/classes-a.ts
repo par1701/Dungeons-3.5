@@ -171,6 +171,7 @@ const monkFeatures: ClassFeature[] = [
   { level: 4, name: "Golpe ki (mágico)", description: "Los ataques desarmados del monje se consideran armas mágicas a efectos de superar la reducción de daño." },
   { level: 4, name: "Caída lenta (6 m)", description: "Si el monje está en contacto con una pared, puede usarla para frenar una caída, tratándola como si fuera 6 metros más corta de lo que realmente es." },
   { level: 5, name: "Pureza de cuerpo", description: "El monje obtiene inmunidad a todas las enfermedades, incluidas las de origen sobrenatural o mágico." },
+  { level: 5, name: "CA sin armadura +1", description: "Además del bonificador de Sabiduría, el monje obtiene un bonificador adicional de +1 a la Clase de Armadura mientras no lleve armadura, escudo ni cargue demasiado peso. Este bonificador aumenta en +1 por cada 5 niveles de monje adicionales (+2 en 10º, +3 en 15º, +4 en 20º)." },
   { level: 6, name: "Artes marciales", description: "En sexto nivel, el monje elige una tercera dote de bonificación de la lista especial de monje." },
   { level: 6, name: "Velocidad sin armadura +6 m", description: "El bonificador acumulado a la velocidad sin armadura del monje aumenta a 6 metros." },
   { level: 6, name: "Caída lenta (9 m)", description: "La distancia de caída lenta del monje aumenta a 9 metros." },

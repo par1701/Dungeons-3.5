@@ -542,6 +542,11 @@ export const CW_CLASSES: ClassDef[] = [
     weaponProficiencies: [],
     armorProficiencies: [],
     features: TEMPEST_FEATURES,
+    bonusFeatGrants: [
+      { level: 1, featId: "two-weapon-defense" },
+      { level: 3, featId: "improved-two-weapon-fighting" },
+      { level: 5, featId: "greater-two-weapon-fighting" },
+    ],
     maxLevel: 5,
     isPrestige: true,
     prerequisites: [
@@ -581,6 +586,11 @@ export const CW_CLASSES: ClassDef[] = [
     weaponProficiencies: [],
     armorProficiencies: [],
     features: HALFLING_OUTRIDER_FEATURES,
+    bonusFeatGrants: [
+      { level: 2, featId: "ride-by-attack" },
+      { level: 3, featId: "spirited-charge" },
+      { level: 5, featId: "trample" },
+    ],
     maxLevel: 5,
     isPrestige: true,
     prerequisites: [

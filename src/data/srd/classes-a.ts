@@ -60,6 +60,86 @@ const RANGER_BONUS_FEAT_GRANTS = [
   { level: 3, featId: "endurance" },
 ];
 
+// Complete Champion: rasgo de clase alternativo "Campeón de lo Salvaje" (solo
+// activo con la regla variante vr-cc-champion-of-the-wild). En vez de
+// conjuros divinos, el explorador obtiene una dote de bonificación en los
+// niveles 4, 8, 11 y 14, elegida entre una lista fija de dotes de combate
+// más las propias de su estilo de combate (arquería o dos armas), aunque no
+// cumpla sus prerrequisitos. "Ojos en la Nuca" (Eyes in the Back of Your
+// Head) no está implementada en el catálogo de dotes de esta app, así que
+// se omite de la lista seleccionable en vez de inventar su id.
+const CHAMPION_OF_THE_WILD_BASE_FEATS = [
+  "blind-fight",
+  "combat-expertise",
+  "improved-disarm",
+  "cw-improved-favored-enemy",
+  "improved-feint",
+  "improved-trip",
+];
+
+const CHAMPION_OF_THE_WILD_CHOICES: ClassFeatureChoice[] = [
+  {
+    id: "campeon-salvaje-dote-1",
+    featureName: "Dote de bonificación (Campeón de lo Salvaje)",
+    levels: [4],
+    label: "Dote de bonificación (Campeón de lo Salvaje, 1.ª)",
+    kind: "dote_restringida",
+    featOptionsByDependency: {
+      dependsOn: "estilo-combate",
+      options: {
+        arqueria: [...CHAMPION_OF_THE_WILD_BASE_FEATS, "rapid-shot", "manyshot", "improved-precise-shot"],
+        "dos-armas": [...CHAMPION_OF_THE_WILD_BASE_FEATS, "two-weapon-fighting", "improved-two-weapon-fighting", "greater-two-weapon-fighting"],
+      },
+    },
+    requiresVariantRule: "vr-cc-champion-of-the-wild",
+  },
+  {
+    id: "campeon-salvaje-dote-2",
+    featureName: "Dote de bonificación (Campeón de lo Salvaje)",
+    levels: [8],
+    label: "Dote de bonificación (Campeón de lo Salvaje, 2.ª)",
+    kind: "dote_restringida",
+    featOptionsByDependency: {
+      dependsOn: "estilo-combate",
+      options: {
+        arqueria: [...CHAMPION_OF_THE_WILD_BASE_FEATS, "rapid-shot", "manyshot", "improved-precise-shot"],
+        "dos-armas": [...CHAMPION_OF_THE_WILD_BASE_FEATS, "two-weapon-fighting", "improved-two-weapon-fighting", "greater-two-weapon-fighting"],
+      },
+    },
+    requiresVariantRule: "vr-cc-champion-of-the-wild",
+  },
+  {
+    id: "campeon-salvaje-dote-3",
+    featureName: "Dote de bonificación (Campeón de lo Salvaje)",
+    levels: [11],
+    label: "Dote de bonificación (Campeón de lo Salvaje, 3.ª)",
+    kind: "dote_restringida",
+    featOptionsByDependency: {
+      dependsOn: "estilo-combate",
+      options: {
+        arqueria: [...CHAMPION_OF_THE_WILD_BASE_FEATS, "rapid-shot", "manyshot", "improved-precise-shot"],
+        "dos-armas": [...CHAMPION_OF_THE_WILD_BASE_FEATS, "two-weapon-fighting", "improved-two-weapon-fighting", "greater-two-weapon-fighting"],
+      },
+    },
+    requiresVariantRule: "vr-cc-champion-of-the-wild",
+  },
+  {
+    id: "campeon-salvaje-dote-4",
+    featureName: "Dote de bonificación (Campeón de lo Salvaje)",
+    levels: [14],
+    label: "Dote de bonificación (Campeón de lo Salvaje, 4.ª)",
+    kind: "dote_restringida",
+    featOptionsByDependency: {
+      dependsOn: "estilo-combate",
+      options: {
+        arqueria: [...CHAMPION_OF_THE_WILD_BASE_FEATS, "rapid-shot", "manyshot", "improved-precise-shot"],
+        "dos-armas": [...CHAMPION_OF_THE_WILD_BASE_FEATS, "two-weapon-fighting", "improved-two-weapon-fighting", "greater-two-weapon-fighting"],
+      },
+    },
+    requiresVariantRule: "vr-cc-champion-of-the-wild",
+  },
+];
+
 const MONK_MARTIAL_ARTS_FEATS = ["improved-grapple", "deflect-arrows", "improved-trip", "stunning-fist", "combat-reflexes"];
 
 const MONK_CHOICES: ClassFeatureChoice[] = [
@@ -417,7 +497,7 @@ export const SRD_CLASSES_A: ClassDef[] = [
     },
     companionGrant: { kind: "animal_companion", startLevel: 4, effectiveLevelOffset: -3 },
     features: rangerFeatures,
-    choices: RANGER_CHOICES,
+    choices: [...RANGER_CHOICES, ...CHAMPION_OF_THE_WILD_CHOICES],
     bonusFeatGrants: RANGER_BONUS_FEAT_GRANTS,
     maxLevel: 20,
   },

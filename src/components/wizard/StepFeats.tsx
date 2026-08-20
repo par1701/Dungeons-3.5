@@ -55,18 +55,19 @@ export default function StepFeats({ character, onChange }: StepProps) {
   const race = findRace(character.raceId);
   const finalScores = computeFinalAbilityScores(character.abilityScores, race, character.equipment);
 
-  const featSlots = computeFeatSlots(
-    character.classLevels,
-    isHumanRace(race),
-    character.activeVariantRules.includes("vr-cc-champion-of-the-wild"),
-    character.bonusFeatSlots,
-  );
+  const featSlots = computeFeatSlots(character.classLevels, isHumanRace(race), character.bonusFeatSlots);
   const ctx: FeatPrereqContext = {
     abilityScores: finalScores,
     babTotal: computeBabTotal(character.classLevels, classes),
     classLevels: Object.fromEntries(character.classLevels.map((cl) => [cl.classId, cl.level])),
     totalCharacterLevel: totalCharacterLevel(character.classLevels),
-    featIds: getAllKnownFeatIds(character.feats, character.classLevels, classes, character.classFeatureChoices ?? []),
+    featIds: getAllKnownFeatIds(
+      character.feats,
+      character.classLevels,
+      classes,
+      character.classFeatureChoices ?? [],
+      character.activeVariantRules,
+    ),
     skillRanks: flattenSkillRanksForPrereqs(character.skillRanks),
     casterLevel: totalCharacterLevel(character.classLevels),
   };

@@ -559,7 +559,7 @@ export function getUnlockedClassFeatures(
           level,
           name: "Dote de bonificación (Campeón de lo Salvaje)",
           description:
-            "El explorador ha renunciado a sus conjuros divinos para convertirse en un maestro de las armas. Obtiene una dote de bonificación elegida entre Combate a Ciegas, Amaño en Combate, Ojos en la Nuca, Desarmar Mejorado, Enemigo Predilecto Mejorado, Finta Mejorada, Derribar Mejorado, o de la lista propia de su estilo de combate.",
+            "El explorador ha renunciado a sus conjuros divinos para convertirse en un maestro de las armas. Obtiene una dote de bonificación elegida entre Lucha a Ciegas, Pericia en Combate, Desarme Mejorado, Enemigo Predilecto Mejorado, Finta Mejorada, Derribo Mejorado, o de la lista propia de su estilo de combate. Elígela en \"Elecciones de clase\".",
         });
       }
     }
@@ -589,15 +589,18 @@ export interface UnlockedClassFeatureChoice {
 export function getUnlockedClassFeatureChoices(
   classLevels: CharacterClassLevel[],
   classes: ClassDef[],
+  activeVariantRules: string[] = [],
 ): UnlockedClassFeatureChoice[] {
   return classLevels.flatMap((cl) => {
     const def = classes.find((c) => c.id === cl.classId);
     if (!def?.choices) return [];
-    return def.choices.flatMap((choice) =>
-      choice.levels
-        .filter((level) => level <= cl.level)
-        .map((level) => ({ classId: def.id, className: def.name, level, choice })),
-    );
+    return def.choices
+      .filter((choice) => !choice.requiresVariantRule || activeVariantRules.includes(choice.requiresVariantRule))
+      .flatMap((choice) =>
+        choice.levels
+          .filter((level) => level <= cl.level)
+          .map((level) => ({ classId: def.id, className: def.name, level, choice })),
+      );
   });
 }
 
@@ -631,6 +634,7 @@ export function getBonusFeatsFromClasses(
   classLevels: CharacterClassLevel[],
   classes: ClassDef[],
   classFeatureChoices: CharacterClassFeatureChoice[],
+  activeVariantRules: string[] = [],
 ): BonusFeatEntry[] {
   const entries: BonusFeatEntry[] = [];
   classLevels.forEach((cl) => {
@@ -642,7 +646,8 @@ export function getBonusFeatsFromClasses(
       }
     }
     for (const choice of def.choices ?? []) {
-      if (choice.kind !== "dote_restringida") continue;
+      if (choice.kind !== "dote_restringida" && choice.kind !== "dote_categoria") continue;
+      if (choice.requiresVariantRule && !activeVariantRules.includes(choice.requiresVariantRule)) continue;
       for (const level of choice.levels.filter((l) => l <= cl.level)) {
         const value = findChoiceValue(classFeatureChoices, def.id, choice.id, level);
         if (value) {
@@ -667,22 +672,23 @@ export function getAllKnownFeatIds(
   classLevels: CharacterClassLevel[],
   classes: ClassDef[],
   classFeatureChoices: CharacterClassFeatureChoice[],
+  activeVariantRules: string[] = [],
 ): Set<string> {
   const ids = new Set(feats.map((f) => f.featId));
-  for (const bf of getBonusFeatsFromClasses(classLevels, classes, classFeatureChoices)) {
+  for (const bf of getBonusFeatsFromClasses(classLevels, classes, classFeatureChoices, activeVariantRules)) {
     ids.add(bf.featId);
   }
   return ids;
 }
 
 const FIGHTER_BONUS_FEAT_LEVELS = [1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20];
+// Ejemplar (Complete Adventurer): "Dote Adicional" en los niveles 4 y 8, sin
+// restricción de lista (a diferencia de la mayoría de dotes de bonificación
+// de clase, que sí están restringidas y por tanto se modelan como elección
+// "dote_restringida"/"dote_categoria" en vez de un hueco genérico).
+const EXEMPLAR_BONUS_FEAT_LEVELS = [4, 8];
 
-export function computeFeatSlots(
-  classLevels: CharacterClassLevel[],
-  isHuman: boolean,
-  championOfTheWildRanger = false,
-  bonusFeatSlots = 0,
-): number {
+export function computeFeatSlots(classLevels: CharacterClassLevel[], isHuman: boolean, bonusFeatSlots = 0): number {
   const level = totalCharacterLevel(classLevels);
   if (level <= 0) return bonusFeatSlots;
   let slots = 1;
@@ -690,10 +696,8 @@ export function computeFeatSlots(
   if (isHuman) slots++;
   const fighterLevel = classLevels.find((cl) => cl.classId === "fighter")?.level ?? 0;
   slots += FIGHTER_BONUS_FEAT_LEVELS.filter((l) => l <= fighterLevel).length;
-  if (championOfTheWildRanger) {
-    const rangerLevel = classLevels.find((cl) => cl.classId === "ranger")?.level ?? 0;
-    slots += CHAMPION_OF_THE_WILD_FEAT_LEVELS.filter((l) => l <= rangerLevel).length;
-  }
+  const exemplarLevel = classLevels.find((cl) => cl.classId === "cad-exemplar")?.level ?? 0;
+  slots += EXEMPLAR_BONUS_FEAT_LEVELS.filter((l) => l <= exemplarLevel).length;
   return slots + bonusFeatSlots;
 }
 
@@ -1023,28 +1027,41 @@ const BOW_INITIATE_WEAPON_NAMES: Record<string, string> = {
 
 export interface BowInitiateBonuses {
   attackBonus: number;
+  damageBonus: number;
   rangePenaltyHalved: boolean;
 }
 
+const BOW_INITIATE_WEAPON_SPECIALIZATION_LEVEL = 3;
+const BOW_INITIATE_WEAPON_SPECIALIZATION_DAMAGE = 2;
+
 /**
- * Bonificadores de "Maestría con el arco elegido" y "Reducción de
- * penalizador por distancia" del Iniciado de la Orden del Arco (Complete
- * Warrior, nivel 1): +1 de competencia a las tiradas de ataque a distancia
- * con el tipo de arco elegido, y los penalizadores por incremento de alcance
- * con ese arco se reducen a la mitad (redondeando hacia abajo).
+ * Bonificadores de "Maestría con el arco elegido" (nivel 1: +1 de
+ * competencia al ataque a distancia con el tipo de arco elegido, y
+ * penalizador por incremento de alcance reducido a la mitad) y de la
+ * Especialización en Arma gratuita de nivel 3 (+2 al daño) del Iniciado de
+ * la Orden del Arco. Especialización en Arma se concede como dote de
+ * bonificación normal (aparece en el listado de dotes), pero como esa dote
+ * necesita un arma concreta seleccionada (`selection`) para que
+ * `getWeaponFeatBonuses` la aplique, y las dotes de bonificación de clase no
+ * llevan selección propia, su efecto numérico se añade aquí directamente
+ * sobre el mismo arco ya elegido en "Maestría con el arco elegido".
  */
 export function getBowInitiateBonuses(
   weapon: Weapon,
   classLevels: CharacterClassLevel[],
   classFeatureChoices: CharacterClassFeatureChoice[],
 ): BowInitiateBonuses {
-  const none = { attackBonus: 0, rangePenaltyHalved: false };
+  const none = { attackBonus: 0, damageBonus: 0, rangePenaltyHalved: false };
   const level = classLevels.find((cl) => cl.classId === "cw-order-of-the-bow-initiate")?.level ?? 0;
   if (level < 1) return none;
   const chosenBowType = findChoiceValue(classFeatureChoices, "cw-order-of-the-bow-initiate", "tipo-arco", 1);
   const chosenWeaponName = chosenBowType ? BOW_INITIATE_WEAPON_NAMES[chosenBowType] : undefined;
   if (!chosenWeaponName || normalizeForMatch(weapon.name) !== normalizeForMatch(chosenWeaponName)) return none;
-  return { attackBonus: 1, rangePenaltyHalved: true };
+  return {
+    attackBonus: 1,
+    damageBonus: level >= BOW_INITIATE_WEAPON_SPECIALIZATION_LEVEL ? BOW_INITIATE_WEAPON_SPECIALIZATION_DAMAGE : 0,
+    rangePenaltyHalved: true,
+  };
 }
 
 const SWASHBUCKLER_GRACE_LEVEL = 1;
@@ -1105,7 +1122,8 @@ export function computeWeaponAttack(
     featBonuses.damageBonus +
     equipBonuses.damageBonus +
     compositeBow.damageBonus +
-    swashbucklerGrace;
+    swashbucklerGrace +
+    bowInitiate.damageBonus;
   const damage = damageMod === 0 ? weapon.damageMedium : `${weapon.damageMedium}${damageMod > 0 ? "+" : ""}${damageMod}`;
   const critical =
     featBonuses.doubledThreatRange || equipBonuses.doubledThreatRange ? doubleCriticalThreatRange(weapon.critical) : weapon.critical;

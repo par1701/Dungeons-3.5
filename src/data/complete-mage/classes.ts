@@ -1,4 +1,15 @@
-import type { ClassDef, FeatPrereqContext } from "../../types";
+import type { ClassDef, ClassFeatureChoice, FeatPrereqContext } from "../../types";
+
+const SUEL_ARCANAMACH_CHOICES: ClassFeatureChoice[] = [
+  {
+    id: "dote-combate-adicional",
+    featureName: "Dote de Combate Adicional",
+    levels: [8],
+    label: "Dote de combate adicional",
+    kind: "dote_categoria",
+    featCategoryOptions: ["combate"],
+  },
+];
 
 // Clases de prestigio de Complete Mage (2006).
 //
@@ -324,6 +335,7 @@ export const CM_CLASSES: ClassDef[] = [
     weaponProficiencies: [],
     armorProficiencies: [],
     features: SUEL_ARCANAMACH_FEATURES,
+    choices: SUEL_ARCANAMACH_CHOICES,
     maxLevel: 10,
     isPrestige: true,
     prerequisites: [

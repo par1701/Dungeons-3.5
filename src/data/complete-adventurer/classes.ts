@@ -9,6 +9,22 @@ const SWASHBUCKLER_CHOICES: ClassFeatureChoice[] = [
     kind: "dote_restringida",
     featOptionIds: ["weapon-finesse", "weapon-focus"],
   },
+  {
+    id: "dote-combate-1",
+    featureName: "Dote de Combate Adicional",
+    levels: [4],
+    label: "Dote de combate adicional (1.ª)",
+    kind: "dote_categoria",
+    featCategoryOptions: ["combate"],
+  },
+  {
+    id: "dote-combate-2",
+    featureName: "Dote de Combate Adicional",
+    levels: [12],
+    label: "Dote de combate adicional (2.ª)",
+    kind: "dote_categoria",
+    featCategoryOptions: ["combate"],
+  },
 ];
 
 const EXEMPLAR_CHOICES: ClassFeatureChoice[] = [

@@ -332,6 +332,7 @@ export default function CharacterSheetPage() {
                   <th>Daño</th>
                   <th>Crítico</th>
                   <th>Alcance</th>
+                  <th>Cualidades</th>
                 </tr>
               </thead>
               <tbody>
@@ -342,11 +343,34 @@ export default function CharacterSheetPage() {
                     <td>{w.damage}</td>
                     <td>{w.critical}</td>
                     <td>{w.rangeIncrement ? `${w.rangeIncrement} pies` : "—"}</td>
+                    <td>
+                      {w.specialMaterial?.name}
+                      {w.specialMaterial && w.magicProperties.length > 0 ? ", " : ""}
+                      {w.magicProperties.map((p) => p.name).join(", ")}
+                      {!w.specialMaterial && w.magicProperties.length === 0 && "—"}
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           )}
+          {equippedWeapons
+            .filter((w) => w.magicProperties.length > 0 || w.specialMaterial)
+            .map((w) => (
+              <div key={`${w.itemId}-qualities`} className="muted" style={{ marginTop: 8, fontSize: "0.85rem" }}>
+                <strong>{w.name}:</strong>
+                {w.specialMaterial && (
+                  <div>
+                    {w.specialMaterial.name}: {w.specialMaterial.description}
+                  </div>
+                )}
+                {w.magicProperties.map((p) => (
+                  <div key={p.id}>
+                    {p.name}: {p.description}
+                  </div>
+                ))}
+              </div>
+            ))}
           {equippedWeapons
             .filter((w) => w.rangeIncrement)
             .map((w) => (

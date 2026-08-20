@@ -1,14 +1,15 @@
 import type { Armor, ArmorCategory, CharacterEquipmentItem, MagicItemProperty, SpecialMaterial, Weapon } from "../types";
 import { findMagicItemProperty, findSpecialMaterial } from "../data";
 
-/** Bono de mejora + propiedades mágicas conocidas de un objeto equipado (sin resolver aún: solo lee las referencias del personaje). */
-function resolveProperties(item: CharacterEquipmentItem): MagicItemProperty[] {
+/** Resuelve los ids de `magicPropertyIds` de un objeto equipado a sus `MagicItemProperty` completos. */
+export function resolveProperties(item: CharacterEquipmentItem): MagicItemProperty[] {
   return (item.magicPropertyIds ?? [])
     .map((id) => findMagicItemProperty(id))
     .filter((p): p is MagicItemProperty => Boolean(p));
 }
 
-function resolveMaterial(item: CharacterEquipmentItem): SpecialMaterial | undefined {
+/** Resuelve el `specialMaterialId` de un objeto equipado a su `SpecialMaterial` completo, si tiene. */
+export function resolveMaterial(item: CharacterEquipmentItem): SpecialMaterial | undefined {
   return item.specialMaterialId ? findSpecialMaterial(item.specialMaterialId) : undefined;
 }
 

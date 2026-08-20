@@ -301,7 +301,7 @@ export const SRD_RACES: Race[] = [
           "Los medianos reciben un bonificador racial de +1 a las tiradas de ataque con armas arrojadizas, incluida la honda.",
       },
       {
-        name: "+2 a Escalar, Saltar y Moverse Sigilosamente",
+        name: "+2 a Trepar, Saltar y Moverse Sigilosamente",
         description:
           "Los medianos reciben un bonificador racial de +2 a las pruebas de Trepar, Saltar y Moverse Sigilosamente.",
       },

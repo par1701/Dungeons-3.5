@@ -34,7 +34,7 @@ const EXEMPLAR_CHOICES: ClassFeatureChoice[] = [
     levels: [1],
     label: "Habilidad insigne (mínimo 12 rangos)",
     kind: "texto_libre",
-    placeholder: "p.ej. Escalar, Buscar, Diplomacia...",
+    placeholder: "p.ej. Trepar, Buscar, Diplomacia...",
   },
 ];
 
@@ -172,7 +172,7 @@ const SWASHBUCKLER_FEATURES = [
   {
     level: 1,
     name: "Amenaza con Arma (dote de bonificación)",
-    description: "El espadachín obtiene Finta como Sabio en Combate o Especialización en Arma como dote de bonificación (a elegir) para el arma que empuñe con mayor frecuencia.",
+    description: "El espadachín obtiene Sutileza con Armas o Soltura con un Arma como dote de bonificación (a elegir) para el arma que empuñe con mayor frecuencia.",
   },
   {
     level: 2,
@@ -655,7 +655,7 @@ export const CAD_CLASSES: ClassDef[] = [
         check: (ctx) => (ctx.skillRanks["move-silently"] ?? 0) >= 8,
       },
       {
-        description: "Ataque Desarmado a Mano Limpia",
+        description: "Impacto sin Arma Mejorado",
         check: (ctx) => ctx.featIds.has("improved-unarmed-strike"),
       },
       {
@@ -705,7 +705,7 @@ export const CAD_CLASSES: ClassDef[] = [
         check: (ctx) => (ctx.skillRanks["move-silently"] ?? 0) >= 8,
       },
       {
-        description: "Finta con Armas Ligeras (Weapon Finesse)",
+        description: "Sutileza con Armas",
         check: (ctx) => ctx.featIds.has("weapon-finesse"),
       },
       {
@@ -794,11 +794,11 @@ export const CAD_CLASSES: ClassDef[] = [
         check: (ctx) => ctx.babTotal >= 6,
       },
       {
-        description: "Amenaza (Dodge)",
+        description: "Esquiva",
         check: (ctx) => ctx.featIds.has("dodge"),
       },
       {
-        description: "Combatir con Dos Armas (Two-Weapon Fighting)",
+        description: "Combate con Dos Armas",
         check: (ctx) => ctx.featIds.has("two-weapon-fighting"),
       },
       {

@@ -204,7 +204,7 @@ export const CA_FEATS: Feat[] = [
     benefit:
       "Ignora la probabilidad de fallo por ocultación otorgada por conjuros o efectos mágicos (como invisibilidad, borrosidad o imagen especular), aunque sigue sufriendo la ocultación normal no mágica.",
     prerequisites: [
-      { description: "Combate a Ciegas", check: hasFeat("blind-fight") },
+      { description: "Lucha a Ciegas", check: hasFeat("blind-fight") },
       { description: "Cazador de Magos", check: hasFeat("ca-mage-slayer") },
     ],
     fighterBonusFeat: true,
@@ -299,9 +299,9 @@ export const CA_FEATS: Feat[] = [
     description:
       "El lanzador más experimentado en el uso de la magia acelerada aprende a desencadenar más de un conjuro acelerado en el mismo instante.",
     benefit:
-      "Un número de veces al día igual a su modificador de característica de lanzamiento (mínimo 1), puede lanzar un segundo conjuro modificado con Conjuro Acelerado en el mismo asalto además del primero, pagando el coste de espacio de conjuro de cada uno por separado.",
+      "Un número de veces al día igual a su modificador de característica de lanzamiento (mínimo 1), puede lanzar un segundo conjuro modificado con Apresurar Conjuros en el mismo asalto además del primero, pagando el coste de espacio de conjuro de cada uno por separado.",
     prerequisites: [
-      { description: "Conjuro Acelerado", check: hasFeat("quicken-spell") },
+      { description: "Apresurar Conjuros", check: hasFeat("quicken-spell") },
       { description: "Capacidad de lanzar conjuros arcanos de nivel 6 o superior" },
     ],
     fighterBonusFeat: false,
@@ -315,7 +315,7 @@ export const CA_FEATS: Feat[] = [
     description: "El lanzador extiende un conjuro personal hasta que su duración cubre un día entero.",
     benefit:
       "Un conjuro con duración de 1 asalto/nivel o mayor (y sin duración instantánea) pasa a durar 24 horas. Usa un espacio de conjuro seis niveles más alto que el nivel real.",
-    prerequisites: [{ description: "Conjuro Extendido", check: hasFeat("extend-spell") }],
+    prerequisites: [{ description: "Prolongar Conjuro", check: hasFeat("extend-spell") }],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -364,7 +364,7 @@ export const CA_FEATS: Feat[] = [
     description: "El lanzador puede fortalecer un conjuro en el último instante, sin haberlo preparado así de antemano.",
     benefit:
       "Una vez al día, puede aplicar el efecto de Conjuro Fortalecido a un conjuro que esté lanzando sin necesidad de haberlo preparado con esa dote y sin aumentar el tiempo de lanzamiento (aunque sigue ocupando un espacio de conjuro dos niveles más alto que el real).",
-    prerequisites: [{ description: "Conjuro Fortalecido", check: hasFeat("empower-spell") }],
+    prerequisites: [{ description: "Potenciar Conjuro", check: hasFeat("empower-spell") }],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -376,7 +376,7 @@ export const CA_FEATS: Feat[] = [
     description: "El lanzador puede extender el alcance de un conjuro en el último instante, sin haberlo preparado así de antemano.",
     benefit:
       "Una vez al día, puede aplicar el efecto de Conjuro Agrandado a un conjuro que esté lanzando sin necesidad de haberlo preparado con esa dote y sin aumentar el tiempo de lanzamiento (aunque sigue ocupando un espacio de conjuro un nivel más alto que el real).",
-    prerequisites: [{ description: "Conjuro Agrandado", check: hasFeat("enlarge-spell") }],
+    prerequisites: [{ description: "Ampliar Conjuro", check: hasFeat("enlarge-spell") }],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -388,7 +388,7 @@ export const CA_FEATS: Feat[] = [
     description: "El lanzador puede prolongar la duración de un conjuro en el último instante, sin haberlo preparado así de antemano.",
     benefit:
       "Una vez al día, puede aplicar el efecto de Conjuro Extendido a un conjuro que esté lanzando sin necesidad de haberlo preparado con esa dote y sin aumentar el tiempo de lanzamiento (aunque sigue ocupando un espacio de conjuro un nivel más alto que el real).",
-    prerequisites: [{ description: "Conjuro Extendido", check: hasFeat("extend-spell") }],
+    prerequisites: [{ description: "Prolongar Conjuro", check: hasFeat("extend-spell") }],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -400,7 +400,7 @@ export const CA_FEATS: Feat[] = [
     description: "El lanzador puede maximizar un conjuro en el último instante, sin haberlo preparado así de antemano.",
     benefit:
       "Una vez al día, puede aplicar el efecto de Conjuro Maximizado a un conjuro que esté lanzando sin necesidad de haberlo preparado con esa dote y sin aumentar el tiempo de lanzamiento (aunque sigue ocupando un espacio de conjuro tres niveles más alto que el real).",
-    prerequisites: [{ description: "Conjuro Maximizado", check: hasFeat("maximize-spell") }],
+    prerequisites: [{ description: "Maximizar Conjuro", check: hasFeat("maximize-spell") }],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -412,7 +412,7 @@ export const CA_FEATS: Feat[] = [
     description: "El lanzador puede prescindir de las palabras mágicas en el último instante, sin haberlo preparado así de antemano.",
     benefit:
       "Una vez al día, puede aplicar el efecto de Conjuro Silencioso a un conjuro que esté lanzando sin necesidad de haberlo preparado con esa dote y sin aumentar el tiempo de lanzamiento (aunque sigue ocupando un espacio de conjuro un nivel más alto que el real).",
-    prerequisites: [{ description: "Conjuro Silencioso", check: hasFeat("silent-spell") }],
+    prerequisites: [{ description: "Conjurar en Silencio", check: hasFeat("silent-spell") }],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -424,7 +424,7 @@ export const CA_FEATS: Feat[] = [
     description: "El lanzador puede prescindir de los gestos rituales en el último instante, sin haberlo preparado así de antemano.",
     benefit:
       "Una vez al día, puede aplicar el efecto de Conjuro Sigiloso a un conjuro que esté lanzando sin necesidad de haberlo preparado con esa dote y sin aumentar el tiempo de lanzamiento (aunque sigue ocupando un espacio de conjuro un nivel más alto que el real).",
-    prerequisites: [{ description: "Conjuro Sigiloso", check: hasFeat("still-spell") }],
+    prerequisites: [{ description: "Conjurar sin Moverse", check: hasFeat("still-spell") }],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -436,7 +436,7 @@ export const CA_FEATS: Feat[] = [
     description: "El lanzador puede expandir el área de un conjuro en el último instante, sin haberlo preparado así de antemano.",
     benefit:
       "Una vez al día, puede aplicar el efecto de Conjuro Expandido a un conjuro que esté lanzando sin necesidad de haberlo preparado con esa dote y sin aumentar el tiempo de lanzamiento (aunque sigue ocupando un espacio de conjuro tres niveles más alto que el real).",
-    prerequisites: [{ description: "Conjuro Expandido", check: hasFeat("widen-spell") }],
+    prerequisites: [{ description: "Extender Conjuro", check: hasFeat("widen-spell") }],
     fighterBonusFeat: false,
     stackable: false,
   },

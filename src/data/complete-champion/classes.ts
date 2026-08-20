@@ -433,7 +433,7 @@ export const CC_CLASSES: ClassDef[] = [
     isPrestige: true,
     prerequisites: [
       {
-        description: "Ataque Desarmado Mejorado",
+        description: "Impacto sin Arma Mejorado",
         check: (ctx) => ctx.featIds.has("improved-unarmed-strike"),
       },
       {
@@ -534,7 +534,7 @@ export const CC_CLASSES: ClassDef[] = [
         check: (ctx) => ctx.babTotal >= 4,
       },
       {
-        description: "Ataque Desarmado Mejorado",
+        description: "Impacto sin Arma Mejorado",
         check: (ctx) => ctx.featIds.has("improved-unarmed-strike"),
       },
       {

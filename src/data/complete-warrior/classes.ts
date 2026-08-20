@@ -150,7 +150,7 @@ const DRUNKEN_MASTER_FEATURES: ClassFeature[] = [
     level: 1,
     name: "Niveles de monje continuados",
     description:
-      "Los niveles de maestro ebrio se suman a los niveles de monje que el personaje ya poseía a efectos de Torrente de Golpes, Clase de Armadura sin armadura, velocidad sin armadura y daño de ataque desarmado, pero no otorgan ni mejoran los demás rasgos de clase del monje.",
+      "Los niveles de maestro ebrio se suman a los niveles de monje que el personaje ya poseía a efectos de Ráfaga de Golpes, Clase de Armadura sin armadura, velocidad sin armadura y daño de ataque desarmado, pero no otorgan ni mejoran los demás rasgos de clase del monje.",
   },
   {
     level: 1,
@@ -189,7 +189,7 @@ const DRUNKEN_MASTER_FEATURES: ClassFeature[] = [
     level: 7,
     name: "Golpe desestabilizador",
     description:
-      "El ataque desarmado del maestro ebrio puede aturdir a su objetivo durante 1 asalto (salvación de Fortaleza para negarlo), de forma similar a la dote Puño Aturdidor, un número de veces por día igual a su modificador de Sabiduría.",
+      "El ataque desarmado del maestro ebrio puede aturdir a su objetivo durante 1 asalto (salvación de Fortaleza para negarlo), de forma similar a la dote Golpe Aturdidor, un número de veces por día igual a su modificador de Sabiduría.",
   },
   {
     level: 8,
@@ -234,9 +234,9 @@ const ORDER_OF_THE_BOW_INITIATE_FEATURES: ClassFeature[] = [
   },
   {
     level: 3,
-    name: "Dote de bonificación: Especialización en Arma",
+    name: "Dote de bonificación: Especialización con un Arma",
     description:
-      "El iniciado obtiene Especialización en Arma con el arco elegido como dote de bonificación, aunque no cumpla sus prerrequisitos.",
+      "El iniciado obtiene Especialización con un Arma con el arco elegido como dote de bonificación, aunque no cumpla sus prerrequisitos.",
   },
   {
     level: 4,
@@ -284,7 +284,7 @@ const TEMPEST_FEATURES: ClassFeature[] = [
     level: 5,
     name: "Golpe gemelo",
     description:
-      "Si en un mismo asalto ambas armas de la tempestad impactan al mismo objetivo, este sufre daño adicional igual a 1d6 más una vez y media su modificador de Fuerza. Además, obtiene Combate con Dos Armas Superior como dote de bonificación, aunque no cumpla sus prerrequisitos.",
+      "Si en un mismo asalto ambas armas de la tempestad impactan al mismo objetivo, este sufre daño adicional igual a 1d6 más una vez y media su modificador de Fuerza. Además, obtiene Combate con Dos Armas Mayor como dote de bonificación, aunque no cumpla sus prerrequisitos.",
   },
   {
     level: 5,
@@ -306,8 +306,8 @@ const HALFLING_OUTRIDER_FEATURES: ClassFeature[] = [
   },
   {
     level: 2,
-    name: "Dote de bonificación: Cabalgar y Atacar",
-    description: "El jinete obtiene Cabalgar y Atacar como dote de bonificación, aunque no cumpla sus prerrequisitos.",
+    name: "Dote de bonificación: Ataque al Galope",
+    description: "El jinete obtiene Ataque al Galope como dote de bonificación, aunque no cumpla sus prerrequisitos.",
   },
   {
     level: 3,
@@ -462,7 +462,7 @@ export const CW_CLASSES: ClassDef[] = [
     isPrestige: true,
     prerequisites: [
       {
-        description: "Ataque Desarmado Mejorado",
+        description: "Impacto sin Arma Mejorado",
         check: (ctx) => ctx.featIds.has("improved-unarmed-strike"),
       },
       {
@@ -474,7 +474,7 @@ export const CW_CLASSES: ClassDef[] = [
         check: (ctx) => (ctx.skillRanks["perform"] ?? 0) >= 3,
       },
       {
-        description: "Capacidad de usar Torrente de Golpes como un monje",
+        description: "Capacidad de usar Ráfaga de Golpes como un monje",
       },
       {
         description: "Alineamiento: cualquiera no legal",
@@ -515,7 +515,7 @@ export const CW_CLASSES: ClassDef[] = [
         check: (ctx) => ctx.featIds.has("point-blank-shot"),
       },
       {
-        description: "Disparo Certero",
+        description: "Disparo Preciso",
         check: (ctx) => ctx.featIds.has("precise-shot"),
       },
       {
@@ -559,7 +559,7 @@ export const CW_CLASSES: ClassDef[] = [
         check: (ctx) => ctx.featIds.has("two-weapon-fighting"),
       },
       {
-        description: "Amago (Dodge)",
+        description: "Esquiva",
         check: (ctx) => ctx.featIds.has("dodge"),
       },
       {
@@ -642,7 +642,7 @@ export const CW_CLASSES: ClassDef[] = [
     isPrestige: true,
     prerequisites: [
       {
-        description: "Seguir Rastro",
+        description: "Rastreo",
         check: (ctx) => ctx.featIds.has("track"),
       },
       {

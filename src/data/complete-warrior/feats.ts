@@ -234,9 +234,9 @@ export const CW_FEATS: Feat[] = [
     types: ["combate"],
     description: "Un combatiente que aprovecha el impulso de sus fintas de movimiento para golpear más de una vez.",
     benefit:
-      "Cuando usa Ataque en Movimiento, puede realizar todos los ataques a los que tendría derecho en un ataque completo, en lugar de uno solo, siempre que se desplace tanto antes como después de atacar.",
+      "Cuando usa Ataque Elástico, puede realizar todos los ataques a los que tendría derecho en un ataque completo, en lugar de uno solo, siempre que se desplace tanto antes como después de atacar.",
     prerequisites: [
-      { description: "Ataque en Movimiento", check: hasFeat("spring-attack") },
+      { description: "Ataque Elástico", check: hasFeat("spring-attack") },
       { description: "Bonificador base de ataque +6", check: (ctx) => ctx.babTotal >= 6 },
     ],
     fighterBonusFeat: true,
@@ -488,7 +488,7 @@ export const CW_FEATS: Feat[] = [
       "Al cargar, puede sustituir su ataque normal por un golpe de escudo que, de impactar, le permite realizar de inmediato una prueba de derribo enfrentada gratuita contra el objetivo.",
     prerequisites: [
       { description: "Competencia con Escudo", check: hasFeat("shield-proficiency") },
-      { description: "Bote de Escudo Mejorado", check: hasFeat("improved-shield-bash") },
+      { description: "Golpe con el Escudo Mejorado", check: hasFeat("improved-shield-bash") },
     ],
     fighterBonusFeat: true,
     stackable: false,
@@ -502,7 +502,7 @@ export const CW_FEATS: Feat[] = [
     benefit:
       "Cuando golpea con su escudo, puede realizar de inmediato una prueba de empujón gratuita contra el objetivo, sin provocar ataque de oportunidad y sin necesitar seguirlo si es rechazado.",
     prerequisites: [
-      { description: "Bote de Escudo Mejorado", check: hasFeat("improved-shield-bash") },
+      { description: "Golpe con el Escudo Mejorado", check: hasFeat("improved-shield-bash") },
       { description: "Empujón Mejorado", check: hasFeat("improved-bull-rush") },
     ],
     fighterBonusFeat: true,
@@ -700,7 +700,7 @@ export const CW_FEATS: Feat[] = [
       { description: "Soltura con un arma tipo hacha (hacha de batalla, hacha de mano o hacha arrojadiza enana)" },
       { description: "Soltura con un arma tipo martillo (martillo de guerra o martillo ligero)" },
       { description: "Ataque Poderoso", check: hasFeat("power-attack") },
-      { description: "Desarmar Mejorado", check: hasFeat("improved-sunder") },
+      { description: "Romper Arma Mejorado", check: hasFeat("improved-sunder") },
       { description: "Combate con Dos Armas", check: hasFeat("two-weapon-fighting") },
       { description: "Fuerza 13", check: (ctx) => ctx.abilityScores.str >= 13 },
     ],

@@ -134,7 +134,7 @@ export const SRD_DOMAIN_OPTIONS: ClassFeatureChoiceOption[] = [
     id: "guerra",
     label: "Guerra",
     description:
-      "Poder otorgado: obtiene gratis Competencia con Armas Marciales (con el arma predilecta de su deidad, si la necesita) y Especialización en Armas con esa misma arma. Conjuros de dominio: 1.º Arma Mágica, 2.º Arma Espiritual, 3.º Vestidura Mágica, 4.º Poder Divino, 5.º Golpe de Llamas, 6.º Barrera de Hojas, 7.º Palabra de Poder: Cegar, 8.º Palabra de Poder: Aturdir, 9.º Palabra de Poder: Matar.",
+      "Poder otorgado: obtiene gratis Competencia con Armas Marciales (con el arma predilecta de su deidad, si la necesita) y Especialización con un Arma con esa misma arma. Conjuros de dominio: 1.º Arma Mágica, 2.º Arma Espiritual, 3.º Vestidura Mágica, 4.º Poder Divino, 5.º Golpe de Llamas, 6.º Barrera de Hojas, 7.º Palabra de Poder: Cegar, 8.º Palabra de Poder: Aturdir, 9.º Palabra de Poder: Matar.",
   },
   {
     id: "agua",

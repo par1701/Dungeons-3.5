@@ -450,7 +450,7 @@ export const CA_CLASSES: ClassDef[] = [
         check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 4,
       },
       {
-        description: "Concentración en Combate",
+        description: "Conjurar en Combate",
         check: (ctx) => ctx.featIds.has("combat-casting"),
       },
       {

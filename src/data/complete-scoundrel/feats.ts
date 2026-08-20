@@ -161,7 +161,7 @@ export const CS_FEATS: Feat[] = [
     description: "El pícaro pequeño y ágil convierte el tamaño de un rival corpulento en una desventaja para este.",
     benefit:
       "Mientras flanquea junto a un aliado a un enemigo de una categoría de tamaño mayor que la suya (o más), el personaje gana un bonificador de esquiva de +4 a la Clase de Armadura frente a los ataques de dicho enemigo.",
-    prerequisites: [{ description: "Amago (Dodge)", check: hasFeat("dodge") }],
+    prerequisites: [{ description: "Esquiva", check: hasFeat("dodge") }],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -296,7 +296,7 @@ export const CS_FEATS: Feat[] = [
     types: ["general"],
     description: "El personaje arriesga el cuerpo en el último instante para lograr una proeza física imposible.",
     benefit:
-      "Hasta 3 veces al día, como acción inmediata, obtiene un bonificador de competencia +5 a una prueba de Equilibrio, Escalar, Escapismo, Saltar, Montar o Acrobacias.",
+      "Hasta 3 veces al día, como acción inmediata, obtiene un bonificador de competencia +5 a una prueba de Equilibrio, Trepar, Escapismo, Saltar, Montar o Piruetas.",
     prerequisites: [],
     fighterBonusFeat: false,
     stackable: false,

@@ -354,7 +354,7 @@ export const SRD_COMPANIONS: CompanionBaseCreature[] = [
     specialQualities: ["Trepar 20 pies"],
     skillBonuses: [],
     minEffectiveLevel: 1,
-    description: "Familiar trepador; otorga al amo +3 a Escalar.",
+    description: "Familiar trepador; otorga al amo +3 a Trepar.",
   },
   {
     id: "owl-familiar",

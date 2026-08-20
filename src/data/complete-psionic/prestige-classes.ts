@@ -298,8 +298,8 @@ export const CPS_PRESTIGE_CLASSES: ClassDef[] = [
     isPrestige: true,
     prerequisites: [
       {
-        description: "Rapidez de Pensamiento",
-        check: (ctx) => ctx.featIds.has("speed-of-thought"),
+        description: "Velocidad de Pensamiento",
+        check: (ctx) => ctx.featIds.has("cps-speed-of-thought"),
       },
       {
         description: "Saltar: 5 rangos",

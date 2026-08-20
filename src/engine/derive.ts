@@ -9,12 +9,20 @@ import type {
   CharacterFeatChoice,
   ClassDef,
   ClassFeatureChoice,
+  MagicItemProperty,
   Race,
   SaveProgression,
+  SpecialMaterial,
   Weapon,
   WeaponType,
 } from "../types";
-import { computeArmorEquipmentBonuses, computeItemDisplayName, computeWeaponEquipmentBonuses } from "./itemEnhancements";
+import {
+  computeArmorEquipmentBonuses,
+  computeItemDisplayName,
+  computeWeaponEquipmentBonuses,
+  resolveMaterial,
+  resolveProperties,
+} from "./itemEnhancements";
 
 const SKILL_KEY_SEPARATOR = "::";
 
@@ -692,6 +700,10 @@ export interface WeaponAttackSummary {
   rangeIncrement?: number;
   /** Bonificadores de ataque de cada ataque iterativo en un ataque completo (p.ej. [+12, +7, +2]). */
   fullAttackSequence: number[];
+  /** Propiedades mágicas especiales resueltas del arma equipada (Flamígera, Hiriente...), para mostrar su efecto en la hoja. */
+  magicProperties: MagicItemProperty[];
+  /** Material especial resuelto del arma equipada, si tiene. */
+  specialMaterial?: SpecialMaterial;
 }
 
 /**
@@ -811,6 +823,8 @@ export function computeWeaponAttack(
     critical,
     rangeIncrement,
     fullAttackSequence: computeFullAttackSequence(attackBonus, bab),
+    magicProperties: equipmentItem ? resolveProperties(equipmentItem) : [],
+    specialMaterial: equipmentItem ? resolveMaterial(equipmentItem) : undefined,
   };
 }
 

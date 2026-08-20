@@ -259,6 +259,15 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                 </View>
               ))}
               {equippedWeapons
+                .filter((w) => w.magicProperties.length > 0 || w.specialMaterial)
+                .map((w) => (
+                  <Text key={`${w.itemId}-qualities`} style={{ fontSize: 7 }}>
+                    {w.name}: {[w.specialMaterial?.name, ...w.magicProperties.map((p) => `${p.name} (${p.description})`)]
+                      .filter(Boolean)
+                      .join("; ")}
+                  </Text>
+                ))}
+              {equippedWeapons
                 .filter((w) => w.rangeIncrement)
                 .map((w) => (
                   <Text key={w.itemId} style={{ fontSize: 7 }}>

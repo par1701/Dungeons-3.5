@@ -147,16 +147,6 @@ export default function StepFeats({ character, onChange }: StepProps) {
 
   return (
     <div>
-      <datalist id="weapon-name-options">
-        {weaponNames.map((name) => (
-          <option key={name} value={name} />
-        ))}
-      </datalist>
-      <datalist id="damage-type-options">
-        {DAMAGE_TYPE_OPTIONS.map((name) => (
-          <option key={name} value={name} />
-        ))}
-      </datalist>
       <h2>Dotes</h2>
       <p className={character.feats.length > featSlots ? "" : "muted"} style={character.feats.length > featSlots ? { color: "var(--danger)" } : {}}>
         Dotes seleccionadas: {character.feats.length} / {featSlots} disponibles según nivel y raza
@@ -244,35 +234,40 @@ export default function StepFeats({ character, onChange }: StepProps) {
                     </ul>
                   )}
                   <div style={{ display: "flex", gap: 6 }}>
-                    <input
-                      style={{ flex: 1, padding: 6, border: "1px solid var(--border)", borderRadius: 6 }}
-                      placeholder={
-                        WEAPON_SELECTION_FEAT_IDS.has(feat.id)
-                          ? "Elige el arma exacta (debe coincidir para aplicarse en la hoja)"
-                          : DAMAGE_TYPE_SELECTION_FEAT_IDS.has(feat.id)
-                            ? "Elige el tipo de daño"
-                            : "Arma, habilidad, escuela... (opcional)"
+                    {WEAPON_SELECTION_FEAT_IDS.has(feat.id) || DAMAGE_TYPE_SELECTION_FEAT_IDS.has(feat.id) ? (
+                      <select
+                        style={{ flex: 1, padding: 6, border: "1px solid var(--border)", borderRadius: 6 }}
+                        value={drafts[feat.id] ?? ""}
+                        onChange={(e) => setDrafts((d) => ({ ...d, [feat.id]: e.target.value }))}
+                      >
+                        <option value="" disabled>
+                          {WEAPON_SELECTION_FEAT_IDS.has(feat.id) ? "-- Elige un arma --" : "-- Elige un tipo de daño --"}
+                        </option>
+                        {(WEAPON_SELECTION_FEAT_IDS.has(feat.id) ? weaponNames : DAMAGE_TYPE_OPTIONS).map((name) => (
+                          <option key={name} value={name}>
+                            {name}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        style={{ flex: 1, padding: 6, border: "1px solid var(--border)", borderRadius: 6 }}
+                        placeholder="Arma, habilidad, escuela... (opcional)"
+                        value={drafts[feat.id] ?? ""}
+                        onChange={(e) => setDrafts((d) => ({ ...d, [feat.id]: e.target.value }))}
+                      />
+                    )}
+                    <button
+                      className="btn"
+                      disabled={
+                        (WEAPON_SELECTION_FEAT_IDS.has(feat.id) || DAMAGE_TYPE_SELECTION_FEAT_IDS.has(feat.id)) &&
+                        !(drafts[feat.id] ?? "").trim()
                       }
-                      list={
-                        WEAPON_SELECTION_FEAT_IDS.has(feat.id)
-                          ? "weapon-name-options"
-                          : DAMAGE_TYPE_SELECTION_FEAT_IDS.has(feat.id)
-                            ? "damage-type-options"
-                            : undefined
-                      }
-                      value={drafts[feat.id] ?? ""}
-                      onChange={(e) => setDrafts((d) => ({ ...d, [feat.id]: e.target.value }))}
-                    />
-                    <button className="btn" onClick={() => addFeatInstance(feat.id, (drafts[feat.id] ?? "").trim())}>
+                      onClick={() => addFeatInstance(feat.id, (drafts[feat.id] ?? "").trim())}
+                    >
                       + Añadir
                     </button>
                   </div>
-                  {WEAPON_SELECTION_FEAT_IDS.has(feat.id) && (
-                    <p className="muted" style={{ fontSize: "0.75rem", margin: "4px 0 0" }}>
-                      El nombre debe coincidir exactamente con el del arma en Equipo para que su bonificador se
-                      refleje en la hoja de personaje.
-                    </p>
-                  )}
                 </div>
               )}
             </div>

@@ -38,6 +38,7 @@ import {
   getCadTempestSteelDanceReduction,
   getContemplativeStoneWillBonus,
   getDivineGraceBonus,
+  getFavoredEnemyBonuses,
   getScoutBattleBonus,
   getSoulknifeMindBladeBonus,
   getUnlockedClassFeatureChoices,
@@ -113,6 +114,7 @@ export default function CharacterSheetPage() {
     .join(" / ");
   const unlockedFeatures = getUnlockedClassFeatures(character.classLevels, classes, character.activeVariantRules);
   const classFeatureChoices = character.classFeatureChoices ?? [];
+  const favoredEnemyBonuses = getFavoredEnemyBonuses(classFeatureChoices);
   const unlockedChoices = getUnlockedClassFeatureChoices(character.classLevels, classes, character.activeVariantRules);
   const bonusFeats = getBonusFeatsFromClasses(character.classLevels, classes, classFeatureChoices, character.activeVariantRules);
 
@@ -626,6 +628,12 @@ export default function CharacterSheetPage() {
                   );
                 })}
             </ul>
+            {favoredEnemyBonuses.length > 0 && (
+              <p className="muted" style={{ marginTop: 8, marginBottom: 0 }}>
+                <strong>Bono total contra enemigos predilectos:</strong>{" "}
+                {favoredEnemyBonuses.map((fe) => `${fe.enemy} +${fe.bonus}`).join(" · ")}
+              </p>
+            )}
           </Panel>
         )}
 

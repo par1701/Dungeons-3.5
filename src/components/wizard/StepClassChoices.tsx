@@ -115,6 +115,11 @@ export default function StepClassChoices({ character, onChange }: StepProps) {
                   onChange={(e) => setChoice(classId, choice.id, level, e.target.value)}
                 />
               )}
+              {choice.hint && (
+                <p className="muted" style={{ marginTop: 6, fontSize: "0.85rem" }}>
+                  {choice.hint}
+                </p>
+              )}
               {choice.kind === "lista_fija" && (
                 <>
                   <select

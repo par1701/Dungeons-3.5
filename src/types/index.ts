@@ -149,6 +149,8 @@ export interface ClassFeatureChoice {
    */
   featCategoryOptions?: FeatType[];
   placeholder?: string;
+  /** Texto de ayuda adicional mostrado bajo el campo de esta elección, independiente del placeholder (que desaparece al escribir). */
+  hint?: string;
   /**
    * Id de una regla variante (`VariantRule.id`) que debe estar activa para
    * que esta elección se ofrezca. Se usa para elecciones que solo existen

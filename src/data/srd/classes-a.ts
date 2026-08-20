@@ -8,6 +8,7 @@ const RANGER_CHOICES: ClassFeatureChoice[] = [
     label: "Enemigo predilecto",
     kind: "texto_libre",
     placeholder: "p.ej. No muertos, Gigantes, Humanos (tipo o subtipo de criatura)",
+    hint: "Cada elección da +2 contra ese enemigo. Para reforzar uno ya elegido en vez de añadir uno nuevo, escribe aquí el mismo texto exacto que en un nivel anterior: sumará otro +2 al mismo enemigo en vez de crear uno distinto.",
   },
   {
     id: "estilo-combate",

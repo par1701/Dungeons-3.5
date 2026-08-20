@@ -679,6 +679,46 @@ export function getBonusFeatsFromClasses(
   return entries;
 }
 
+export interface FavoredEnemyBonus {
+  /** Texto tal cual se escribió la primera vez que se eligió este enemigo predilecto. */
+  enemy: string;
+  /** Bono total contra este enemigo: +2 por cada vez que se eligió/reforzó. */
+  bonus: number;
+  /** Niveles de la clase en los que se eligió o reforzó este enemigo predilecto. */
+  levels: number[];
+}
+
+/**
+ * Agrega las elecciones de "enemigo predilecto" del explorador (niveles 1,
+ * 5, 10, 15 y 20) en un bono por enemigo. Según el SRD, en cada uno de esos
+ * niveles el jugador elige entre seleccionar un enemigo predilecto nuevo (a
+ * +2) o reforzar en +2 uno ya elegido antes, en vez de añadir uno distinto:
+ * esta app modela esa elección simplemente dejando repetir el mismo texto en
+ * un nivel posterior (comparado sin mayúsculas/acentos), y cada repetición
+ * suma otro +2 al bono total de ese enemigo.
+ */
+export function getFavoredEnemyBonuses(
+  classFeatureChoices: CharacterClassFeatureChoice[],
+  classId = "ranger",
+  choiceId = "enemigo-predilecto",
+): FavoredEnemyBonus[] {
+  const entries = classFeatureChoices
+    .filter((c) => c.classId === classId && c.choiceId === choiceId && c.value.trim())
+    .sort((a, b) => a.level - b.level);
+  const byKey = new Map<string, FavoredEnemyBonus>();
+  for (const entry of entries) {
+    const key = normalizeForMatch(entry.value);
+    const existing = byKey.get(key);
+    if (existing) {
+      existing.bonus += 2;
+      existing.levels.push(entry.level);
+    } else {
+      byKey.set(key, { enemy: entry.value.trim(), bonus: 2, levels: [entry.level] });
+    }
+  }
+  return Array.from(byKey.values());
+}
+
 /**
  * Ids de todas las dotes que el personaje posee, ya sean elegidas normalmente
  * o concedidas gratis por sus clases (automáticas o de lista restringida).

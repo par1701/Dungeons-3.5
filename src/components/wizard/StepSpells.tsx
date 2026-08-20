@@ -1,6 +1,6 @@
 import { getEnabledClasses, getEnabledSpells } from "../../data";
 import type { StepProps } from "./types";
-import { applyRacialAdjustments, spellsPerDayForClassLevel } from "../../engine/derive";
+import { computeFinalAbilityScores, spellsPerDayForClassLevel } from "../../engine/derive";
 import { findRace } from "../../data";
 
 function reachableMaxLevel(perDay: number[] | null, fallbackMax: number): number {
@@ -15,7 +15,7 @@ export default function StepSpells({ character, onChange }: StepProps) {
   const classes = getEnabledClasses(character.activeSourceBooks);
   const spells = getEnabledSpells(character.activeSourceBooks);
   const race = findRace(character.raceId);
-  const finalScores = applyRacialAdjustments(character.abilityScores, race);
+  const finalScores = computeFinalAbilityScores(character.abilityScores, race, character.equipment);
 
   const championOfTheWild = character.activeVariantRules.includes("vr-cc-champion-of-the-wild");
   const cwRangerNoSpells = character.activeVariantRules.includes("vr-cw-ranger-no-spells");

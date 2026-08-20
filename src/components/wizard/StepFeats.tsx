@@ -4,9 +4,9 @@ import { getSourceBook } from "../../data/sourcebooks";
 import type { StepProps } from "./types";
 import type { FeatPrereqContext, FeatType } from "../../types";
 import {
-  applyRacialAdjustments,
   computeBabTotal,
   computeFeatSlots,
+  computeFinalAbilityScores,
   flattenSkillRanksForPrereqs,
   getAllKnownFeatIds,
   isHumanRace,
@@ -53,7 +53,7 @@ export default function StepFeats({ character, onChange }: StepProps) {
     a.localeCompare(b, "es"),
   );
   const race = findRace(character.raceId);
-  const finalScores = applyRacialAdjustments(character.abilityScores, race);
+  const finalScores = computeFinalAbilityScores(character.abilityScores, race, character.equipment);
 
   const featSlots = computeFeatSlots(
     character.classLevels,

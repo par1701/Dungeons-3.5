@@ -1,25 +1,46 @@
 import { Fragment, useState } from "react";
 import {
+  findWondrousItem,
   getEnabledArmors,
   getEnabledGear,
   getEnabledMagicItemProperties,
   getEnabledSpecialMaterials,
   getEnabledWeapons,
+  getEnabledWondrousItems,
   findRace,
 } from "../../data";
 import type { StepProps } from "./types";
-import { applyRacialAdjustments, computeCarryingCapacity } from "../../engine/derive";
+import { computeCarryingCapacity, computeFinalAbilityScores } from "../../engine/derive";
 import {
   computeArmorMarketPrice,
   computeItemDisplayName,
   computeItemWeight,
   computeWeaponMarketPrice,
+  computeWondrousItemMarketPrice,
   isEnhancedItem,
   propertiesApplicableTo,
 } from "../../engine/itemEnhancements";
-import type { CharacterEquipmentItem } from "../../types";
+import type { BodySlot, CharacterEquipmentItem } from "../../types";
 
-type Tab = "weapon" | "armor" | "gear";
+type Tab = "weapon" | "armor" | "gear" | "wondrous";
+
+const TAB_TO_KIND: Record<Tab, CharacterEquipmentItem["itemKind"]> = {
+  weapon: "weapon",
+  armor: "armor",
+  gear: "gear",
+  wondrous: "maravilloso",
+};
+
+const BODY_SLOT_LABELS: Record<BodySlot, string> = {
+  cabeza: "Cabeza",
+  cuello: "Cuello",
+  hombros: "Hombros",
+  cintura: "Cintura",
+  munecas: "Muñecas",
+  manos: "Manos",
+  anillo: "Anillo (hasta 2)",
+  pies: "Pies",
+};
 
 export default function StepEquipment({ character, onChange }: StepProps) {
   const [tab, setTab] = useState<Tab>("weapon");
@@ -27,13 +48,40 @@ export default function StepEquipment({ character, onChange }: StepProps) {
   const weapons = getEnabledWeapons(character.activeSourceBooks);
   const armors = getEnabledArmors(character.activeSourceBooks);
   const gear = getEnabledGear(character.activeSourceBooks);
+  const wondrousItems = getEnabledWondrousItems(character.activeSourceBooks);
   const materials = getEnabledSpecialMaterials(character.activeSourceBooks);
   const magicProperties = getEnabledMagicItemProperties(character.activeSourceBooks);
   const race = findRace(character.raceId);
-  const finalScores = applyRacialAdjustments(character.abilityScores, race);
+  const finalScores = computeFinalAbilityScores(character.abilityScores, race, character.equipment);
   const carrying = computeCarryingCapacity(finalScores.str, race?.size ?? "Mediano");
 
-  function addItem(itemId: string, itemKind: Tab) {
+  /**
+   * Al equipar un objeto maravilloso, desequipa automáticamente los objetos
+   * que ya ocupaban su misma ranura de cuerpo por encima del límite permitido
+   * (1 por ranura, salvo "anillo" que permite 2), reproduciendo así los
+   * conflictos reales de ranura del RAW (p.ej. no se pueden llevar a la vez
+   * un Amuleto de Vigor y un Periapto de Sabiduría, ambos de cuello).
+   */
+  function applyWondrousSlotConflicts(equipment: CharacterEquipmentItem[], targetIndex: number): CharacterEquipmentItem[] {
+    const target = equipment[targetIndex];
+    const def = wondrousItems.find((w) => w.id === target.itemId) ?? findWondrousItem(target.itemId);
+    if (!def) return equipment;
+    const slotLimit = def.bodySlot === "anillo" ? 2 : 1;
+    let remaining = slotLimit - 1;
+    return equipment.map((e, i) => {
+      if (i === targetIndex) return e;
+      if (e.itemKind !== "maravilloso" || !e.equipped) return e;
+      const otherDef = wondrousItems.find((w) => w.id === e.itemId) ?? findWondrousItem(e.itemId);
+      if (otherDef?.bodySlot !== def.bodySlot) return e;
+      if (remaining > 0) {
+        remaining--;
+        return e;
+      }
+      return { ...e, equipped: false };
+    });
+  }
+
+  function addItem(itemId: string, itemKind: CharacterEquipmentItem["itemKind"]) {
     onChange((c) => {
       const existing = c.equipment.find((e) => e.itemId === itemId && e.itemKind === itemKind);
       if (existing) {
@@ -44,8 +92,19 @@ export default function StepEquipment({ character, onChange }: StepProps) {
           ),
         };
       }
-      const item: CharacterEquipmentItem = { itemId, itemKind, quantity: 1, equipped: itemKind !== "gear" };
-      return { ...c, equipment: [...c.equipment, item] };
+      const wondrousDef = itemKind === "maravilloso" ? wondrousItems.find((w) => w.id === itemId) : undefined;
+      const item: CharacterEquipmentItem = {
+        itemId,
+        itemKind,
+        quantity: 1,
+        equipped: itemKind !== "gear",
+        ...(wondrousDef ? { enhancementBonus: wondrousDef.minBonus } : {}),
+      };
+      const equipment = [...c.equipment, item];
+      return {
+        ...c,
+        equipment: itemKind === "maravilloso" ? applyWondrousSlotConflicts(equipment, equipment.length - 1) : equipment,
+      };
     });
   }
 
@@ -54,6 +113,16 @@ export default function StepEquipment({ character, onChange }: StepProps) {
       ...c,
       equipment: c.equipment.map((e, i) => (i === index ? { ...e, ...patch } : e)),
     }));
+  }
+
+  function setEquipped(index: number, equipped: boolean) {
+    onChange((c) => {
+      const equipment = c.equipment.map((e, i) => (i === index ? { ...e, equipped } : e));
+      if (equipped && c.equipment[index]?.itemKind === "maravilloso") {
+        return { ...c, equipment: applyWondrousSlotConflicts(equipment, index) };
+      }
+      return { ...c, equipment };
+    });
   }
 
   function removeItem(index: number) {
@@ -75,13 +144,13 @@ export default function StepEquipment({ character, onChange }: StepProps) {
     updateItem(index, { magicPropertyIds });
   }
 
-  function findItemData(itemId: string, kind: Tab) {
+  function findItemData(itemId: string, kind: "weapon" | "armor" | "gear") {
     if (kind === "weapon") return weapons.find((w) => w.id === itemId);
     if (kind === "armor") return armors.find((a) => a.id === itemId);
     return gear.find((g) => g.id === itemId);
   }
 
-  /** Coste unitario final de un objeto del inventario, incluyendo magistral/material/mejora mágica para armas y armaduras. */
+  /** Coste unitario final de un objeto del inventario, incluyendo magistral/material/mejora mágica para armas y armaduras, o el nivel de bono elegido para objetos maravillosos. */
   function itemUnitPrice(e: CharacterEquipmentItem): number {
     if (e.itemKind === "weapon") {
       const w = weapons.find((x) => x.id === e.itemId);
@@ -91,11 +160,16 @@ export default function StepEquipment({ character, onChange }: StepProps) {
       const a = armors.find((x) => x.id === e.itemId);
       return a ? computeArmorMarketPrice(a, e) : 0;
     }
+    if (e.itemKind === "maravilloso") {
+      const w = wondrousItems.find((x) => x.id === e.itemId);
+      return w ? computeWondrousItemMarketPrice(w, e) : 0;
+    }
     return gear.find((g) => g.id === e.itemId)?.cost ?? 0;
   }
 
-  /** Peso unitario final, aplicando el multiplicador de peso del material especial en armas/armaduras. */
+  /** Peso unitario final, aplicando el multiplicador de peso del material especial en armas/armaduras. Los objetos maravillosos no llevan peso propio en este catálogo. */
   function itemUnitWeight(e: CharacterEquipmentItem): number {
+    if (e.itemKind === "maravilloso") return 0;
     const data = findItemData(e.itemId, e.itemKind);
     if (!data) return 0;
     return e.itemKind === "weapon" || e.itemKind === "armor" ? computeItemWeight(data.weight, e) : data.weight;
@@ -104,7 +178,7 @@ export default function StepEquipment({ character, onChange }: StepProps) {
   const totalWeight = character.equipment.reduce((sum, e) => sum + itemUnitWeight(e) * e.quantity, 0);
   const totalCost = character.equipment.reduce((sum, e) => sum + itemUnitPrice(e) * e.quantity, 0);
 
-  const catalog = tab === "weapon" ? weapons : tab === "armor" ? armors : gear;
+  const catalog = tab === "weapon" ? weapons : tab === "armor" ? armors : tab === "gear" ? gear : [];
 
   return (
     <div>
@@ -124,41 +198,83 @@ export default function StepEquipment({ character, onChange }: StepProps) {
       </p>
 
       <div className="wizard-steps">
-        {(["weapon", "armor", "gear"] as Tab[]).map((t) => (
+        {(["weapon", "armor", "gear", "wondrous"] as Tab[]).map((t) => (
           <button
             key={t}
             className={`wizard-step-pill ${tab === t ? "active" : ""}`}
             onClick={() => setTab(t)}
           >
-            {t === "weapon" ? "Armas" : t === "armor" ? "Armaduras" : "Equipo general"}
+            {t === "weapon"
+              ? "Armas"
+              : t === "armor"
+                ? "Armaduras"
+                : t === "gear"
+                  ? "Equipo general"
+                  : "Objetos maravillosos"}
           </button>
         ))}
       </div>
 
-      <table className="data-table">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Coste</th>
-            <th>Peso</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {catalog.map((item) => (
-            <tr key={item.id}>
-              <td>{item.name}</td>
-              <td>{item.cost} po</td>
-              <td>{item.weight} lb</td>
-              <td>
-                <button className="btn" onClick={() => addItem(item.id, tab)}>
-                  + Añadir
-                </button>
-              </td>
+      {tab === "wondrous" ? (
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Ranura</th>
+              <th>Coste</th>
+              <th></th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {wondrousItems.map((w) => {
+              const minCost = w.minBonus * w.minBonus * w.costPerBonusSquared;
+              const maxCost = w.maxBonus * w.maxBonus * w.costPerBonusSquared;
+              return (
+                <tr key={w.id}>
+                  <td>
+                    {w.name}
+                    <div className="muted" style={{ fontSize: "0.8rem" }}>
+                      {w.description}
+                    </div>
+                  </td>
+                  <td>{BODY_SLOT_LABELS[w.bodySlot]}</td>
+                  <td>{minCost === maxCost ? `${minCost} po` : `${minCost}–${maxCost} po`}</td>
+                  <td>
+                    <button className="btn" onClick={() => addItem(w.id, "maravilloso")}>
+                      + Añadir
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      ) : (
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Coste</th>
+              <th>Peso</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {catalog.map((item) => (
+              <tr key={item.id}>
+                <td>{item.name}</td>
+                <td>{item.cost} po</td>
+                <td>{item.weight} lb</td>
+                <td>
+                  <button className="btn" onClick={() => addItem(item.id, TAB_TO_KIND[tab])}>
+                    + Añadir
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
 
       <h3 style={{ marginTop: 20 }}>Inventario</h3>
       {character.equipment.length === 0 ? (
@@ -176,6 +292,56 @@ export default function StepEquipment({ character, onChange }: StepProps) {
           </thead>
           <tbody>
             {character.equipment.map((e, i) => {
+              if (e.itemKind === "maravilloso") {
+                const w = wondrousItems.find((x) => x.id === e.itemId) ?? findWondrousItem(e.itemId);
+                const bonus = e.enhancementBonus ?? w?.minBonus ?? 0;
+                const bonusOptions: number[] = [];
+                if (w) {
+                  for (let n = w.minBonus; n <= w.maxBonus; n += w.bonusStep) bonusOptions.push(n);
+                }
+                return (
+                  <tr key={`${e.itemId}-${i}`}>
+                    <td>
+                      {w ? `${w.name} +${bonus}` : e.itemId}
+                      {w && (
+                        <div className="muted" style={{ fontSize: "0.8rem" }}>
+                          Ranura: {BODY_SLOT_LABELS[w.bodySlot]}
+                        </div>
+                      )}
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        min={1}
+                        style={{ width: 60 }}
+                        value={e.quantity}
+                        onChange={(ev) => updateItem(i, { quantity: Math.max(1, Number(ev.target.value)) })}
+                      />
+                    </td>
+                    <td>
+                      <input type="checkbox" checked={e.equipped} onChange={(ev) => setEquipped(i, ev.target.checked)} />
+                    </td>
+                    <td>{itemUnitPrice(e).toFixed(2)} po</td>
+                    <td style={{ display: "flex", gap: 6 }}>
+                      {w && bonusOptions.length > 1 && (
+                        <select
+                          value={bonus}
+                          onChange={(ev) => updateItem(i, { enhancementBonus: Number(ev.target.value) })}
+                        >
+                          {bonusOptions.map((n) => (
+                            <option key={n} value={n}>
+                              +{n}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                      <button className="btn btn-danger" onClick={() => removeItem(i)}>
+                        Quitar
+                      </button>
+                    </td>
+                  </tr>
+                );
+              }
               const data = findItemData(e.itemId, e.itemKind);
               const canEnhance = e.itemKind === "weapon" || e.itemKind === "armor";
               const displayName = data && canEnhance ? computeItemDisplayName(data.name, e) : (data?.name ?? e.itemId);
@@ -274,6 +440,21 @@ export default function StepEquipment({ character, onChange }: StepProps) {
                               ))}
                             </select>
                           </div>
+                          {e.itemKind === "weapon" && data && "isComposite" in data && data.isComposite && (
+                            <div className="form-row">
+                              <label>Calificación de Fuerza (arco compuesto)</label>
+                              <input
+                                type="number"
+                                min={0}
+                                value={e.strengthRating ?? 0}
+                                onChange={(ev) => updateItem(i, { strengthRating: Math.max(0, Number(ev.target.value)) || undefined })}
+                              />
+                              <p className="muted" style={{ margin: 0 }}>
+                                +100 po por punto. Añade el bono de Fuerza al daño hasta este límite; si tu bono de
+                                Fuerza real es menor, sufres -2 al ataque con este arco.
+                              </p>
+                            </div>
+                          )}
                         </div>
                         {applicableProperties.length > 0 && (
                           <div style={{ marginTop: 10 }}>

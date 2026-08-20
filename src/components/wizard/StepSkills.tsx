@@ -3,7 +3,7 @@ import { getEnabledClasses, getEnabledSkills } from "../../data";
 import type { StepProps } from "./types";
 import {
   abilityModifier,
-  applyRacialAdjustments,
+  computeFinalAbilityScores,
   computeTotalSkillPoints,
   isHumanRace,
   makeSkillKey,
@@ -17,7 +17,7 @@ export default function StepSkills({ character, onChange }: StepProps) {
   const classes = getEnabledClasses(character.activeSourceBooks);
   const skills = getEnabledSkills(character.activeSourceBooks);
   const race = findRace(character.raceId);
-  const finalScores = applyRacialAdjustments(character.abilityScores, race);
+  const finalScores = computeFinalAbilityScores(character.abilityScores, race, character.equipment);
   const level = totalCharacterLevel(character.classLevels);
 
   const classSkillIds = new Set(

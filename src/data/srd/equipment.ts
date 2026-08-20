@@ -61,9 +61,9 @@ export const SRD_WEAPONS: Weapon[] = [
 
   // ----- Armas Marciales: a distancia -----
   { id: "longbow", name: "Arco Largo", source: "srd", category: "marcial", type: "distancia", damageSmall: "1d6", damageMedium: "1d8", critical: "x3", rangeIncrement: 100, weight: 3, cost: 75, damageType: "P" },
-  { id: "composite-longbow", name: "Arco Largo Compuesto", source: "srd", category: "marcial", type: "distancia", damageSmall: "1d6", damageMedium: "1d8", critical: "x3", rangeIncrement: 110, weight: 3, cost: 100, damageType: "P" },
+  { id: "composite-longbow", name: "Arco Largo Compuesto", source: "srd", category: "marcial", type: "distancia", damageSmall: "1d6", damageMedium: "1d8", critical: "x3", rangeIncrement: 110, weight: 3, cost: 100, damageType: "P", isComposite: true },
   { id: "shortbow", name: "Arco Corto", source: "srd", category: "marcial", type: "distancia", damageSmall: "1d4", damageMedium: "1d6", critical: "x3", rangeIncrement: 60, weight: 2, cost: 30, damageType: "P" },
-  { id: "composite-shortbow", name: "Arco Corto Compuesto", source: "srd", category: "marcial", type: "distancia", damageSmall: "1d4", damageMedium: "1d6", critical: "x3", rangeIncrement: 70, weight: 2, cost: 75, damageType: "P" },
+  { id: "composite-shortbow", name: "Arco Corto Compuesto", source: "srd", category: "marcial", type: "distancia", damageSmall: "1d4", damageMedium: "1d6", critical: "x3", rangeIncrement: 70, weight: 2, cost: 75, damageType: "P", isComposite: true },
 
   // ----- Armas Exóticas: cuerpo a cuerpo ligeras -----
   { id: "kama", name: "Kama", source: "srd", category: "exotica", type: "cuerpo_a_cuerpo", damageSmall: "1d4", damageMedium: "1d6", critical: "x2", weight: 2, cost: 2, damageType: "E" },
@@ -99,6 +99,8 @@ export const SRD_ARMORS: Armor[] = [
   { id: "leather", name: "Armadura de Cuero", source: "srd", category: "ligera", armorBonus: 2, maxDexBonus: 6, armorCheckPenalty: 0, arcaneSpellFailure: 10, speed30: 30, speed20: 20, weight: 15, cost: 10 },
   { id: "studded-leather", name: "Cuero Tachonado", source: "srd", category: "ligera", armorBonus: 3, maxDexBonus: 5, armorCheckPenalty: -1, arcaneSpellFailure: 15, speed30: 30, speed20: 20, weight: 20, cost: 25 },
   { id: "chain-shirt", name: "Camisote de Mallas", source: "srd", category: "ligera", armorBonus: 4, maxDexBonus: 4, armorCheckPenalty: -2, arcaneSpellFailure: 20, speed30: 30, speed20: 20, weight: 25, cost: 100 },
+  // Objeto específico del SRD: cota de mallas de fabricación élfica, tratada como armadura ligera pese a su bonificador (no mágica de por sí; puede encantarse encima con el sistema habitual).
+  { id: "elven-chain", name: "Mallas Élficas", source: "srd", category: "ligera", armorBonus: 5, maxDexBonus: 4, armorCheckPenalty: -2, arcaneSpellFailure: 20, speed30: 30, speed20: 20, weight: 20, cost: 4150 },
 
   // ----- Armaduras Medias -----
   { id: "hide", name: "Armadura de Pieles", source: "srd", category: "media", armorBonus: 3, maxDexBonus: 4, armorCheckPenalty: -3, arcaneSpellFailure: 20, speed30: 20, speed20: 15, weight: 25, cost: 15 },

@@ -12,6 +12,7 @@ import type {
   SpecialMaterial,
   Spell,
   Weapon,
+  WondrousItem,
 } from "../types";
 import { SRD_RACES } from "./srd/races";
 import { SRD_COMPANIONS } from "./srd/companions";
@@ -24,6 +25,7 @@ import { SRD_FEATS } from "./srd/feats";
 import { SRD_WEAPONS, SRD_ARMORS, SRD_GEAR } from "./srd/equipment";
 import { SRD_SPECIAL_MATERIALS } from "./srd/special-materials";
 import { SRD_MAGIC_ITEM_PROPERTIES } from "./srd/magic-item-properties";
+import { SRD_WONDROUS_ITEMS } from "./srd/wondrous-items";
 import { CW_CLASSES } from "./complete-warrior/classes";
 import { CW_FEATS } from "./complete-warrior/feats";
 import { CA_CLASSES } from "./complete-arcane/classes";
@@ -81,6 +83,7 @@ export const ALL_ARMORS: Armor[] = [...SRD_ARMORS];
 export const ALL_GEAR: GearItem[] = [...SRD_GEAR];
 export const ALL_SPECIAL_MATERIALS: SpecialMaterial[] = [...SRD_SPECIAL_MATERIALS];
 export const ALL_MAGIC_ITEM_PROPERTIES: MagicItemProperty[] = [...SRD_MAGIC_ITEM_PROPERTIES];
+export const ALL_WONDROUS_ITEMS: WondrousItem[] = [...SRD_WONDROUS_ITEMS];
 export const ALL_POWERS: PsionicPower[] = [...CPS_POWERS];
 export const ALL_COMPANIONS: CompanionBaseCreature[] = [...SRD_COMPANIONS];
 
@@ -117,6 +120,9 @@ export function getEnabledSpecialMaterials(enabled: SourceBookId[]): SpecialMate
 }
 export function getEnabledMagicItemProperties(enabled: SourceBookId[]): MagicItemProperty[] {
   return bySource(ALL_MAGIC_ITEM_PROPERTIES, enabled);
+}
+export function getEnabledWondrousItems(enabled: SourceBookId[]): WondrousItem[] {
+  return bySource(ALL_WONDROUS_ITEMS, enabled);
 }
 export function getEnabledPowers(enabled: SourceBookId[]): PsionicPower[] {
   return bySource(ALL_POWERS, enabled);
@@ -160,4 +166,7 @@ export function findSpecialMaterial(id: string): SpecialMaterial | undefined {
 }
 export function findMagicItemProperty(id: string): MagicItemProperty | undefined {
   return ALL_MAGIC_ITEM_PROPERTIES.find((p) => p.id === id);
+}
+export function findWondrousItem(id: string): WondrousItem | undefined {
+  return ALL_WONDROUS_ITEMS.find((w) => w.id === id);
 }

@@ -323,6 +323,8 @@ export interface Weapon {
   weight: number;
   cost: number; // en po
   damageType: string; // C, P, E o combinaciones
+  /** Arco compuesto: puede fabricarse con una calificación de Fuerza (ver `CharacterEquipmentItem.strengthRating`) que añade el bono de Fuerza al daño hasta ese límite. */
+  isComposite?: boolean;
 }
 
 /**
@@ -384,6 +386,34 @@ export interface MagicItemProperty {
   minEnhancementBonus?: number;
   description: string;
   restrictions?: string;
+}
+
+/** Ranura de cuerpo para objetos maravillosos: solo puede llevarse un objeto por ranura, salvo "anillo" (hasta 2). */
+export type BodySlot = "cabeza" | "cuello" | "hombros" | "cintura" | "munecas" | "manos" | "anillo" | "pies";
+
+/** Qué modifica un objeto maravilloso, para saber dónde aplicar su bonificador. */
+export type WondrousItemCategory = "ca_desviacion" | "ca_natural" | "salvaciones_resistencia" | "caracteristica";
+
+/**
+ * Objeto mágico "pasivo" que se lleva puesto en una ranura de cuerpo
+ * concreta (anillo de protección, capa de resistencia, cinturón de
+ * característica...), con un bonificador configurable dentro de un rango y
+ * un coste que escala con su cuadrado, igual que las dotes de arma/armadura.
+ */
+export interface WondrousItem {
+  id: string;
+  name: string;
+  source: SourceBookId;
+  bodySlot: BodySlot;
+  category: WondrousItemCategory;
+  /** Solo para category "caracteristica": qué puntuación modifica. */
+  ability?: Ability;
+  description: string;
+  minBonus: number;
+  maxBonus: number;
+  bonusStep: number;
+  /** Coste = (bono)² × este valor, en po (2000 para CA, 1000 para salvaciones/características). */
+  costPerBonusSquared: number;
 }
 
 export type ArmorCategory = "ligera" | "media" | "pesada" | "escudo";
@@ -510,16 +540,18 @@ export interface CharacterClassFeatureChoice {
 
 export interface CharacterEquipmentItem {
   itemId: string;
-  itemKind: "weapon" | "armor" | "gear";
+  itemKind: "weapon" | "armor" | "gear" | "maravilloso";
   quantity: number;
   equipped: boolean;
   masterwork?: boolean;
   /** Id de un `SpecialMaterial` (solo aplicable a armas/armaduras). */
   specialMaterialId?: string;
-  /** Bonificador de mejora mágica (0-5). Un valor > 0 implica calidad magistral. */
+  /** Bonificador de mejora mágica (0-5 en armas/armaduras). Para objetos maravillosos (itemKind "maravilloso"), es el nivel de bonificador elegido dentro del rango del objeto. */
   enhancementBonus?: number;
   /** Ids de `MagicItemProperty` aplicadas a este objeto. */
   magicPropertyIds?: string[];
+  /** Solo arcos compuestos: calificación de Fuerza fabricada (0 por defecto), +100 po por punto. */
+  strengthRating?: number;
 }
 
 export interface CharacterCompanion {

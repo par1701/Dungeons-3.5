@@ -107,7 +107,7 @@ export const CW_FEATS: Feat[] = [
   },
   {
     id: "cw-extra-smiting",
-    name: "Golpes Divinos Adicionales",
+    name: "Castigo Incrementado",
     source: "complete-warrior",
     types: ["general"],
     description: "Un paladín o un clérigo del mal capaz de invocar su ira divina con más frecuencia.",
@@ -155,7 +155,7 @@ export const CW_FEATS: Feat[] = [
   },
   {
     id: "cw-steadfast-determination",
-    name: "Determinación Inquebrantable",
+    name: "Determinación Firme",
     source: "complete-warrior",
     types: ["general"],
     description: "Una voluntad forjada más en la terquedad que en la sabiduría.",
@@ -183,7 +183,7 @@ export const CW_FEATS: Feat[] = [
   // ---------------------------------------------------------------------
   {
     id: "cw-arcane-strike",
-    name: "Ataque Arcano",
+    name: "Golpe Arcano",
     source: "complete-warrior",
     types: ["combate"],
     description: "El lanzador de conjuros aprende a canalizar su poder arcano directamente en el filo de su arma.",
@@ -199,7 +199,7 @@ export const CW_FEATS: Feat[] = [
   // ---------------------------------------------------------------------
   {
     id: "cw-adaptable-flanker",
-    name: "Flanqueador Adaptable (Complete Warrior)",
+    name: "Flanqueo Adaptable (Complete Warrior)",
     source: "complete-warrior",
     types: ["combate"],
     description: "Un luchador que ajusta su posición en pleno combate para aprovechar cualquier flanqueo posible.",
@@ -214,7 +214,7 @@ export const CW_FEATS: Feat[] = [
   },
   {
     id: "cw-agile-shield-fighter",
-    name: "Luchador Ágil con Broquel",
+    name: "Uso Ágil de Escudos (Complete Warrior)",
     source: "complete-warrior",
     types: ["combate"],
     description: "Un experto en broqueles capaz de atacar con libertad sin descuidar su defensa.",
@@ -229,7 +229,7 @@ export const CW_FEATS: Feat[] = [
   },
   {
     id: "cw-bounding-assault",
-    name: "Embestida Saltarina",
+    name: "Asalto Doble (Complete Warrior)",
     source: "complete-warrior",
     types: ["combate"],
     description: "Un combatiente que aprovecha el impulso de sus fintas de movimiento para golpear más de una vez.",
@@ -270,7 +270,7 @@ export const CW_FEATS: Feat[] = [
   },
   {
     id: "cw-combat-brute",
-    name: "Bruto de Combate",
+    name: "Combate Brutal",
     source: "complete-warrior",
     types: ["combate"],
     description: "Un luchador que convierte cada maniobra de combate en una oportunidad de causar daño extra.",
@@ -300,7 +300,7 @@ export const CW_FEATS: Feat[] = [
   },
   {
     id: "cw-dash",
-    name: "Arremetida",
+    name: "Carrera",
     source: "complete-warrior",
     types: ["combate"],
     description: "Piernas entrenadas para ganar terreno con rapidez sin perder la guardia.",
@@ -311,7 +311,7 @@ export const CW_FEATS: Feat[] = [
   },
   {
     id: "cw-defensive-throw",
-    name: "Contraataque Defensivo",
+    name: "Proyección Defensiva",
     source: "complete-warrior",
     types: ["combate"],
     description: "Un luchador que convierte el fallo de su rival en su propia ventaja.",
@@ -326,7 +326,7 @@ export const CW_FEATS: Feat[] = [
   },
   {
     id: "cw-elusive-target",
-    name: "Objetivo Escurridizo",
+    name: "Blanco Escurridizo",
     source: "complete-warrior",
     types: ["combate"],
     description: "Un combatiente difícil de inmovilizar, desarmar o derribar en pleno fragor de la batalla.",
@@ -380,7 +380,7 @@ export const CW_FEATS: Feat[] = [
   },
   {
     id: "cw-karmic-strike",
-    name: "Golpe Kármico",
+    name: "Impacto Kármico",
     source: "complete-warrior",
     types: ["combate"],
     description: "Un luchador que aprovecha cada golpe recibido para devolver el favor de inmediato.",
@@ -410,7 +410,7 @@ export const CW_FEATS: Feat[] = [
   },
   {
     id: "cw-leap-attack",
-    name: "Ataque Saltador",
+    name: "Ataque en Salto",
     source: "complete-warrior",
     types: ["combate"],
     description: "Un guerrero que convierte un salto en el preludio de un golpe devastador.",
@@ -422,7 +422,7 @@ export const CW_FEATS: Feat[] = [
   },
   {
     id: "cw-roundabout-kick",
-    name: "Patada Circular",
+    name: "Patada Giratoria",
     source: "complete-warrior",
     types: ["combate"],
     description: "Una patada barredora capaz de dejar tambaleante a un enemigo distraído.",
@@ -480,7 +480,7 @@ export const CW_FEATS: Feat[] = [
   // ---------------------------------------------------------------------
   {
     id: "cw-shield-charge",
-    name: "Carga con Escudo",
+    name: "Cargar con el Escudo",
     source: "complete-warrior",
     types: ["combate"],
     description: "Un combatiente que usa su escudo como un ariete durante la carga.",
@@ -495,7 +495,7 @@ export const CW_FEATS: Feat[] = [
   },
   {
     id: "cw-shield-slam",
-    name: "Golpe de Escudo Aturdidor",
+    name: "Golpetazo con el Escudo",
     source: "complete-warrior",
     types: ["combate"],
     description: "Un golpe de escudo capaz de desequilibrar al enemigo antes de que pueda reaccionar.",
@@ -510,7 +510,7 @@ export const CW_FEATS: Feat[] = [
   },
   {
     id: "cw-shield-specialization",
-    name: "Especialización con Escudo",
+    name: "Especialización con Escudos",
     source: "complete-warrior",
     types: ["combate"],
     description: "Años de práctica con un tipo concreto de escudo lo vuelven una extensión del propio brazo.",
@@ -538,7 +538,7 @@ export const CW_FEATS: Feat[] = [
   // ---------------------------------------------------------------------
   {
     id: "cw-shock-trooper",
-    name: "Tropa de Choque",
+    name: "Soldado de Asalto",
     source: "complete-warrior",
     types: ["combate"],
     description: "Un guerrero que convierte la furia de su carga en pura potencia destructiva, sin importarle exponerse.",
@@ -553,7 +553,7 @@ export const CW_FEATS: Feat[] = [
   },
   {
     id: "cw-rapid-blitz",
-    name: "Embestida Rápida (Complete Warrior)",
+    name: "Ataque Relámpago (Complete Warrior)",
     source: "complete-warrior",
     types: ["combate"],
     description: "Un combatiente capaz de recorrer el campo de batalla sin perder ímpetu ofensivo.",
@@ -663,7 +663,7 @@ export const CW_FEATS: Feat[] = [
     benefit:
       "Puede realizar todos sus ataques normales (no solo uno) mientras su montura se mueve, siempre que esta no se desplace más de su velocidad ese turno, sin provocar ataques de oportunidad por ello.",
     prerequisites: [
-      { description: "Combatir desde Montura", check: hasFeat("mounted-combat") },
+      { description: "Combatir desde una Montura", check: hasFeat("mounted-combat") },
       { description: "1 rango en Montar", check: (ctx) => (ctx.skillRanks["ride"] ?? 0) >= 1 },
     ],
     fighterBonusFeat: true,
@@ -678,7 +678,7 @@ export const CW_FEATS: Feat[] = [
     benefit:
       "Cuando impacta con una lanza durante una carga montada, puede realizar de inmediato una prueba de derribo enfrentada gratuita contra el jinete objetivo.",
     prerequisites: [
-      { description: "Combatir desde Montura", check: hasFeat("mounted-combat") },
+      { description: "Combatir desde una Montura", check: hasFeat("mounted-combat") },
       { description: "1 rango en Montar", check: (ctx) => (ctx.skillRanks["ride"] ?? 0) >= 1 },
     ],
     fighterBonusFeat: true,

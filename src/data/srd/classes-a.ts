@@ -242,7 +242,7 @@ const fighterFeatures: ClassFeature[] = [
 
 const monkFeatures: ClassFeature[] = [
   { level: 1, name: "Ataque desarmado mejorado", description: "El monje recibe Impacto sin Arma Mejorado como dote de bonificación y no provoca ataques de oportunidad al atacar desarmado. Su daño de ataque desarmado es 1d6 (para un monje de tamaño Mediano)." },
-  { level: 1, name: "Artes marciales", description: "En primer nivel, el monje puede elegir una dote de bonificación de una lista especial (Presa Mejorada, Desviar Flechas, Derribo Mejorado, Golpe Aturdidor o Reflejos de Combate), aunque no cumpla los prerrequisitos." },
+  { level: 1, name: "Artes marciales", description: "En primer nivel, el monje puede elegir una dote de bonificación de una lista especial (Presa Mejorada, Desviar Flechas, Derribo Mejorado, Puñetazo Aturdidor o Reflejos de Combate), aunque no cumpla los prerrequisitos." },
   { level: 1, name: "CA sin armadura", description: "Mientras no lleve armadura, escudo ni cargue demasiado peso, el monje suma su bonificador de Sabiduría (si es positivo) a la Clase de Armadura." },
   { level: 1, name: "Ráfaga de golpes", description: "El monje puede prescindir de su bonificador de ataque normal para realizar un ataque adicional en la ronda, con un penalizador a todos sus ataques desarmados." },
   { level: 2, name: "Artes marciales", description: "En segundo nivel, el monje elige una segunda dote de bonificación de la lista especial de monje." },
@@ -303,10 +303,10 @@ const paladinFeatures: ClassFeature[] = [
 
 const rangerFeatures: ClassFeature[] = [
   { level: 1, name: "Enemigo predilecto (1)", description: "El explorador elige un tipo de enemigo predilecto, obteniendo +2 a Avistar, Buscar, Saber, Averiguar Intenciones y Supervivencia relacionados con él, así como +2 al daño contra esas criaturas." },
-  { level: 1, name: "Rastreo", description: "El explorador obtiene la dote Rastreo como dote de bonificación." },
+  { level: 1, name: "Rastrear", description: "El explorador obtiene la dote Rastrear como dote de bonificación." },
   { level: 1, name: "Empatía salvaje", description: "El explorador puede mejorar la actitud de un animal, de forma similar a Diplomacia, mediante comunicación e interacción con lenguaje corporal." },
   { level: 2, name: "Estilo de combate (arquería o dos armas)", description: "El explorador elige entre el estilo de combate a distancia (arquería) o el de combate con dos armas, obteniendo la primera dote de bonificación de esa senda aunque no cumpla los prerrequisitos." },
-  { level: 3, name: "Resistencia", description: "El explorador obtiene la dote Resistencia como dote de bonificación." },
+  { level: 3, name: "Aguante", description: "El explorador obtiene la dote Aguante como dote de bonificación." },
   { level: 4, name: "Compañero animal", description: "El explorador puede convocar a un compañero animal que le sirve fielmente." },
   { level: 4, name: "Conjuros divinos", description: "El explorador comienza a lanzar conjuros divinos de la lista de conjuros de explorador, con Sabiduría como característica clave." },
   { level: 5, name: "Enemigo predilecto (2)", description: "El explorador elige un segundo tipo de enemigo predilecto." },

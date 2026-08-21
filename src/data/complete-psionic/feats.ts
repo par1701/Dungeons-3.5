@@ -325,7 +325,7 @@ export const CPS_FEATS: Feat[] = [
   },
   {
     id: "cps-psionic-stunning-fist",
-    name: "Golpe Aturdidor Psiónico",
+    name: "Puñetazo Aturdidor Psiónico",
     source: "complete-psionic",
     types: ["combate"],
     description: "El combatiente canaliza su disciplina mental en un golpe capaz de anular a su rival.",
@@ -347,7 +347,7 @@ export const CPS_FEATS: Feat[] = [
     benefit:
       "Al confirmar un golpe crítico con un ataque cuerpo a cuerpo, puede gastar puntos de poder (hasta un máximo igual a su modificador de Sabiduría) para infligir 1d6 puntos de daño adicional por cada punto de poder gastado.",
     prerequisites: [
-      { description: "Golpe Aturdidor Psiónico", check: hasFeat("cps-psionic-stunning-fist") },
+      { description: "Puñetazo Aturdidor Psiónico", check: hasFeat("cps-psionic-stunning-fist") },
       { description: "Bonificador base de ataque +11", check: (ctx) => ctx.babTotal >= 11 },
     ],
     fighterBonusFeat: false,

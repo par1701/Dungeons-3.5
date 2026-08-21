@@ -384,7 +384,7 @@ export const CS_CLASSES: ClassDef[] = [
         check: (ctx) => (ctx.skillRanks["bluff"] ?? 0) >= 8,
       },
       {
-        description: "Sutileza con Armas",
+        description: "Sutileza con las Armas",
         check: hasFeat("weapon-finesse"),
       },
       { description: "Capacidad de infligir daño de ataque furtivo" },

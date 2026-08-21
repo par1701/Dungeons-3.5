@@ -389,9 +389,9 @@ export const SRD_CLASSES_C: ClassDef[] = [
       },
       {
         level: 1,
-        name: "Inscribir Pergamino",
+        name: "Inscribir Rollo de Pergamino",
         description:
-          "El mago obtiene Inscribir Pergamino como dote de fabricación de objetos mágicos de forma gratuita al alcanzar el nivel 1.",
+          "El mago obtiene Inscribir Rollo de Pergamino como dote de fabricación de objetos mágicos de forma gratuita al alcanzar el nivel 1.",
       },
     ],
     spellcasting: {

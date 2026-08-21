@@ -52,7 +52,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "animal-affinity",
-    name: "Afinidad Animal",
+    name: "Afinidad con los Animales",
     source: "srd",
     types: ["general"],
     description: "Una conexión natural con los animales.",
@@ -122,7 +122,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "diligent",
-    name: "Diligente",
+    name: "Aplicado",
     source: "srd",
     types: ["general"],
     description: "Paciencia y meticulosidad al examinar detalles.",
@@ -133,7 +133,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "endurance",
-    name: "Resistencia",
+    name: "Aguante",
     source: "srd",
     types: ["general"],
     description: "Un cuerpo curtido capaz de soportar privaciones extremas.",
@@ -145,13 +145,13 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "diehard",
-    name: "Tenacidad",
+    name: "Duro de Pelar",
     source: "srd",
     types: ["general"],
     description: "El personaje se aferra a la vida incluso cuando su cuerpo debería haber sucumbido.",
     benefit:
       "Cuando sus puntos de golpe caen por debajo de 0 pero no ha muerto, se estabiliza automáticamente sin necesidad de superar una prueba de Constitución. Además, puede optar por actuar con normalidad (con un penalizador de -1 a las tiradas de ataque, pruebas de habilidad y de característica) en vez de quedar inconsciente, mientras sus puntos de golpe negativos no lleguen a -10.",
-    prerequisites: [{ description: "Resistencia", check: hasFeat("endurance") }],
+    prerequisites: [{ description: "Aguante", check: hasFeat("endurance") }],
     fighterBonusFeat: true,
     stackable: false,
   },
@@ -169,7 +169,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "extra-turning",
-    name: "Expulsión Adicional",
+    name: "Expulsión Incrementada",
     source: "srd",
     types: ["general"],
     description: "Una reserva mayor de energía divina para expulsar o reprender a los no muertos.",
@@ -314,7 +314,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "natural-spell",
-    name: "Conjuro Natural",
+    name: "Conjuros Naturales",
     source: "srd",
     types: ["general"],
     description: "El druida aprende a seguir canalizando su magia incluso adoptando forma animal.",
@@ -452,7 +452,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "track",
-    name: "Rastreo",
+    name: "Rastrear",
     source: "srd",
     types: ["general"],
     description: "El personaje sabe leer huellas y señales dejadas por el paso de criaturas.",
@@ -519,7 +519,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "tower-shield-proficiency",
-    name: "Competencia con Escudo Torre",
+    name: "Competencia con Escudo Pavés",
     source: "srd",
     types: ["combate"],
     description: "Entrenamiento para manejar el enorme escudo torre en combate.",
@@ -532,7 +532,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "simple-weapon-proficiency",
-    name: "Competencia con Armas Sencillas",
+    name: "Competencia con Arma Sencilla",
     source: "srd",
     types: ["combate"],
     description: "Entrenamiento básico con el conjunto de armas sencillas.",
@@ -740,7 +740,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "stunning-fist",
-    name: "Golpe Aturdidor",
+    name: "Puñetazo Aturdidor",
     source: "srd",
     types: ["combate"],
     description: "Un golpe certero capaz de dejar aturdido a un enemigo.",
@@ -811,7 +811,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "far-shot",
-    name: "Tiro Lejano",
+    name: "Disparo a Larga Distancia",
     source: "srd",
     types: ["combate"],
     description: "Entrenamiento para mantener la puntería a grandes distancias.",
@@ -849,7 +849,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "manyshot",
-    name: "Multidisparo",
+    name: "Disparos Múltiples",
     source: "srd",
     types: ["combate"],
     description: "El arquero dispara varias flechas al unísono contra un mismo objetivo.",
@@ -883,7 +883,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "shot-on-the-run",
-    name: "Disparo en Movimiento",
+    name: "Disparo a la Carrera",
     source: "srd",
     types: ["combate"],
     description: "Un tirador capaz de moverse, disparar y volver a moverse en un instante.",
@@ -900,7 +900,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "weapon-finesse",
-    name: "Sutileza con Armas",
+    name: "Sutileza con las Armas",
     source: "srd",
     types: ["combate"],
     description: "El combatiente sustituye la fuerza bruta por precisión quirúrgica.",
@@ -1121,7 +1121,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "mounted-combat",
-    name: "Combatir desde Montura",
+    name: "Combatir desde una Montura",
     source: "srd",
     types: ["combate"],
     description: "El jinete aprende a proteger a su montura (o a sí mismo) en plena cabalgada.",
@@ -1135,24 +1135,24 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "mounted-archery",
-    name: "Tiro Montado",
+    name: "Disparar desde una Montura",
     source: "srd",
     types: ["combate"],
     description: "Un arquero capaz de disparar con precisión desde una montura en movimiento.",
     benefit: "La penalización por disparar un arma a distancia desde una montura en movimiento se reduce a la mitad.",
-    prerequisites: [{ description: "Combatir desde Montura", check: hasFeat("mounted-combat") }],
+    prerequisites: [{ description: "Combatir desde una Montura", check: hasFeat("mounted-combat") }],
     fighterBonusFeat: true,
     stackable: false,
   },
   {
     id: "trample",
-    name: "Arrollar",
+    name: "Pisotear",
     source: "srd",
     types: ["combate"],
     description: "El jinete aprende a pasar por encima de sus enemigos durante una carga.",
     benefit:
       "Durante una carga montada, su montura puede pasar por encima de enemigos de tamaño igual o menor, atropellándolos si no pueden esquivar y causando el daño de pisoteo de la montura más el modificador de Fuerza del jinete.",
-    prerequisites: [{ description: "Combatir desde Montura", check: hasFeat("mounted-combat") }],
+    prerequisites: [{ description: "Combatir desde una Montura", check: hasFeat("mounted-combat") }],
     fighterBonusFeat: true,
     stackable: false,
   },
@@ -1164,7 +1164,7 @@ export const SRD_FEATS: Feat[] = [
     description: "El jinete golpea y continúa su carga sin detenerse.",
     benefit:
       "Durante una carga montada, puede moverse, atacar y continuar el movimiento sin provocar un ataque de oportunidad del enemigo atacado.",
-    prerequisites: [{ description: "Combatir desde Montura", check: hasFeat("mounted-combat") }],
+    prerequisites: [{ description: "Combatir desde una Montura", check: hasFeat("mounted-combat") }],
     fighterBonusFeat: true,
     stackable: false,
   },
@@ -1177,7 +1177,7 @@ export const SRD_FEATS: Feat[] = [
     benefit:
       "Durante una carga montada, causa el doble de daño con un arma cuerpo a cuerpo (el triple si usa una lanza montado).",
     prerequisites: [
-      { description: "Combatir desde Montura", check: hasFeat("mounted-combat") },
+      { description: "Combatir desde una Montura", check: hasFeat("mounted-combat") },
       { description: "Ataque al Galope", check: hasFeat("ride-by-attack") },
     ],
     fighterBonusFeat: true,
@@ -1283,7 +1283,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "quicken-spell",
-    name: "Apresurar Conjuros",
+    name: "Apresurar Conjuro",
     source: "srd",
     types: ["metamagia"],
     description: "El lanzador puede recurrir a su magia en un instante, en pleno turno de acción.",
@@ -1333,7 +1333,7 @@ export const SRD_FEATS: Feat[] = [
   // ---------------------------------------------------------------------
   {
     id: "brew-potion",
-    name: "Elaborar Pociones",
+    name: "Elaborar Poción",
     source: "srd",
     types: ["creacion_objetos"],
     description: "El lanzador aprende a embotellar sus propios conjuros.",
@@ -1345,7 +1345,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "craft-magic-arms-and-armor",
-    name: "Artesano Mágico de Armas y Armaduras",
+    name: "Fabricar Armas y Armaduras Mágicas",
     source: "srd",
     types: ["creacion_objetos"],
     description: "El lanzador aprende a imbuir armas, armaduras y escudos con magia permanente.",
@@ -1357,7 +1357,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "craft-rod",
-    name: "Crear Vara Mágica",
+    name: "Fabricar Vara Mágica",
     source: "srd",
     types: ["creacion_objetos"],
     description: "El lanzador aprende a forjar varas de poder mágico.",
@@ -1368,7 +1368,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "craft-staff",
-    name: "Crear Báculo Mágico",
+    name: "Fabricar Báculo Mágico",
     source: "srd",
     types: ["creacion_objetos"],
     description: "El lanzador aprende a canalizar varios de sus conjuros en un báculo.",
@@ -1380,7 +1380,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "craft-wand",
-    name: "Crear Varita Mágica",
+    name: "Fabricar Varita Mágica",
     source: "srd",
     types: ["creacion_objetos"],
     description: "El lanzador aprende a encerrar un conjuro en una varita de usos limitados.",
@@ -1392,7 +1392,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "craft-wondrous-item",
-    name: "Artesano de Objetos Maravillosos",
+    name: "Fabricar Objeto Maravilloso",
     source: "srd",
     types: ["creacion_objetos"],
     description: "El lanzador aprende a imbuir toda clase de objetos con magia permanente.",
@@ -1403,7 +1403,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "forge-ring",
-    name: "Forjar Anillo Mágico",
+    name: "Forjar Anillo",
     source: "srd",
     types: ["creacion_objetos"],
     description: "El lanzador domina el arte más exigente de la creación de objetos mágicos.",
@@ -1414,7 +1414,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "scribe-scroll",
-    name: "Inscribir Pergamino",
+    name: "Inscribir Rollo de Pergamino",
     source: "srd",
     types: ["creacion_objetos"],
     description: "El lanzador aprende a plasmar sus conjuros en pergamino para usarlos más tarde.",

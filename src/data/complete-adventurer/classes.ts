@@ -172,7 +172,7 @@ const SWASHBUCKLER_FEATURES = [
   {
     level: 1,
     name: "Amenaza con Arma (dote de bonificación)",
-    description: "El espadachín obtiene Sutileza con Armas o Soltura con un Arma como dote de bonificación (a elegir) para el arma que empuñe con mayor frecuencia.",
+    description: "El espadachín obtiene Sutileza con las Armas o Soltura con un Arma como dote de bonificación (a elegir) para el arma que empuñe con mayor frecuencia.",
   },
   {
     level: 2,
@@ -705,7 +705,7 @@ export const CAD_CLASSES: ClassDef[] = [
         check: (ctx) => (ctx.skillRanks["move-silently"] ?? 0) >= 8,
       },
       {
-        description: "Sutileza con Armas",
+        description: "Sutileza con las Armas",
         check: (ctx) => ctx.featIds.has("weapon-finesse"),
       },
       {

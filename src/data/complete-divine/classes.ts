@@ -637,7 +637,7 @@ export const CDV_CLASSES: ClassDef[] = [
         description: "Capacidad de expulsar o reprender no-muertos",
       },
       {
-        description: "Expulsión Adicional",
+        description: "Expulsión Incrementada",
         check: (ctx) => ctx.featIds.has("extra-turning"),
       },
       {
@@ -724,7 +724,7 @@ export const CDV_CLASSES: ClassDef[] = [
         check: (ctx) => (ctx.skillRanks["knowledge-religion"] ?? 0) >= 4,
       },
       {
-        description: "Resistencia",
+        description: "Aguante",
         check: (ctx) => ctx.featIds.has("endurance"),
       },
       {

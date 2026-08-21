@@ -189,7 +189,7 @@ const DRUNKEN_MASTER_FEATURES: ClassFeature[] = [
     level: 7,
     name: "Golpe desestabilizador",
     description:
-      "El ataque desarmado del maestro ebrio puede aturdir a su objetivo durante 1 asalto (salvación de Fortaleza para negarlo), de forma similar a la dote Golpe Aturdidor, un número de veces por día igual a su modificador de Sabiduría.",
+      "El ataque desarmado del maestro ebrio puede aturdir a su objetivo durante 1 asalto (salvación de Fortaleza para negarlo), de forma similar a la dote Puñetazo Aturdidor, un número de veces por día igual a su modificador de Sabiduría.",
   },
   {
     level: 8,
@@ -324,7 +324,7 @@ const HALFLING_OUTRIDER_FEATURES: ClassFeature[] = [
     level: 5,
     name: "Carga devastadora",
     description:
-      "Al realizar una carga montada, el daño de los ataques con arma del jinete aumenta en 1d6. Además, obtiene Arrollar como dote de bonificación, aunque no cumpla sus prerrequisitos.",
+      "Al realizar una carga montada, el daño de los ataques con arma del jinete aumenta en 1d6. Además, obtiene Pisotear como dote de bonificación, aunque no cumpla sus prerrequisitos.",
   },
 ];
 
@@ -602,7 +602,7 @@ export const CW_CLASSES: ClassDef[] = [
         check: (ctx) => (ctx.skillRanks["ride"] ?? 0) >= 8,
       },
       {
-        description: "Combatir desde Montura",
+        description: "Combatir desde una Montura",
         check: (ctx) => ctx.featIds.has("mounted-combat"),
       },
       {
@@ -642,7 +642,7 @@ export const CW_CLASSES: ClassDef[] = [
     isPrestige: true,
     prerequisites: [
       {
-        description: "Rastreo",
+        description: "Rastrear",
         check: (ctx) => ctx.featIds.has("track"),
       },
       {

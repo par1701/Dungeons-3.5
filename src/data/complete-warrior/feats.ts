@@ -759,6 +759,122 @@ export const CW_FEATS: Feat[] = [
     fighterBonusFeat: true,
     stackable: false,
   },
+  {
+    id: "cw-improved-rapid-shot",
+    name: "Disparo Rápido Mejorado",
+    source: "complete-warrior",
+    types: ["combate"],
+    description: "El arquero ha perfeccionado su técnica hasta el punto de disparar con rapidez sin sacrificar precisión.",
+    benefit: "Cuando use la dote Disparo Rápido, ignora la penalización de -2 a todas sus tiradas de ataque a distancia ese turno.",
+    prerequisites: [
+      { description: "Multidisparo", check: hasFeat("manyshot") },
+      { description: "Disparo a Bocajarro", check: hasFeat("point-blank-shot") },
+      { description: "Disparo Rápido", check: hasFeat("rapid-shot") },
+    ],
+    fighterBonusFeat: true,
+    stackable: false,
+  },
+  {
+    id: "cw-ranged-disarm",
+    name: "Desarme a Distancia",
+    source: "complete-warrior",
+    types: ["combate"],
+    description: "El combatiente aprende a desarmar a sus enemigos sin necesidad de acercarse a ellos.",
+    benefit:
+      "Elige un tipo de arma a distancia con la que tenga competencia. Puede realizar un intento de desarme con esa arma contra un objetivo situado a 9 metros (30 pies) o menos.",
+    prerequisites: [
+      { description: "Destreza 15", check: (ctx) => ctx.abilityScores.dex >= 15 },
+      { description: "Disparo a Bocajarro", check: hasFeat("point-blank-shot") },
+      { description: "Disparo Preciso", check: hasFeat("precise-shot") },
+      { description: "Bonificador base de ataque +5", check: (ctx) => ctx.babTotal >= 5 },
+    ],
+    fighterBonusFeat: true,
+    stackable: true,
+  },
+  {
+    id: "cw-ranged-pin",
+    name: "Inmovilizar a Distancia",
+    source: "complete-warrior",
+    types: ["combate"],
+    description: "El combatiente puede clavar la ropa de su enemigo contra una superficie cercana para inmovilizarlo a distancia.",
+    benefit:
+      "Si el objetivo está a 1,5 metros (5 pies) o menos de un muro, árbol u otra superficie donde un arma arrojadiza o proyectil pueda clavarse, y lleva ropa, armadura u otro atuendo, puede intentar clavarlo contra ella. Debe superar un ataque a distancia normal (no de toque) y a continuación ganar una prueba de presa enfrentada (se aplican los modificadores de tamaño de ambos). Para liberarse, la víctima debe superar una prueba de Fuerza o de Escapismo (CD 15) como acción estándar.",
+    prerequisites: [
+      { description: "Destreza 15", check: (ctx) => ctx.abilityScores.dex >= 15 },
+      { description: "Disparo a Bocajarro", check: hasFeat("point-blank-shot") },
+      { description: "Disparo Preciso", check: hasFeat("precise-shot") },
+      { description: "Bonificador base de ataque +5", check: (ctx) => ctx.babTotal >= 5 },
+    ],
+    fighterBonusFeat: true,
+    stackable: false,
+  },
+  {
+    id: "cw-ranged-sunder",
+    name: "Romper Arma a Distancia",
+    source: "complete-warrior",
+    types: ["combate"],
+    description: "El combatiente puede destrozar objetos y armas empuñadas por sus enemigos disparando o arrojando armas a distancia.",
+    benefit:
+      "Al atacar objetos con armas a distancia de tipo cortante o contundente, inflige daño completo en vez de la mitad. Puede realizar intentos de romper objetos con armas perforantes (como flechas), aunque en ese caso solo inflige la mitad del daño, dividiéndolo entre dos antes de aplicar la dureza del objeto. Debe estar a 9 metros (30 pies) o menos de su objetivo para realizar un intento de romper armas a distancia.",
+    prerequisites: [
+      { description: "Fuerza 13", check: (ctx) => ctx.abilityScores.str >= 13 },
+      { description: "Disparo a Bocajarro", check: hasFeat("point-blank-shot") },
+      { description: "Disparo Preciso", check: hasFeat("precise-shot") },
+      { description: "Bonificador base de ataque +5", check: (ctx) => ctx.babTotal >= 5 },
+    ],
+    fighterBonusFeat: true,
+    stackable: false,
+  },
+  {
+    id: "cw-sharp-shooting",
+    name: "Puntería",
+    source: "complete-warrior",
+    types: ["combate"],
+    description: "El tirador sabe encontrar el hueco justo en la cobertura de su objetivo.",
+    benefit:
+      "Sus objetivos solo reciben un bonificador de +2 a la Clase de Armadura por cobertura, en vez del bonificador normal. Esta dote no tiene efecto contra objetivos sin cobertura o con cobertura total.",
+    prerequisites: [
+      { description: "Disparo a Bocajarro", check: hasFeat("point-blank-shot") },
+      { description: "Disparo Preciso", check: hasFeat("precise-shot") },
+      { description: "Bonificador base de ataque +3", check: (ctx) => ctx.babTotal >= 3 },
+    ],
+    fighterBonusFeat: true,
+    stackable: false,
+  },
+  {
+    id: "cw-improved-two-weapon-defense",
+    name: "Defensa con Dos Armas Mejorada",
+    source: "complete-warrior",
+    types: ["combate"],
+    description: "El combatiente aprende a usar su segunda arma como una defensa aún más eficaz.",
+    benefit:
+      "Mientras empuñe dos armas (sin contar armas naturales ni ataques desarmados), gana un bonificador de escudo de +2 a la Clase de Armadura. Este bonificador aumenta a +4 si lucha a la defensiva o usa la acción de defensa total.",
+    prerequisites: [
+      { description: "Combate con Dos Armas", check: hasFeat("two-weapon-fighting") },
+      { description: "Defensa con Dos Armas", check: hasFeat("two-weapon-defense") },
+      { description: "Destreza 17", check: (ctx) => ctx.abilityScores.dex >= 17 },
+      { description: "Bonificador base de ataque +6", check: (ctx) => ctx.babTotal >= 6 },
+    ],
+    fighterBonusFeat: true,
+    stackable: false,
+  },
+  {
+    id: "cw-greater-two-weapon-defense",
+    name: "Defensa con Dos Armas Superior",
+    source: "complete-warrior",
+    types: ["combate"],
+    description: "El combatiente domina por completo el arte de defenderse con un arma en cada mano.",
+    benefit:
+      "Mientras empuñe dos armas (sin contar armas naturales ni ataques desarmados), gana un bonificador de escudo de +3 a la Clase de Armadura. Este bonificador aumenta a +6 si lucha a la defensiva o usa la acción de defensa total.",
+    prerequisites: [
+      { description: "Combate con Dos Armas", check: hasFeat("two-weapon-fighting") },
+      { description: "Defensa con Dos Armas", check: hasFeat("two-weapon-defense") },
+      { description: "Destreza 19", check: (ctx) => ctx.abilityScores.dex >= 19 },
+      { description: "Bonificador base de ataque +11", check: (ctx) => ctx.babTotal >= 11 },
+    ],
+    fighterBonusFeat: true,
+    stackable: false,
+  },
 ];
 
 export const CW_FEAT_IDS = CW_FEATS.map((f) => f.id);

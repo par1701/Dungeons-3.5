@@ -265,7 +265,7 @@ const monkFeatures: ClassFeature[] = [
   { level: 11, name: "Cuerpo de diamante", description: "El monje obtiene inmunidad a todos los venenos." },
   { level: 11, name: "Ráfaga de golpes mayor", description: "Al usar ráfaga de golpes, el monje puede realizar un ataque adicional más." },
   { level: 12, name: "Velocidad sin armadura +12 m", description: "El bonificador acumulado a la velocidad sin armadura del monje aumenta a 12 metros." },
-  { level: 12, name: "Paso abundante", description: "El monje puede usar paso brumoso (como el conjuro) una vez al día, como si fuera lanzado por un conjurador de nivel igual a la mitad de su nivel de monje." },
+  { level: 12, name: "Paso abundante", description: "El monje puede usar puerta dimensional (como el conjuro) una vez al día, como si fuera lanzado por un conjurador de nivel igual a la mitad de su nivel de monje." },
   { level: 12, name: "Caída lenta (18 m)", description: "La distancia de caída lenta del monje aumenta a 18 metros." },
   { level: 13, name: "Alma de diamante", description: "El monje obtiene resistencia a conjuros igual a 10 + su nivel de monje." },
   { level: 14, name: "Caída lenta (21 m)", description: "La distancia de caída lenta del monje aumenta a 21 metros." },
@@ -276,7 +276,7 @@ const monkFeatures: ClassFeature[] = [
   { level: 17, name: "Lengua del sol y la luna", description: "El monje puede hablar con cualquier criatura viviente." },
   { level: 18, name: "Velocidad sin armadura +18 m", description: "El bonificador acumulado a la velocidad sin armadura del monje aumenta a 18 metros." },
   { level: 18, name: "Caída lenta (27 m)", description: "La distancia de caída lenta del monje aumenta a 27 metros." },
-  { level: 19, name: "Cuerpo etéreo", description: "El monje puede usar viaje etéreo (como el conjuro) una vez al día, como conjurador de nivel igual a su nivel de monje." },
+  { level: 19, name: "Cuerpo etéreo", description: "El monje puede usar etereidad (como el conjuro) una vez al día, como conjurador de nivel igual a su nivel de monje." },
   { level: 20, name: "Ser perfecto", description: "El monje se convierte en una criatura fabulosa. Gana resistencia a daño 10/mágico y +2 a una puntuación de característica a su elección." },
 ];
 
@@ -291,7 +291,7 @@ const paladinFeatures: ClassFeature[] = [
   { level: 4, name: "Expulsar no-muertos", description: "El paladín puede expulsar no-muertos como un clérigo, usando su nivel de paladín menos 3 como nivel de clérigo efectivo." },
   { level: 5, name: "Castigar el mal (2/día)", description: "El paladín puede usar castigar el mal dos veces por día." },
   { level: 5, name: "Montura especial", description: "El paladín puede invocar a una montura especial con poderes mágicos, mediante un ritual que requiere una hora." },
-  { level: 6, name: "Curar enfermedades (1/semana)", description: "El paladín puede curar enfermedades, como el conjuro, una vez a la semana." },
+  { level: 6, name: "Curar enfermedades (1/semana)", description: "El paladín puede usar Quitar Enfermedad, como el conjuro, una vez a la semana." },
   { level: 9, name: "Curar enfermedades (2/semana)", description: "El paladín puede curar enfermedades dos veces a la semana." },
   { level: 10, name: "Castigar el mal (3/día)", description: "El paladín puede usar castigar el mal tres veces por día." },
   { level: 12, name: "Curar enfermedades (3/semana)", description: "El paladín puede curar enfermedades tres veces a la semana." },

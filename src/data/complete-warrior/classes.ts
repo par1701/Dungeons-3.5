@@ -366,7 +366,7 @@ const BLOODHOUND_FEATURES: ClassFeature[] = [
     level: 5,
     name: "Sabueso perfecto",
     description:
-      "Una vez al día, el sabueso de sangre puede determinar la dirección y la distancia aproximada hasta su presa predilecta actual, igual que el conjuro descubrir localización, sin importar la distancia o el plano en que se encuentre.",
+      "Una vez al día, el sabueso de sangre puede determinar la dirección y la distancia aproximada hasta su presa predilecta actual, igual que el conjuro discernir ubicación, sin importar la distancia o el plano en que se encuentre.",
   },
 ];
 

@@ -221,7 +221,7 @@ const HOSPITALER_FEATURES: ClassFeature[] = [
   {
     level: 4,
     name: "Curar enfermedades (1/semana)",
-    description: "El hospitalario puede curar enfermedades, como el conjuro, una vez a la semana.",
+    description: "El hospitalario puede usar Quitar Enfermedad, como el conjuro, una vez a la semana.",
   },
   {
     level: 6,

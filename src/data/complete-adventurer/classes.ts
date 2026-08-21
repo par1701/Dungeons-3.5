@@ -436,7 +436,7 @@ const SPYMASTER_FEATURES = [
   {
     level: 6,
     name: "Nunca a Flor de Piel",
-    description: "El maestro de espías es inmune a los efectos que detectan directamente su alineamiento o sus emociones (como detectar el mal o el conjuro sondear pensamientos, en lo que respecta a percibir su lealtad), a menos que el conjuro sea de nivel superior a la mitad de su nivel de clase.",
+    description: "El maestro de espías es inmune a los efectos que detectan directamente su alineamiento o sus emociones (como detectar el mal o el conjuro detectar pensamientos, en lo que respecta a percibir su lealtad), a menos que el conjuro sea de nivel superior a la mitad de su nivel de clase.",
   },
   {
     level: 8,

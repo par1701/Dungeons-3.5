@@ -728,7 +728,7 @@ export const CDV_CLASSES: ClassDef[] = [
         check: (ctx) => ctx.featIds.has("endurance"),
       },
       {
-        description: "Capacidad de lanzar el conjuro divino llamar relámpago",
+        description: "Capacidad de lanzar el conjuro divino llamar al relámpago",
       },
     ],
   },

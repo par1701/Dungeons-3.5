@@ -584,7 +584,7 @@ export const PHB2_FEATS: Feat[] = [
     types: ["general"],
     description: "El conocimiento secreto de la magia élfica le permite retorcer y desentrañar los conjuros con una sutileza inusual.",
     benefit:
-      "Gana un bonificador de +2 en las tiradas de nivel de lanzador al lanzar dispersar magia o dispersar magia mayor. Además, al preparar sus conjuros, puede elegir un único conjuro de su libro de conjuros y alterar el tipo de daño que inflige a un único tipo distinto de su elección al prepararlo (solo disponible para lanzadores que preparan conjuros).",
+      "Gana un bonificador de +2 en las tiradas de nivel de lanzador al lanzar disipar magia o disipar magia mayor. Además, al preparar sus conjuros, puede elegir un único conjuro de su libro de conjuros y alterar el tipo de daño que inflige a un único tipo distinto de su elección al prepararlo (solo disponible para lanzadores que preparan conjuros).",
     prerequisites: [
       { description: "12 rangos en Saber (Arcano)", check: (ctx: FeatPrereqContext) => (ctx.skillRanks["knowledge-arcana"] ?? 0) >= 12 },
       { description: "Inteligencia 17, o ser elfo" },

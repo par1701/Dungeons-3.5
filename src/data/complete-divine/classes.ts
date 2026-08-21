@@ -637,7 +637,7 @@ export const CDV_CLASSES: ClassDef[] = [
         description: "Capacidad de expulsar o reprender no-muertos",
       },
       {
-        description: "Expulsar Superior",
+        description: "Expulsión Incrementada",
         check: (ctx) => ctx.featIds.has("extra-turning"),
       },
       {
@@ -728,7 +728,7 @@ export const CDV_CLASSES: ClassDef[] = [
         check: (ctx) => ctx.featIds.has("endurance"),
       },
       {
-        description: "Capacidad de lanzar el conjuro divino llamar relámpago",
+        description: "Capacidad de lanzar el conjuro divino llamar al relámpago",
       },
     ],
   },

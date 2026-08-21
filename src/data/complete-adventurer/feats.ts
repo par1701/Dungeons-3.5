@@ -51,7 +51,7 @@ export const CAD_FEATS: Feat[] = [
   },
   {
     id: "cad-staggering-strike",
-    name: "Golpe Aturdidor (Staggering Strike)",
+    name: "Impacto Asombroso",
     source: "complete-adventurer",
     types: ["general"],
     description: "Sabe colocar el ataque furtivo justo donde más aturde al cuerpo del enemigo.",
@@ -94,7 +94,7 @@ export const CAD_FEATS: Feat[] = [
     benefit:
       "Cuando falla una prueba de Supervivencia para seguir un rastro, no lo pierde de inmediato: puede seguir intentándolo con un penalizador acumulativo de -5 por cada fallo previo, en vez de tener que retroceder para recuperar la pista. Además, puede seguir un rastro a la mitad de su velocidad sin el penalizador habitual a la prueba.",
     prerequisites: [
-      { description: "Dote de Rastreo", check: hasFeat("track") },
+      { description: "Rastrear", check: hasFeat("track") },
       { description: "Rango elevado en Supervivencia" },
     ],
     fighterBonusFeat: false,
@@ -109,7 +109,7 @@ export const CAD_FEATS: Feat[] = [
     benefit:
       "Como acción rápida, puede realizar una prueba de Avistar para evaluar las capacidades de combate de un oponente que pueda ver con claridad, obteniendo una estimación de si es más fuerte, más rápido, más hábil en combate o más resistente que él.",
     prerequisites: [
-      { description: "Dote de Rastreo", check: hasFeat("track") },
+      { description: "Rastrear", check: hasFeat("track") },
       { description: "Rangos en Avistar y Supervivencia" },
     ],
     fighterBonusFeat: false,
@@ -117,7 +117,7 @@ export const CAD_FEATS: Feat[] = [
   },
   {
     id: "cad-tactile-trapsmith",
-    name: "Artesano Táctil de Trampas",
+    name: "Trampero Táctil",
     source: "complete-adventurer",
     types: ["general"],
     description: "Sus dedos leen los mecanismos de una trampa mejor de lo que sus ojos podrían nunca verlos.",
@@ -379,7 +379,7 @@ export const CAD_FEATS: Feat[] = [
   },
   {
     id: "cad-deft-strike",
-    name: "Golpe Diestro",
+    name: "Golpe Hábil",
     source: "complete-adventurer",
     types: ["combate"],
     description: "Un ojo entrenado para detectar el hueco exacto en la guardia de un rival antes de golpear.",
@@ -434,7 +434,7 @@ export const CAD_FEATS: Feat[] = [
   },
   {
     id: "cad-obscure-lore",
-    name: "Saber Oscuro",
+    name: "Conocimiento Oscuro",
     source: "complete-adventurer",
     types: ["general"],
     description: "El personaje atesora fragmentos de conocimiento que la mayoría considera olvidados o irrelevantes.",

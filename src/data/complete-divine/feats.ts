@@ -9,7 +9,7 @@ import type { Feat, FeatPrereqContext } from "../../types";
 //   rango de habilidad, nivel de lanzador). Los prerrequisitos narrativos
 //   (ej. "acceso a un dominio concreto", "capacidad de lanzar conjuros
 //   divinos") quedan solo como texto.
-// - Se excluyen dotes ya presentes en el SRD (Expulsión Adicional, Expulsión
+// - Se excluyen dotes ya presentes en el SRD (Expulsión Incrementada, Expulsión
 //   Mejorada, etc.) para no duplicar contenido.
 
 const hasFeat = (id: string) => (ctx: FeatPrereqContext) => ctx.featIds.has(id);
@@ -45,7 +45,7 @@ export const CDV_FEATS: Feat[] = [
   },
   {
     id: "cdv-domain-focus",
-    name: "Enfoque de Dominio",
+    name: "Soltura con un Dominio",
     source: "complete-divine",
     types: ["general"],
     description: "El personaje concentra su devoción en uno de sus dominios hasta dominarlo por completo.",
@@ -85,7 +85,7 @@ export const CDV_FEATS: Feat[] = [
   // ---------------------------------------------------------------------
   {
     id: "cdv-divine-might",
-    name: "Poder Divino",
+    name: "Poder Divino (Complete Divine)",
     source: "complete-divine",
     types: ["general"],
     description: "El favor de la deidad del personaje se manifiesta en la fuerza de sus golpes.",
@@ -101,7 +101,7 @@ export const CDV_FEATS: Feat[] = [
   },
   {
     id: "cdv-divine-shield",
-    name: "Escudo Divino",
+    name: "Escudo Divino (Complete Divine)",
     source: "complete-divine",
     types: ["general"],
     description: "La energía divina del personaje puede desviar los golpes del enemigo.",
@@ -126,7 +126,7 @@ export const CDV_FEATS: Feat[] = [
     prerequisites: [
       { description: "Carisma 13", check: minCha(13) },
       { description: "Base de ataque +6", check: minBab(6) },
-      { description: "Poder Divino", check: hasFeat("cdv-divine-might") },
+      { description: "Poder Divino (Complete Divine)", check: hasFeat("cdv-divine-might") },
       { description: "Capacidad de expulsar o reprender a los no muertos" },
     ],
     fighterBonusFeat: false,
@@ -143,7 +143,7 @@ export const CDV_FEATS: Feat[] = [
     prerequisites: [
       { description: "Carisma 13", check: minCha(13) },
       { description: "Base de ataque +6", check: minBab(6) },
-      { description: "Escudo Divino", check: hasFeat("cdv-divine-shield") },
+      { description: "Escudo Divino (Complete Divine)", check: hasFeat("cdv-divine-shield") },
       { description: "Capacidad de expulsar o reprender a los no muertos" },
     ],
     fighterBonusFeat: false,
@@ -217,7 +217,7 @@ export const CDV_FEATS: Feat[] = [
   // ---------------------------------------------------------------------
   {
     id: "cdv-augment-healing",
-    name: "Aumentar Curación",
+    name: "Curación Aumentada",
     source: "complete-divine",
     types: ["general"],
     description: "El personaje ha estudiado técnicas para maximizar la eficacia de sus conjuros curativos.",
@@ -273,7 +273,7 @@ export const CDV_FEATS: Feat[] = [
   },
   {
     id: "cdv-domain-spontaneity",
-    name: "Espontaneidad de Dominio",
+    name: "Espontaneidad con un Dominio",
     source: "complete-divine",
     types: ["especial"],
     description: "El personaje aprende a canalizar la energía de un dominio con la misma facilidad con la que lanza conjuros de curación o daño espontáneamente.",

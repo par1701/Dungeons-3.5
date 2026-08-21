@@ -25,24 +25,30 @@ import {
   computeEquipmentPassiveBonuses,
   computeFinalAbilityScores,
   computeFlurryOfBlowsSequence,
+  computeInitiativeBonus,
   computeMaxHp,
   computeRapidShotSequence,
   computeSaveTotals,
   computeRangeIncrementAttackBonuses,
   computeTwoWeaponFightingOption,
   computeWeaponAttack,
+  annotateSpellDescription,
   findChoiceValue,
   getAllKnownFeatIds,
   getBonusFeatsFromClasses,
   getCadTempestSteelDanceReduction,
+  getCasterLevelForClass,
   getContemplativeStoneWillBonus,
   getDivineGraceBonus,
+  getFavoredEnemyBonuses,
   getScoutBattleBonus,
   getSoulknifeMindBladeBonus,
   getUnlockedClassFeatureChoices,
   getUnlockedClassFeatures,
   monkUnarmedDamage,
   parseSkillKey,
+  resolveSpellDuration,
+  resolveSpellRange,
   sizeModifier,
   totalCharacterLevel,
 } from "../engine/derive";
@@ -112,6 +118,7 @@ export default function CharacterSheetPage() {
     .join(" / ");
   const unlockedFeatures = getUnlockedClassFeatures(character.classLevels, classes, character.activeVariantRules);
   const classFeatureChoices = character.classFeatureChoices ?? [];
+  const favoredEnemyBonuses = getFavoredEnemyBonuses(classFeatureChoices);
   const unlockedChoices = getUnlockedClassFeatureChoices(character.classLevels, classes, character.activeVariantRules);
   const bonusFeats = getBonusFeatsFromClasses(character.classLevels, classes, classFeatureChoices, character.activeVariantRules);
 
@@ -192,6 +199,8 @@ export default function CharacterSheetPage() {
 
   // Opciones de ataque activables por dotes/estilos de combate.
   const knownFeatIds = getAllKnownFeatIds(character.feats, character.classLevels, classes, classFeatureChoices, character.activeVariantRules);
+  const initiativeBonus = computeInitiativeBonus(knownFeatIds, character.classLevels);
+  const initiative = dexMod + initiativeBonus;
   const rangedWeapons = equippedWeapons.filter((w) => w.type === "distancia" && w.rangeIncrement);
   const meleeWeapons = equippedWeapons.filter((w) => w.type === "cuerpo_a_cuerpo");
   const monkLevel = character.classLevels.find((cl) => cl.classId === "monk")?.level ?? 0;
@@ -383,7 +392,8 @@ export default function CharacterSheetPage() {
 
             <Panel title="Iniciativa y velocidad">
               <p style={{ margin: 0 }}>
-                Iniciativa: <strong>{dexMod >= 0 ? `+${dexMod}` : dexMod}</strong> (Des) · Velocidad:{" "}
+                Iniciativa: <strong>{initiative >= 0 ? `+${initiative}` : initiative}</strong> ({dexMod >= 0 ? `+${dexMod}` : dexMod} Des
+                {initiativeBonus !== 0 ? `, ${initiativeBonus >= 0 ? "+" : ""}${initiativeBonus} otros` : ""}) · Velocidad:{" "}
                 <strong>{race?.speed ?? 30} pies</strong>
               </p>
             </Panel>
@@ -622,6 +632,12 @@ export default function CharacterSheetPage() {
                   );
                 })}
             </ul>
+            {favoredEnemyBonuses.length > 0 && (
+              <p className="muted" style={{ marginTop: 8, marginBottom: 0 }}>
+                <strong>Bono total contra enemigos predilectos:</strong>{" "}
+                {favoredEnemyBonuses.map((fe) => `${fe.enemy} +${fe.bonus}`).join(" · ")}
+              </p>
+            )}
           </Panel>
         )}
 
@@ -725,18 +741,25 @@ export default function CharacterSheetPage() {
             <ul>
               {character.spells.map((s, i) => {
                 const spell = findSpell(s.spellId);
+                const casterLevel = getCasterLevelForClass(s.classId, character.classLevels, classes);
+                const resolvedRange = spell ? resolveSpellRange(spell.range, casterLevel) : null;
+                const resolvedDuration = spell ? resolveSpellDuration(spell.duration, casterLevel) : null;
                 return (
                   <li key={i} style={{ marginBottom: 6 }}>
                     <strong>
                       [Nv.{s.level}] {spell?.name ?? s.spellId} ({s.classId})
+                      {casterLevel > 0 ? ` · NL ${casterLevel}` : ""}
                     </strong>
                     {spell && (
                       <div className="muted">
                         {spell.school}
-                        {spell.subschool ? ` (${spell.subschool})` : ""} · {spell.castingTime} · {spell.range} ·{" "}
-                        {spell.duration} · Salv. {spell.savingThrow} · RC {spell.spellResistance}
+                        {spell.subschool ? ` (${spell.subschool})` : ""} · {spell.castingTime} · Alcance:{" "}
+                        {spell.range}
+                        {resolvedRange ? ` → ${resolvedRange}` : ""} · Duración: {spell.duration}
+                        {resolvedDuration ? ` → ${resolvedDuration}` : ""} · Salv. {spell.savingThrow} · RC{" "}
+                        {spell.spellResistance}
                         <br />
-                        {spell.description}
+                        {annotateSpellDescription(spell.description, casterLevel)}
                       </div>
                     )}
                   </li>

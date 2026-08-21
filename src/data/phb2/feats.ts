@@ -95,7 +95,7 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-insightful-reflexes",
-    name: "Reflejos Perspicaces",
+    name: "Reflejos Intuitivos",
     source: "phb2",
     types: ["combate"],
     description: "Anticipa el peligro con la mente antes de que el cuerpo pueda reaccionar.",
@@ -109,7 +109,7 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-extend-rage",
-    name: "Furia Prolongada",
+    name: "Prolongar Furia",
     source: "phb2",
     types: ["general"],
     description: "La ira, una vez desatada, tarda más en apagarse.",
@@ -174,7 +174,7 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-vexing-flanker",
-    name: "Flanqueador Exasperante",
+    name: "Flanqueo Exasperante",
     source: "phb2",
     types: ["combate"],
     description: "Explota el flanqueo con una precisión que desespera a quien lo sufre.",
@@ -188,7 +188,7 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-armor-specialization",
-    name: "Especialización con Armadura",
+    name: "Especialización con Armaduras",
     source: "phb2",
     types: ["combate"],
     description: "Un especialista que ha llevado un tipo concreto de armadura hasta conocer cada uno de sus resquicios.",
@@ -206,7 +206,7 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-two-weapon-rend",
-    name: "Desgarro con Dos Armas",
+    name: "Desgarrar con Dos Armas",
     source: "phb2",
     types: ["combate"],
     description: "Cuando ambas armas encuentran el mismo objetivo, la herida se desgarra con una violencia añadida.",
@@ -225,7 +225,7 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-combat-focus",
-    name: "Enfoque de Combate",
+    name: "Foco Marcial",
     source: "phb2",
     types: ["combate"],
     description: "Concentra su atención en el fragor de la batalla hasta alcanzar un estado de enfoque que puede liberar en el momento justo.",
@@ -239,14 +239,14 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-combat-vigor",
-    name: "Vigor de Combate",
+    name: "Vigor Marcial",
     source: "phb2",
     types: ["combate"],
     description: "Su enfoque en combate templa el cuerpo, cerrando heridas menores mientras dura la concentración.",
     benefit:
-      "Mientras mantenga su enfoque de combate (véase Enfoque de Combate), gana curación rápida 2. Si posee tres o más dotes de la familia 'Forma de Combate' (incluida esta), la curación rápida aumenta a 4.",
+      "Mientras mantenga su enfoque de combate (véase Foco Marcial), gana curación rápida 2. Si posee tres o más dotes de la familia 'Forma de Combate' (incluida esta), la curación rápida aumenta a 4.",
     prerequisites: [
-      { description: "Enfoque de Combate", check: hasFeat("phb2-combat-focus") },
+      { description: "Foco Marcial", check: hasFeat("phb2-combat-focus") },
       { description: "Sabiduría 13", check: (ctx: FeatPrereqContext) => ctx.abilityScores.wis >= 13 },
       {
         description: "Bonificador base de ataque +9",
@@ -258,7 +258,7 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-combat-familiar",
-    name: "Familiar de Combate",
+    name: "Familiar Marcial",
     source: "phb2",
     types: ["general"],
     description: "Su familiar se ha adiestrado para llevar la magia de su amo hasta el corazón mismo de la refriega.",
@@ -273,14 +273,14 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-combat-strike",
-    name: "Golpe de Combate",
+    name: "Impacto Marcial",
     source: "phb2",
     types: ["combate"],
     description: "Mientras mantiene su enfoque, cada golpe cuerpo a cuerpo se vuelve devastador si decide soltarlo todo de una vez.",
     benefit:
       "Como acción rápida, puede poner fin a su enfoque de combate para obtener, hasta el final de su turno actual, un bonificador a las tiradas de ataque y de daño igual al número total de dotes de la familia 'Forma de Combate' que posea (incluida esta). En el momento en que termina su enfoque de esta forma, pierde de inmediato cualquier otro beneficio que solo se aplique mientras lo mantiene.",
     prerequisites: [
-      { description: "Enfoque de Combate", check: hasFeat("phb2-combat-focus") },
+      { description: "Foco Marcial", check: hasFeat("phb2-combat-focus") },
       { description: "Sabiduría 13", check: (ctx: FeatPrereqContext) => ctx.abilityScores.wis >= 13 },
       { description: "Dos dotes adicionales de la familia 'Forma de Combate'" },
       {
@@ -293,16 +293,16 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-combat-defense",
-    name: "Defensa de Combate",
+    name: "Defensa Marcial",
     source: "phb2",
     types: ["combate"],
     description: "Mientras mantiene su enfoque, su guardia cambia de blanco con una agilidad que desconcierta a sus enemigos.",
     benefit:
-      "Mientras mantenga su enfoque de combate (véase Enfoque de Combate), puede cambiar el objetivo de su dote de Esquiva a un nuevo oponente como acción inmediata (normalmente solo puede designar o cambiar dicho objetivo en su turno, como acción gratuita). Si posee tres o más dotes de la familia 'Forma de Combate', gana además un bonificador de esquiva adicional de +1 a la Clase de Armadura frente al objetivo de su dote de Esquiva.",
+      "Mientras mantenga su enfoque de combate (véase Foco Marcial), puede cambiar el objetivo de su dote de Esquiva a un nuevo oponente como acción inmediata (normalmente solo puede designar o cambiar dicho objetivo en su turno, como acción gratuita). Si posee tres o más dotes de la familia 'Forma de Combate', gana además un bonificador de esquiva adicional de +1 a la Clase de Armadura frente al objetivo de su dote de Esquiva.",
     prerequisites: [
       { description: "Destreza 13", check: (ctx: FeatPrereqContext) => ctx.abilityScores.dex >= 13 },
       { description: "Sabiduría 13", check: (ctx: FeatPrereqContext) => ctx.abilityScores.wis >= 13 },
-      { description: "Enfoque de Combate", check: hasFeat("phb2-combat-focus") },
+      { description: "Foco Marcial", check: hasFeat("phb2-combat-focus") },
       { description: "Esquiva", check: hasFeat("dodge") },
       {
         description: "Bonificador base de ataque +6",
@@ -314,14 +314,14 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-indomitable-soul",
-    name: "Alma Indomable",
+    name: "Espíritu Indómito",
     source: "phb2",
     types: ["general"],
     description: "Ninguna sugestión ni terror ajeno puede doblegar una voluntad forjada dos veces.",
     benefit:
       "Al realizar una salvación de Voluntad contra un efecto que afecte a la mente o que provoque miedo, tire el dado dos veces y quédese con el resultado más alto.",
     prerequisites: [
-      { description: "Resistencia", check: hasFeat("endurance") },
+      { description: "Aguante", check: hasFeat("endurance") },
       { description: "Voluntad de Hierro", check: hasFeat("iron-will") },
     ],
     fighterBonusFeat: false,
@@ -361,7 +361,7 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-deadeye-shot",
-    name: "Disparo Certero",
+    name: "Disparo Supremo",
     source: "phb2",
     types: ["combate"],
     description: "Aprovecha cualquier distracción cuerpo a cuerpo de un enemigo para clavar la flecha justo donde más duele.",
@@ -381,7 +381,7 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-driving-attack",
-    name: "Ataque Arrollador",
+    name: "Ataque Perforante",
     source: "phb2",
     types: ["combate"],
     description: "Un maestro de las armas perforantes capaz de convertir una estocada certera en un empujón imparable.",
@@ -429,14 +429,14 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-lurking-familiar",
-    name: "Familiar Furtivo",
+    name: "Familiar Oculto",
     source: "phb2",
     types: ["general"],
     description: "Su familiar ha aprendido a permanecer oculto a su sombra y a lanzarse desde ella sin ser visto.",
     benefit:
       "Mientras su familiar ocupa su propia casilla, obtiene cobertura frente a todos los ataques, lo que le permite intentar una prueba de Esconderse. Si después abandona su casilla para atacar a un oponente, obtiene el beneficio normal por atacar desde una posición oculta.",
     prerequisites: [
-      { description: "Familiar de Combate", check: hasFeat("phb2-combat-familiar") },
+      { description: "Familiar Marcial", check: hasFeat("phb2-combat-familiar") },
       { description: "Nivel de lanzador arcano 6" },
       { description: "Poseer un familiar" },
     ],
@@ -445,7 +445,7 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-bounding-assault",
-    name: "Asalto Saltarín",
+    name: "Asalto Doble (PHB2)",
     source: "phb2",
     types: ["combate"],
     description: "Un experto en el Ataque Elástico capaz de golpear a dos enemigos distintos en una sola carrera.",
@@ -466,17 +466,17 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-rapid-blitz",
-    name: "Embestida Rápida (PHB2)",
+    name: "Ataque Relámpago (PHB2)",
     source: "phb2",
     types: ["combate"],
     description: "El culmen del arte de golpear y desaparecer: un tercer enemigo cae dentro del mismo asalto saltarín.",
     benefit:
-      "Puede designar un tercer objetivo para su dote de Ataque Elástico. Además del segundo ataque que ya obtiene de Asalto Saltarín, puede realizar un tercer ataque con un penalizador de -10.",
+      "Puede designar un tercer objetivo para su dote de Ataque Elástico. Además del segundo ataque que ya obtiene de Asalto Doble (PHB2), puede realizar un tercer ataque con un penalizador de -10.",
     prerequisites: [
       { description: "Esquiva", check: hasFeat("dodge") },
       { description: "Movilidad", check: hasFeat("mobility") },
       { description: "Ataque Elástico", check: hasFeat("spring-attack") },
-      { description: "Asalto Saltarín", check: hasFeat("phb2-bounding-assault") },
+      { description: "Asalto Doble (PHB2)", check: hasFeat("phb2-bounding-assault") },
       { description: "Destreza 13", check: (ctx: FeatPrereqContext) => ctx.abilityScores.dex >= 13 },
       {
         description: "Bonificador base de ataque +18",
@@ -488,15 +488,15 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-combat-stability",
-    name: "Estabilidad de Combate",
+    name: "Estabilidad Marcial",
     source: "phb2",
     types: ["combate"],
     description: "Mientras mantiene su enfoque, sus músculos se afianzan en una postura casi imposible de mover.",
     benefit:
-      "Mientras mantenga su enfoque de combate (véase Enfoque de Combate), gana un bonificador de +4 en las pruebas o tiradas para resistirse a intentos de empujón, desarme, presa, atropello y derribo en su contra. Si posee tres o más dotes de la familia 'Forma de Combate', el bonificador aumenta a +8.",
+      "Mientras mantenga su enfoque de combate (véase Foco Marcial), gana un bonificador de +4 en las pruebas o tiradas para resistirse a intentos de empujón, desarme, presa, atropello y derribo en su contra. Si posee tres o más dotes de la familia 'Forma de Combate', el bonificador aumenta a +8.",
     prerequisites: [
       { description: "Sabiduría 13", check: (ctx: FeatPrereqContext) => ctx.abilityScores.wis >= 13 },
-      { description: "Enfoque de Combate", check: hasFeat("phb2-combat-focus") },
+      { description: "Foco Marcial", check: hasFeat("phb2-combat-focus") },
       {
         description: "Bonificador base de ataque +3",
         check: (ctx: FeatPrereqContext) => ctx.babTotal >= 3,
@@ -507,16 +507,16 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-combat-awareness",
-    name: "Consciencia de Combate",
+    name: "Percepción Marcial",
     source: "phb2",
     types: ["combate"],
     description: "Mientras mantiene su enfoque, percibe el estado de sus aliados y enemigos con una claridad casi sobrenatural.",
     benefit:
-      "Mientras mantenga su enfoque de combate (véase Enfoque de Combate), conoce los puntos de golpe actuales de cada aliado y enemigo adyacente a usted. Si posee tres o más dotes de la familia 'Forma de Combate', gana además visión ciega hasta 1,50 m.",
+      "Mientras mantenga su enfoque de combate (véase Foco Marcial), conoce los puntos de golpe actuales de cada aliado y enemigo adyacente a usted. Si posee tres o más dotes de la familia 'Forma de Combate', gana además visión ciega hasta 1,50 m.",
     prerequisites: [
       { description: "Sabiduría 13", check: (ctx: FeatPrereqContext) => ctx.abilityScores.wis >= 13 },
       { description: "Lucha a Ciegas", check: hasFeat("blind-fight") },
-      { description: "Enfoque de Combate", check: hasFeat("phb2-combat-focus") },
+      { description: "Foco Marcial", check: hasFeat("phb2-combat-focus") },
       {
         description: "Bonificador base de ataque +12",
         check: (ctx: FeatPrereqContext) => ctx.babTotal >= 12,
@@ -527,7 +527,7 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-adaptable-flanker",
-    name: "Flanqueador Adaptable (PHB2)",
+    name: "Flanqueo Adaptable (PHB2)",
     source: "phb2",
     types: ["combate"],
     description: "Sabe reposicionarse mentalmente en combate para flanquear a un rival desde donde más conviene.",
@@ -535,7 +535,7 @@ export const PHB2_FEATS: Feat[] = [
       "Como acción rápida, designa a un único oponente como objetivo de esta dote. Mientras esté adyacente a ese objetivo, puede elegir considerar que ocupa cualquier otra casilla que amenace, a efectos de determinar el flanqueo, tanto para usted como para sus aliados.",
     prerequisites: [
       { description: "Reflejos de Combate", check: hasFeat("combat-reflexes") },
-      { description: "Flanqueador Exasperante", check: hasFeat("phb2-vexing-flanker") },
+      { description: "Flanqueo Exasperante", check: hasFeat("phb2-vexing-flanker") },
       {
         description: "Bonificador base de ataque +4",
         check: (ctx: FeatPrereqContext) => ctx.babTotal >= 4,
@@ -546,7 +546,7 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-brutal-strike",
-    name: "Golpe Brutal",
+    name: "Impacto Brutal",
     source: "phb2",
     types: ["combate"],
     description: "Sabe emplear el peso añadido de un Ataque Poderoso para dejar aturdido y descompuesto a su enemigo.",
@@ -565,7 +565,7 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-intimidating-strike",
-    name: "Golpe Intimidante",
+    name: "Impacto Intimidatorio",
     source: "phb2",
     types: ["general"],
     description: "Un golpe bien colocado puede hacer más por quebrar la moral de un enemigo que mil palabras.",
@@ -579,12 +579,12 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-elven-spell-lore",
-    name: "Saber Élfico de Conjuros",
+    name: "Conocimiento Arcano Élfico",
     source: "phb2",
     types: ["general"],
     description: "El conocimiento secreto de la magia élfica le permite retorcer y desentrañar los conjuros con una sutileza inusual.",
     benefit:
-      "Gana un bonificador de +2 en las tiradas de nivel de lanzador al lanzar dispersar magia o dispersar magia mayor. Además, al preparar sus conjuros, puede elegir un único conjuro de su libro de conjuros y alterar el tipo de daño que inflige a un único tipo distinto de su elección al prepararlo (solo disponible para lanzadores que preparan conjuros).",
+      "Gana un bonificador de +2 en las tiradas de nivel de lanzador al lanzar disipar magia o disipar magia mayor. Además, al preparar sus conjuros, puede elegir un único conjuro de su libro de conjuros y alterar el tipo de daño que inflige a un único tipo distinto de su elección al prepararlo (solo disponible para lanzadores que preparan conjuros).",
     prerequisites: [
       { description: "12 rangos en Saber (Arcano)", check: (ctx: FeatPrereqContext) => (ctx.skillRanks["knowledge-arcana"] ?? 0) >= 12 },
       { description: "Inteligencia 17, o ser elfo" },
@@ -711,7 +711,7 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-combat-acrobat",
-    name: "Acróbata de Combate",
+    name: "Acróbata Marcial",
     source: "phb2",
     types: ["general"],
     description: "Su entrenamiento acrobático le permite mantenerse en pie y avanzar por el campo de batalla donde otros tropezarían.",
@@ -726,7 +726,7 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-crossbow-sniper",
-    name: "Francotirador con Ballesta",
+    name: "Ballestero de Élite",
     source: "phb2",
     types: ["combate"],
     description: "Su puntería con la ballesta busca la rendija justa en la armadura de su enemigo.",
@@ -763,7 +763,7 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-telling-blow",
-    name: "Golpe Decisivo",
+    name: "Golpe Eficaz",
     source: "phb2",
     types: ["combate"],
     description: "Cuando la hoja encuentra el punto débil justo en el instante crítico, el daño se multiplica sin piedad.",
@@ -777,7 +777,7 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-acrobatic-strike",
-    name: "Golpe Acrobático",
+    name: "Impacto Acrobático",
     source: "phb2",
     types: ["combate"],
     description: "Convertir una voltereta defensiva en la apertura perfecta para un contraataque certero.",
@@ -799,14 +799,14 @@ export const PHB2_FEATS: Feat[] = [
       "Al luchar a la defensiva mientras porta un escudo, no sufre el penalizador habitual de luchar a la defensiva sobre sus ataques de oportunidad. Al usar la acción de defensa total mientras porta un escudo, sigue amenazando el área a su alrededor con normalidad y puede realizar ataques de oportunidad con un penalizador de -4.",
     prerequisites: [
       { description: "Competencia con Escudo", check: hasFeat("shield-proficiency") },
-      { description: "Especialización con Escudo", check: hasFeat("cw-shield-specialization") },
+      { description: "Especialización con Escudos", check: hasFeat("cw-shield-specialization") },
     ],
     fighterBonusFeat: true,
     stackable: false,
   },
   {
     id: "phb2-agile-shield-fighter",
-    name: "Combatiente Ágil con Escudo",
+    name: "Uso Ágil de Escudos (PHB2)",
     source: "phb2",
     types: ["combate"],
     description: "Combina el golpe con el escudo y el mandoble de su arma en una única secuencia fluida de ataques.",
@@ -814,7 +814,7 @@ export const PHB2_FEATS: Feat[] = [
       "Al realizar un golpe con el escudo y un ataque con su arma como parte de una acción de ataque completo, sufre un penalizador de -2 en cada uno de esos ataques, en lugar de los penalizadores habituales por combatir con dos armas.",
     prerequisites: [
       { description: "Golpe con el Escudo Mejorado", check: hasFeat("improved-shield-bash") },
-      { description: "Especialización con Escudo", check: hasFeat("cw-shield-specialization") },
+      { description: "Especialización con Escudos", check: hasFeat("cw-shield-specialization") },
       { description: "Competencia con Escudo", check: hasFeat("shield-proficiency") },
     ],
     fighterBonusFeat: true,

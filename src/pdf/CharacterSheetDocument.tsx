@@ -23,24 +23,30 @@ import {
   computeEquipmentPassiveBonuses,
   computeFinalAbilityScores,
   computeFlurryOfBlowsSequence,
+  computeInitiativeBonus,
   computeMaxHp,
   computeRapidShotSequence,
   computeSaveTotals,
   computeRangeIncrementAttackBonuses,
   computeTwoWeaponFightingOption,
   computeWeaponAttack,
+  annotateSpellDescription,
   findChoiceValue,
   getAllKnownFeatIds,
   getBonusFeatsFromClasses,
   getCadTempestSteelDanceReduction,
+  getCasterLevelForClass,
   getContemplativeStoneWillBonus,
   getDivineGraceBonus,
+  getFavoredEnemyBonuses,
   getScoutBattleBonus,
   getSoulknifeMindBladeBonus,
   getUnlockedClassFeatureChoices,
   getUnlockedClassFeatures,
   monkUnarmedDamage,
   parseSkillKey,
+  resolveSpellDuration,
+  resolveSpellRange,
   sizeModifier,
   totalCharacterLevel,
 } from "../engine/derive";
@@ -106,6 +112,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
     .join(" / ");
   const unlockedFeatures = getUnlockedClassFeatures(character.classLevels, classes, character.activeVariantRules);
   const classFeatureChoices = character.classFeatureChoices ?? [];
+  const favoredEnemyBonuses = getFavoredEnemyBonuses(classFeatureChoices);
   const unlockedChoices = getUnlockedClassFeatureChoices(character.classLevels, classes, character.activeVariantRules);
   const bonusFeats = getBonusFeatsFromClasses(character.classLevels, classes, classFeatureChoices, character.activeVariantRules);
 
@@ -181,6 +188,8 @@ export default function CharacterSheetDocument({ character }: { character: Chara
   const allAttacks = mindBladeAttack ? [...equippedWeapons, mindBladeAttack] : equippedWeapons;
 
   const knownFeatIds = getAllKnownFeatIds(character.feats, character.classLevels, classes, classFeatureChoices, character.activeVariantRules);
+  const initiativeBonus = computeInitiativeBonus(knownFeatIds, character.classLevels);
+  const initiative = dexMod + initiativeBonus;
   const rangedWeapons = equippedWeapons.filter((w) => w.type === "distancia" && w.rangeIncrement);
   const meleeWeapons = equippedWeapons.filter((w) => w.type === "cuerpo_a_cuerpo");
   const monkLevel = character.classLevels.find((cl) => cl.classId === "monk")?.level ?? 0;
@@ -323,7 +332,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
               <Text>Cuerpo a cuerpo: {meleeAttackBonus >= 0 ? `+${meleeAttackBonus}` : meleeAttackBonus}</Text>
               <Text>A distancia: {rangedAttackBonus >= 0 ? `+${rangedAttackBonus}` : rangedAttackBonus}</Text>
               <Text>Golpe de presa: {grapple >= 0 ? `+${grapple}` : grapple}</Text>
-              <Text>Iniciativa: {dexMod >= 0 ? `+${dexMod}` : dexMod}</Text>
+              <Text>Iniciativa: {initiative >= 0 ? `+${initiative}` : initiative}</Text>
               <Text>Velocidad: {race?.speed ?? 30} pies</Text>
             </Panel>
             <Panel title="Puntos de golpe y carga">
@@ -486,6 +495,11 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                   </Text>
                 );
               })}
+            {favoredEnemyBonuses.length > 0 && (
+              <Text style={{ fontSize: 7 }}>
+                Bono total contra enemigos predilectos: {favoredEnemyBonuses.map((fe) => `${fe.enemy} +${fe.bonus}`).join(" · ")}
+              </Text>
+            )}
           </>
         )}
 
@@ -560,15 +574,21 @@ export default function CharacterSheetDocument({ character }: { character: Chara
             <Text style={styles.sectionTitle}>Conjuros</Text>
             {character.spells.map((s, i) => {
               const spell = findSpell(s.spellId);
+              const casterLevel = getCasterLevelForClass(s.classId, character.classLevels, classes);
+              const resolvedRange = spell ? resolveSpellRange(spell.range, casterLevel) : null;
+              const resolvedDuration = spell ? resolveSpellDuration(spell.duration, casterLevel) : null;
               return (
                 <View key={i} style={{ marginBottom: 3 }}>
                   <Text style={{ fontWeight: 700 }}>
                     [Nv.{s.level}] {spell?.name ?? s.spellId} ({s.classId})
+                    {casterLevel > 0 ? ` · NL ${casterLevel}` : ""}
                   </Text>
                   {spell && (
                     <Text>
-                      {spell.school} · {spell.castingTime} · {spell.range} · {spell.duration} · Salv.{" "}
-                      {spell.savingThrow} · RC {spell.spellResistance} — {spell.description}
+                      {spell.school} · {spell.castingTime} · Alcance: {spell.range}
+                      {resolvedRange ? ` → ${resolvedRange}` : ""} · Duración: {spell.duration}
+                      {resolvedDuration ? ` → ${resolvedDuration}` : ""} · Salv. {spell.savingThrow} · RC{" "}
+                      {spell.spellResistance} — {annotateSpellDescription(spell.description, casterLevel)}
                     </Text>
                   )}
                 </View>

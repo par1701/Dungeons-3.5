@@ -173,7 +173,7 @@ export const CA_FEATS: Feat[] = [
   },
   {
     id: "ca-battle-caster",
-    name: "Combatiente Arcano",
+    name: "Lanzador de Batalla",
     source: "complete-arcane",
     types: ["general"],
     description: "El lanzador acostumbrado a conjurar en pleno combate extiende su inmunidad al fallo de conjuros hasta protecciones más pesadas.",
@@ -185,7 +185,7 @@ export const CA_FEATS: Feat[] = [
   },
   {
     id: "ca-mage-slayer",
-    name: "Cazador de Magos",
+    name: "Asesino de Mágicos",
     source: "complete-arcane",
     types: ["combate"],
     description: "El personaje ha aprendido a hostigar a los lanzadores de conjuros hasta el punto de quebrar su concentración.",
@@ -204,8 +204,8 @@ export const CA_FEATS: Feat[] = [
     benefit:
       "Ignora la probabilidad de fallo por ocultación otorgada por conjuros o efectos mágicos (como invisibilidad, borrosidad o imagen especular), aunque sigue sufriendo la ocultación normal no mágica.",
     prerequisites: [
-      { description: "Combate a Ciegas", check: hasFeat("blind-fight") },
-      { description: "Cazador de Magos", check: hasFeat("ca-mage-slayer") },
+      { description: "Lucha a Ciegas", check: hasFeat("blind-fight") },
+      { description: "Asesino de Mágicos", check: hasFeat("ca-mage-slayer") },
     ],
     fighterBonusFeat: true,
     stackable: false,
@@ -218,7 +218,7 @@ export const CA_FEATS: Feat[] = [
     description: "El personaje sabe dirigir un golpe certero contra el aura mágica que protege a un enemigo, no contra su cuerpo.",
     benefit:
       "Como acción estándar, puede realizar un único ataque cuerpo a cuerpo que ignora cualquier bonificador mágico a la Clase de Armadura del objetivo. Si el ataque impacta, además dispersa (como Dispersar Magia, a su nivel de lanzador o nivel de personaje, lo que sea mayor) el conjuro o efecto que otorgaba ese bonificador.",
-    prerequisites: [{ description: "Cazador de Magos", check: hasFeat("ca-mage-slayer") }],
+    prerequisites: [{ description: "Asesino de Mágicos", check: hasFeat("ca-mage-slayer") }],
     fighterBonusFeat: true,
     stackable: false,
   },
@@ -240,7 +240,7 @@ export const CA_FEATS: Feat[] = [
   // ---------------------------------------------------------------------
   {
     id: "ca-chain-spell",
-    name: "Conjuro en Cadena",
+    name: "Conjuros Encadenados",
     source: "complete-arcane",
     types: ["metamagia"],
     description: "El lanzador aprende a hacer que un conjuro de objetivo único salte de un blanco a otro, como un rayo en cadena.",
@@ -252,7 +252,7 @@ export const CA_FEATS: Feat[] = [
   },
   {
     id: "ca-delay-spell",
-    name: "Conjuro Retardado",
+    name: "Retardar Conjuro",
     source: "complete-arcane",
     types: ["metamagia"],
     description: "El lanzador aprende a posponer el instante exacto en que su conjuro surte efecto.",
@@ -278,7 +278,7 @@ export const CA_FEATS: Feat[] = [
   },
   {
     id: "ca-energy-admixture",
-    name: "Mezcla de Energía",
+    name: "Mezcla de Energías",
     source: "complete-arcane",
     types: ["metamagia"],
     description: "El lanzador combina dos tipos de energía elemental en un mismo conjuro para golpear con ambas a la vez.",
@@ -299,9 +299,9 @@ export const CA_FEATS: Feat[] = [
     description:
       "El lanzador más experimentado en el uso de la magia acelerada aprende a desencadenar más de un conjuro acelerado en el mismo instante.",
     benefit:
-      "Un número de veces al día igual a su modificador de característica de lanzamiento (mínimo 1), puede lanzar un segundo conjuro modificado con Conjuro Acelerado en el mismo asalto además del primero, pagando el coste de espacio de conjuro de cada uno por separado.",
+      "Un número de veces al día igual a su modificador de característica de lanzamiento (mínimo 1), puede lanzar un segundo conjuro modificado con Apresurar Conjuro en el mismo asalto además del primero, pagando el coste de espacio de conjuro de cada uno por separado.",
     prerequisites: [
-      { description: "Conjuro Acelerado", check: hasFeat("quicken-spell") },
+      { description: "Apresurar Conjuro", check: hasFeat("quicken-spell") },
       { description: "Capacidad de lanzar conjuros arcanos de nivel 6 o superior" },
     ],
     fighterBonusFeat: false,
@@ -315,7 +315,7 @@ export const CA_FEATS: Feat[] = [
     description: "El lanzador extiende un conjuro personal hasta que su duración cubre un día entero.",
     benefit:
       "Un conjuro con duración de 1 asalto/nivel o mayor (y sin duración instantánea) pasa a durar 24 horas. Usa un espacio de conjuro seis niveles más alto que el nivel real.",
-    prerequisites: [{ description: "Conjuro Extendido", check: hasFeat("extend-spell") }],
+    prerequisites: [{ description: "Prolongar Conjuro", check: hasFeat("extend-spell") }],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -334,7 +334,7 @@ export const CA_FEATS: Feat[] = [
   },
   {
     id: "ca-sculpt-spell",
-    name: "Conjuro Esculpido",
+    name: "Esculpir Conjuro",
     source: "complete-arcane",
     types: ["metamagia"],
     description: "El lanzador aprende a moldear el área de sus conjuros para excluir de ella a sus propios aliados.",
@@ -346,7 +346,7 @@ export const CA_FEATS: Feat[] = [
   },
   {
     id: "ca-twin-spell",
-    name: "Conjuro Gemelo",
+    name: "Duplicar Conjuro",
     source: "complete-arcane",
     types: ["metamagia"],
     description: "El lanzador aprende a duplicar el efecto de un conjuro sobre el mismo objetivo o área en el mismo instante de lanzarlo.",
@@ -358,13 +358,13 @@ export const CA_FEATS: Feat[] = [
   },
   {
     id: "ca-sudden-empower",
-    name: "Conjuro Fortalecido Repentino",
+    name: "Potenciación Espontánea",
     source: "complete-arcane",
     types: ["metamagia"],
     description: "El lanzador puede fortalecer un conjuro en el último instante, sin haberlo preparado así de antemano.",
     benefit:
       "Una vez al día, puede aplicar el efecto de Conjuro Fortalecido a un conjuro que esté lanzando sin necesidad de haberlo preparado con esa dote y sin aumentar el tiempo de lanzamiento (aunque sigue ocupando un espacio de conjuro dos niveles más alto que el real).",
-    prerequisites: [{ description: "Conjuro Fortalecido", check: hasFeat("empower-spell") }],
+    prerequisites: [{ description: "Potenciar Conjuro", check: hasFeat("empower-spell") }],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -376,73 +376,73 @@ export const CA_FEATS: Feat[] = [
     description: "El lanzador puede extender el alcance de un conjuro en el último instante, sin haberlo preparado así de antemano.",
     benefit:
       "Una vez al día, puede aplicar el efecto de Conjuro Agrandado a un conjuro que esté lanzando sin necesidad de haberlo preparado con esa dote y sin aumentar el tiempo de lanzamiento (aunque sigue ocupando un espacio de conjuro un nivel más alto que el real).",
-    prerequisites: [{ description: "Conjuro Agrandado", check: hasFeat("enlarge-spell") }],
+    prerequisites: [{ description: "Ampliar Conjuro", check: hasFeat("enlarge-spell") }],
     fighterBonusFeat: false,
     stackable: false,
   },
   {
     id: "ca-sudden-extend",
-    name: "Conjuro Extendido Repentino",
+    name: "Prolongación Espontánea",
     source: "complete-arcane",
     types: ["metamagia"],
     description: "El lanzador puede prolongar la duración de un conjuro en el último instante, sin haberlo preparado así de antemano.",
     benefit:
       "Una vez al día, puede aplicar el efecto de Conjuro Extendido a un conjuro que esté lanzando sin necesidad de haberlo preparado con esa dote y sin aumentar el tiempo de lanzamiento (aunque sigue ocupando un espacio de conjuro un nivel más alto que el real).",
-    prerequisites: [{ description: "Conjuro Extendido", check: hasFeat("extend-spell") }],
+    prerequisites: [{ description: "Prolongar Conjuro", check: hasFeat("extend-spell") }],
     fighterBonusFeat: false,
     stackable: false,
   },
   {
     id: "ca-sudden-maximize",
-    name: "Conjuro Maximizado Repentino",
+    name: "Maximización Espontánea",
     source: "complete-arcane",
     types: ["metamagia"],
     description: "El lanzador puede maximizar un conjuro en el último instante, sin haberlo preparado así de antemano.",
     benefit:
       "Una vez al día, puede aplicar el efecto de Conjuro Maximizado a un conjuro que esté lanzando sin necesidad de haberlo preparado con esa dote y sin aumentar el tiempo de lanzamiento (aunque sigue ocupando un espacio de conjuro tres niveles más alto que el real).",
-    prerequisites: [{ description: "Conjuro Maximizado", check: hasFeat("maximize-spell") }],
+    prerequisites: [{ description: "Maximizar Conjuro", check: hasFeat("maximize-spell") }],
     fighterBonusFeat: false,
     stackable: false,
   },
   {
     id: "ca-sudden-silent",
-    name: "Conjuro Silencioso Repentino",
+    name: "Conjuro Silencioso Espontáneo",
     source: "complete-arcane",
     types: ["metamagia"],
     description: "El lanzador puede prescindir de las palabras mágicas en el último instante, sin haberlo preparado así de antemano.",
     benefit:
       "Una vez al día, puede aplicar el efecto de Conjuro Silencioso a un conjuro que esté lanzando sin necesidad de haberlo preparado con esa dote y sin aumentar el tiempo de lanzamiento (aunque sigue ocupando un espacio de conjuro un nivel más alto que el real).",
-    prerequisites: [{ description: "Conjuro Silencioso", check: hasFeat("silent-spell") }],
+    prerequisites: [{ description: "Conjurar en Silencio", check: hasFeat("silent-spell") }],
     fighterBonusFeat: false,
     stackable: false,
   },
   {
     id: "ca-sudden-still",
-    name: "Conjuro Sigiloso Repentino",
+    name: "Conjuro sin Moverse Espontáneo",
     source: "complete-arcane",
     types: ["metamagia"],
     description: "El lanzador puede prescindir de los gestos rituales en el último instante, sin haberlo preparado así de antemano.",
     benefit:
       "Una vez al día, puede aplicar el efecto de Conjuro Sigiloso a un conjuro que esté lanzando sin necesidad de haberlo preparado con esa dote y sin aumentar el tiempo de lanzamiento (aunque sigue ocupando un espacio de conjuro un nivel más alto que el real).",
-    prerequisites: [{ description: "Conjuro Sigiloso", check: hasFeat("still-spell") }],
+    prerequisites: [{ description: "Conjurar sin Moverse", check: hasFeat("still-spell") }],
     fighterBonusFeat: false,
     stackable: false,
   },
   {
     id: "ca-sudden-widen",
-    name: "Conjuro Expandido Repentino",
+    name: "Extensión Espontánea",
     source: "complete-arcane",
     types: ["metamagia"],
     description: "El lanzador puede expandir el área de un conjuro en el último instante, sin haberlo preparado así de antemano.",
     benefit:
       "Una vez al día, puede aplicar el efecto de Conjuro Expandido a un conjuro que esté lanzando sin necesidad de haberlo preparado con esa dote y sin aumentar el tiempo de lanzamiento (aunque sigue ocupando un espacio de conjuro tres niveles más alto que el real).",
-    prerequisites: [{ description: "Conjuro Expandido", check: hasFeat("widen-spell") }],
+    prerequisites: [{ description: "Extender Conjuro", check: hasFeat("widen-spell") }],
     fighterBonusFeat: false,
     stackable: false,
   },
   {
     id: "ca-split-ray",
-    name: "Rayo Dividido",
+    name: "Dividir Rayos",
     source: "complete-arcane",
     types: ["metamagia"],
     description: "El lanzador aprende a bifurcar un conjuro de rayo para golpear a dos objetivos distintos a la vez.",
@@ -458,7 +458,7 @@ export const CA_FEATS: Feat[] = [
   // ---------------------------------------------------------------------
   {
     id: "ca-craft-contingent-spell",
-    name: "Crear Conjuro Contingente",
+    name: "Fabricar Conjuro Contingente",
     source: "complete-arcane",
     types: ["creacion_objetos"],
     description:
@@ -480,7 +480,7 @@ export const CA_FEATS: Feat[] = [
     description: "El artesano que forjó un báculo mágico aprende a extraer de él más poder que cualquier otro usuario.",
     benefit:
       "Al usar un báculo que él mismo haya creado, no gasta cargas del báculo al lanzar cualquier conjuro almacenado en él cuyo nivel sea igual o inferior a la mitad de su nivel de lanzador (redondeando hacia abajo).",
-    prerequisites: [{ description: "Crear Báculo Mágico", check: hasFeat("craft-staff") }],
+    prerequisites: [{ description: "Fabricar Báculo Mágico", check: hasFeat("craft-staff") }],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -492,7 +492,7 @@ export const CA_FEATS: Feat[] = [
     description: "El lanzador aprende a sacar el máximo partido de cualquier varita que empuñe, no solo de las que él mismo fabricó.",
     benefit:
       "Al usar cualquier varita, puede tratar su propio nivel de lanzador como el nivel de lanzador de la varita si este es superior, hasta un máximo igual a su nivel de lanzador real, y no necesita realizar una prueba de Usar Objeto Mágico para activar varitas de una clase que no domine.",
-    prerequisites: [{ description: "Crear Varita Mágica", check: hasFeat("craft-wand") }],
+    prerequisites: [{ description: "Fabricar Varita Mágica", check: hasFeat("craft-wand") }],
     fighterBonusFeat: false,
     stackable: false,
   },

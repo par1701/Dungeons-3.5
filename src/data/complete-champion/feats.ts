@@ -150,7 +150,7 @@ export const CC_FEATS: Feat[] = [
   },
   {
     id: "cc-ancestral-relic",
-    name: "Reliquia Ancestral",
+    name: "Reliquia Ancestral (Complete Champion)",
     source: "complete-champion",
     types: ["especial"],
     description: "El personaje hereda o recibe un objeto mágico legendario ligado a su linaje o a su fe, que crece en poder junto a él.",

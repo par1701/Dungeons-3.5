@@ -138,7 +138,7 @@ const druidFeatures: ClassFeature[] = [
   { level: 10, name: "Forma silvestre (4/día)", description: "El druida puede usar forma silvestre cuatro veces al día." },
   { level: 11, name: "Forma silvestre (Enorme y Fino)", description: "El druida puede usar forma silvestre para adoptar también la forma de un animal Enorme o Fino." },
   { level: 12, name: "Forma silvestre (5/día)", description: "El druida puede usar forma silvestre cinco veces al día." },
-  { level: 13, name: "Mil rostros", description: "El druida puede cambiar su apariencia como si usara el conjuro disfraz propio, a voluntad." },
+  { level: 13, name: "Mil rostros", description: "El druida puede cambiar su apariencia como si usara el conjuro disfrazarse, a voluntad." },
   { level: 14, name: "Forma silvestre (6/día)", description: "El druida puede usar forma silvestre seis veces al día." },
   { level: 15, name: "Cuerpo intemporal", description: "El druida deja de sufrir penalizadores por vejez a sus puntuaciones de característica, aunque sigue obteniendo los bonificadores por edad; además, no puede morir de vejez." },
   { level: 15, name: "Forma silvestre (forma de planta)", description: "El druida puede usar forma silvestre para adoptar la forma de una criatura de tipo planta." },

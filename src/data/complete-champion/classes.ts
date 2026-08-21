@@ -221,7 +221,7 @@ const HOSPITALER_FEATURES: ClassFeature[] = [
   {
     level: 4,
     name: "Curar enfermedades (1/semana)",
-    description: "El hospitalario puede curar enfermedades, como el conjuro, una vez a la semana.",
+    description: "El hospitalario puede usar Quitar Enfermedad, como el conjuro, una vez a la semana.",
   },
   {
     level: 6,
@@ -433,7 +433,7 @@ export const CC_CLASSES: ClassDef[] = [
     isPrestige: true,
     prerequisites: [
       {
-        description: "Ataque Desarmado Mejorado",
+        description: "Impacto sin Arma Mejorado",
         check: (ctx) => ctx.featIds.has("improved-unarmed-strike"),
       },
       {
@@ -534,7 +534,7 @@ export const CC_CLASSES: ClassDef[] = [
         check: (ctx) => ctx.babTotal >= 4,
       },
       {
-        description: "Ataque Desarmado Mejorado",
+        description: "Impacto sin Arma Mejorado",
         check: (ctx) => ctx.featIds.has("improved-unarmed-strike"),
       },
       {

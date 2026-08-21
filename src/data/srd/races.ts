@@ -180,7 +180,7 @@ export const SRD_RACES: Race[] = [
       {
         name: "Habla con animales pequeños",
         description:
-          "Los gnomos con una puntuación de Carisma de 10 o superior pueden lanzar, como efecto similar a un conjuro, hablar con los animales (solo con animales de tipo pequeño), imagen menor, prestidigitación y luz danzante, cada uno una vez al día. El nivel de lanzador es igual al nivel de personaje del gnomo.",
+          "Los gnomos con una puntuación de Carisma de 10 o superior pueden lanzar, como efecto similar a un conjuro, hablar con los animales (solo con animales de tipo pequeño), imagen menor, prestidigitación y luces danzantes, cada uno una vez al día. El nivel de lanzador es igual al nivel de personaje del gnomo.",
       },
       {
         name: "+1 a ataque contra kobolds y goblinoides",
@@ -301,7 +301,7 @@ export const SRD_RACES: Race[] = [
           "Los medianos reciben un bonificador racial de +1 a las tiradas de ataque con armas arrojadizas, incluida la honda.",
       },
       {
-        name: "+2 a Escalar, Saltar y Moverse Sigilosamente",
+        name: "+2 a Trepar, Saltar y Moverse Sigilosamente",
         description:
           "Los medianos reciben un bonificador racial de +2 a las pruebas de Trepar, Saltar y Moverse Sigilosamente.",
       },

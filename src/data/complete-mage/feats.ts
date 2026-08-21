@@ -32,7 +32,7 @@ export const CM_FEATS: Feat[] = [
   // ---------------------------------------------------------------------
   {
     id: "cm-ancestral-relic",
-    name: "Reliquia Ancestral",
+    name: "Reliquia Ancestral (Complete Mage)",
     source: "complete-mage",
     types: ["especial"],
     description:
@@ -51,7 +51,7 @@ export const CM_FEATS: Feat[] = [
     description: "El vínculo del personaje con su reliquia ancestral se profundiza antes de lo habitual.",
     benefit:
       "Su reliquia ancestral gana una propiedad especial adicional de inmediato, como si hubiera alcanzado el siguiente hito de nivel de personaje para ese propósito. Se puede tomar varias veces; sus efectos son acumulativos.",
-    prerequisites: [{ description: "Reliquia Ancestral", check: hasFeat("cm-ancestral-relic") }],
+    prerequisites: [{ description: "Reliquia Ancestral (Complete Mage)", check: hasFeat("cm-ancestral-relic") }],
     fighterBonusFeat: false,
     stackable: true,
   },

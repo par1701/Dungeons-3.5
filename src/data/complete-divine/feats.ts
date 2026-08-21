@@ -85,7 +85,7 @@ export const CDV_FEATS: Feat[] = [
   // ---------------------------------------------------------------------
   {
     id: "cdv-divine-might",
-    name: "Poder Divino",
+    name: "Poder Divino (Complete Divine)",
     source: "complete-divine",
     types: ["general"],
     description: "El favor de la deidad del personaje se manifiesta en la fuerza de sus golpes.",
@@ -101,7 +101,7 @@ export const CDV_FEATS: Feat[] = [
   },
   {
     id: "cdv-divine-shield",
-    name: "Escudo Divino",
+    name: "Escudo Divino (Complete Divine)",
     source: "complete-divine",
     types: ["general"],
     description: "La energía divina del personaje puede desviar los golpes del enemigo.",
@@ -126,7 +126,7 @@ export const CDV_FEATS: Feat[] = [
     prerequisites: [
       { description: "Carisma 13", check: minCha(13) },
       { description: "Base de ataque +6", check: minBab(6) },
-      { description: "Poder Divino", check: hasFeat("cdv-divine-might") },
+      { description: "Poder Divino (Complete Divine)", check: hasFeat("cdv-divine-might") },
       { description: "Capacidad de expulsar o reprender a los no muertos" },
     ],
     fighterBonusFeat: false,
@@ -143,7 +143,7 @@ export const CDV_FEATS: Feat[] = [
     prerequisites: [
       { description: "Carisma 13", check: minCha(13) },
       { description: "Base de ataque +6", check: minBab(6) },
-      { description: "Escudo Divino", check: hasFeat("cdv-divine-shield") },
+      { description: "Escudo Divino (Complete Divine)", check: hasFeat("cdv-divine-shield") },
       { description: "Capacidad de expulsar o reprender a los no muertos" },
     ],
     fighterBonusFeat: false,

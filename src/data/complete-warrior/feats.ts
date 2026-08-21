@@ -50,7 +50,7 @@ export const CW_FEATS: Feat[] = [
   },
   {
     id: "cw-divine-might",
-    name: "Poder Divino",
+    name: "Poder Divino (Complete Warrior)",
     source: "complete-warrior",
     types: ["general"],
     description: "Un paladín o clérigo canaliza su energía divina para golpear con fuerza sobrehumana.",
@@ -65,7 +65,7 @@ export const CW_FEATS: Feat[] = [
   },
   {
     id: "cw-divine-shield",
-    name: "Escudo Divino",
+    name: "Escudo Divino (Complete Warrior)",
     source: "complete-warrior",
     types: ["general"],
     description: "La misma energía divina que expulsa a los no muertos puede levantarse como una barrera protectora.",

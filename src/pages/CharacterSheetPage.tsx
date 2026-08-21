@@ -32,10 +32,12 @@ import {
   computeRangeIncrementAttackBonuses,
   computeTwoWeaponFightingOption,
   computeWeaponAttack,
+  annotateSpellDescription,
   findChoiceValue,
   getAllKnownFeatIds,
   getBonusFeatsFromClasses,
   getCadTempestSteelDanceReduction,
+  getCasterLevelForClass,
   getContemplativeStoneWillBonus,
   getDivineGraceBonus,
   getFavoredEnemyBonuses,
@@ -45,6 +47,8 @@ import {
   getUnlockedClassFeatures,
   monkUnarmedDamage,
   parseSkillKey,
+  resolveSpellDuration,
+  resolveSpellRange,
   sizeModifier,
   totalCharacterLevel,
 } from "../engine/derive";
@@ -737,18 +741,25 @@ export default function CharacterSheetPage() {
             <ul>
               {character.spells.map((s, i) => {
                 const spell = findSpell(s.spellId);
+                const casterLevel = getCasterLevelForClass(s.classId, character.classLevels, classes);
+                const resolvedRange = spell ? resolveSpellRange(spell.range, casterLevel) : null;
+                const resolvedDuration = spell ? resolveSpellDuration(spell.duration, casterLevel) : null;
                 return (
                   <li key={i} style={{ marginBottom: 6 }}>
                     <strong>
                       [Nv.{s.level}] {spell?.name ?? s.spellId} ({s.classId})
+                      {casterLevel > 0 ? ` · NL ${casterLevel}` : ""}
                     </strong>
                     {spell && (
                       <div className="muted">
                         {spell.school}
-                        {spell.subschool ? ` (${spell.subschool})` : ""} · {spell.castingTime} · {spell.range} ·{" "}
-                        {spell.duration} · Salv. {spell.savingThrow} · RC {spell.spellResistance}
+                        {spell.subschool ? ` (${spell.subschool})` : ""} · {spell.castingTime} · Alcance:{" "}
+                        {spell.range}
+                        {resolvedRange ? ` → ${resolvedRange}` : ""} · Duración: {spell.duration}
+                        {resolvedDuration ? ` → ${resolvedDuration}` : ""} · Salv. {spell.savingThrow} · RC{" "}
+                        {spell.spellResistance}
                         <br />
-                        {spell.description}
+                        {annotateSpellDescription(spell.description, casterLevel)}
                       </div>
                     )}
                   </li>

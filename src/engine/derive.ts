@@ -412,6 +412,137 @@ export function spellsPerDayForClassLevel(
 }
 
 /**
+ * Nivel de lanzador de un personaje en una clase concreta: nivel de esa
+ * clase menos el nivel en que empieza a lanzar conjuros, más 1 (p.ej. un
+ * paladín de nivel 7, que empieza a lanzar en nivel 4, tiene nivel de
+ * lanzador 4). Devuelve 0 si la clase no lanza conjuros o el personaje aún
+ * no ha alcanzado su nivel inicial de lanzamiento.
+ */
+export function getCasterLevelForClass(classId: string, classLevels: CharacterClassLevel[], classes: ClassDef[]): number {
+  const cl = classLevels.find((c) => c.classId === classId);
+  const def = classDefFor(classId, classes);
+  if (!cl || !def?.spellcasting) return 0;
+  const startLevel = def.spellcasting.startLevel;
+  if (cl.level < startLevel) return 0;
+  return cl.level - startLevel + 1;
+}
+
+const SPANISH_UNIT_PLURALS: Record<string, [string, string]> = {
+  pie: ["pie", "pies"],
+  pies: ["pie", "pies"],
+  milla: ["milla", "millas"],
+  millas: ["milla", "millas"],
+  asalto: ["asalto", "asaltos"],
+  asaltos: ["asalto", "asaltos"],
+  minuto: ["minuto", "minutos"],
+  minutos: ["minuto", "minutos"],
+  hora: ["hora", "horas"],
+  horas: ["hora", "horas"],
+  día: ["día", "días"],
+  días: ["día", "días"],
+};
+
+function formatUnit(amount: number, unit: string): string {
+  const [singular, plural] = SPANISH_UNIT_PLURALS[unit.toLowerCase()] ?? [unit, unit];
+  const rounded = Math.round(amount * 10) / 10;
+  const label = rounded === 1 ? singular : plural;
+  return `${rounded % 1 === 0 ? rounded : rounded.toFixed(1)} ${label}`;
+}
+
+function parseSpanishNumber(raw: string): number {
+  return parseFloat(raw.replace(",", "."));
+}
+
+const RANGE_SCALING_RE =
+  /(?:(\d+(?:[.,]\d+)?)\s*(pies|millas?)\s*\+\s*)?(\d+(?:[.,]\d+)?)\s*(pies|millas?)\s*\/\s*(?:(\d+)\s*)?nivele?s?/i;
+
+/**
+ * Resuelve el alcance de un conjuro (p.ej. "Media (100 pies + 10 pies/nivel)")
+ * al valor total en pies/millas para un nivel de lanzador concreto. Devuelve
+ * null si el alcance no depende del nivel (nada que resolver: la ficha ya
+ * muestra el valor final).
+ */
+export function resolveSpellRange(range: string, casterLevel: number): string | null {
+  const m = RANGE_SCALING_RE.exec(range);
+  if (!m) return null;
+  const [, flatRaw, flatUnit, scaleRaw, scaleUnit, divisorRaw] = m;
+  const divisor = divisorRaw ? parseInt(divisorRaw, 10) : 1;
+  const flat = flatRaw ? parseSpanishNumber(flatRaw) : 0;
+  const scale = parseSpanishNumber(scaleRaw);
+  const total = flat + scale * Math.floor(casterLevel / divisor);
+  return formatUnit(total, flatUnit ?? scaleUnit);
+}
+
+const DURATION_TERM_RE =
+  /(\d+(?:[.,]\d+)?)\s*(asaltos?|minutos?|horas?|d[ií]as?)(?:\s*\/\s*(?:(\d+)\s*)?nivele?s?)?/gi;
+
+/**
+ * Resuelve la duración de un conjuro (p.ej. "1 minuto/nivel" o
+ * "1 asalto + 1 asalto/3 niveles") al valor total para un nivel de
+ * lanzador concreto. Devuelve null si la duración no depende del nivel.
+ */
+export function resolveSpellDuration(duration: string, casterLevel: number): string | null {
+  let hasScaling = false;
+  let unit: string | null = null;
+  let total = 0;
+  for (const m of duration.matchAll(DURATION_TERM_RE)) {
+    const [, amountRaw, termUnit, divisorRaw] = m;
+    const normalizedUnit = termUnit.toLowerCase().replace(/s$/, "");
+    if (unit && normalizedUnit !== unit) continue; // unidad distinta a la principal: se ignora por seguridad
+    unit = normalizedUnit;
+    const amount = parseSpanishNumber(amountRaw);
+    if (divisorRaw !== undefined || m[0].includes("/")) {
+      hasScaling = true;
+      const divisor = divisorRaw ? parseInt(divisorRaw, 10) : 1;
+      total += amount * Math.floor(casterLevel / divisor);
+    } else {
+      total += amount;
+    }
+  }
+  if (!hasScaling || !unit) return null;
+  return formatUnit(total, unit);
+}
+
+// Requiere que el propio dado (NdM) sea lo que escala, con un límite expresado
+// también en dados del mismo tamaño (p.ej. "1d6 ... por nivel (máximo 10d6)").
+// La comprobación negativa evita confundirlo con el patrón de bonificador
+// plano por nivel ("1d8 +1 por nivel, máximo +5"), donde el dado es fijo y
+// solo el "+1" escala.
+const DICE_PER_LEVEL_RE =
+  /(\d+)d(\d+)(?!\s*\+\s*\d)[^().]*?por (?:cada (dos|tres|cuatro) niveles|nivel(?:\s+del?\s+lanzador)?)[^().]*?\(máximo\s+(\d+)d\2\)/gi;
+// Bonificador plano que escala por nivel (o cada N niveles), con o sin límite
+// expresado como "+K" (p.ej. "+1 por nivel del lanzador (máximo +5)" en las
+// curaciones básicas, o "+1 por cada dos niveles" sin límite en Hoja de Llama).
+const BONUS_PER_LEVEL_RE =
+  /\+(\d+)\s+por (?:cada (dos|tres|cuatro) niveles|nivel(?:\s+del?\s+lanzador)?)(?:[^().]*?\(máximo\s+\+(\d+)\)|)/gi;
+const DIVISOR_WORDS: Record<string, number> = { dos: 2, tres: 3, cuatro: 4 };
+
+/**
+ * Añade, entre corchetes tras cada fragmento reconocible de daño/curación
+ * escalado por nivel dentro de la descripción de un conjuro, el valor ya
+ * resuelto para el nivel de lanzador indicado (p.ej. "1d6 por nivel
+ * (máximo 10d6)" -> "...(máximo 10d6) [a nivel de lanzador 7: 7d6]").
+ * Los fragmentos que no encajan con ninguno de los dos patrones reconocidos
+ * (dados por nivel, bonificador plano por nivel) se dejan tal cual.
+ */
+export function annotateSpellDescription(description: string, casterLevel: number): string {
+  let out = description.replace(DICE_PER_LEVEL_RE, (match, baseDice, dieSize, divisorWord, cap) => {
+    const divisor = divisorWord ? DIVISOR_WORDS[divisorWord] : 1;
+    const diceCount = Math.min(parseInt(baseDice, 10) * Math.floor(casterLevel / divisor), parseInt(cap, 10));
+    if (diceCount <= 0) return match;
+    return `${match} [a nivel de lanzador ${casterLevel}: ${diceCount}d${dieSize}]`;
+  });
+  out = out.replace(BONUS_PER_LEVEL_RE, (match, perLevel, divisorWord, cap) => {
+    const divisor = divisorWord ? DIVISOR_WORDS[divisorWord] : 1;
+    let bonus = parseInt(perLevel, 10) * Math.floor(casterLevel / divisor);
+    if (cap) bonus = Math.min(bonus, parseInt(cap, 10));
+    if (bonus <= 0) return match;
+    return `${match} [a nivel de lanzador ${casterLevel}: +${bonus}]`;
+  });
+  return out;
+}
+
+/**
  * Puntos de poder bonus por característica alta (Complete Psionic / XPH):
  * equivalen a la suma de los conjuros bonus "virtuales" de cada nivel de
  * poder, convertidos a puntos según su coste (2×nivel−1 puntos de poder).

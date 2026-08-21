@@ -30,10 +30,12 @@ import {
   computeRangeIncrementAttackBonuses,
   computeTwoWeaponFightingOption,
   computeWeaponAttack,
+  annotateSpellDescription,
   findChoiceValue,
   getAllKnownFeatIds,
   getBonusFeatsFromClasses,
   getCadTempestSteelDanceReduction,
+  getCasterLevelForClass,
   getContemplativeStoneWillBonus,
   getDivineGraceBonus,
   getFavoredEnemyBonuses,
@@ -43,6 +45,8 @@ import {
   getUnlockedClassFeatures,
   monkUnarmedDamage,
   parseSkillKey,
+  resolveSpellDuration,
+  resolveSpellRange,
   sizeModifier,
   totalCharacterLevel,
 } from "../engine/derive";
@@ -570,15 +574,21 @@ export default function CharacterSheetDocument({ character }: { character: Chara
             <Text style={styles.sectionTitle}>Conjuros</Text>
             {character.spells.map((s, i) => {
               const spell = findSpell(s.spellId);
+              const casterLevel = getCasterLevelForClass(s.classId, character.classLevels, classes);
+              const resolvedRange = spell ? resolveSpellRange(spell.range, casterLevel) : null;
+              const resolvedDuration = spell ? resolveSpellDuration(spell.duration, casterLevel) : null;
               return (
                 <View key={i} style={{ marginBottom: 3 }}>
                   <Text style={{ fontWeight: 700 }}>
                     [Nv.{s.level}] {spell?.name ?? s.spellId} ({s.classId})
+                    {casterLevel > 0 ? ` · NL ${casterLevel}` : ""}
                   </Text>
                   {spell && (
                     <Text>
-                      {spell.school} · {spell.castingTime} · {spell.range} · {spell.duration} · Salv.{" "}
-                      {spell.savingThrow} · RC {spell.spellResistance} — {spell.description}
+                      {spell.school} · {spell.castingTime} · Alcance: {spell.range}
+                      {resolvedRange ? ` → ${resolvedRange}` : ""} · Duración: {spell.duration}
+                      {resolvedDuration ? ` → ${resolvedDuration}` : ""} · Salv. {spell.savingThrow} · RC{" "}
+                      {spell.spellResistance} — {annotateSpellDescription(spell.description, casterLevel)}
                     </Text>
                   )}
                 </View>

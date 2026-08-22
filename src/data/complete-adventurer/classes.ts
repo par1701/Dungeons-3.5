@@ -27,34 +27,108 @@ const SWASHBUCKLER_CHOICES: ClassFeatureChoice[] = [
   },
 ];
 
+// Dotes de bonificación reales del ejemplar (Complete Adventurer) que ya
+// existen en el catálogo. La lista original también incluye Improved
+// Swimming, Open Minded y Versatile Performer, que no están todavía
+// modeladas como dotes propias, así que se omiten de las opciones en vez de
+// inventar una entrada para ellas.
+const EXEMPLAR_BONUS_FEAT_LIST = [
+  "acrobatic",
+  "agile",
+  "alertness",
+  "animal-affinity",
+  "athletic",
+  "blind-fight",
+  "combat-casting",
+  "combat-expertise",
+  "deceitful",
+  "deft-hands",
+  "diligent",
+  "improved-initiative",
+  "investigator",
+  "magical-aptitude",
+  "negotiator",
+  "nimble-fingers",
+  "persuasive",
+  "self-sufficient",
+  "skill-focus",
+  "stealthy",
+  "track",
+];
+
 const EXEMPLAR_CHOICES: ClassFeatureChoice[] = [
   {
-    id: "habilidad-insigne",
-    featureName: "Habilidad Insigne",
+    id: "arte-habilidad-1",
+    featureName: "Arte de la Habilidad (1.ª)",
     levels: [1],
-    label: "Habilidad insigne (mínimo 12 rangos)",
+    label: "Arte de la habilidad, nivel 1 (mínimo 13 rangos)",
     kind: "texto_libre",
     placeholder: "p.ej. Trepar, Buscar, Diplomacia...",
+  },
+  {
+    id: "arte-habilidad-2",
+    featureName: "Arte de la Habilidad (2.ª)",
+    levels: [4],
+    label: "Arte de la habilidad, nivel 4 (habilidad distinta, mínimo 13 rangos)",
+    kind: "texto_libre",
+    placeholder: "p.ej. Trepar, Buscar, Diplomacia...",
+  },
+  {
+    id: "arte-habilidad-3",
+    featureName: "Arte de la Habilidad (3.ª)",
+    levels: [7],
+    label: "Arte de la habilidad, nivel 7 (habilidad distinta, mínimo 13 rangos)",
+    kind: "texto_libre",
+    placeholder: "p.ej. Trepar, Buscar, Diplomacia...",
+  },
+  {
+    id: "arte-habilidad-4",
+    featureName: "Arte de la Habilidad (4.ª)",
+    levels: [10],
+    label: "Arte de la habilidad, nivel 10 (habilidad distinta, mínimo 13 rangos)",
+    kind: "texto_libre",
+    placeholder: "p.ej. Trepar, Buscar, Diplomacia...",
+  },
+  {
+    id: "dote-bonus-1",
+    featureName: "Dote de Bonificación (1.ª)",
+    levels: [3],
+    label: "Dote de bonificación, nivel 3",
+    kind: "dote_restringida",
+    featOptionIds: EXEMPLAR_BONUS_FEAT_LIST,
+  },
+  {
+    id: "dote-bonus-2",
+    featureName: "Dote de Bonificación (2.ª)",
+    levels: [6],
+    label: "Dote de bonificación, nivel 6",
+    kind: "dote_restringida",
+    featOptionIds: EXEMPLAR_BONUS_FEAT_LIST,
+  },
+  {
+    id: "dote-bonus-3",
+    featureName: "Dote de Bonificación (3.ª)",
+    levels: [9],
+    label: "Dote de bonificación, nivel 9",
+    kind: "dote_restringida",
+    featOptionIds: EXEMPLAR_BONUS_FEAT_LIST,
   },
 ];
 
 // Clases de Complete Adventurer (2005).
 //
 // Se incluyen dos clases base centradas en el combate ágil y furtivo
-// (Batidor y Espadachín) y un puñado de clases de prestigio
-// representativas del libro, elegidas por ser razonablemente conocidas y
-// por poder documentarse con confianza.
+// (Batidor y Espadachín) y las clases de prestigio del libro verificadas
+// frente a docs/prestige/ (Ejemplar, Asesino Fantasma, Maestro de Espías,
+// Tempestad, Sabueso de Sangre). "Ninja de la Luna Creciente" se eliminó:
+// no corresponde a ninguna clase real de Complete Adventurer ni de ningún
+// otro libro con ficha de referencia disponible, así que no hay forma de
+// verificarla ni corregirla.
 //
-// Igual que en complete-arcane/classes.ts, cuando una clase de prestigio se
-// limita a hacer progresar el ataque furtivo o el nivel de lanzador de una
-// clase que el personaje ya posee, ese efecto se documenta como un rasgo de
-// clase (ClassFeature) de texto en vez de automatizarse, porque el modelo de
-// datos todavía no soporta "tomar prestada" la progresión de otra clase.
-//
-// Las progresiones numéricas de Golpe de Escaramuza (Batidor) y
-// de Gracia / Bono de Perspicacia (Espadachín) son aproximadas: siguen el
-// espíritu de las clases originales, pero se ha priorizado una progresión
-// razonable y jugable sobre la reproducción exacta tabla por tabla.
+// Tempestad y Sabueso de Sangre estaban antes mal filiadas en
+// complete-warrior/classes.ts (son en realidad de este libro, p. 81 y p. 28)
+// y con mecánicas sustancialmente inventadas; se han reescrito aquí desde
+// cero con sus datos reales.
 
 // ---------------------------------------------------------------------------
 // Batidor (Scout)
@@ -249,60 +323,47 @@ const SWASHBUCKLER_FEATURES = [
 const EXEMPLAR_FEATURES = [
   {
     level: 1,
-    name: "Habilidad Insigne",
+    name: "Arte de la Habilidad",
     description:
-      "Al entrar en la clase, el ejemplar elige una habilidad en la que tenga al menos 12 rangos: se convierte en su \"habilidad insigne\". El ejemplar obtiene un bonificador de +2 a las pruebas de esa habilidad.",
+      "El ejemplar elige una habilidad en la que tenga al menos 13 rangos y obtiene un bonificador de competencia de +4 en ella. Vuelve a obtener este rasgo en los niveles 4, 7 y 10, eligiendo cada vez una habilidad distinta a las anteriores (si no tiene otra con 13 rangos o más, no obtiene el beneficio hasta cumplir el requisito).",
   },
   {
     level: 1,
-    name: "Progresión de Clase Base",
+    name: "Maestría de Habilidad",
     description:
-      "Cada nivel de ejemplar cuenta como un nivel de la clase base que el ejemplar poseyera antes de entrar en la clase de prestigio a efectos de rasgos de clase dependientes del nivel (por ejemplo, ataque furtivo de pícaro, torrente de golpes de monje o estilo de combate de guardabosques), aunque no otorga puntos de golpe, bonificador base de ataque ni salvaciones de esa clase.",
+      "El ejemplar elige 1 + su modificador de Inteligencia habilidades: puede tomar 10 en las pruebas de esas habilidades incluso bajo presión o distracción. Añade una habilidad más a la lista cada vez que sube de nivel.",
   },
   {
     level: 2,
-    name: "Resistencia a Fatiga",
-    description: "El ejemplar es inmune a los efectos de fatiga y agotamiento inducidos por el uso extremo de su habilidad insigne (por ejemplo, correr, trepar o luchar sin descanso).",
+    name: "Prestar Talento",
+    description:
+      "Como acción de ronda completa, el ejemplar puede aceptar un penalizador (hasta su nivel de clase) en una habilidad con Arte de la Habilidad para dar a los aliados en 9 m un bonificador de competencia igual a la mitad de ese penalizador en la misma prueba, mientras permanezca consciente y dentro del alcance. Desde nivel 8, el bonificador otorgado a los aliados iguala el penalizador completo.",
   },
   {
     level: 3,
-    name: "Habilidad Insigne Mejorada",
-    description: "El bonificador a la habilidad insigne aumenta a +4.",
+    name: "Dote de Bonificación",
+    description: "El ejemplar elige una dote de bonificación de una lista concreta, cumpliendo sus prerrequisitos. Vuelve a obtener este rasgo en los niveles 6 y 9.",
   },
   {
     level: 4,
-    name: "Dote Adicional",
-    description: "El ejemplar obtiene una dote adicional que cumpla sus requisitos.",
+    name: "Presencia Sostenida",
+    description: "El ejemplar suma su modificador de Carisma a las pruebas de Concentración y a las tiradas de salvación de Fortaleza.",
   },
   {
     level: 5,
-    name: "Hazaña Legendaria",
-    description: "Una vez por día, el ejemplar puede realizar una prueba de su habilidad insigne con un bonificador de competencia adicional igual a su nivel de ejemplar, representando un golpe de suerte o pericia sobrehumana.",
-  },
-  {
-    level: 6,
-    name: "Habilidad Insigne Superior",
-    description: "El bonificador a la habilidad insigne aumenta a +6.",
-  },
-  {
-    level: 7,
-    name: "Resistencia a la Muerte Súbita",
-    description: "El ejemplar obtiene un bonificador de +2 de competencia a las tiradas de salvación contra efectos de muerte instantánea y contra golpes críticos que le reduzcan a menos de 0 puntos de golpe.",
+    name: "Actuación Persuasiva",
+    description:
+      "El ejemplar puede usar una habilidad con Arte de la Habilidad en vez de Diplomacia frente a un PNJ en 9 m, mediante una demostración no amenazante de al menos 1 minuto, para mejorar su actitud (máximo una vez cada 24 horas por criatura).",
   },
   {
     level: 8,
-    name: "Dote Adicional",
-    description: "El ejemplar obtiene una segunda dote adicional que cumpla sus requisitos.",
-  },
-  {
-    level: 9,
-    name: "Hazaña Legendaria Mejorada",
-    description: "El ejemplar puede usar la Hazaña Legendaria dos veces al día.",
+    name: "Agilidad Intelectual",
+    description: "El ejemplar suma su modificador de Inteligencia a la iniciativa y a las tiradas de salvación de Reflejos.",
   },
   {
     level: 10,
-    name: "Leyenda Viviente",
-    description: "El bonificador a la habilidad insigne aumenta a +8 y el ejemplar se convierte en una leyenda reconocida en su campo: quienes hayan oído hablar de sus hazañas reaccionan ante él con una actitud inicial mejorada.",
+    name: "Yo Perfecto",
+    description: "El tipo de criatura del ejemplar cambia a forastero (nativo), igual que el rasgo equivalente del monje.",
   },
 ];
 
@@ -313,92 +374,32 @@ const EXEMPLAR_FEATURES = [
 const GHOST_FACED_KILLER_FEATURES = [
   {
     level: 1,
-    name: "Progresión de Ataque Furtivo",
+    name: "Paso Fantasmal (1/día)",
     description:
-      "Cada nivel de asesino de rostro fantasma otorga al personaje el mismo daño adicional de ataque furtivo que habría obtenido si ese nivel se hubiera tomado en una clase con ataque furtivo que ya poseyera (pícaro, ninja de la luna creciente, etc.), sumándose a cualquier ataque furtivo previo.",
-  },
-  {
-    level: 1,
-    name: "Bono de Clase de Armadura",
-    description: "Mientras no lleve armadura ni escudo, el asesino de rostro fantasma suma su modificador de Sabiduría (si es positivo) como bonificador de perspicacia a la Clase de Armadura.",
+      "Como acción rápida, sin provocar ataque de oportunidad, el asesino fantasma se vuelve invisible durante 1 asalto. Puede usar este rasgo una vez al día; obtiene un uso adicional cada 3 niveles (2/día en nivel 4, 3/día en nivel 7, 4/día en nivel 10).",
   },
   {
     level: 2,
-    name: "Uso de Venenos",
-    description: "El asesino de rostro fantasma puede aplicar veneno a un arma sin riesgo de envenenarse a sí mismo accidentalmente.",
-  },
-  {
-    level: 3,
-    name: "Paso Fantasmal",
-    description: "Un número de veces por día igual a su modificador de Sabiduría (mínimo 1), el asesino de rostro fantasma puede desaparecer brevemente y reaparecer a hasta 3 metros de distancia, como una versión menor del conjuro parpadeo dimensional, como acción rápida.",
-  },
-  {
-    level: 4,
-    name: "Velocidad de Trepa",
-    description: "El asesino de rostro fantasma obtiene una velocidad de trepa igual a la mitad de su velocidad base, y puede tomar 10 en las pruebas de Trepar incluso bajo amenaza o distracción.",
-  },
-  {
-    level: 5,
-    name: "Ataque Certero Silencioso",
-    description: "Cuando el asesino de rostro fantasma inflige daño de ataque furtivo con un arma que cause daño no letal o con un ataque desarmado, puede optar por dejar a la víctima inconsciente en vez de infligir el daño normal, sin penalización.",
-  },
-  {
-    level: 6,
-    name: "Uno con las Sombras",
-    description: "El asesino de rostro fantasma obtiene un bonificador de +4 de competencia a las pruebas de Esconderse mientras permanece inmóvil en una zona de penumbra o sombra.",
-  },
-  {
-    level: 8,
-    name: "Paso Fantasmal Mejorado",
-    description: "El alcance del Paso Fantasmal aumenta a 9 metros y puede usarse como acción gratuita una vez por asalto.",
-  },
-  {
-    level: 10,
-    name: "Golpe del Espectro",
-    description: "Una vez al día, el asesino de rostro fantasma puede realizar un único ataque cuerpo a cuerpo contra el que el objetivo no puede beneficiarse de ningún bonificador de Destreza a la Clase de Armadura ni de resistencia al daño que no sea contra armas mágicas, sea cual sea su naturaleza.",
-  },
-];
-
-// ---------------------------------------------------------------------------
-// Ninja de la Luna Creciente (Ninja of the Crescent Moon)
-// ---------------------------------------------------------------------------
-
-const NINJA_OF_THE_CRESCENT_MOON_FEATURES = [
-  {
-    level: 1,
-    name: "Progresión de Ataque Furtivo",
+    name: "Golpe Repentino +1d6",
     description:
-      "Cada nivel de ninja de la luna creciente otorga al personaje el mismo daño adicional de ataque furtivo que habría obtenido si ese nivel se hubiera tomado en una clase con ataque furtivo que ya poseyera, sumándose a cualquier ataque furtivo previo.",
-  },
-  {
-    level: 1,
-    name: "Camuflaje Lunar",
-    description: "Durante la noche o bajo luz tenue, el ninja de la luna creciente obtiene un bonificador de +4 de competencia a las pruebas de Esconderse y Moverse Sigilosamente.",
-  },
-  {
-    level: 2,
-    name: "Sin Rastro",
-    description: "El ninja de la luna creciente deja tan pocas huellas que quienes intenten Seguir Rastros suyos sufren una penalización de -10 a la prueba.",
+      "Si el objetivo pierde su bonificador de Destreza a la Clase de Armadura frente a su ataque, el asesino fantasma inflige 1d6 puntos de daño adicional, +1d6 cada 3 niveles (2d6 en nivel 5, 3d6 en nivel 8). Funciona como el ataque furtivo, pero no se activa por flanqueo.",
   },
   {
     level: 3,
-    name: "Oscuridad a Voluntad",
-    description: "El ninja de la luna creciente puede lanzar oscuridad (como conjuro, nivel de lanzador igual a su nivel de clase) a voluntad.",
-  },
-  {
-    level: 5,
-    name: "Rayo de Luna",
-    description: "Una vez por asalto, el ninja de la luna creciente puede canalizar un rayo de luz plateada mediante un ataque de toque a distancia (alcance 18 metros) que inflige 1d6 puntos de daño por cada dos niveles de clase; los no muertos y las criaturas vulnerables a la plata sufren el doble de daño.",
+    name: "Ataque Aterrador (1/día)",
+    description:
+      "Si usa Ataque Poderoso con una penalización de al menos -1 en un golpe repentino cuerpo a cuerpo que inflige daño, la víctima debe superar una salvación de Voluntad (CD 10 + nivel de clase + modificador de Carisma) o morir instantáneamente de terror; si tiene éxito, queda conmocionada 1 asalto por nivel. Además, las criaturas en 9 m que presencien el ataque quedan aterrorizadas (si tienen menos DG que el nivel de clase + Carisma del asesino) o conmocionadas (si tienen igual o más DG) 1 asalto por nivel, con una salvación de Voluntad (CD 10 + nivel + Carisma + bono de daño por Ataque Poderoso) para negarlo; no afecta a criaturas inmunes a miedo o a efectos mentales, ni a las de más DG que el nivel de personaje del asesino. Puede usarse una vez al día, +1 uso cada 3 niveles (2/día en nivel 6, 3/día en nivel 9).",
   },
   {
     level: 7,
-    name: "Invisibilidad a Voluntad",
-    description: "El ninja de la luna creciente puede lanzar invisibilidad sobre sí mismo (como conjuro, nivel de lanzador igual a su nivel de clase) a voluntad.",
+    name: "Visión Fantasmal",
+    description: "El asesino fantasma ve a las criaturas y objetos etéreos e invisibles como si fueran materiales.",
   },
   {
     level: 10,
-    name: "Manto de la Luna Nueva",
-    description: "Durante la noche, el ninja de la luna creciente puede adoptar una forma gaseosa (como el conjuro forma gaseosa) durante 1 asalto por nivel de clase, una vez al día.",
+    name: "Hendidura Aterradora",
+    description:
+      "Si mata a un enemigo con su Ataque Aterrador, el asesino fantasma obtiene de inmediato un ataque cuerpo a cuerpo adicional contra otro objetivo a su alcance, como con la dote Hendidura; si ese nuevo objetivo está desprevenido, el ataque cuenta también como Ataque Aterrador sin consumir un uso diario.",
   },
 ];
 
@@ -409,44 +410,56 @@ const NINJA_OF_THE_CRESCENT_MOON_FEATURES = [
 const SPYMASTER_FEATURES = [
   {
     level: 1,
-    name: "Red de Contactos",
+    name: "Identidad Encubierta",
     description:
-      "El maestro de espías ha cultivado una red de informadores. Una vez por semana (por nivel de maestro de espías) puede invertir tiempo y una pequeña suma de dinero para obtener del director de juego un rumor o dato útil relacionado con su investigación actual, sujeto a que exista alguien en la zona que pueda saberlo.",
+      "Mientras opera bajo una identidad de tapadera, el maestro de espías obtiene +4 de circunstancia a Disfrazarse y +2 de circunstancia a Engañar y Reunir Información. Cambiar de identidad requiere una semana de práctica antes de obtener los bonificadores. Obtiene una identidad adicional en los niveles 4 y 7.",
   },
   {
     level: 1,
-    name: "Farsa Perfecta",
-    description: "El maestro de espías obtiene un bonificador de +2 de competencia a las pruebas de Engañar, Disfrazarse y Reunir Información.",
+    name: "Alineamiento Indetectable",
+    description: "El maestro de espías se beneficia permanentemente del efecto del conjuro alineamiento indetectable.",
   },
   {
     level: 2,
-    name: "Detectar Mentiras",
-    description: "Un número de veces por día igual a su modificador de Carisma (mínimo 1), el maestro de espías puede usar detectar mentiras (como el conjuro) al escuchar la respuesta de una criatura a una única pregunta.",
+    name: "Cambio Rápido",
+    description: "El maestro de espías puede disfrazarse en una décima parte del tiempo normal (1d3 minutos) y ponerse o quitarse la armadura en la mitad del tiempo habitual.",
+  },
+  {
+    level: 2,
+    name: "Defensa contra Escrutación",
+    description: "El maestro de espías suma su nivel de clase a las salvaciones de Voluntad contra conjuros de adivinación (escrutación) y a las pruebas de Avistar para detectar los sensores de dichos conjuros.",
   },
   {
     level: 3,
-    name: "Farsa Perfecta Mejorada",
-    description: "El bonificador de Farsa Perfecta aumenta a +4.",
+    name: "Aura Mágica",
+    description: "El maestro de espías puede usar aura mágica de Nystul a voluntad, con nivel de lanzador igual a su nivel de clase.",
+  },
+  {
+    level: 3,
+    name: "Ataque Furtivo +1d6",
+    description: "El maestro de espías inflige 1d6 de daño adicional de ataque furtivo, aumentando a 2d6 en nivel 6. Se acumula con el ataque furtivo obtenido de otras fuentes.",
   },
   {
     level: 4,
-    name: "Identidad Falsa",
-    description: "El maestro de espías puede mantener una identidad alternativa completa; mientras la interpreta, las pruebas de Averiguar Intenciones u otros medios para desenmascararlo sufren una CD adicional de +5.",
+    name: "Mente Escurridiza",
+    description: "Como la dote homónima del pícaro: si el maestro de espías falla una salvación contra un conjuro o efecto de encantamiento, obtiene una segunda tirada de salvación un asalto después.",
+  },
+  {
+    level: 5,
+    name: "Disipar Escrutación",
+    description:
+      "El maestro de espías puede disipar un sensor de escrutación dirigido, como si lanzara disipar magia superior con nivel de lanzador igual a su nivel de clase +10, un número de veces al día igual a 3 + su modificador de Inteligencia.",
   },
   {
     level: 6,
-    name: "Nunca a Flor de Piel",
-    description: "El maestro de espías es inmune a los efectos que detectan directamente su alineamiento o sus emociones (como detectar el mal o el conjuro detectar pensamientos, en lo que respecta a percibir su lealtad), a menos que el conjuro sea de nivel superior a la mitad de su nivel de clase.",
+    name: "Ataque Furtivo +2d6",
+    description: "El daño adicional de ataque furtivo del maestro de espías aumenta a 2d6.",
   },
   {
-    level: 8,
-    name: "Farsa Perfecta Superior",
-    description: "El bonificador de Farsa Perfecta aumenta a +6.",
-  },
-  {
-    level: 10,
-    name: "El Espía que Nunca Estuvo Allí",
-    description: "Una vez al día, el maestro de espías puede hacer que un testigo que lo haya visto claramente dude por completo de haberlo visto, como si se le hubiera aplicado un efecto de modificación de memoria limitado a ese único recuerdo (sujeto al arbitrio del director de juego).",
+    level: 7,
+    name: "Tapadera Profunda",
+    description:
+      "Al inmersarse por completo en su identidad de tapadera, los conjuros de adivinación usados contra el maestro de espías solo revelan información acorde a esa identidad, no a su verdadera identidad de espía.",
   },
 ];
 
@@ -457,30 +470,149 @@ const SPYMASTER_FEATURES = [
 const TEMPEST_FEATURES = [
   {
     level: 1,
-    name: "Defensa de Dos Armas Mejorada",
-    description: "Mientras lucha con un arma en cada mano, la tempestad obtiene un bonificador de +1 a la Clase de Armadura, que se suma a cualquier otro bonificador por combatir con dos armas.",
+    name: "Defensa de Tempestad +1",
+    description:
+      "Mientras empuñe un arma doble o dos armas (no cuentan las armas naturales ni los golpes desarmados), la tempestad obtiene un bonificador de esquiva de +1 a la Clase de Armadura. Pierde este bonificador si lleva armadura media o pesada.",
   },
   {
     level: 2,
-    name: "Danza de Acero",
-    description: "La tempestad reduce en 2 la penalización por combatir con dos armas al ataque con su arma principal y en 6 la penalización al ataque con su arma secundaria, además de cualquier reducción por dotes de combate con dos armas.",
+    name: "Ambidiestría (-3/-1)",
+    description:
+      "La tempestad reduce en 1 la penalización habitual por combatir con dos armas: de -4/-4 pasa a -3/-1 con un arma secundaria ligera (o -3/-3 en general), acumulándose con cualquier dote de combate con dos armas que ya posea. Se pierde con armadura media o pesada.",
   },
   {
     level: 3,
-    name: "Defensa de Dos Armas Mejorada +2",
-    description: "El bonificador a la Clase de Armadura por luchar con dos armas aumenta a +2.",
+    name: "Defensa de Tempestad +2",
+    description: "El bonificador de esquiva de la Defensa de Tempestad aumenta a +2.",
+  },
+  {
+    level: 3,
+    name: "Versatilidad con Dos Armas",
+    description:
+      "Al combatir con dos armas, la tempestad puede aplicar a la segunda arma el efecto de ciertas dotes que ya posea para la primera (Soltura Mayor con un Arma, Especialización Mayor con un Arma, Crítico Mejorado, Soltura con un Arma, Especialización con un Arma), siempre que la aplicación sea legal.",
   },
   {
     level: 4,
-    name: "Torbellino de Acero",
-    description: "Una vez por combate, la tempestad puede realizar un ataque adicional con su arma secundaria contra un enemigo que ya haya atacado ese asalto, como acción gratuita.",
+    name: "Ambidiestría (-2/+0)",
+    description: "La penalización por combatir con dos armas se reduce un punto más: a -2/-2 en general (o -2/+0 con un arma secundaria ligera).",
   },
   {
     level: 5,
-    name: "Ojo de la Tempestad",
-    description: "La tempestad ya no puede ser flanqueada mientras empuñe un arma en cada mano, y el bonificador a la Clase de Armadura por luchar con dos armas aumenta a +3.",
+    name: "Defensa de Tempestad +3",
+    description: "El bonificador de esquiva de la Defensa de Tempestad aumenta a +3.",
+  },
+  {
+    level: 5,
+    name: "Ataque en Carrera con Dos Armas",
+    description:
+      "Al realizar un ataque en carrera (Ataque en Carrera), la tempestad puede atacar una vez con cada una de sus dos armas como parte de esa misma acción.",
   },
 ];
+
+// ---------------------------------------------------------------------------
+// Sabueso de Sangre (Bloodhound)
+// ---------------------------------------------------------------------------
+
+const BLOODHOUND_FEATURES = [
+  {
+    level: 1,
+    name: "Marca (1)",
+    description:
+      "Tras concentrarse 10 minutos sin interrupción sobre un humanoide o monstruo humanoide presente o descrito, el sabueso de sangre lo designa \"marca\". Suma su nivel de clase como bonificador de perspicacia a las pruebas de Reunir Información, Escuchar, Buscar, Avistar y Supervivencia realizadas para localizarlo. Solo puede elegir marca una vez por semana; cambiar de marca antes de atraparla pierde la experiencia que hubiera ganado por ello. Obtiene una marca adicional cada 3 niveles a partir del 1.º (hasta 4 en nivel 10).",
+  },
+  {
+    level: 1,
+    name: "Rastreador Veloz",
+    description: "El sabueso de sangre puede seguir rastros a su velocidad normal, sin la penalización habitual, igual que el rasgo homónimo del explorador.",
+  },
+  {
+    level: 2,
+    name: "Fuerza No Letal",
+    description: "El sabueso de sangre puede infligir daño no letal con un arma letal sin el penalizador de -4 habitual.",
+  },
+  {
+    level: 2,
+    name: "Listo y Esperando",
+    description: "El sabueso de sangre puede preparar una acción contra su marca incluso fuera de la secuencia de iniciativa; si la marca la activa en los siguientes 10 minutos, puede ejecutarla.",
+  },
+  {
+    level: 3,
+    name: "Traer con Vida",
+    description: "Al reducir a su marca a -2 puntos de golpe o menos con un ataque cuerpo a cuerpo, el sabueso de sangre puede optar por dejarla en -1 puntos de golpe en vez de matarla (no disponible si está enfurecido).",
+  },
+  {
+    level: 3,
+    name: "Persecución Tenaz (+3 m)",
+    description:
+      "El sabueso de sangre obtiene +4 en salvaciones de Constitución contra marcha forzada al perseguir a su marca, e incrementa su velocidad hasta la de la marca (hasta +3 m en nivel 3, +6 m en nivel 6, +9 m en nivel 9), acumulable con otros bonificadores de velocidad.",
+  },
+  {
+    level: 4,
+    name: "Dedicación del Cazador",
+    description: "El sabueso de sangre suma su modificador de Constitución a las salvaciones de Voluntad contra ataques o conjuros de su marca.",
+  },
+  {
+    level: 4,
+    name: "Marca (2)",
+    description: "El sabueso de sangre puede tener designadas 2 marcas simultáneamente.",
+  },
+  {
+    level: 4,
+    name: "Moverse como el Viento",
+    description: "El sabueso de sangre no sufre el penalizador de -5 en Esconderse o Moverse Sigilosamente al moverse a velocidad normal, y solo -10 (en vez de -20) al correr.",
+  },
+  {
+    level: 5,
+    name: "Golpe Incapacitante",
+    description: "Cada ataque exitoso del sabueso de sangre contra su marca (cuerpo a cuerpo o a distancia hasta 9 m) inflige 2 puntos adicionales de daño de Fuerza, como el ataque furtivo del pícaro.",
+  },
+  {
+    level: 5,
+    name: "Rastrear lo sin Rastro",
+    description: "El sabueso de sangre puede rastrear a una criatura bajo el efecto de paso sin rastro, con un penalizador de -20 a la prueba de Supervivencia.",
+  },
+  {
+    level: 6,
+    name: "Ver Invisibilidad",
+    description: "El sabueso de sangre se beneficia de un efecto constante de ver invisibilidad, pero solo revela a sus marcas invisibles.",
+  },
+  {
+    level: 6,
+    name: "Mente Protegida",
+    description: "El sabueso de sangre obtiene resistencia a conjuros de adivinación igual a 15 + su nivel de clase (no se acumula con otra resistencia a conjuros).",
+  },
+  {
+    level: 7,
+    name: "Localizar Criatura",
+    description: "Una vez al día, el sabueso de sangre puede lanzar localizar criatura como conjuro, con nivel de lanzador igual a su nivel de personaje.",
+  },
+  {
+    level: 7,
+    name: "Marca (3)",
+    description: "El sabueso de sangre puede tener designadas 3 marcas simultáneamente.",
+  },
+  {
+    level: 8,
+    name: "Libertad de Movimiento",
+    description: "El sabueso de sangre se beneficia automáticamente del efecto de libertad de movimiento, activo hasta un total de 1 asalto por punto de su modificador de Sabiduría al día (mínimo 1 asalto), con nivel de lanzador igual a su nivel de clase.",
+  },
+  {
+    level: 9,
+    name: "Olfato",
+    description: "El sabueso de sangre obtiene la capacidad extraordinaria de olfato.",
+  },
+  {
+    level: 10,
+    name: "Encontrar el Camino",
+    description: "Dos veces al día, el sabueso de sangre puede usar encontrar el camino como conjuro, con nivel de lanzador igual a su nivel de clase.",
+  },
+  {
+    level: 10,
+    name: "Marca (4)",
+    description: "El sabueso de sangre puede tener designadas hasta 4 marcas simultáneamente.",
+  },
+];
+
 
 export const CAD_CLASSES: ClassDef[] = [
   {
@@ -570,27 +702,55 @@ export const CAD_CLASSES: ClassDef[] = [
     source: "complete-adventurer",
     description:
       "Un maestro tan consumado en una única habilidad que ha trascendido los límites de sus compañeros de clase, convirtiendo su pericia en algo que roza lo legendario.",
-    hitDie: 8,
-    skillPointsPerLevel: 4,
+    hitDie: 6,
+    skillPointsPerLevel: 8,
     classSkills: [
+      "appraise",
       "balance",
       "bluff",
       "climb",
+      "concentration",
       "craft",
+      "decipher-script",
       "diplomacy",
+      "disable-device",
+      "disguise",
+      "escape-artist",
+      "forgery",
+      "gather-information",
+      "handle-animal",
+      "heal",
       "hide",
       "intimidate",
       "jump",
+      "knowledge-arcana",
+      "knowledge-architecture-engineering",
+      "knowledge-dungeoneering",
+      "knowledge-geography",
+      "knowledge-history",
       "knowledge-local",
+      "knowledge-nature",
+      "knowledge-nobility-royalty",
+      "knowledge-the-planes",
+      "knowledge-religion",
+      "listen",
       "move-silently",
+      "open-lock",
       "perform",
       "profession",
+      "ride",
+      "search",
       "sense-motive",
+      "sleight-of-hand",
+      "spellcraft",
       "spot",
+      "survival",
       "swim",
       "tumble",
+      "use-magic-device",
+      "use-rope",
     ],
-    babProgression: "tres_cuartos",
+    babProgression: "media",
     saves: { fort: "mala", ref: "mala", will: "buena" },
     weaponProficiencies: [],
     armorProficiencies: [],
@@ -600,14 +760,16 @@ export const CAD_CLASSES: ClassDef[] = [
     isPrestige: true,
     prerequisites: [
       {
-        description: "Al menos 12 rangos en una habilidad cualquiera, elegida como habilidad insigne al entrar en la clase",
+        description: "Diplomacia: 6 rangos",
+        check: (ctx) => (ctx.skillRanks["diplomacy"] ?? 0) >= 6,
       },
       {
-        description: "Dos dotes cualesquiera",
-        check: (ctx) => ctx.featIds.size >= 2,
+        description: "13 rangos en cualquier otra habilidad",
+        check: (ctx) => Object.values(ctx.skillRanks).some((r) => r >= 13),
       },
       {
-        description: "Reputación +4 (regla opcional de reputación, a discreción del director de juego)",
+        description: "Especialización en Habilidad (en cualquier habilidad)",
+        check: (ctx) => ctx.featIds.has("skill-focus"),
       },
     ],
   },
@@ -618,101 +780,60 @@ export const CAD_CLASSES: ClassDef[] = [
     description:
       "Un asesino silencioso entrenado en una escuela legendaria que combina las artes marciales con un sigilo casi sobrenatural, capaz de parecer que se desvanece en el aire en pleno combate.",
     hitDie: 8,
-    skillPointsPerLevel: 6,
+    skillPointsPerLevel: 4,
     classSkills: [
-      "balance",
+      "bluff",
       "climb",
-      "craft",
-      "escape-artist",
+      "concentration",
       "hide",
+      "intimidate",
       "jump",
       "listen",
       "move-silently",
-      "perform",
-      "sense-motive",
+      "open-lock",
+      "search",
       "spot",
+      "swim",
       "tumble",
-      "use-rope",
     ],
-    babProgression: "tres_cuartos",
-    saves: { fort: "mala", ref: "buena", will: "mala" },
-    weaponProficiencies: [],
-    armorProficiencies: [],
+    babProgression: "completa",
+    saves: { fort: "buena", ref: "mala", will: "mala" },
+    weaponProficiencies: ["Armas simples", "Armas marciales"],
+    armorProficiencies: ["Armadura ligera"],
     features: GHOST_FACED_KILLER_FEATURES,
     maxLevel: 10,
     isPrestige: true,
     prerequisites: [
       {
-        description: "Equilibrio 8 rangos",
-        check: (ctx) => (ctx.skillRanks["balance"] ?? 0) >= 8,
+        description: "Bonificador base de ataque +5",
+        check: (ctx) => ctx.babTotal >= 5,
       },
       {
-        description: "Esconderse 8 rangos",
-        check: (ctx) => (ctx.skillRanks["hide"] ?? 0) >= 8,
+        description: "Alineamiento: cualquier malvado",
       },
       {
-        description: "Moverse Sigilosamente 8 rangos",
-        check: (ctx) => (ctx.skillRanks["move-silently"] ?? 0) >= 8,
+        description: "Esconderse: 6 rangos",
+        check: (ctx) => (ctx.skillRanks["hide"] ?? 0) >= 6,
       },
       {
-        description: "Impacto sin Arma Mejorado",
-        check: (ctx) => ctx.featIds.has("improved-unarmed-strike"),
+        description: "Concentración: 4 rangos",
+        check: (ctx) => (ctx.skillRanks["concentration"] ?? 0) >= 4,
       },
       {
-        description: "Ataque furtivo +2d6 o superior",
-      },
-    ],
-  },
-  {
-    id: "cad-ninja-of-the-crescent-moon",
-    name: "Ninja de la Luna Creciente (Ninja of the Crescent Moon)",
-    source: "complete-adventurer",
-    description:
-      "Un espía y asesino iniciado en una sociedad secreta que venera la luna, capaz de mezclarse con la oscuridad y de canalizar una luz plateada contra sus enemigos.",
-    hitDie: 6,
-    skillPointsPerLevel: 6,
-    classSkills: [
-      "balance",
-      "bluff",
-      "climb",
-      "craft",
-      "disguise",
-      "escape-artist",
-      "hide",
-      "jump",
-      "listen",
-      "move-silently",
-      "search",
-      "sense-motive",
-      "spot",
-      "tumble",
-      "use-rope",
-    ],
-    babProgression: "tres_cuartos",
-    saves: { fort: "mala", ref: "buena", will: "mala" },
-    weaponProficiencies: [],
-    armorProficiencies: [],
-    features: NINJA_OF_THE_CRESCENT_MOON_FEATURES,
-    maxLevel: 10,
-    isPrestige: true,
-    prerequisites: [
-      {
-        description: "Esconderse 8 rangos",
-        check: (ctx) => (ctx.skillRanks["hide"] ?? 0) >= 8,
+        description: "Intimidar: 8 rangos",
+        check: (ctx) => (ctx.skillRanks["intimidate"] ?? 0) >= 8,
       },
       {
-        description: "Moverse Sigilosamente 8 rangos",
-        check: (ctx) => (ctx.skillRanks["move-silently"] ?? 0) >= 8,
+        description: "Moverse Sigilosamente: 6 rangos",
+        check: (ctx) => (ctx.skillRanks["move-silently"] ?? 0) >= 6,
       },
       {
-        description: "Sutileza con las Armas",
-        check: (ctx) => ctx.featIds.has("weapon-finesse"),
+        description: "Iniciativa Mejorada",
+        check: (ctx) => ctx.featIds.has("improved-initiative"),
       },
       {
-        description: "Ataque furtivo +1d6 o superior",
-      },
-      {
-        description: "Alineamiento no legal",
+        description: "Ataque Poderoso",
+        check: (ctx) => ctx.featIds.has("power-attack"),
       },
     ],
   },
@@ -726,49 +847,69 @@ export const CAD_CLASSES: ClassDef[] = [
     skillPointsPerLevel: 8,
     classSkills: [
       "appraise",
+      "balance",
       "bluff",
+      "climb",
+      "decipher-script",
       "diplomacy",
+      "disable-device",
       "disguise",
+      "escape-artist",
       "forgery",
       "gather-information",
       "hide",
       "intimidate",
+      "jump",
+      "knowledge-geography",
+      "knowledge-history",
       "knowledge-local",
       "knowledge-nobility-royalty",
       "listen",
       "move-silently",
-      "perform",
-      "profession",
+      "open-lock",
       "search",
       "sense-motive",
+      "sleight-of-hand",
       "spot",
+      "swim",
+      "use-magic-device",
+      "use-rope",
     ],
-    babProgression: "media",
-    saves: { fort: "mala", ref: "mala", will: "buena" },
-    weaponProficiencies: [],
-    armorProficiencies: [],
+    babProgression: "tres_cuartos",
+    saves: { fort: "mala", ref: "buena", will: "mala" },
+    weaponProficiencies: ["Armas simples", "Armas marciales"],
+    armorProficiencies: ["Armadura ligera", "Armadura media"],
     features: SPYMASTER_FEATURES,
-    maxLevel: 10,
+    maxLevel: 7,
     isPrestige: true,
     prerequisites: [
       {
-        description: "Engañar 9 rangos",
-        check: (ctx) => (ctx.skillRanks["bluff"] ?? 0) >= 9,
+        description: "Engañar: 8 rangos",
+        check: (ctx) => (ctx.skillRanks["bluff"] ?? 0) >= 8,
       },
       {
-        description: "Diplomacia 9 rangos",
-        check: (ctx) => (ctx.skillRanks["diplomacy"] ?? 0) >= 9,
+        description: "Diplomacia: 4 rangos",
+        check: (ctx) => (ctx.skillRanks["diplomacy"] ?? 0) >= 4,
       },
       {
-        description: "Reunir Información 9 rangos",
-        check: (ctx) => (ctx.skillRanks["gather-information"] ?? 0) >= 9,
+        description: "Disfrazarse: 8 rangos",
+        check: (ctx) => (ctx.skillRanks["disguise"] ?? 0) >= 8,
       },
       {
-        description: "Averiguar Intenciones 4 rangos",
+        description: "Falsificar: 4 rangos",
+        check: (ctx) => (ctx.skillRanks["forgery"] ?? 0) >= 4,
+      },
+      {
+        description: "Reunir Información: 4 rangos",
+        check: (ctx) => (ctx.skillRanks["gather-information"] ?? 0) >= 4,
+      },
+      {
+        description: "Averiguar Intenciones: 4 rangos",
         check: (ctx) => (ctx.skillRanks["sense-motive"] ?? 0) >= 4,
       },
       {
-        description: "Poseer o dirigir una red de contactos e informadores propia (a discreción del director de juego)",
+        description: "Especialización en Habilidad (Engañar)",
+        check: (ctx) => ctx.featIds.has("skill-focus"),
       },
     ],
   },
@@ -779,10 +920,10 @@ export const CAD_CLASSES: ClassDef[] = [
     description:
       "Un guerrero que ha llevado el combate con dos armas a su máxima expresión, convirtiendo el ataque y la defensa simultáneos con acero en ambas manos en un torbellino letal.",
     hitDie: 10,
-    skillPointsPerLevel: 4,
-    classSkills: ["balance", "climb", "craft", "jump", "profession", "ride", "swim", "tumble"],
+    skillPointsPerLevel: 2,
+    classSkills: ["balance", "climb", "craft", "jump", "sleight-of-hand", "tumble"],
     babProgression: "completa",
-    saves: { fort: "buena", ref: "buena", will: "mala" },
+    saves: { fort: "buena", ref: "mala", will: "mala" },
     weaponProficiencies: [],
     armorProficiencies: [],
     features: TEMPEST_FEATURES,
@@ -802,8 +943,79 @@ export const CAD_CLASSES: ClassDef[] = [
         check: (ctx) => ctx.featIds.has("two-weapon-fighting"),
       },
       {
-        description: "Soltura con el arma elegida",
-        check: (ctx) => ctx.featIds.has("weapon-focus"),
+        description: "Combate con Dos Armas Mejorado",
+        check: (ctx) => ctx.featIds.has("improved-two-weapon-fighting"),
+      },
+      {
+        description: "Movilidad",
+        check: (ctx) => ctx.featIds.has("mobility"),
+      },
+      {
+        description: "Ataque en Carrera",
+        check: (ctx) => ctx.featIds.has("spring-attack"),
+      },
+    ],
+  },
+  {
+    id: "cad-bloodhound",
+    name: "Sabueso de Sangre (Bloodhound)",
+    source: "complete-adventurer",
+    description:
+      "Un cazarrecompensas y rastreador implacable, especializado en localizar y dar caza a un fugitivo concreto hasta los confines del mundo.",
+    hitDie: 10,
+    skillPointsPerLevel: 6,
+    classSkills: [
+      "bluff",
+      "climb",
+      "diplomacy",
+      "disguise",
+      "gather-information",
+      "heal",
+      "hide",
+      "intimidate",
+      "jump",
+      "listen",
+      "move-silently",
+      "open-lock",
+      "ride",
+      "search",
+      "sense-motive",
+      "spot",
+      "survival",
+      "swim",
+      "use-rope",
+    ],
+    babProgression: "completa",
+    saves: { fort: "buena", ref: "buena", will: "mala" },
+    weaponProficiencies: ["Armas simples", "Armas marciales"],
+    armorProficiencies: ["Armadura ligera"],
+    features: BLOODHOUND_FEATURES,
+    maxLevel: 10,
+    isPrestige: true,
+    prerequisites: [
+      {
+        description: "Bonificador base de ataque +4",
+        check: (ctx) => ctx.babTotal >= 4,
+      },
+      {
+        description: "Reunir Información: 4 rangos",
+        check: (ctx) => (ctx.skillRanks["gather-information"] ?? 0) >= 4,
+      },
+      {
+        description: "Moverse Sigilosamente: 4 rangos",
+        check: (ctx) => (ctx.skillRanks["move-silently"] ?? 0) >= 4,
+      },
+      {
+        description: "Supervivencia: 4 rangos",
+        check: (ctx) => (ctx.skillRanks["survival"] ?? 0) >= 4,
+      },
+      {
+        description: "Aguante",
+        check: (ctx) => ctx.featIds.has("endurance"),
+      },
+      {
+        description: "Rastrear",
+        check: (ctx) => ctx.featIds.has("track"),
       },
     ],
   },

@@ -212,15 +212,6 @@ export function getScoutBattleBonus(classLevels: CharacterClassLevel[]): number 
   return Math.max(1, Math.floor(level / 2));
 }
 
-const CONTEMPLATIVE_STONE_WILL_LEVEL = 9;
-const CONTEMPLATIVE_STONE_WILL_BONUS = 4;
-
-/** Voluntad de Piedra (contemplativo, Complete Champion, nivel 9): +4 de competencia a Voluntad. */
-export function getContemplativeStoneWillBonus(classLevels: CharacterClassLevel[]): number {
-  const level = classLevels.find((cl) => cl.classId === "cc-contemplative")?.level ?? 0;
-  return level >= CONTEMPLATIVE_STONE_WILL_LEVEL ? CONTEMPLATIVE_STONE_WILL_BONUS : 0;
-}
-
 const IMPROVED_INITIATIVE_BONUS = 4;
 const BLOODED_INITIATIVE_BONUS = 2;
 
@@ -249,7 +240,6 @@ export function computeSaveTotals(
 ): SaveTotals {
   const divineGrace = getDivineGraceBonus(classLevels, abilityScores);
   const battleBonus = getScoutBattleBonus(classLevels);
-  const stoneWill = getContemplativeStoneWillBonus(classLevels);
   return {
     fort:
       computeBaseSave("fort", classLevels, classes) +
@@ -262,8 +252,7 @@ export function computeSaveTotals(
       computeBaseSave("will", classLevels, classes) +
       abilityModifier(abilityScores.wis) +
       resistanceBonus +
-      divineGrace +
-      stoneWill,
+      divineGrace,
   };
 }
 

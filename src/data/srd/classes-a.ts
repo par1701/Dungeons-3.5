@@ -78,6 +78,33 @@ const CHAMPION_OF_THE_WILD_BASE_FEATS = [
   "improved-trip",
 ];
 
+// Listas completas de Complete Champion: 11 dotes de arquería y 6 de dos
+// armas (no incluyen Disparo Rápido / Combate con Dos Armas, que ya se
+// obtienen automáticamente al elegir el estilo de combate del explorador).
+const CHAMPION_OF_THE_WILD_ARCHERY_FEATS = [
+  ...CHAMPION_OF_THE_WILD_BASE_FEATS,
+  "far-shot",
+  "point-blank-shot",
+  "precise-shot",
+  "shot-on-the-run",
+  "manyshot",
+  "improved-precise-shot",
+  "cw-improved-rapid-shot",
+  "cw-ranged-disarm",
+  "cw-ranged-pin",
+  "cw-ranged-sunder",
+  "cw-sharp-shooting",
+];
+const CHAMPION_OF_THE_WILD_TWO_WEAPON_FEATS = [
+  ...CHAMPION_OF_THE_WILD_BASE_FEATS,
+  "weapon-finesse",
+  "two-weapon-defense",
+  "improved-two-weapon-fighting",
+  "greater-two-weapon-fighting",
+  "cw-improved-two-weapon-defense",
+  "cw-greater-two-weapon-defense",
+];
+
 const CHAMPION_OF_THE_WILD_CHOICES: ClassFeatureChoice[] = [
   {
     id: "campeon-salvaje-dote-1",
@@ -88,8 +115,8 @@ const CHAMPION_OF_THE_WILD_CHOICES: ClassFeatureChoice[] = [
     featOptionsByDependency: {
       dependsOn: "estilo-combate",
       options: {
-        arqueria: [...CHAMPION_OF_THE_WILD_BASE_FEATS, "rapid-shot", "manyshot", "improved-precise-shot"],
-        "dos-armas": [...CHAMPION_OF_THE_WILD_BASE_FEATS, "two-weapon-fighting", "improved-two-weapon-fighting", "greater-two-weapon-fighting"],
+        arqueria: CHAMPION_OF_THE_WILD_ARCHERY_FEATS,
+        "dos-armas": CHAMPION_OF_THE_WILD_TWO_WEAPON_FEATS,
       },
     },
     requiresVariantRule: "vr-cc-champion-of-the-wild",
@@ -103,8 +130,8 @@ const CHAMPION_OF_THE_WILD_CHOICES: ClassFeatureChoice[] = [
     featOptionsByDependency: {
       dependsOn: "estilo-combate",
       options: {
-        arqueria: [...CHAMPION_OF_THE_WILD_BASE_FEATS, "rapid-shot", "manyshot", "improved-precise-shot"],
-        "dos-armas": [...CHAMPION_OF_THE_WILD_BASE_FEATS, "two-weapon-fighting", "improved-two-weapon-fighting", "greater-two-weapon-fighting"],
+        arqueria: CHAMPION_OF_THE_WILD_ARCHERY_FEATS,
+        "dos-armas": CHAMPION_OF_THE_WILD_TWO_WEAPON_FEATS,
       },
     },
     requiresVariantRule: "vr-cc-champion-of-the-wild",
@@ -118,8 +145,8 @@ const CHAMPION_OF_THE_WILD_CHOICES: ClassFeatureChoice[] = [
     featOptionsByDependency: {
       dependsOn: "estilo-combate",
       options: {
-        arqueria: [...CHAMPION_OF_THE_WILD_BASE_FEATS, "rapid-shot", "manyshot", "improved-precise-shot"],
-        "dos-armas": [...CHAMPION_OF_THE_WILD_BASE_FEATS, "two-weapon-fighting", "improved-two-weapon-fighting", "greater-two-weapon-fighting"],
+        arqueria: CHAMPION_OF_THE_WILD_ARCHERY_FEATS,
+        "dos-armas": CHAMPION_OF_THE_WILD_TWO_WEAPON_FEATS,
       },
     },
     requiresVariantRule: "vr-cc-champion-of-the-wild",
@@ -133,8 +160,8 @@ const CHAMPION_OF_THE_WILD_CHOICES: ClassFeatureChoice[] = [
     featOptionsByDependency: {
       dependsOn: "estilo-combate",
       options: {
-        arqueria: [...CHAMPION_OF_THE_WILD_BASE_FEATS, "rapid-shot", "manyshot", "improved-precise-shot"],
-        "dos-armas": [...CHAMPION_OF_THE_WILD_BASE_FEATS, "two-weapon-fighting", "improved-two-weapon-fighting", "greater-two-weapon-fighting"],
+        arqueria: CHAMPION_OF_THE_WILD_ARCHERY_FEATS,
+        "dos-armas": CHAMPION_OF_THE_WILD_TWO_WEAPON_FEATS,
       },
     },
     requiresVariantRule: "vr-cc-champion-of-the-wild",

@@ -540,7 +540,6 @@ export const CW_CLASSES: ClassDef[] = [
         description: "Gran Fortaleza",
         check: (ctx) => ctx.featIds.has("great-fortitude"),
       },
-      { description: "Amago" },
       {
         description: "Piruetas: 8 rangos",
         check: (ctx) => (ctx.skillRanks["tumble"] ?? 0) >= 8,

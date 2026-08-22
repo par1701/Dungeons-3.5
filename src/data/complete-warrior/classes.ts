@@ -562,12 +562,15 @@ export const CW_CLASSES: ClassDef[] = [
     skillPointsPerLevel: 2,
     classSkills: ["climb", "craft", "knowledge-religion", "ride", "spot", "swim"],
     babProgression: "completa",
-    saves: { fort: "buena", ref: "buena", will: "mala" },
+    saves: { fort: "mala", ref: "buena", will: "buena" },
     weaponProficiencies: [],
     armorProficiencies: [],
     features: ORDER_OF_THE_BOW_INITIATE_FEATURES,
     choices: BOW_INITIATE_CHOICES,
-    bonusFeatGrants: [{ level: 6, featId: "cw-sharp-shooting" }],
+    bonusFeatGrants: [
+      { level: 4, featId: "greater-weapon-focus" },
+      { level: 6, featId: "cw-sharp-shooting" },
+    ],
     maxLevel: 10,
     isPrestige: true,
     prerequisites: [

@@ -36,7 +36,6 @@ import {
   getBonusFeatsFromClasses,
   getCadTempestSteelDanceReduction,
   getCasterLevelForClass,
-  getContemplativeStoneWillBonus,
   getDivineGraceBonus,
   getFavoredEnemyBonuses,
   getScoutBattleBonus,
@@ -310,8 +309,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
               </Text>
               {(equipmentBonuses.saveResistance > 0 ||
                 getDivineGraceBonus(character.classLevels, finalScores) > 0 ||
-                getScoutBattleBonus(character.classLevels) > 0 ||
-                getContemplativeStoneWillBonus(character.classLevels) > 0) && (
+                getScoutBattleBonus(character.classLevels) > 0) && (
                 <Text style={{ fontSize: 6.5 }}>
                   Incluye
                   {equipmentBonuses.saveResistance > 0 ? ` resistencia +${equipmentBonuses.saveResistance};` : ""}
@@ -319,9 +317,6 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                     ? ` Gracia Divina +${getDivineGraceBonus(character.classLevels, finalScores)};`
                     : ""}
                   {getScoutBattleBonus(character.classLevels) > 0 ? ` Bono de Batalla +${getScoutBattleBonus(character.classLevels)};` : ""}
-                  {getContemplativeStoneWillBonus(character.classLevels) > 0
-                    ? ` Voluntad de Piedra +${getContemplativeStoneWillBonus(character.classLevels)};`
-                    : ""}
                 </Text>
               )}
             </Panel>

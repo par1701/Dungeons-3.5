@@ -212,15 +212,6 @@ export function getScoutBattleBonus(classLevels: CharacterClassLevel[]): number 
   return Math.max(1, Math.floor(level / 2));
 }
 
-const CONTEMPLATIVE_STONE_WILL_LEVEL = 9;
-const CONTEMPLATIVE_STONE_WILL_BONUS = 4;
-
-/** Voluntad de Piedra (contemplativo, Complete Champion, nivel 9): +4 de competencia a Voluntad. */
-export function getContemplativeStoneWillBonus(classLevels: CharacterClassLevel[]): number {
-  const level = classLevels.find((cl) => cl.classId === "cc-contemplative")?.level ?? 0;
-  return level >= CONTEMPLATIVE_STONE_WILL_LEVEL ? CONTEMPLATIVE_STONE_WILL_BONUS : 0;
-}
-
 const IMPROVED_INITIATIVE_BONUS = 4;
 const BLOODED_INITIATIVE_BONUS = 2;
 
@@ -249,7 +240,6 @@ export function computeSaveTotals(
 ): SaveTotals {
   const divineGrace = getDivineGraceBonus(classLevels, abilityScores);
   const battleBonus = getScoutBattleBonus(classLevels);
-  const stoneWill = getContemplativeStoneWillBonus(classLevels);
   return {
     fort:
       computeBaseSave("fort", classLevels, classes) +
@@ -262,8 +252,7 @@ export function computeSaveTotals(
       computeBaseSave("will", classLevels, classes) +
       abilityModifier(abilityScores.wis) +
       resistanceBonus +
-      divineGrace +
-      stoneWill,
+      divineGrace,
   };
 }
 
@@ -991,7 +980,7 @@ const TEMPEST_DEFENSE_LEVELS: [level: number, bonus: number][] = [
 ];
 
 /**
- * Defensa de la Tempestad (tempestad, Complete Warrior, nivel 1+): bono de
+ * Defensa de la Tempestad (tempestad, Complete Adventurer, nivel 1+): bono de
  * esquiva a la CA mientras empuñe un arma doble o dos armas; se pierde con
  * armadura media o pesada. Es un bonificador de esquiva normal (se pierde
  * estando desprevenido), a diferencia del de Gracia en la Danza del
@@ -1000,7 +989,7 @@ const TEMPEST_DEFENSE_LEVELS: [level: number, bonus: number][] = [
  * armas dobles.
  */
 function getTempestDefenseBonus(classLevels: CharacterClassLevel[], bodyArmorCategory: ArmorCategory | undefined, meleeWeaponCount: number): number {
-  const level = classLevels.find((cl) => cl.classId === "cw-tempest")?.level ?? 0;
+  const level = classLevels.find((cl) => cl.classId === "cad-tempest")?.level ?? 0;
   if (level < 1 || meleeWeaponCount < 2) return 0;
   if (bodyArmorCategory === "media" || bodyArmorCategory === "pesada") return 0;
   let bonus = 0;
@@ -1222,20 +1211,21 @@ export interface BowInitiateBonuses {
   rangePenaltyHalved: boolean;
 }
 
-const BOW_INITIATE_WEAPON_SPECIALIZATION_LEVEL = 3;
-const BOW_INITIATE_WEAPON_SPECIALIZATION_DAMAGE = 2;
+const BOW_INITIATE_GREATER_WEAPON_FOCUS_LEVEL = 4;
+const BOW_INITIATE_GREATER_WEAPON_FOCUS_ATTACK = 1;
 
 /**
- * Bonificadores de "Maestría con el arco elegido" (nivel 1: +1 de
- * competencia al ataque a distancia con el tipo de arco elegido, y
- * penalizador por incremento de alcance reducido a la mitad) y de la
- * Especialización en Arma gratuita de nivel 3 (+2 al daño) del Iniciado de
- * la Orden del Arco. Especialización en Arma se concede como dote de
- * bonificación normal (aparece en el listado de dotes), pero como esa dote
- * necesita un arma concreta seleccionada (`selection`) para que
- * `getWeaponFeatBonuses` la aplique, y las dotes de bonificación de clase no
- * llevan selección propia, su efecto numérico se añade aquí directamente
- * sobre el mismo arco ya elegido en "Maestría con el arco elegido".
+ * Bonificador de la dote gratuita Soltura Mayor con un Arma (Greater
+ * Weapon Focus, +1 a las tiradas de ataque) que el Iniciado de la Orden
+ * del Arco obtiene en nivel 4 para el tipo de arco elegido al entrar en la
+ * clase (rasgo "Precisión a distancia", nivel 1). Esa dote necesita un
+ * arma concreta seleccionada (`selection`) para que `getWeaponFeatBonuses`
+ * la aplique, y las dotes de bonificación de clase no llevan selección
+ * propia, así que su efecto numérico se añade aquí directamente sobre el
+ * arco ya elegido. El resto de rasgos de la clase (Precisión a Distancia,
+ * daño adicional de tipo ataque furtivo) no se calculan automáticamente,
+ * igual que el Ataque Furtivo del pícaro: se muestran como texto en la
+ * ficha, no se suman a la tirada de daño.
  */
 export function getBowInitiateBonuses(
   weapon: Weapon,
@@ -1244,15 +1234,11 @@ export function getBowInitiateBonuses(
 ): BowInitiateBonuses {
   const none = { attackBonus: 0, damageBonus: 0, rangePenaltyHalved: false };
   const level = classLevels.find((cl) => cl.classId === "cw-order-of-the-bow-initiate")?.level ?? 0;
-  if (level < 1) return none;
+  if (level < BOW_INITIATE_GREATER_WEAPON_FOCUS_LEVEL) return none;
   const chosenBowType = findChoiceValue(classFeatureChoices, "cw-order-of-the-bow-initiate", "tipo-arco", 1);
   const chosenWeaponName = chosenBowType ? BOW_INITIATE_WEAPON_NAMES[chosenBowType] : undefined;
   if (!chosenWeaponName || normalizeForMatch(weapon.name) !== normalizeForMatch(chosenWeaponName)) return none;
-  return {
-    attackBonus: 1,
-    damageBonus: level >= BOW_INITIATE_WEAPON_SPECIALIZATION_LEVEL ? BOW_INITIATE_WEAPON_SPECIALIZATION_DAMAGE : 0,
-    rangePenaltyHalved: true,
-  };
+  return { attackBonus: BOW_INITIATE_GREATER_WEAPON_FOCUS_ATTACK, damageBonus: 0, rangePenaltyHalved: false };
 }
 
 const SWASHBUCKLER_GRACE_LEVEL = 1;

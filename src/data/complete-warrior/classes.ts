@@ -1,33 +1,5 @@
 import type { ClassDef, ClassFeature, ClassFeatureChoice } from "../../types";
 
-const BLOODHOUND_BONUS_FEAT_LIST = ["alertness", "iron-will", "improved-initiative", "investigator", "negotiator", "run"];
-const BLOODHOUND_CHOICES: ClassFeatureChoice[] = [
-  {
-    id: "presa-predilecta",
-    featureName: "Presa predilecta",
-    levels: [1],
-    label: "Presa predilecta",
-    kind: "texto_libre",
-    placeholder: "Nombre o descripción del individuo elegido como presa",
-  },
-  {
-    id: "dote-bonificacion-1",
-    featureName: "Dote de bonificación (1er nivel)",
-    levels: [1],
-    label: "Dote de bonificación (1.ª)",
-    kind: "dote_restringida",
-    featOptionIds: BLOODHOUND_BONUS_FEAT_LIST,
-  },
-  {
-    id: "dote-bonificacion-2",
-    featureName: "Dote de bonificación (3er nivel)",
-    levels: [3],
-    label: "Dote de bonificación (2.ª)",
-    kind: "dote_restringida",
-    featOptionIds: BLOODHOUND_BONUS_FEAT_LIST,
-  },
-];
-
 const BOW_INITIATE_CHOICES: ClassFeatureChoice[] = [
   {
     id: "tipo-arco",
@@ -278,47 +250,6 @@ const ORDER_OF_THE_BOW_INITIATE_FEATURES: ClassFeature[] = [
 ];
 
 // ---------------------------------------------------------------------------
-// Tempestad (Tempest)
-// ---------------------------------------------------------------------------
-
-const TEMPEST_FEATURES: ClassFeature[] = [
-  {
-    level: 1,
-    name: "Dote de bonificación: Defensa con Dos Armas",
-    description:
-      "La tempestad obtiene Defensa con Dos Armas como dote de bonificación, aunque no cumpla sus prerrequisitos.",
-  },
-  {
-    level: 1,
-    name: "Defensa de la Tempestad (+1 CA)",
-    description:
-      "Mientras empuñe un arma doble o dos armas (no cuentan las armas naturales ni los golpes desarmados), la tempestad obtiene un bonificador de esquiva de +1 a la Clase de Armadura. Pierde este bonificador si lleva armadura media o pesada.",
-  },
-  {
-    level: 3,
-    name: "Dote de bonificación: Combate con Dos Armas Mejorado",
-    description:
-      "La tempestad obtiene Combate con Dos Armas Mejorado como dote de bonificación, aunque no cumpla sus prerrequisitos.",
-  },
-  {
-    level: 3,
-    name: "Defensa de la Tempestad (+2 CA)",
-    description: "El bonificador de esquiva de la Defensa de la Tempestad aumenta a +2.",
-  },
-  {
-    level: 5,
-    name: "Golpe gemelo",
-    description:
-      "Si en un mismo asalto ambas armas de la tempestad impactan al mismo objetivo, este sufre daño adicional igual a 1d6 más una vez y media su modificador de Fuerza. Además, obtiene Combate con Dos Armas Mayor como dote de bonificación, aunque no cumpla sus prerrequisitos.",
-  },
-  {
-    level: 5,
-    name: "Defensa de la Tempestad (+3 CA)",
-    description: "El bonificador de esquiva de la Defensa de la Tempestad aumenta a +3.",
-  },
-];
-
-// ---------------------------------------------------------------------------
 // Jinete Explorador Halfling (Halfling Outrider)
 // ---------------------------------------------------------------------------
 
@@ -403,48 +334,6 @@ const HALFLING_OUTRIDER_FEATURES: ClassFeature[] = [
     name: "Giro rápido",
     description:
       "Como acción gratuita, mediante una prueba de Montar (CD 25), puede hacer que su montura cambie de dirección hasta 90 grados una vez mientras corre o carga.",
-  },
-];
-
-// ---------------------------------------------------------------------------
-// Sabueso de Sangre (Bloodhound)
-// ---------------------------------------------------------------------------
-
-const BLOODHOUND_FEATURES: ClassFeature[] = [
-  {
-    level: 1,
-    name: "Presa predilecta",
-    description:
-      "El sabueso de sangre elige a un individuo concreto como presa. Obtiene un bonificador de +2 a las pruebas de Buscar, Reunir Información, Averiguar Intenciones y Avistar realizadas para localizarlo, así como +2 al daño contra él en combate.",
-  },
-  {
-    level: 1,
-    name: "Dote de bonificación",
-    description:
-      "El sabueso de sangre elige una dote entre Alerta, Voluntad de Hierro, Iniciativa Mejorada, Investigador, Negociador o Correr, aunque no cumpla sus prerrequisitos.",
-  },
-  {
-    level: 2,
-    name: "Esquiva sobrenatural",
-    description:
-      "El sabueso de sangre conserva su bonificador de Destreza a la Clase de Armadura incluso cuando es sorprendido o atacado por un enemigo invisible.",
-  },
-  {
-    level: 3,
-    name: "Dote de bonificación",
-    description: "El sabueso de sangre elige una segunda dote de la misma lista del 1er nivel.",
-  },
-  {
-    level: 4,
-    name: "Rastro infalible",
-    description:
-      "El sabueso de sangre ya no sufre penalizadores a las pruebas de Supervivencia para seguir un rastro debido al mal tiempo, el terreno difícil o el paso del tiempo.",
-  },
-  {
-    level: 5,
-    name: "Sabueso perfecto",
-    description:
-      "Una vez al día, el sabueso de sangre puede determinar la dirección y la distancia aproximada hasta su presa predilecta actual, igual que el conjuro discernir ubicación, sin importar la distancia o el plano en que se encuentre.",
   },
 ];
 
@@ -605,50 +494,6 @@ export const CW_CLASSES: ClassDef[] = [
     ],
   },
   {
-    id: "cw-tempest",
-    name: "Tempestad (Tempest)",
-    source: "complete-warrior",
-    description:
-      "Un maestro del combate con dos armas que se mueve por el campo de batalla como una tormenta de acero, encadenando golpes de ambas manos con una fluidez letal.",
-    hitDie: 10,
-    skillPointsPerLevel: 4,
-    classSkills: ["balance", "climb", "craft", "escape-artist", "intimidate", "jump", "perform", "profession", "tumble"],
-    babProgression: "completa",
-    saves: { fort: "buena", ref: "buena", will: "mala" },
-    weaponProficiencies: [],
-    armorProficiencies: [],
-    features: TEMPEST_FEATURES,
-    bonusFeatGrants: [
-      { level: 1, featId: "two-weapon-defense" },
-      { level: 3, featId: "improved-two-weapon-fighting" },
-      { level: 5, featId: "greater-two-weapon-fighting" },
-    ],
-    maxLevel: 5,
-    isPrestige: true,
-    prerequisites: [
-      {
-        description: "Destreza 15",
-        check: (ctx) => ctx.abilityScores.dex >= 15,
-      },
-      {
-        description: "Combate con Dos Armas",
-        check: (ctx) => ctx.featIds.has("two-weapon-fighting"),
-      },
-      {
-        description: "Esquiva",
-        check: (ctx) => ctx.featIds.has("dodge"),
-      },
-      {
-        description: "Movilidad",
-        check: (ctx) => ctx.featIds.has("mobility"),
-      },
-      {
-        description: "Bonificador base de ataque +6",
-        check: (ctx) => ctx.babTotal >= 6,
-      },
-    ],
-  },
-  {
     id: "cw-halfling-outrider",
     name: "Jinete Explorador Halfling (Halfling Outrider)",
     source: "complete-warrior",
@@ -692,58 +537,6 @@ export const CW_CLASSES: ClassDef[] = [
       {
         description: "Tiro Montado",
         check: (ctx) => ctx.featIds.has("mounted-archery"),
-      },
-    ],
-  },
-  {
-    id: "cw-bloodhound",
-    name: "Sabueso de Sangre (Bloodhound)",
-    source: "complete-warrior",
-    description:
-      "Un cazarrecompensas y rastreador implacable, especializado en localizar y dar caza a un fugitivo concreto hasta los confines del mundo.",
-    hitDie: 8,
-    skillPointsPerLevel: 6,
-    classSkills: [
-      "bluff",
-      "diplomacy",
-      "disguise",
-      "gather-information",
-      "intimidate",
-      "knowledge-local",
-      "listen",
-      "search",
-      "sense-motive",
-      "spot",
-      "survival",
-    ],
-    babProgression: "tres_cuartos",
-    saves: { fort: "buena", ref: "buena", will: "mala" },
-    weaponProficiencies: [],
-    armorProficiencies: [],
-    features: BLOODHOUND_FEATURES,
-    choices: BLOODHOUND_CHOICES,
-    maxLevel: 5,
-    isPrestige: true,
-    prerequisites: [
-      {
-        description: "Rastrear",
-        check: (ctx) => ctx.featIds.has("track"),
-      },
-      {
-        description: "Reunir Información: 4 rangos",
-        check: (ctx) => (ctx.skillRanks["gather-information"] ?? 0) >= 4,
-      },
-      {
-        description: "Buscar: 4 rangos",
-        check: (ctx) => (ctx.skillRanks["search"] ?? 0) >= 4,
-      },
-      {
-        description: "Averiguar Intenciones: 4 rangos",
-        check: (ctx) => (ctx.skillRanks["sense-motive"] ?? 0) >= 4,
-      },
-      {
-        description: "Bonificador base de ataque +5",
-        check: (ctx) => ctx.babTotal >= 5,
       },
     ],
   },

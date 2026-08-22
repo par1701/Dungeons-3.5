@@ -991,7 +991,7 @@ const TEMPEST_DEFENSE_LEVELS: [level: number, bonus: number][] = [
 ];
 
 /**
- * Defensa de la Tempestad (tempestad, Complete Warrior, nivel 1+): bono de
+ * Defensa de la Tempestad (tempestad, Complete Adventurer, nivel 1+): bono de
  * esquiva a la CA mientras empuñe un arma doble o dos armas; se pierde con
  * armadura media o pesada. Es un bonificador de esquiva normal (se pierde
  * estando desprevenido), a diferencia del de Gracia en la Danza del
@@ -1000,7 +1000,7 @@ const TEMPEST_DEFENSE_LEVELS: [level: number, bonus: number][] = [
  * armas dobles.
  */
 function getTempestDefenseBonus(classLevels: CharacterClassLevel[], bodyArmorCategory: ArmorCategory | undefined, meleeWeaponCount: number): number {
-  const level = classLevels.find((cl) => cl.classId === "cw-tempest")?.level ?? 0;
+  const level = classLevels.find((cl) => cl.classId === "cad-tempest")?.level ?? 0;
   if (level < 1 || meleeWeaponCount < 2) return 0;
   if (bodyArmorCategory === "media" || bodyArmorCategory === "pesada") return 0;
   let bonus = 0;

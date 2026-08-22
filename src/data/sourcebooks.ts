@@ -22,7 +22,7 @@ export const SOURCE_BOOKS: SourceBook[] = [
     name: "Complete Warrior",
     shortName: "C. Warrior",
     description:
-      "Dotes de combate adicionales y clases de prestigio marciales (Derviche, Maestro Ebrio, Tempestad, etc.).",
+      "Dotes de combate adicionales y clases de prestigio marciales (Derviche, Maestro Ebrio, Iniciado de la Orden del Arco, etc.).",
     implemented: true,
     defaultEnabled: false,
   },

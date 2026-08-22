@@ -56,8 +56,11 @@ export const CAD_FEATS: Feat[] = [
     types: ["general"],
     description: "Sabe colocar el ataque furtivo justo donde más aturde al cuerpo del enemigo.",
     benefit:
-      "Cuando inflige daño por ataque furtivo, el objetivo debe superar una salvación de Fortaleza (CD 10 + la mitad del nivel de personaje + modificador de Destreza) o quedar aturdido durante 1 asalto.",
-    prerequisites: [{ description: "Ataque furtivo +4d6 o superior" }],
+      "Cuando inflige daño por ataque furtivo cuerpo a cuerpo, el objetivo queda trastabillado (staggered) durante 1 asalto, salvo que supere una salvación de Fortaleza cuya CD es igual al daño infligido con ese ataque. El efecto no se acumula y no afecta a criaturas inmunes al ataque furtivo.",
+    prerequisites: [
+      { description: "Bonificador base de ataque +6", check: (ctx) => ctx.babTotal >= 6 },
+      { description: "Capacidad de infligir daño por ataque furtivo" },
+    ],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -107,10 +110,10 @@ export const CAD_FEATS: Feat[] = [
     types: ["general"],
     description: "Una simple mirada al enemigo le basta para calcular a qué se enfrenta.",
     benefit:
-      "Como acción rápida, puede realizar una prueba de Avistar para evaluar las capacidades de combate de un oponente que pueda ver con claridad, obteniendo una estimación de si es más fuerte, más rápido, más hábil en combate o más resistente que él.",
+      "Como acción gratuita, puede realizar una prueba de Avistar y una de Escuchar cada ronda (normalmente, usar Avistar o Escuchar de forma activa exige una acción de movimiento). Además, obtiene un bonificador de +2 a las tiradas de iniciativa.",
     prerequisites: [
-      { description: "Rastrear", check: hasFeat("track") },
-      { description: "Rangos en Avistar y Supervivencia" },
+      { description: "Escuchar 5 rangos", check: (ctx) => (ctx.skillRanks["listen"] ?? 0) >= 5 },
+      { description: "Avistar 5 rangos", check: (ctx) => (ctx.skillRanks["spot"] ?? 0) >= 5 },
     ],
     fighterBonusFeat: false,
     stackable: false,
@@ -122,8 +125,8 @@ export const CAD_FEATS: Feat[] = [
     types: ["general"],
     description: "Sus dedos leen los mecanismos de una trampa mejor de lo que sus ojos podrían nunca verlos.",
     benefit:
-      "Puede usar Buscar y Inutilizar Mecanismo para detectar y desactivar trampas por el tacto sin penalizador, incluso si está cegado o no puede ver el mecanismo en cuestión.",
-    prerequisites: [{ description: "Rangos en Buscar y en Inutilizar Mecanismo" }],
+      "Usa su modificador de Destreza (en vez de Inteligencia) en las pruebas de Buscar e Inutilizar Mecanismo, y no sufre penalizador en esas pruebas por oscuridad o ceguera.",
+    prerequisites: [],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -240,9 +243,10 @@ export const CAD_FEATS: Feat[] = [
     id: "cad-ascetic-knight",
     name: "Caballero Ascético",
     source: "complete-adventurer",
-    types: ["especial"],
+    types: ["general"],
     description: "El paladín que también se disciplina como monje combina ambas tradiciones marciales sin diluir ninguna.",
-    benefit: "A efectos de determinar su daño con ataques sin armas, sus niveles de paladín cuentan como niveles de monje.",
+    benefit:
+      "A efectos de determinar su daño con ataques sin armas y el daño adicional de su castigo divino (smite evil), sus niveles de paladín cuentan como niveles de monje. Puede cambiar libremente de clase entre paladín y monje sin penalización por multiclase.",
     prerequisites: [
       { description: "Impacto sin Arma Mejorado", check: hasFeat("improved-unarmed-strike") },
       { description: "Capacidad de castigar al malvado" },
@@ -254,13 +258,13 @@ export const CAD_FEATS: Feat[] = [
     id: "cad-ascetic-mage",
     name: "Mago Ascético",
     source: "complete-adventurer",
-    types: ["especial"],
+    types: ["general"],
     description: "El hechicero que también se disciplina como monje aprende a canalizar su fuerza de voluntad arcana en defensa y golpes desarmados.",
     benefit:
       "A efectos de determinar su bonificador a la Clase de Armadura sin armadura, sus niveles de hechicero cuentan como niveles de monje. Además, usa su modificador de Carisma en vez de Sabiduría para ese bonificador. Como acción rápida, puede sacrificar uno de sus espacios de conjuro diarios para obtener un bonificador igual al nivel de ese conjuro a sus tiradas de ataque y daño sin armas durante 1 asalto. Puede cambiar libremente de clase entre hechicero y monje sin penalización por multiclase.",
     prerequisites: [
       { description: "Impacto sin Arma Mejorado", check: hasFeat("improved-unarmed-strike") },
-      { description: "Capacidad de lanzar conjuros de hechicero" },
+      { description: "Capacidad de lanzar conjuros arcanos espontáneos de nivel 2" },
     ],
     fighterBonusFeat: false,
     stackable: false,
@@ -269,10 +273,10 @@ export const CAD_FEATS: Feat[] = [
     id: "cad-ascetic-rogue",
     name: "Pícaro Ascético",
     source: "complete-adventurer",
-    types: ["especial"],
+    types: ["general"],
     description: "El pícaro que también se disciplina como monje combina la astucia furtiva con la maestría marcial desarmada.",
     benefit:
-      "A efectos de determinar su daño con ataques sin armas, sus niveles de pícaro cuentan como niveles de monje. Puede cambiar libremente de clase entre pícaro y monje sin penalización por multiclase.",
+      "Un golpe desarmado aturdidor (Golpe Aturdidor) que además inflige daño de ataque furtivo suma +2 a la CD de aturdimiento. Además, a efectos de determinar su daño con ataques sin armas, sus niveles de pícaro cuentan como niveles de monje. Puede cambiar libremente de clase entre pícaro y monje sin penalización por multiclase.",
     prerequisites: [
       { description: "Impacto sin Arma Mejorado", check: hasFeat("improved-unarmed-strike") },
       { description: "Capacidad de infligir daño por ataque furtivo" },
@@ -284,10 +288,10 @@ export const CAD_FEATS: Feat[] = [
     id: "cad-ascetic-hunter",
     name: "Cazador Ascético",
     source: "complete-adventurer",
-    types: ["especial"],
+    types: ["general"],
     description: "El explorador que también se disciplina como monje funde el rastreo y la caza con la maestría marcial desarmada.",
     benefit:
-      "A efectos de determinar su daño con ataques sin armas, sus niveles de explorador cuentan como niveles de monje. Puede cambiar libremente de clase entre explorador y monje sin penalización por multiclase.",
+      "Al aturdir con un golpe desarmado (Golpe Aturdidor) a un enemigo predilecto, suma la mitad de su bonificador de enemigo predilecto a la CD de aturdimiento. Además, a efectos de determinar su daño con ataques sin armas, sus niveles de explorador cuentan como niveles de monje. Puede cambiar libremente de clase entre explorador y monje sin penalización por multiclase.",
     prerequisites: [
       { description: "Impacto sin Arma Mejorado", check: hasFeat("improved-unarmed-strike") },
       { description: "Enemigo predilecto" },
@@ -318,10 +322,10 @@ export const CAD_FEATS: Feat[] = [
     id: "cad-devoted-inquisitor",
     name: "Inquisidor Devoto (Complete Adventurer)",
     source: "complete-adventurer",
-    types: ["especial"],
+    types: ["general"],
     description: "El paladín que también se disciplina como pícaro combina el castigo divino con el golpe certero de la traición.",
     benefit:
-      "Cuando inflige daño por ataque furtivo y castigo divino con el mismo golpe, el objetivo debe superar una salvación de Voluntad (CD 10 + la mitad del nivel de personaje + su modificador de Carisma) o quedar aturdido 1 asalto.",
+      "Cuando inflige daño por ataque furtivo y castigo divino con el mismo golpe, el objetivo debe superar una salvación de Voluntad (CD 10 + la mitad del nivel de personaje + su modificador de Carisma) o quedar aturdido 1 asalto. Además, puede cambiar libremente de clase entre paladín y pícaro sin penalización por multiclase.",
     prerequisites: [
       { description: "Capacidad de castigar al malvado" },
       { description: "Capacidad de infligir daño por ataque furtivo" },
@@ -333,10 +337,10 @@ export const CAD_FEATS: Feat[] = [
     id: "cad-devoted-performer",
     name: "Intérprete Devoto",
     source: "complete-adventurer",
-    types: ["especial"],
+    types: ["general"],
     description: "El paladín que también es bardo pone su música al servicio de la fe.",
     benefit:
-      "A efectos de determinar el daño adicional de su castigo divino y sus usos diarios de música de bardo, sus niveles de paladín y de bardo se suman entre sí.",
+      "A efectos de determinar el daño adicional de su castigo divino y sus usos diarios de música de bardo, sus niveles de paladín y de bardo se suman entre sí (sin superar el máximo normal de cada capacidad). Puede cambiar libremente de clase entre paladín y bardo sin penalización por multiclase, incluso ganando niveles de bardo sin importar que deje de ser legal.",
     prerequisites: [
       { description: "Capacidad de castigar al malvado" },
       { description: "Capacidad de música de bardo" },
@@ -348,13 +352,14 @@ export const CAD_FEATS: Feat[] = [
     id: "cad-devoted-tracker",
     name: "Rastreador Devoto",
     source: "complete-adventurer",
-    types: ["especial"],
+    types: ["general"],
     description: "El paladín que también se forma como explorador pone su montura especial y su empatía salvaje al servicio de una causa mayor.",
     benefit:
-      "A efectos de determinar el daño adicional de su castigo divino y su empatía con los animales, sus niveles de paladín y de explorador se suman entre sí. Además, su montura especial de paladín puede servir también como compañero animal, usando el nivel efectivo más alto entre ambas capacidades.",
+      "A efectos de determinar el daño adicional de su castigo divino y su bonificador de empatía salvaje, sus niveles de paladín y de explorador se suman entre sí (esta dote no otorga usos diarios adicionales de castigo divino). Además, si tiene tanto montura especial como compañero animal, puede designar su montura especial como ambas cosas a la vez, combinando todos los beneficios de las dos capacidades. Puede cambiar libremente de clase entre paladín y explorador sin penalización por multiclase.",
     prerequisites: [
+      { description: "Rastrear", check: hasFeat("track") },
       { description: "Capacidad de castigar al malvado" },
-      { description: "Enemigo predilecto" },
+      { description: "Empatía salvaje" },
     ],
     fighterBonusFeat: false,
     stackable: false,
@@ -367,24 +372,24 @@ export const CAD_FEATS: Feat[] = [
     id: "cad-deft-opportunist",
     name: "Oportunista Diestro",
     source: "complete-adventurer",
-    types: ["combate"],
+    types: ["general"],
     description: "El personaje aprovecha con especial destreza cualquier resquicio que le brinde un enemigo.",
     benefit: "+4 de bonificador a las tiradas de ataque de oportunidad.",
     prerequisites: [
       { description: "Destreza 15", check: (ctx) => ctx.abilityScores.dex >= 15 },
       { description: "Reflejos de Combate", check: hasFeat("combat-reflexes") },
     ],
-    fighterBonusFeat: true,
+    fighterBonusFeat: false,
     stackable: false,
   },
   {
     id: "cad-deft-strike",
     name: "Golpe Hábil",
     source: "complete-adventurer",
-    types: ["combate"],
+    types: ["general"],
     description: "Un ojo entrenado para detectar el hueco exacto en la guardia de un rival antes de golpear.",
     benefit:
-      "Como acción rápida, puede realizar una prueba de Avistar enfrentada a la Clase de Armadura de un enemigo. Si supera el resultado, su siguiente ataque cuerpo a cuerpo contra ese enemigo este mismo asalto ignora cualquier bonificador a la CA por armadura o armadura natural.",
+      "Como acción estándar, puede realizar una prueba de Avistar (CD = Clase de Armadura del objetivo) para hallar un punto débil en su guardia. Si tiene éxito, su siguiente ataque contra ese enemigo (a más tardar en su siguiente turno) ignora su bonificador de armadura y de armadura natural a la CA (los demás bonificadores a la CA siguen aplicando). Con un arma a distancia, el objetivo debe estar a 9 m o menos.",
     prerequisites: [
       { description: "Inteligencia 13", check: (ctx) => ctx.abilityScores.int >= 13 },
       { description: "Pericia en Combate", check: hasFeat("combat-expertise") },

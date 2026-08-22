@@ -1,25 +1,5 @@
 import type { ClassDef, ClassFeature, ClassFeatureChoice } from "../../types";
 
-const DERVISH_BONUS_FEAT_LIST = ["dodge", "improved-initiative", "mobility", "combat-reflexes"];
-const DERVISH_CHOICES: ClassFeatureChoice[] = [
-  {
-    id: "dote-bonificacion-1",
-    featureName: "Dote de bonificación (4º nivel)",
-    levels: [4],
-    label: "Dote de bonificación (1.ª)",
-    kind: "dote_restringida",
-    featOptionIds: DERVISH_BONUS_FEAT_LIST,
-  },
-  {
-    id: "dote-bonificacion-2",
-    featureName: "Dote de bonificación (7º nivel)",
-    levels: [7],
-    label: "Dote de bonificación (2.ª)",
-    kind: "dote_restringida",
-    featOptionIds: DERVISH_BONUS_FEAT_LIST,
-  },
-];
-
 const BLOODHOUND_BONUS_FEAT_LIST = ["alertness", "iron-will", "improved-initiative", "investigator", "negotiator", "run"];
 const BLOODHOUND_CHOICES: ClassFeatureChoice[] = [
   {
@@ -85,59 +65,76 @@ const BOW_INITIATE_CHOICES: ClassFeatureChoice[] = [
 const DERVISH_FEATURES: ClassFeature[] = [
   {
     level: 1,
-    name: "Baile del derviche",
+    name: "Bono de CA (+1)",
     description:
-      "Mientras lleve como máximo armadura ligera y ningún escudo, el derviche puede moverse antes, después y entre los ataques de una acción de ataque a discreción, sin que ese movimiento provoque ataques de oportunidad, siempre que la distancia total recorrida en el asalto no supere su velocidad.",
+      "Mientras no lleve armadura o lleve armadura ligera y no cargue con un escudo, el derviche obtiene un bonificador de +1 a la Clase de Armadura. Se aplica incluso contra ataques de toque o estando desprevenido, y se pierde si está inmovilizado, indefenso, con armadura más pesada que la ligera, con escudo, o con carga media o pesada.",
+  },
+  {
+    level: 1,
+    name: "Baile del derviche (1/día)",
+    description:
+      "Como parte de una acción de ataque a discreción (solo ataques cuerpo a cuerpo), el derviche puede moverse hasta su velocidad antes, después y entre sus ataques, siempre que se mueva al menos 1,5 m entre cada uno y no vuelva a una casilla que ya haya abandonado ese mismo movimiento. Sigue expuesto a ataques de oportunidad, pero puede usar Piruetas con normalidad. Mientras empuñe un arma cortante durante el baile, obtiene un bonificador de +1 a las tiradas de ataque y daño, que aumenta en +1 adicional en cada nivel impar posterior. El baile dura 1 asalto por cada 2 rangos en Interpretar (danza), y al terminar el encuentro el derviche queda fatigado durante el resto del mismo (salvo a partir del nivel 9). Solo puede realizar un baile del derviche por encuentro.",
+  },
+  {
+    level: 1,
+    name: "Dominio del movimiento",
+    description: "El derviche puede sacar 10 en las pruebas de Saltar, Interpretar (danza) o Piruetas incluso bajo estrés o distracción.",
+  },
+  {
+    level: 1,
+    name: "Hojas cortantes",
+    description: "El derviche trata la cimitarra como un arma ligera en vez de un arma a una mano a todos los efectos, incluido el combate con dos armas.",
   },
   {
     level: 2,
-    name: "Velocidad aumentada",
-    description: "Mientras no lleve armadura pesada, la velocidad del derviche aumenta en 3 metros.",
+    name: "Movimiento rápido (+1,5 m)",
+    description: "Mientras no lleve armadura más pesada que la ligera ni carga media o pesada, la velocidad del derviche aumenta en 1,5 m por un bonificador de mejora.",
   },
   {
     level: 3,
-    name: "Gracia en la danza (+1 CA)",
+    name: "Ataque en Carrera",
     description:
-      "El derviche obtiene un bonificador de esquiva de +1 a la Clase de Armadura mientras empuñe el arma elegida para su baile y no lleve escudo.",
+      "El derviche obtiene la dote Ataque en Carrera (Spring Attack) como dote de bonificación, aunque no cumpla sus prerrequisitos. Además, puede realizar su baile del derviche hasta 2 veces al día.",
   },
   {
     level: 4,
-    name: "Dote de bonificación",
+    name: "Danza de la muerte",
     description:
-      "El derviche elige una dote entre Esquiva, Iniciativa Mejorada, Movilidad o Reflejos de Combate, aunque no cumpla sus prerrequisitos.",
+      "Mientras realice un baile del derviche, el derviche obtiene el beneficio de la dote Hendedura (Cleave), aunque no cumpla sus prerrequisitos, sin necesidad de moverse 1,5 m antes del ataque adicional que esta concede.",
   },
   {
     level: 5,
-    name: "Danza elaborada",
+    name: "Bono de CA (+2)",
     description:
-      "Mientras use el baile del derviche, puede sumar su modificador de Destreza al daño en vez del de Fuerza con el arma elegida para el baile.",
+      "El Bono de CA aumenta a +2. Además, el movimiento rápido aumenta a +3 m y el derviche puede realizar su baile del derviche hasta 3 veces al día.",
   },
   {
     level: 6,
-    name: "Gracia en la danza (+2 CA)",
-    description: "El bonificador de esquiva de la Gracia en la Danza aumenta a +2.",
+    name: "Reacción mejorada",
+    description: "El derviche obtiene un bonificador de +2 a las tiradas de iniciativa.",
   },
   {
     level: 7,
-    name: "Dote de bonificación",
-    description: "El derviche elige una segunda dote de la misma lista del 4º nivel.",
+    name: "Parada elaborada",
+    description:
+      "El derviche obtiene un bonificador adicional de +4 a la Clase de Armadura cuando lucha a la defensiva o realiza la acción de defensa total en combate cuerpo a cuerpo. Además, puede realizar su baile del derviche hasta 4 veces al día.",
   },
   {
     level: 8,
-    name: "Gracia en la danza (+3 CA)",
-    description: "El bonificador de esquiva de la Gracia en la Danza aumenta a +3.",
+    name: "Movimiento rápido (+4,5 m)",
+    description: "El bonificador de movimiento rápido aumenta a +4,5 m.",
   },
   {
     level: 9,
-    name: "Serenidad de la danza",
+    name: "Danza incansable",
     description:
-      "El derviche obtiene un bonificador de +2 a las tiradas de salvación contra conjuros y efectos de la escuela de Encantamiento mientras esté usando el baile del derviche.",
+      "El derviche ya no queda fatigado al final del encuentro tras realizar un baile del derviche. Además, el Bono de CA aumenta a +3 y puede realizar su baile del derviche hasta 5 veces al día.",
   },
   {
     level: 10,
-    name: "Torbellino mortal",
+    name: "Mil cortes",
     description:
-      "Una vez por asalto, mientras use el baile del derviche, el derviche puede realizar un ataque adicional a su bonificador de ataque más alto. El bonificador de esquiva de la Gracia en la Danza aumenta a +4.",
+      "Una vez al día, al realizar una acción de ataque completo (dentro o fuera de un baile del derviche), el derviche puede duplicar el número de ataques cuerpo a cuerpo que realiza; si lo combina con un baile del derviche, puede realizar hasta dos ataques entre movimientos. Mientras usa esta capacidad obtiene también el beneficio de la dote Hendedura Mayor (Great Cleave) con armas cortantes, sin necesidad de moverse 1,5 m antes de cada ataque adicional. Si recibe además el ataque adicional del conjuro prisa, los bonificadores de ese conjuro no se acumulan con los concedidos por esta capacidad.",
   },
 ];
 
@@ -148,64 +145,80 @@ const DERVISH_FEATURES: ClassFeature[] = [
 const DRUNKEN_MASTER_FEATURES: ClassFeature[] = [
   {
     level: 1,
-    name: "Niveles de monje continuados",
+    name: "Beber como un demonio",
     description:
-      "Los niveles de maestro ebrio se suman a los niveles de monje que el personaje ya poseía a efectos de Ráfaga de Golpes, Clase de Armadura sin armadura, velocidad sin armadura y daño de ataque desarmado, pero no otorgan ni mejoran los demás rasgos de clase del monje.",
+      "Como acción de movimiento, puede beber una gran cantidad de alcohol. Cada bebida consumida en combate reduce en 2 puntos tanto su Sabiduría como su Inteligencia, pero aumenta en 2 puntos (a su elección) la Fuerza o la Constitución. Puede beneficiarse de tantas bebidas como su nivel de clase de maestro ebrio; la duración de los bonificadores y penalizadores es igual a su nivel de maestro ebrio + 3 asaltos.",
   },
   {
     level: 1,
-    name: "Redirección",
+    name: "Armas improvisadas",
     description:
-      "Cuando un ataque cuerpo a cuerpo falla contra el maestro ebrio, puede obligar al atacante a repetir el mismo ataque contra otra criatura adyacente al maestro ebrio, un número de veces por día igual a su modificador de Sabiduría (mínimo 1).",
+      "Puede usar muebles, aperos y otros objetos cotidianos como armas improvisadas, infligiendo el daño de su ataque desarmado más 1d4 adicional. Si al atacar con un arma improvisada saca un 1 natural en la tirada de ataque, el arma se rompe.",
   },
   {
     level: 2,
-    name: "Valor etílico",
+    name: "Tambalearse",
     description:
-      "Mientras finja estar embriagado en combate, el maestro ebrio es inmune al miedo, mágico o mundano.",
+      "Puede realizar una carga que no necesita seguir una línea recta. Con una prueba de Piruetas (CD 15) antes de cargar, el movimiento a través de casillas amenazadas durante la carga no provoca ataques de oportunidad.",
   },
   {
     level: 3,
-    name: "Fuerza etílica (+2)",
-    description: "Mientras luche 'como si estuviera ebrio', el maestro ebrio gana un bonificador de +2 a la Fuerza.",
+    name: "Cintura oscilante",
+    description: "En su turno, obtiene un bonificador de esquiva de +2 a la Clase de Armadura frente a un oponente que elija.",
   },
   {
     level: 4,
-    name: "Redirección mejorada",
-    description: "El maestro ebrio puede usar Redirección un número adicional de veces por día.",
+    name: "Bono de CA (+1)",
+    description: "Obtiene un bonificador de +1 a la Clase de Armadura.",
+  },
+  {
+    level: 4,
+    name: "Armas improvisadas mejoradas",
+    description:
+      "Puede usar armas improvisadas largas (como remos o palos de escoba) como armas de alcance. Las que tienen protuberancias otorgan +2 a sus intentos de desarme, y las superficies planas grandes pueden usarse como escudos de torre improvisados.",
   },
   {
     level: 5,
-    name: "Aguante etílico",
-    description:
-      "El maestro ebrio es inmune a los efectos de intoxicación por alcohol y obtiene un bonificador de +2 a las tiradas de salvación de Fortaleza contra venenos ingeridos.",
+    name: "Armas improvisadas superiores (mayores)",
+    description: "El daño adicional de sus armas improvisadas aumenta de 1d4 a 1d8.",
   },
   {
     level: 6,
-    name: "Fuerza etílica (+4)",
-    description: "El bonificador de Fuerza etílica aumenta a +4.",
+    name: "Finta Mejorada (Improved Feint)",
+    description: "Obtiene la dote Finta Mejorada como dote de bonificación, aunque no cumpla sus prerrequisitos.",
   },
   {
     level: 7,
-    name: "Golpe desestabilizador",
-    description:
-      "El ataque desarmado del maestro ebrio puede aturdir a su objetivo durante 1 asalto (salvación de Fortaleza para negarlo), de forma similar a la dote Puñetazo Aturdidor, un número de veces por día igual a su modificador de Sabiduría.",
+    name: "Presa Mejorada (Improved Grapple)",
+    description: "Obtiene la dote Presa Mejorada como dote de bonificación, aunque no cumpla sus prerrequisitos.",
   },
   {
     level: 8,
-    name: "Redirección superior",
-    description: "El maestro ebrio puede usar Redirección contra ataques a distancia además de cuerpo a cuerpo.",
+    name: "Para fines medicinales",
+    description:
+      "Mientras esté bajo los efectos del alcohol, puede convertir una bebida alcohólica ingerida en una poción de curar heridas moderadas. Al usar esta capacidad, sus puntuaciones de característica cambian como si el efecto de esa bebida hubiera expirado. Puede usarla hasta 3 veces al día, como acción estándar que no provoca ataques de oportunidad.",
   },
   {
     level: 9,
-    name: "Cuerpo de hierro etílico",
-    description: "El maestro ebrio se vuelve inmune a todos los venenos, ingeridos o no.",
+    name: "Bono de CA (+2)",
+    description: "El bonificador de Bono de CA aumenta a +2.",
+  },
+  {
+    level: 9,
+    name: "Embestida en tirabuzón",
+    description:
+      "Al cargar, además del daño normal puede iniciar un intento de empujón sin provocar ataque de oportunidad. Si tiene éxito, el oponente queda aturdido a menos que supere una salvación de Voluntad (CD 10 + nivel de clase + modificador de Sabiduría). Si el intento de empujón falla, el maestro ebrio cae postrado.",
+  },
+  {
+    level: 9,
+    name: "Armas improvisadas superiores",
+    description: "El daño adicional de sus armas improvisadas aumenta de 1d8 a 1d12.",
   },
   {
     level: 10,
-    name: "Maestro ebrio perfecto",
+    name: "Aliento de fuego",
     description:
-      "El maestro ebrio puede beneficiarse en todo momento de sus habilidades 'de ebrio' sin necesidad de fingir estarlo, y su bonificador de Fuerza etílica aumenta a +6.",
+      "Como acción gratuita, puede escupir un cono de 6 m que inflige 3d12 puntos de daño de fuego (mitad con éxito en una salvación de Reflejos CD 10 + nivel de clase + modificador de Constitución). Cada uso consume una bebida de alcohol de las que tiene activas en su cuerpo.",
   },
 ];
 
@@ -216,39 +229,51 @@ const DRUNKEN_MASTER_FEATURES: ClassFeature[] = [
 const ORDER_OF_THE_BOW_INITIATE_FEATURES: ClassFeature[] = [
   {
     level: 1,
-    name: "Maestría con el arco elegido",
+    name: "Precisión a distancia (+1d8)",
     description:
-      "Al entrar en la clase, el iniciado elige un tipo de arco (corto o largo, normal o compuesto). Obtiene un bonificador de +1 de competencia a las tiradas de ataque a distancia con ese tipo de arco.",
-  },
-  {
-    level: 1,
-    name: "Reducción de penalizador por distancia",
-    description:
-      "Los penalizadores por incremento de alcance al disparar con el arco elegido se reducen a la mitad (redondeando hacia abajo).",
+      "Como acción estándar, puede realizar un ataque a distancia bien apuntado que inflige 1d8 puntos de daño adicional contra un objetivo situado a 9 m o menos, siempre que tenga anatomía discernible y no sea inmune a los golpes críticos, y que use el tipo de arma con el que tiene Soltura con un Arma. No requiere que el objetivo esté desprevenido, pero si lo está, este daño se acumula con el del ataque furtivo. El bonificador aumenta en +1d8 cada 2 niveles adicionales.",
   },
   {
     level: 2,
-    name: "Disparo Rápido mejorado",
-    description:
-      "Si posee la dote Disparo Rápido, el ataque adicional que esta otorga deja de imponer el penalizador de -2 a todas las tiradas de ataque a distancia realizadas ese asalto con el arco elegido.",
+    name: "Disparo en combate cercano",
+    description: "Puede realizar ataques a distancia mientras está en una casilla amenazada sin provocar ataques de oportunidad por ello.",
   },
   {
     level: 3,
-    name: "Dote de bonificación: Especialización con un Arma",
-    description:
-      "El iniciado obtiene Especialización con un Arma con el arco elegido como dote de bonificación, aunque no cumpla sus prerrequisitos.",
+    name: "Precisión a distancia (+2d8)",
+    description: "El daño adicional de Precisión a Distancia aumenta a +2d8.",
   },
   {
     level: 4,
-    name: "Tiro certero",
+    name: "Soltura Mayor con un Arma",
     description:
-      "El iniciado puede aceptar un penalizador voluntario de hasta su bonificador base de ataque en sus tiradas de ataque a distancia con el arco elegido, para obtener un bonificador idéntico a las tiradas de daño, de forma similar a la dote Ataque Poderoso.",
+      "Obtiene la dote Soltura Mayor con un Arma (Greater Weapon Focus) de forma gratuita para el arma a distancia elegida, sin necesidad de cumplir el prerrequisito de guerrero de nivel 8.",
   },
   {
     level: 5,
-    name: "Flecha de fase",
+    name: "Precisión a distancia (+3d8)",
+    description: "El daño adicional de Precisión a Distancia aumenta a +3d8.",
+  },
+  {
+    level: 6,
+    name: "Puntería",
+    description: "Obtiene la dote Puntería (Sharp-Shooting) como dote de bonificación, aunque no cumpla sus prerrequisitos.",
+  },
+  {
+    level: 7,
+    name: "Precisión a distancia (+4d8)",
+    description: "El daño adicional de Precisión a Distancia aumenta a +4d8.",
+  },
+  {
+    level: 9,
+    name: "Precisión a distancia (+5d8)",
+    description: "El daño adicional de Precisión a Distancia aumenta a +5d8.",
+  },
+  {
+    level: 10,
+    name: "Precisión extendida",
     description:
-      "Una vez al día, como acción estándar, el iniciado puede disparar una flecha que vuela en línea recta ignorando la cobertura y las barreras no mágicas de hasta 30 centímetros de grosor hasta alcanzar a su objetivo, igual que el conjuro flecha de fase.",
+      "El alcance al que puede realizar ataques de precisión a distancia (y ataques furtivos, si los posee) aumenta de 9 m a 18 m.",
   },
 ];
 
@@ -300,31 +325,84 @@ const TEMPEST_FEATURES: ClassFeature[] = [
 const HALFLING_OUTRIDER_FEATURES: ClassFeature[] = [
   {
     level: 1,
-    name: "Vínculo de montura",
+    name: "Bono de CA (+1)",
+    description: "Mientras esté montado, obtiene un bonificador de esquiva a la Clase de Armadura. Se pierde en cualquier situación en la que perdería el bonificador de Destreza a la CA.",
+  },
+  {
+    level: 1,
+    name: "Montura",
     description:
-      "El vínculo entre el jinete halfling y su montura se estrecha: a efectos de qué montura puede llevar sin penalizador, se le trata como si fuera de una categoría de tamaño mayor. Además, obtiene un bonificador de competencia de +2 a las pruebas de Montar.",
+      "Recibe una montura de su comunidad (típicamente un perro de monta o un poni de guerra) con sus arreos. Los niveles de jinete explorador halfling se acumulan con los de paladín, druida y explorador a efectos de montura especial o compañero animal.",
+  },
+  {
+    level: 1,
+    name: "Vigilancia",
+    description: "Obtiene la dote Vigilancia (Alertness) como dote de bonificación.",
+  },
+  {
+    level: 1,
+    name: "Bonificador a Montar",
+    description: "Obtiene un bonificador de competencia igual a su nivel de clase en las pruebas de Montar.",
   },
   {
     level: 2,
-    name: "Dote de bonificación: Ataque al Galope",
-    description: "El jinete obtiene Ataque al Galope como dote de bonificación, aunque no cumpla sus prerrequisitos.",
+    name: "Cabalgar defensivo",
+    description:
+      "Mientras está montado y no realiza ninguna acción ofensiva, obtiene un bonificador de +2 a las tiradas de salvación de Reflejos y un bonificador de esquiva de +4 a la Clase de Armadura. Su montura obtiene además +6 m de velocidad, +2 a las tiradas de salvación de Voluntad y un bonificador de esquiva de +4 a la Clase de Armadura.",
   },
   {
     level: 3,
-    name: "Dote de bonificación: Carga Impetuosa",
-    description: "El jinete obtiene Carga Impetuosa como dote de bonificación, aunque no cumpla sus prerrequisitos.",
+    name: "Carga imparable",
+    description: "Montado, puede cargar a través de terreno difícil o de casillas ocupadas por aliados con una prueba de Montar (CD 15).",
+  },
+  {
+    level: 3,
+    name: "Bono de CA (+2)",
+    description: "El Bono de CA aumenta a +2.",
   },
   {
     level: 4,
-    name: "Maniobra evasiva montada",
+    name: "Ponerse de pie sobre la montura",
     description:
-      "Una vez por asalto, el jinete puede realizar una prueba de Montar (CD 10) para desviar hacia su montura un golpe que le habría alcanzado a él, en vez de sufrirlo directamente.",
+      "Puede mantenerse de pie sobre el lomo de su montura durante el movimiento o el combate con una prueba de Montar (CD 20), evitando así los penalizadores a las armas a distancia por que la montura se mueva al doble de su velocidad o corra.",
   },
   {
     level: 5,
-    name: "Carga devastadora",
+    name: "Saltar de la silla",
     description:
-      "Al realizar una carga montada, el daño de los ataques con arma del jinete aumenta en 1d6. Además, obtiene Pisotear como dote de bonificación, aunque no cumpla sus prerrequisitos.",
+      "Como acción gratuita, mediante una prueba de Montar (CD 20), puede desmontar y colocarse junto a su montura, obteniendo potencialmente un bonificador de +2 al ataque y un penalizador de -2 a la Clase de Armadura frente a oponentes cercanos.",
+  },
+  {
+    level: 5,
+    name: "Bono de CA (+3)",
+    description: "El Bono de CA aumenta a +3.",
+  },
+  {
+    level: 7,
+    name: "Evasión",
+    description:
+      "Con armadura ligera o sin armadura, si supera con éxito una salvación de Reflejos contra un efecto que normalmente inflige la mitad de daño, no sufre daño alguno. Montado, se usa el mejor bonificador de Reflejos entre el jinete y su montura. Si ya poseía evasión, obtiene evasión mejorada (sufre la mitad de daño incluso si falla la salvación).",
+  },
+  {
+    level: 7,
+    name: "Bono de CA (+4)",
+    description: "El Bono de CA aumenta a +4.",
+  },
+  {
+    level: 8,
+    name: "Ataque montado completo",
+    description: "Puede realizar un ataque completo aunque su montura se haya movido más de 1,5 m, siempre que no se haya movido más de lo permitido por una acción de movimiento.",
+  },
+  {
+    level: 9,
+    name: "Bono de CA (+5)",
+    description: "El Bono de CA aumenta a +5.",
+  },
+  {
+    level: 10,
+    name: "Giro rápido",
+    description:
+      "Como acción gratuita, mediante una prueba de Montar (CD 25), puede hacer que su montura cambie de dirección hasta 90 grados una vez mientras corre o carga.",
   },
 ];
 
@@ -378,26 +456,14 @@ export const CW_CLASSES: ClassDef[] = [
     description:
       "Un guerrero ágil que convierte el combate en una danza mortal, moviéndose sin cesar por el campo de batalla mientras encadena golpes con un arma cortante ligera.",
     hitDie: 10,
-    skillPointsPerLevel: 6,
-    classSkills: [
-      "balance",
-      "climb",
-      "craft",
-      "diplomacy",
-      "handle-animal",
-      "intimidate",
-      "jump",
-      "perform",
-      "profession",
-      "ride",
-      "tumble",
-    ],
+    skillPointsPerLevel: 4,
+    classSkills: ["balance", "craft", "escape-artist", "jump", "listen", "perform", "profession", "swim", "tumble"],
     babProgression: "completa",
-    saves: { fort: "buena", ref: "buena", will: "mala" },
+    saves: { fort: "mala", ref: "buena", will: "buena" },
     weaponProficiencies: [],
     armorProficiencies: [],
     features: DERVISH_FEATURES,
-    choices: DERVISH_CHOICES,
+    bonusFeatGrants: [{ level: 3, featId: "spring-attack" }],
     maxLevel: 10,
     isPrestige: true,
     prerequisites: [
@@ -406,15 +472,19 @@ export const CW_CLASSES: ClassDef[] = [
         check: (ctx) => ctx.babTotal >= 5,
       },
       {
-        description: "Destreza 13",
-        check: (ctx) => ctx.abilityScores.dex >= 13,
+        description: "Pericia en Combate",
+        check: (ctx) => ctx.featIds.has("combat-expertise"),
       },
       {
-        description: "Inteligencia 8",
-        check: (ctx) => ctx.abilityScores.int >= 8,
+        description: "Esquiva",
+        check: (ctx) => ctx.featIds.has("dodge"),
       },
       {
-        description: "Soltura con el arma cortante elegida para el baile (habitualmente cimitarra)",
+        description: "Movilidad",
+        check: (ctx) => ctx.featIds.has("mobility"),
+      },
+      {
+        description: "Soltura con un Arma (cualquier arma cortante cuerpo a cuerpo)",
         check: (ctx) => ctx.featIds.has("weapon-focus"),
       },
       {
@@ -422,11 +492,8 @@ export const CW_CLASSES: ClassDef[] = [
         check: (ctx) => (ctx.skillRanks["perform"] ?? 0) >= 3,
       },
       {
-        description: "Piruetas: 5 rangos",
-        check: (ctx) => (ctx.skillRanks["tumble"] ?? 0) >= 5,
-      },
-      {
-        description: "Competencia con el arma elegida para el baile del derviche y capacidad de hablar",
+        description: "Piruetas: 3 rangos",
+        check: (ctx) => (ctx.skillRanks["tumble"] ?? 0) >= 3,
       },
     ],
   },
@@ -440,6 +507,7 @@ export const CW_CLASSES: ClassDef[] = [
     skillPointsPerLevel: 4,
     classSkills: [
       "balance",
+      "bluff",
       "climb",
       "craft",
       "escape-artist",
@@ -449,35 +517,39 @@ export const CW_CLASSES: ClassDef[] = [
       "move-silently",
       "perform",
       "profession",
-      "sense-motive",
-      "spot",
+      "swim",
       "tumble",
     ],
     babProgression: "tres_cuartos",
-    saves: { fort: "buena", ref: "buena", will: "buena" },
+    saves: { fort: "buena", ref: "buena", will: "mala" },
     weaponProficiencies: [],
     armorProficiencies: [],
     features: DRUNKEN_MASTER_FEATURES,
+    bonusFeatGrants: [
+      { level: 6, featId: "improved-feint" },
+      { level: 7, featId: "improved-grapple" },
+    ],
     maxLevel: 10,
     isPrestige: true,
     prerequisites: [
       {
-        description: "Impacto sin Arma Mejorado",
+        description: "Impacto sin Arma Mejorado (o capacidad de golpe sin armas del monje)",
         check: (ctx) => ctx.featIds.has("improved-unarmed-strike"),
       },
       {
-        description: "Derribo Mejorado",
-        check: (ctx) => ctx.featIds.has("improved-trip"),
+        description: "Gran Fortaleza",
+        check: (ctx) => ctx.featIds.has("great-fortitude"),
+      },
+      { description: "Amago" },
+      {
+        description: "Piruetas: 8 rangos",
+        check: (ctx) => (ctx.skillRanks["tumble"] ?? 0) >= 8,
       },
       {
-        description: "Interpretar: 3 rangos",
-        check: (ctx) => (ctx.skillRanks["perform"] ?? 0) >= 3,
+        description: "Capacidad de usar Ráfaga de Golpes y Evasión como un monje",
       },
       {
-        description: "Capacidad de usar Ráfaga de Golpes como un monje",
-      },
-      {
-        description: "Alineamiento: cualquiera no legal",
+        description: "Debe ser invitado por maestros ebrios existentes y sobrevivir a una noche de juerga con ellos sin ser encarcelado, envenenado o extraordinariamente avergonzado",
       },
     ],
   },
@@ -488,28 +560,30 @@ export const CW_CLASSES: ClassDef[] = [
     description:
       "Un arquero devoto que ha unido su destino a un único tipo de arco, refinando su puntería hasta convertirla en un arte casi sobrenatural.",
     hitDie: 8,
-    skillPointsPerLevel: 4,
-    classSkills: [
-      "climb",
-      "craft",
-      "handle-animal",
-      "hide",
-      "jump",
-      "listen",
-      "move-silently",
-      "profession",
-      "ride",
-      "spot",
-    ],
+    skillPointsPerLevel: 2,
+    classSkills: ["climb", "craft", "knowledge-religion", "ride", "spot", "swim"],
     babProgression: "completa",
     saves: { fort: "buena", ref: "buena", will: "mala" },
     weaponProficiencies: [],
     armorProficiencies: [],
     features: ORDER_OF_THE_BOW_INITIATE_FEATURES,
     choices: BOW_INITIATE_CHOICES,
-    maxLevel: 5,
+    bonusFeatGrants: [{ level: 6, featId: "cw-sharp-shooting" }],
+    maxLevel: 10,
     isPrestige: true,
     prerequisites: [
+      {
+        description: "Bonificador base de ataque +5",
+        check: (ctx) => ctx.babTotal >= 5,
+      },
+      {
+        description: "Oficio (arquería): 5 rangos",
+        check: (ctx) => (ctx.skillRanks["craft"] ?? 0) >= 5,
+      },
+      {
+        description: "Conocimiento (religión): 2 rangos",
+        check: (ctx) => (ctx.skillRanks["knowledge-religion"] ?? 0) >= 2,
+      },
       {
         description: "Disparo a Bocajarro",
         check: (ctx) => ctx.featIds.has("point-blank-shot"),
@@ -519,12 +593,12 @@ export const CW_CLASSES: ClassDef[] = [
         check: (ctx) => ctx.featIds.has("precise-shot"),
       },
       {
-        description: "Soltura con el arco elegido",
-        check: (ctx) => ctx.featIds.has("weapon-focus"),
+        description: "Disparo Rápido",
+        check: (ctx) => ctx.featIds.has("rapid-shot"),
       },
       {
-        description: "Bonificador base de ataque +6",
-        check: (ctx) => ctx.babTotal >= 6,
+        description: "Soltura con un Arma (arco largo, arco corto, o su versión compuesta)",
+        check: (ctx) => ctx.featIds.has("weapon-focus"),
       },
     ],
   },
@@ -580,34 +654,42 @@ export const CW_CLASSES: ClassDef[] = [
       "Un halfling que ha llevado el combate montado a su máxima expresión, formando con su montura un equipo capaz de acosar y abatir enemigos mucho mayores que ellos.",
     hitDie: 8,
     skillPointsPerLevel: 4,
-    classSkills: ["climb", "craft", "handle-animal", "jump", "listen", "profession", "ride", "spot", "survival", "swim"],
+    classSkills: ["handle-animal", "listen", "ride", "spot", "survival"],
     babProgression: "completa",
-    saves: { fort: "buena", ref: "buena", will: "mala" },
+    saves: { fort: "mala", ref: "buena", will: "mala" },
     weaponProficiencies: [],
     armorProficiencies: [],
     features: HALFLING_OUTRIDER_FEATURES,
-    bonusFeatGrants: [
-      { level: 2, featId: "ride-by-attack" },
-      { level: 3, featId: "spirited-charge" },
-      { level: 5, featId: "trample" },
-    ],
-    maxLevel: 5,
+    bonusFeatGrants: [{ level: 1, featId: "alertness" }],
+    maxLevel: 10,
     isPrestige: true,
     prerequisites: [
       {
         description: "Raza: mediano (halfling)",
       },
       {
-        description: "Montar: 8 rangos",
-        check: (ctx) => (ctx.skillRanks["ride"] ?? 0) >= 8,
+        description: "Bonificador base de ataque +5",
+        check: (ctx) => ctx.babTotal >= 5,
+      },
+      {
+        description: "Escuchar: 3 rangos",
+        check: (ctx) => (ctx.skillRanks["listen"] ?? 0) >= 3,
+      },
+      {
+        description: "Montar: 6 rangos",
+        check: (ctx) => (ctx.skillRanks["ride"] ?? 0) >= 6,
+      },
+      {
+        description: "Avistar: 3 rangos",
+        check: (ctx) => (ctx.skillRanks["spot"] ?? 0) >= 3,
       },
       {
         description: "Combatir desde una Montura",
         check: (ctx) => ctx.featIds.has("mounted-combat"),
       },
       {
-        description: "Bonificador base de ataque +5",
-        check: (ctx) => ctx.babTotal >= 5,
+        description: "Tiro Montado",
+        check: (ctx) => ctx.featIds.has("mounted-archery"),
       },
     ],
   },

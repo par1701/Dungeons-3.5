@@ -1222,20 +1222,21 @@ export interface BowInitiateBonuses {
   rangePenaltyHalved: boolean;
 }
 
-const BOW_INITIATE_WEAPON_SPECIALIZATION_LEVEL = 3;
-const BOW_INITIATE_WEAPON_SPECIALIZATION_DAMAGE = 2;
+const BOW_INITIATE_GREATER_WEAPON_FOCUS_LEVEL = 4;
+const BOW_INITIATE_GREATER_WEAPON_FOCUS_ATTACK = 1;
 
 /**
- * Bonificadores de "Maestría con el arco elegido" (nivel 1: +1 de
- * competencia al ataque a distancia con el tipo de arco elegido, y
- * penalizador por incremento de alcance reducido a la mitad) y de la
- * Especialización en Arma gratuita de nivel 3 (+2 al daño) del Iniciado de
- * la Orden del Arco. Especialización en Arma se concede como dote de
- * bonificación normal (aparece en el listado de dotes), pero como esa dote
- * necesita un arma concreta seleccionada (`selection`) para que
- * `getWeaponFeatBonuses` la aplique, y las dotes de bonificación de clase no
- * llevan selección propia, su efecto numérico se añade aquí directamente
- * sobre el mismo arco ya elegido en "Maestría con el arco elegido".
+ * Bonificador de la dote gratuita Soltura Mayor con un Arma (Greater
+ * Weapon Focus, +1 a las tiradas de ataque) que el Iniciado de la Orden
+ * del Arco obtiene en nivel 4 para el tipo de arco elegido al entrar en la
+ * clase (rasgo "Precisión a distancia", nivel 1). Esa dote necesita un
+ * arma concreta seleccionada (`selection`) para que `getWeaponFeatBonuses`
+ * la aplique, y las dotes de bonificación de clase no llevan selección
+ * propia, así que su efecto numérico se añade aquí directamente sobre el
+ * arco ya elegido. El resto de rasgos de la clase (Precisión a Distancia,
+ * daño adicional de tipo ataque furtivo) no se calculan automáticamente,
+ * igual que el Ataque Furtivo del pícaro: se muestran como texto en la
+ * ficha, no se suman a la tirada de daño.
  */
 export function getBowInitiateBonuses(
   weapon: Weapon,
@@ -1244,15 +1245,11 @@ export function getBowInitiateBonuses(
 ): BowInitiateBonuses {
   const none = { attackBonus: 0, damageBonus: 0, rangePenaltyHalved: false };
   const level = classLevels.find((cl) => cl.classId === "cw-order-of-the-bow-initiate")?.level ?? 0;
-  if (level < 1) return none;
+  if (level < BOW_INITIATE_GREATER_WEAPON_FOCUS_LEVEL) return none;
   const chosenBowType = findChoiceValue(classFeatureChoices, "cw-order-of-the-bow-initiate", "tipo-arco", 1);
   const chosenWeaponName = chosenBowType ? BOW_INITIATE_WEAPON_NAMES[chosenBowType] : undefined;
   if (!chosenWeaponName || normalizeForMatch(weapon.name) !== normalizeForMatch(chosenWeaponName)) return none;
-  return {
-    attackBonus: 1,
-    damageBonus: level >= BOW_INITIATE_WEAPON_SPECIALIZATION_LEVEL ? BOW_INITIATE_WEAPON_SPECIALIZATION_DAMAGE : 0,
-    rangePenaltyHalved: true,
-  };
+  return { attackBonus: BOW_INITIATE_GREATER_WEAPON_FOCUS_ATTACK, damageBonus: 0, rangePenaltyHalved: false };
 }
 
 const SWASHBUCKLER_GRACE_LEVEL = 1;

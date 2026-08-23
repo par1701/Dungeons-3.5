@@ -55,10 +55,11 @@ export const CW_FEATS: Feat[] = [
     types: ["general"],
     description: "Un paladín o clérigo canaliza su energía divina para golpear con fuerza sobrehumana.",
     benefit:
-      "Como acción libre, puede gastar un uso diario de su capacidad de expulsar o reprender no muertos para ganar un bonificador a las tiradas de daño cuerpo a cuerpo igual a su modificador de Carisma durante varios asaltos.",
+      "Como acción libre, puede gastar un uso diario de su capacidad de expulsar o reprender no muertos para sumar su modificador de Carisma a las tiradas de daño con arma durante 1 asalto completo.",
     prerequisites: [
-      { description: "Carisma 13", check: (ctx) => ctx.abilityScores.cha >= 13 },
+      { description: "Fuerza 13", check: (ctx) => ctx.abilityScores.str >= 13 },
       { description: "Capacidad de expulsar o reprender no muertos" },
+      { description: "Ataque Poderoso", check: hasFeat("power-attack") },
     ],
     fighterBonusFeat: false,
     stackable: false,
@@ -70,10 +71,10 @@ export const CW_FEATS: Feat[] = [
     types: ["general"],
     description: "La misma energía divina que expulsa a los no muertos puede levantarse como una barrera protectora.",
     benefit:
-      "Como acción libre, puede gastar un uso diario de su capacidad de expulsar o reprender no muertos para ganar un bonificador de escudo a la Clase de Armadura igual a su modificador de Carisma durante varios asaltos.",
+      "Como acción estándar, puede gastar un uso diario de su capacidad de expulsar o reprender no muertos para que su escudo gane un bonificador a la Clase de Armadura igual a su modificador de Carisma durante un número de asaltos igual a la mitad de su nivel de personaje.",
     prerequisites: [
-      { description: "Carisma 13", check: (ctx) => ctx.abilityScores.cha >= 13 },
       { description: "Capacidad de expulsar o reprender no muertos" },
+      { description: "Competencia con Escudo", check: hasFeat("shield-proficiency") },
     ],
     fighterBonusFeat: false,
     stackable: false,
@@ -85,11 +86,8 @@ export const CW_FEATS: Feat[] = [
     types: ["general"],
     description: "Una ráfaga de energía sagrada acelera el cuerpo y los reflejos del guerrero divino.",
     benefit:
-      "Como acción libre, puede gastar un uso diario de su capacidad de expulsar o reprender no muertos para ganar +30 pies (9 m) de velocidad y un ataque cuerpo a cuerpo adicional a su bonificador de ataque más alto durante varios asaltos.",
-    prerequisites: [
-      { description: "Carisma 13", check: (ctx) => ctx.abilityScores.cha >= 13 },
-      { description: "Capacidad de expulsar o reprender no muertos" },
-    ],
+      "Como acción estándar, puede gastar un uso diario de su capacidad de expulsar o reprender no muertos para ganar +10 pies (3 m) de velocidad base y 2 puntos de golpe temporales por nivel de personaje, durante un número de minutos igual a su modificador de Carisma.",
+    prerequisites: [{ description: "Capacidad de expulsar o reprender no muertos" }],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -113,7 +111,10 @@ export const CW_FEATS: Feat[] = [
     description: "Un paladín o un clérigo del mal capaz de invocar su ira divina con más frecuencia.",
     benefit:
       "Gana 2 usos adicionales al día de su capacidad de Golpe Divino (Smite Evil o Smite Good). Se puede tomar varias veces; sus efectos son acumulativos.",
-    prerequisites: [{ description: "Capacidad de Golpe Divino contra el mal o el bien" }],
+    prerequisites: [
+      { description: "Capacidad de Golpe Divino contra el mal o el bien" },
+      { description: "Bonificador base de ataque +4", check: (ctx) => ctx.babTotal >= 4 },
+    ],
     fighterBonusFeat: false,
     stackable: true,
   },
@@ -124,8 +125,11 @@ export const CW_FEATS: Feat[] = [
     types: ["general"],
     description: "Un cazador cuya especialización contra sus presas habituales se vuelve letal.",
     benefit:
-      "Una vez por asalto, en lugar de aplicar su bonificador normal contra un enemigo predilecto, puede aplicar el doble de dicho bonificador a un único ataque, daño o prueba de habilidad.",
-    prerequisites: [{ description: "Capacidad de clase de Enemigo Predilecto" }],
+      "Inflige +3 de daño adicional a sus enemigos predilectos. Este bonificador se acumula con el bonificador de enemigo predilecto que obtenga de otra clase.",
+    prerequisites: [
+      { description: "Capacidad de clase de Enemigo Predilecto" },
+      { description: "Bonificador base de ataque +5", check: (ctx) => ctx.babTotal >= 5 },
+    ],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -148,9 +152,9 @@ export const CW_FEATS: Feat[] = [
     types: ["general", "combate"],
     description: "Una fuerza descomunal le permite manejar armas pensadas para manos más grandes que las suyas.",
     benefit:
-      "Puede empuñar un arma de una categoría de tamaño mayor a la que le correspondería como si fuese de su tamaño (tratándola como un arma a dos manos), sufriendo -2 a las tiradas de ataque mientras la use.",
-    prerequisites: [],
-    fighterBonusFeat: true,
+      "Puede empuñar un arma cuerpo a cuerpo de una categoría de tamaño mayor a la que le correspondería como si fuese de su tamaño, sufriendo -2 a las tiradas de ataque mientras la use, sin que ello aumente el esfuerzo necesario para manejarla: un arma ligera de tamaño superior sigue tratándose como ligera, y solo un arma a dos manos de tamaño superior debe empuñarse con las dos manos.",
+    prerequisites: [{ description: "Bonificador base de ataque +1", check: (ctx) => ctx.babTotal >= 1 }],
+    fighterBonusFeat: false,
     stackable: false,
   },
   {
@@ -185,11 +189,14 @@ export const CW_FEATS: Feat[] = [
     id: "cw-arcane-strike",
     name: "Golpe Arcano",
     source: "complete-warrior",
-    types: ["combate"],
+    types: ["general"],
     description: "El lanzador de conjuros aprende a canalizar su poder arcano directamente en el filo de su arma.",
     benefit:
-      "Como acción rápida, puede sacrificar un espacio de conjuro (o un conjuro preparado) para imbuir todas sus armas de poder arcano durante 1 asalto; mientras dure el efecto, sus ataques con armas ganan un bonificador de competencia al daño igual al nivel del espacio sacrificado.",
-    prerequisites: [{ description: "Capacidad de lanzar al menos un conjuro arcano" }],
+      "Como acción libre que no provoca ataque de oportunidad, puede sacrificar un conjuro arcano preparado (o un espacio de conjuro) de nivel 1 o superior para ganar, durante 1 asalto, un bonificador a todas sus tiradas de ataque igual al nivel del conjuro sacrificado (sin poder superar su bonificador base de ataque) y un bonificador al daño de 1d4 por nivel del conjuro sacrificado, aplicable únicamente a sus ataques con arma cuerpo a cuerpo, desarmados o con arma natural.",
+    prerequisites: [
+      { description: "Capacidad de lanzar conjuros arcanos de nivel 3" },
+      { description: "Bonificador base de ataque +4", check: (ctx) => ctx.babTotal >= 4 },
+    ],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -260,11 +267,8 @@ export const CW_FEATS: Feat[] = [
     types: ["combate"],
     description: "Un luchador que no pierde eficacia cuando su enemigo lo tiene sujeto en una presa.",
     benefit:
-      "Puede realizar ataques con armas ligeras o desarmados contra un enemigo que lo tenga agarrado sin la penalización habitual por combatir mientras está agarrado, y gana +4 de bonificador en las pruebas enfrentadas para iniciar o escapar de una presa.",
-    prerequisites: [
-      { description: "Presa Mejorada", check: hasFeat("improved-grapple") },
-      { description: "Bonificador base de ataque +6", check: (ctx) => ctx.babTotal >= 6 },
-    ],
+      "Gana un ataque de oportunidad cuando un enemigo intente agarrarlo, incluso en los casos en los que normalmente no provocaría ninguno; si dicho ataque de oportunidad causa daño, el intento de presa del enemigo fracasa automáticamente (salvo que este posea Presa Mejorada u otra capacidad similar, en cuyo caso el daño se suma en su lugar a su prueba de presa enfrentada).",
+    prerequisites: [{ description: "Bonificador base de ataque +3", check: (ctx) => ctx.babTotal >= 3 }],
     fighterBonusFeat: true,
     stackable: false,
   },
@@ -275,10 +279,11 @@ export const CW_FEATS: Feat[] = [
     types: ["combate"],
     description: "Un luchador que convierte cada maniobra de combate en una oportunidad de causar daño extra.",
     benefit:
-      "Cuando obtiene éxito en una prueba de Empujón, Atropello o Presa y decide causar daño con ella, inflige el máximo daño posible en lugar de tirar los dados.",
+      "Concede tres maniobras de combate. Golpes de Avance (Advancing Blows): tras un empujón exitoso, gana +1 a las tiradas de ataque y de daño por cada casilla que haya desplazado al objetivo, aplicable en su siguiente asalto. Tajo Desguazador (Sundering Cleave): al destruir el arma o el escudo de un enemigo mediante un intento de Romper Arma, obtiene de inmediato un ataque cuerpo a cuerpo adicional. Golpe con Impulso (Momentum Swing): tras cargar, si usa Ataque Poderoso con una penalización de -5 o mayor, obtiene un bonificador al daño igual a esa penalización multiplicada por 1,5 (por 3 si empuña el arma a dos manos).",
     prerequisites: [
-      { description: "Fuerza 13", check: (ctx) => ctx.abilityScores.str >= 13 },
+      { description: "Romper Arma Mejorado", check: hasFeat("improved-sunder") },
       { description: "Ataque Poderoso", check: hasFeat("power-attack") },
+      { description: "Bonificador base de ataque +6", check: (ctx) => ctx.babTotal >= 6 },
     ],
     fighterBonusFeat: true,
     stackable: false,
@@ -290,12 +295,15 @@ export const CW_FEATS: Feat[] = [
     types: ["combate"],
     description: "Un estilo de combate nacido de danzar en batalla con dos hojas curvas gemelas.",
     benefit:
-      "Mientras luche con dos armas cortantes ligeras idénticas empuñadas una en cada mano, si ambos ataques de un mismo asalto impactan al mismo objetivo, puede realizar de inmediato un ataque adicional gratuito contra ese objetivo con cualquiera de las dos armas.",
+      "Si golpea al mismo objetivo con su espada y con su daga en un mismo asalto, puede realizar de inmediato un intento de desarme como acción gratuita.",
     prerequisites: [
-      { description: "Destreza 13", check: (ctx) => ctx.abilityScores.dex >= 13 },
+      { description: "Desarme Mejorado", check: hasFeat("improved-disarm") },
+      { description: "Combate con Dos Armas Mejorado", check: hasFeat("improved-two-weapon-fighting") },
       { description: "Combate con Dos Armas", check: hasFeat("two-weapon-fighting") },
+      { description: "Soltura con Daga", check: hasFeat("weapon-focus") },
+      { description: "Soltura con un arma tipo espada (bastarda, larga, cimitarra o corta)", check: hasFeat("weapon-focus") },
     ],
-    fighterBonusFeat: true,
+    fighterBonusFeat: false,
     stackable: false,
   },
   {
@@ -304,9 +312,10 @@ export const CW_FEATS: Feat[] = [
     source: "complete-warrior",
     types: ["combate"],
     description: "Piernas entrenadas para ganar terreno con rapidez sin perder la guardia.",
-    benefit: "Gana +5 pies (1,5 m) de velocidad base siempre que no lleve una carga pesada ni armadura media o pesada.",
+    benefit:
+      "Mientras lleve armadura ligera o ninguna armadura y no porte más que una carga ligera, su velocidad base aumenta en 5 pies (1,5 m).",
     prerequisites: [],
-    fighterBonusFeat: true,
+    fighterBonusFeat: false,
     stackable: false,
   },
   {
@@ -316,12 +325,15 @@ export const CW_FEATS: Feat[] = [
     types: ["combate"],
     description: "Un luchador que convierte el fallo de su rival en su propia ventaja.",
     benefit:
-      "Si un enemigo falla un ataque cuerpo a cuerpo contra usted, puede realizar de inmediato una prueba de derribo enfrentada gratuita contra él, sin provocar ataque de oportunidad.",
+      "Si el enemigo que es objetivo de su dote Esquiva le ataca cuerpo a cuerpo y falla, puede realizar de inmediato un intento de derribo contra él. Este ataque de oportunidad cuenta contra el número normal de ataques de oportunidad que puede realizar en el asalto.",
     prerequisites: [
-      { description: "Inteligencia 13", check: (ctx) => ctx.abilityScores.int >= 13 },
-      { description: "Pericia en Combate", check: hasFeat("combat-expertise") },
+      { description: "Destreza 13", check: (ctx) => ctx.abilityScores.dex >= 13 },
+      { description: "Reflejos de Combate", check: hasFeat("combat-reflexes") },
+      { description: "Esquiva", check: hasFeat("dodge") },
+      { description: "Derribo Mejorado", check: hasFeat("improved-trip") },
+      { description: "Impacto sin Arma Mejorado", check: hasFeat("improved-unarmed-strike") },
     ],
-    fighterBonusFeat: true,
+    fighterBonusFeat: false,
     stackable: false,
   },
   {
@@ -331,12 +343,13 @@ export const CW_FEATS: Feat[] = [
     types: ["combate"],
     description: "Un combatiente difícil de inmovilizar, desarmar o derribar en pleno fragor de la batalla.",
     benefit:
-      "Los enemigos sufren -4 de penalizador en las pruebas enfrentadas de derribo, desarme o empujón que intenten contra usted mientras no lo tengan flanqueado, y puede optar por que un empujón fallido por muy poco no le haga retroceder.",
+      "Concede tres maniobras que emplean su dote Esquiva. Negar Ataque Poderoso (Negate Power Attack): el enemigo designado por su Esquiva no gana el bonificador al daño de Ataque Poderoso contra usted, aunque sigue sufriendo la penalización al ataque. Defensa Desviada (Diverting Defense): el primer ataque de un flanqueador designado falla automáticamente y puede redirigirse para golpear al otro flanqueador, que queda desprevenido ante ese ataque. Provocar Extralimitación (Cause Overreach): si provoca un ataque de oportunidad al moverse y el enemigo falla, obtiene un intento de derribo gratuito sin arriesgarse a ser derribado a su vez.",
     prerequisites: [
       { description: "Esquiva", check: hasFeat("dodge") },
+      { description: "Movilidad", check: hasFeat("mobility") },
       { description: "Bonificador base de ataque +6", check: (ctx) => ctx.babTotal >= 6 },
     ],
-    fighterBonusFeat: true,
+    fighterBonusFeat: false,
     stackable: false,
   },
   {
@@ -358,11 +371,11 @@ export const CW_FEATS: Feat[] = [
     id: "cw-formation-expert",
     name: "Experto en Formación",
     source: "complete-warrior",
-    types: ["combate", "especial"],
+    types: ["combate"],
     description: "Un veterano acostumbrado a luchar codo con codo dentro de una unidad organizada.",
     benefit:
-      "Mientras luche adyacente a al menos otro aliado que también posea este dote y ambos empuñen armas de asta o de alcance similar, ambos ganan +1 de bonificador de moral a la Clase de Armadura y a las tiradas de ataque.",
-    prerequisites: [{ description: "Bonificador base de ataque +1", check: (ctx) => ctx.babTotal >= 1 }],
+      "Concede tres maniobras de combate en formación (funcionan aunque sus aliados no posean este dote). Muro de Escudos (Lock Shields): mientras esté flanqueado por aliados con escudo listo a ambos lados, gana +1 a la Clase de Armadura. Ocupar la Brecha (Step into the Breach): como acción de movimiento, puede ocupar la casilla de un aliado caído adyacente. Muro de Astas (Wall of Polearms): gana +2 a las tiradas de ataque con un arma de asta si aliados adyacentes empuñan el mismo tipo de arma.",
+    prerequisites: [{ description: "Bonificador base de ataque +6", check: (ctx) => ctx.babTotal >= 6 }],
     fighterBonusFeat: true,
     stackable: false,
   },
@@ -385,12 +398,13 @@ export const CW_FEATS: Feat[] = [
     types: ["combate"],
     description: "Un luchador que aprovecha cada golpe recibido para devolver el favor de inmediato.",
     benefit:
-      "Cuando un enemigo le impacta con un ataque cuerpo a cuerpo, puede realizar de inmediato un ataque de oportunidad contra él; a cambio, pierde su bonificador de Destreza a la Clase de Armadura hasta el comienzo de su siguiente turno.",
+      "Tomando un penalizador de -4 a su Clase de Armadura, gana un ataque de oportunidad contra cualquier criatura que le impacte con un ataque cuerpo a cuerpo. Esto no le otorga más ataques de oportunidad de los que normalmente podría realizar en un asalto.",
     prerequisites: [
+      { description: "Destreza 13", check: (ctx) => ctx.abilityScores.dex >= 13 },
+      { description: "Pericia en Combate", check: hasFeat("combat-expertise") },
       { description: "Esquiva", check: hasFeat("dodge") },
-      { description: "Reflejos de Combate", check: hasFeat("combat-reflexes") },
     ],
-    fighterBonusFeat: true,
+    fighterBonusFeat: false,
     stackable: false,
   },
   {
@@ -427,12 +441,13 @@ export const CW_FEATS: Feat[] = [
     types: ["combate"],
     description: "Una patada barredora capaz de dejar tambaleante a un enemigo distraído.",
     benefit:
-      "Cuando finta con éxito contra un enemigo, puede sustituir su siguiente ataque desarmado por una patada circular que, de impactar, deja al objetivo tambaleante durante 1 asalto (sufre -2 a la Clase de Armadura y a las tiradas de ataque).",
+      "Si consigue un golpe crítico con un ataque desarmado, puede realizar de inmediato un ataque desarmado adicional contra el mismo objetivo, usando el mismo bonificador de ataque empleado para el crítico.",
     prerequisites: [
+      { description: "Fuerza 15", check: (ctx) => ctx.abilityScores.str >= 15 },
       { description: "Impacto sin Arma Mejorado", check: hasFeat("improved-unarmed-strike") },
-      { description: "Finta Mejorada", check: hasFeat("improved-feint") },
+      { description: "Ataque Poderoso", check: hasFeat("power-attack") },
     ],
-    fighterBonusFeat: true,
+    fighterBonusFeat: false,
     stackable: false,
   },
   {
@@ -485,10 +500,10 @@ export const CW_FEATS: Feat[] = [
     types: ["combate"],
     description: "Un combatiente que usa su escudo como un ariete durante la carga.",
     benefit:
-      "Al cargar, puede sustituir su ataque normal por un golpe de escudo que, de impactar, le permite realizar de inmediato una prueba de derribo enfrentada gratuita contra el objetivo.",
+      "Al cargar, puede sustituir su ataque normal por un golpe de escudo que, de impactar, le permite realizar de inmediato una prueba de derribo enfrentada gratuita contra el objetivo sin provocar ataque de oportunidad; si el intento de derribo falla, el defensor no puede derribarlo a él en respuesta.",
     prerequisites: [
-      { description: "Competencia con Escudo", check: hasFeat("shield-proficiency") },
       { description: "Golpe con el Escudo Mejorado", check: hasFeat("improved-shield-bash") },
+      { description: "Bonificador base de ataque +3", check: (ctx) => ctx.babTotal >= 3 },
     ],
     fighterBonusFeat: true,
     stackable: false,
@@ -500,10 +515,11 @@ export const CW_FEATS: Feat[] = [
     types: ["combate"],
     description: "Un golpe de escudo capaz de desequilibrar al enemigo antes de que pueda reaccionar.",
     benefit:
-      "Cuando golpea con su escudo, puede realizar de inmediato una prueba de empujón gratuita contra el objetivo, sin provocar ataque de oportunidad y sin necesitar seguirlo si es rechazado.",
+      "Como acción de asalto completo o como parte de una carga, un golpe de escudo exitoso obliga al objetivo a superar una salvación de Fortaleza (CD 10 + la mitad de su nivel de personaje + su modificador de Fuerza) o quedar aturdido durante 1 asalto. No afecta a constructos, criaturas gelatinosas, plantas, no muertos, criaturas incorpóreas ni a quienes sean inmunes a los golpes críticos.",
     prerequisites: [
       { description: "Golpe con el Escudo Mejorado", check: hasFeat("improved-shield-bash") },
-      { description: "Empujón Mejorado", check: hasFeat("improved-bull-rush") },
+      { description: "Cargar con el Escudo", check: hasFeat("cw-shield-charge") },
+      { description: "Bonificador base de ataque +6", check: (ctx) => ctx.babTotal >= 6 },
     ],
     fighterBonusFeat: true,
     stackable: false,
@@ -543,10 +559,11 @@ export const CW_FEATS: Feat[] = [
     types: ["combate"],
     description: "Un guerrero que convierte la furia de su carga en pura potencia destructiva, sin importarle exponerse.",
     benefit:
-      "Al usar Ataque Poderoso durante una carga, puede aplicar la penalización elegida a su Clase de Armadura hasta su siguiente turno en lugar de a sus tiradas de ataque. Además, si derriba a un enemigo con un empujón exitoso tras cargar, puede seguir avanzando con él.",
+      "Concede tres maniobras. Empujón Dirigido (Directed Bull Rush): al realizar un empujón, puede desviar lateralmente al objetivo en lugar de hacerlo retroceder en línea recta. Empujón en Cadena (Domino Rush): si un empujón hace chocar a un enemigo contra otro, puede realizar de inmediato un intento de derribo gratuito contra ambos. Carga Temeraria (Heedless Charge): al cargar y usar Ataque Poderoso con una penalización de -5 o mayor, puede convertir parte de esa penalización en un bonificador a la Clase de Armadura en lugar de aplicarla íntegramente a sus tiradas de ataque.",
     prerequisites: [
-      { description: "Fuerza 13", check: (ctx) => ctx.abilityScores.str >= 13 },
+      { description: "Empujón Mejorado", check: hasFeat("improved-bull-rush") },
       { description: "Ataque Poderoso", check: hasFeat("power-attack") },
+      { description: "Bonificador base de ataque +6", check: (ctx) => ctx.babTotal >= 6 },
     ],
     fighterBonusFeat: true,
     stackable: false,
@@ -569,7 +586,7 @@ export const CW_FEATS: Feat[] = [
     source: "complete-warrior",
     types: ["combate"],
     description: "Una precisión letal a la hora de rematar los golpes críticos con un arma concreta.",
-    benefit: "+4 de bonificador a las tiradas para confirmar un golpe crítico con el arma cuerpo a cuerpo elegida.",
+    benefit: "+4 de bonificador a las tiradas para confirmar un golpe crítico con el arma elegida.",
     prerequisites: [
       { description: "Soltura con el arma elegida", check: hasFeat("weapon-focus") },
       { description: "Bonificador base de ataque +4", check: (ctx) => ctx.babTotal >= 4 },
@@ -633,9 +650,12 @@ export const CW_FEATS: Feat[] = [
     types: ["combate"],
     description: "Un luchador que convierte cada agarre en una oportunidad para golpear con otra arma.",
     benefit:
-      "Puede emplear armas ligeras o su ataque desarmado con normalidad mientras está implicado en una presa (propia o ajena), sin la penalización habitual por combatir agarrado.",
-    prerequisites: [{ description: "Presa Mejorada", check: hasFeat("improved-grapple") }],
-    fighterBonusFeat: true,
+      "Gana un bonificador de circunstancias para escapar de una presa o inmovilización contra oponentes de mayor tamaño: +2 si el oponente es Grande, +4 si es Enorme, +6 si es Gigantesco y +8 si es Colosal.",
+    prerequisites: [
+      { description: "Tamaño Pequeño o Mediano" },
+      { description: "Impacto sin Arma Mejorado", check: hasFeat("improved-unarmed-strike") },
+    ],
+    fighterBonusFeat: false,
     stackable: false,
   },
   {
@@ -714,7 +734,7 @@ export const CW_FEATS: Feat[] = [
     types: ["combate"],
     description: "Un estilo brutal que combina el tajo de un hacha con la daga oculta para inmovilizar al enemigo.",
     benefit:
-      "Si impacta al mismo objetivo con su hacha y con su daga en el mismo asalto, puede intentar de inmediato una prueba de presa gratuita contra ese objetivo sin provocar ataque de oportunidad.",
+      "Si impacta al mismo objetivo con su hacha y con su daga en el mismo asalto, puede intentar de inmediato una prueba de presa gratuita contra ese objetivo sin provocar ataque de oportunidad ni necesitar un toque previo; si tiene éxito, suelta el hacha pero gana un ataque adicional con la daga a su mejor bonificador base de ataque (con la penalización normal por combatir agarrado).",
     prerequisites: [
       { description: "Soltura con un arma tipo hacha (hacha de batalla, hacha de mano o hacha arrojadiza enana)" },
       { description: "Soltura con Daga", check: hasFeat("weapon-focus") },
@@ -722,7 +742,7 @@ export const CW_FEATS: Feat[] = [
       { description: "Combate con Dos Armas", check: hasFeat("two-weapon-fighting") },
       { description: "Fuerza 15", check: (ctx) => ctx.abilityScores.str >= 15 },
     ],
-    fighterBonusFeat: true,
+    fighterBonusFeat: false,
     stackable: false,
   },
   {
@@ -820,6 +840,7 @@ export const CW_FEATS: Feat[] = [
       { description: "Fuerza 13", check: (ctx) => ctx.abilityScores.str >= 13 },
       { description: "Disparo a Bocajarro", check: hasFeat("point-blank-shot") },
       { description: "Disparo Preciso", check: hasFeat("precise-shot") },
+      { description: "Inmovilizar a Distancia", check: hasFeat("cw-ranged-pin") },
       { description: "Bonificador base de ataque +5", check: (ctx) => ctx.babTotal >= 5 },
     ],
     fighterBonusFeat: true,
@@ -868,6 +889,7 @@ export const CW_FEATS: Feat[] = [
       "Mientras empuñe dos armas (sin contar armas naturales ni ataques desarmados), gana un bonificador de escudo de +3 a la Clase de Armadura. Este bonificador aumenta a +6 si lucha a la defensiva o usa la acción de defensa total.",
     prerequisites: [
       { description: "Combate con Dos Armas", check: hasFeat("two-weapon-fighting") },
+      { description: "Combate con Dos Armas Mejorado", check: hasFeat("improved-two-weapon-fighting") },
       { description: "Defensa con Dos Armas", check: hasFeat("two-weapon-defense") },
       { description: "Destreza 19", check: (ctx) => ctx.abilityScores.dex >= 19 },
       { description: "Bonificador base de ataque +11", check: (ctx) => ctx.babTotal >= 11 },

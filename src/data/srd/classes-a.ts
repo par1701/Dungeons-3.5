@@ -70,8 +70,8 @@ const RANGER_BONUS_FEAT_GRANTS = [
   { level: 3, featId: "endurance" },
 ];
 
-// Complete Champion: rasgo de clase alternativo "Campeón de lo Salvaje" (solo
-// activo con la regla variante vr-cc-champion-of-the-wild). En vez de
+// Complete Warrior: rasgo de clase alternativo "Campeón de lo Salvaje" (solo
+// activo con la regla variante vr-cw-champion-of-the-wild). En vez de
 // conjuros divinos, el explorador obtiene una dote de bonificación en los
 // niveles 4, 8, 11 y 14, elegida entre una lista fija de dotes de combate
 // más las propias de su estilo de combate (arquería o dos armas), aunque no
@@ -128,7 +128,7 @@ const CHAMPION_OF_THE_WILD_CHOICES: ClassFeatureChoice[] = [
         "dos-armas": CHAMPION_OF_THE_WILD_TWO_WEAPON_FEATS,
       },
     },
-    requiresVariantRule: "vr-cc-champion-of-the-wild",
+    requiresVariantRule: "vr-cw-champion-of-the-wild",
   },
   {
     id: "campeon-salvaje-dote-2",
@@ -143,7 +143,7 @@ const CHAMPION_OF_THE_WILD_CHOICES: ClassFeatureChoice[] = [
         "dos-armas": CHAMPION_OF_THE_WILD_TWO_WEAPON_FEATS,
       },
     },
-    requiresVariantRule: "vr-cc-champion-of-the-wild",
+    requiresVariantRule: "vr-cw-champion-of-the-wild",
   },
   {
     id: "campeon-salvaje-dote-3",
@@ -158,7 +158,7 @@ const CHAMPION_OF_THE_WILD_CHOICES: ClassFeatureChoice[] = [
         "dos-armas": CHAMPION_OF_THE_WILD_TWO_WEAPON_FEATS,
       },
     },
-    requiresVariantRule: "vr-cc-champion-of-the-wild",
+    requiresVariantRule: "vr-cw-champion-of-the-wild",
   },
   {
     id: "campeon-salvaje-dote-4",
@@ -173,7 +173,7 @@ const CHAMPION_OF_THE_WILD_CHOICES: ClassFeatureChoice[] = [
         "dos-armas": CHAMPION_OF_THE_WILD_TWO_WEAPON_FEATS,
       },
     },
-    requiresVariantRule: "vr-cc-champion-of-the-wild",
+    requiresVariantRule: "vr-cw-champion-of-the-wild",
   },
 ];
 

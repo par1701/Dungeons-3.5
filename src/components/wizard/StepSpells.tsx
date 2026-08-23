@@ -17,7 +17,7 @@ export default function StepSpells({ character, onChange }: StepProps) {
   const race = findRace(character.raceId);
   const finalScores = computeFinalAbilityScores(character.abilityScores, race, character.equipment);
 
-  const championOfTheWild = character.activeVariantRules.includes("vr-cc-champion-of-the-wild");
+  const championOfTheWild = character.activeVariantRules.includes("vr-cw-champion-of-the-wild");
   const cwRangerNoSpells = character.activeVariantRules.includes("vr-cw-ranger-no-spells");
   const cwPaladinNoSpells = character.activeVariantRules.includes("vr-cw-paladin-no-spells");
   const casterClassLevels = character.classLevels.filter((cl) => {

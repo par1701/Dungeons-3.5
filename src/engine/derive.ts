@@ -680,7 +680,7 @@ export function getUnlockedClassFeatures(
   classes: ClassDef[],
   activeVariantRules: string[] = [],
 ): UnlockedClassFeature[] {
-  const championOfTheWild = activeVariantRules.includes("vr-cc-champion-of-the-wild");
+  const championOfTheWild = activeVariantRules.includes("vr-cw-champion-of-the-wild");
   const cwRangerNoSpells = activeVariantRules.includes("vr-cw-ranger-no-spells");
   const cwPaladinNoSpells = activeVariantRules.includes("vr-cw-paladin-no-spells");
   return classLevels.flatMap((cl) => {

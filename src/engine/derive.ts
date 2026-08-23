@@ -809,31 +809,52 @@ export interface FavoredEnemyBonus {
 }
 
 /**
- * Agrega las elecciones de "enemigo predilecto" del explorador (niveles 1,
- * 5, 10, 15 y 20) en un bono por enemigo. Según el SRD, en cada uno de esos
- * niveles el jugador elige entre seleccionar un enemigo predilecto nuevo (a
- * +2) o reforzar en +2 uno ya elegido antes, en vez de añadir uno distinto:
- * esta app modela esa elección simplemente dejando repetir el mismo texto en
- * un nivel posterior (comparado sin mayúsculas/acentos), y cada repetición
- * suma otro +2 al bono total de ese enemigo.
+ * Agrega las elecciones de "enemigo predilecto" del explorador en un bono
+ * por enemigo. Según el SRD, en nivel 1 el explorador elige un único
+ * enemigo predilecto (+2); en niveles 5, 10, 15 y 20 elige ADEMÁS un enemigo
+ * predilecto nuevo (+2) Y refuerza en +2 el bono contra cualquier enemigo
+ * predilecto ya elegido, incluido el que acaba de añadir ese mismo nivel
+ * ("the bonus against any one favored enemy, including the one just
+ * selected, increases by 2") — son dos beneficios distintos del mismo
+ * nivel, no una alternativa entre "nuevo" o "reforzar uno existente". Se
+ * modelan como dos elecciones de nivel independientes: `newChoiceId` (nuevo
+ * enemigo, en todos los niveles) y `reinforceChoiceId` (enemigo reforzado,
+ * solo niveles 5/10/15/20), donde el texto de un refuerzo debe coincidir
+ * (sin mayúsculas/acentos) con un enemigo ya presente en la lista agregada
+ * hasta ese nivel; un refuerzo que no coincide con ningún enemigo conocido
+ * se ignora en vez de crear una entrada nueva.
  */
 export function getFavoredEnemyBonuses(
   classFeatureChoices: CharacterClassFeatureChoice[],
   classId = "ranger",
-  choiceId = "enemigo-predilecto",
+  newChoiceId = "enemigo-predilecto",
+  reinforceChoiceId = "enemigo-predilecto-refuerzo",
 ): FavoredEnemyBonus[] {
-  const entries = classFeatureChoices
-    .filter((c) => c.classId === classId && c.choiceId === choiceId && c.value.trim())
-    .sort((a, b) => a.level - b.level);
+  const relevant = classFeatureChoices.filter((c) => c.classId === classId && c.value.trim());
+  const newEntries = relevant.filter((c) => c.choiceId === newChoiceId).sort((a, b) => a.level - b.level);
+  const reinforceEntries = relevant.filter((c) => c.choiceId === reinforceChoiceId).sort((a, b) => a.level - b.level);
+
   const byKey = new Map<string, FavoredEnemyBonus>();
-  for (const entry of entries) {
+  for (const entry of newEntries) {
+    const key = normalizeForMatch(entry.value);
+    const existing = byKey.get(key);
+    if (existing) {
+      // Texto repetido en un nuevo nivel: no debería ocurrir según las
+      // reglas (cada elección "nueva" debería ser un enemigo distinto),
+      // pero si sucede se trata igual que un refuerzo en vez de perder el
+      // dato.
+      existing.bonus += 2;
+      existing.levels.push(entry.level);
+    } else {
+      byKey.set(key, { enemy: entry.value.trim(), bonus: 2, levels: [entry.level] });
+    }
+  }
+  for (const entry of reinforceEntries) {
     const key = normalizeForMatch(entry.value);
     const existing = byKey.get(key);
     if (existing) {
       existing.bonus += 2;
       existing.levels.push(entry.level);
-    } else {
-      byKey.set(key, { enemy: entry.value.trim(), bonus: 2, levels: [entry.level] });
     }
   }
   return Array.from(byKey.values());

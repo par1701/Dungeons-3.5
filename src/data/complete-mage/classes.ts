@@ -34,6 +34,137 @@ const SUEL_ARCANAMACH_CHOICES: ClassFeatureChoice[] = [
 
 const hasFeat = (id: string) => (ctx: FeatPrereqContext) => ctx.featIds.has(id);
 
+const ARCANE_METAMAGIC_FEAT_IDS = [
+  "empower-spell",
+  "enlarge-spell",
+  "extend-spell",
+  "heighten-spell",
+  "maximize-spell",
+  "quicken-spell",
+  "silent-spell",
+  "still-spell",
+  "widen-spell",
+];
+
+const ITEM_CREATION_FEAT_IDS = [
+  "brew-potion",
+  "craft-magic-arms-and-armor",
+  "craft-rod",
+  "craft-staff",
+  "craft-wand",
+  "craft-wondrous-item",
+  "forge-ring",
+  "scribe-scroll",
+];
+
+function countMatchingFeats(featIds: Set<string>, candidates: string[]): number {
+  return candidates.filter((id) => featIds.has(id)).length;
+}
+
+const ULTIMATE_MAGUS_CHOICES: ClassFeatureChoice[] = [
+  {
+    id: "dote-adicional-1",
+    featureName: "Dote Adicional",
+    levels: [2],
+    label: "Dote adicional (1.ª): metamagia o creación de objetos",
+    kind: "dote_categoria",
+    featCategoryOptions: ["metamagia", "creacion_objetos"],
+  },
+  {
+    id: "dote-adicional-2",
+    featureName: "Dote Adicional",
+    levels: [4],
+    label: "Dote adicional (2.ª): metamagia o creación de objetos",
+    kind: "dote_categoria",
+    featCategoryOptions: ["metamagia", "creacion_objetos"],
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Campeón Abjurador (Abjurant Champion)
+// ---------------------------------------------------------------------------
+
+const ABJURANT_CHAMPION_FEATURES = [
+  {
+    level: 1,
+    name: "Conjuros",
+    description:
+      "Cada nivel de campeón abjurador (1º a 5º) otorga conjuros por día, nivel de lanzador (y conjuros conocidos si aplica) como si hubiera subido un nivel en su clase de lanzador arcano previa, sin otros beneficios de esa clase.",
+  },
+  {
+    level: 1,
+    name: "Armadura de Abjuración",
+    description:
+      "Al lanzar un conjuro de abjuración que otorgue un bonificador de armadura o de escudo a la Clase de Armadura, el campeón abjurador puede aumentar ese bonificador en una cantidad igual a su nivel de clase.",
+  },
+  {
+    level: 1,
+    name: "Abjuración Extendida",
+    description:
+      "El campeón abjurador duplica la duración de sus conjuros de abjuración, como si tuvieran aplicada la dote Conjuro Prolongado, pero sin cambio de nivel de conjuro ni de tiempo de lanzamiento.",
+  },
+  {
+    level: 2,
+    name: "Abjuración Rápida",
+    description:
+      "Desde el nivel 2, el campeón abjurador puede lanzar conjuros de abjuración como una acción rápida (como con la dote Lanzamiento Rápido, sin cambio de nivel de conjuro), hasta un nivel de conjuro máximo igual a la mitad de su nivel de clase (redondeando hacia arriba).",
+  },
+  {
+    level: 4,
+    name: "Impulso Arcano",
+    description:
+      "Desde el nivel 4, como acción rápida el campeón abjurador puede gastar un conjuro o hueco de conjuro no lanzado para ganar durante 1 asalto un bonificador de intuición igual al nivel del conjuro gastado, a elegir entre: ataque, daño con arma (el doble del nivel del conjuro), Clase de Armadura, tiradas de salvación, o resistencia a energía (ácido, frío, electricidad, fuego o sónico) igual a 5 veces el nivel del conjuro.",
+  },
+  {
+    level: 5,
+    name: "Arcanista Marcial",
+    description:
+      "Desde el nivel 5, su nivel de lanzador en una clase arcana elegida es igual a su bonificador de ataque base, si este es mayor que su nivel de lanzador habitual. Solo puede aplicar este beneficio a una única clase arcana.",
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Magus Definitivo (Ultimate Magus)
+// ---------------------------------------------------------------------------
+
+const ULTIMATE_MAGUS_FEATURES = [
+  {
+    level: 1,
+    name: "Doble Progresión Arcana",
+    description:
+      "Cada nivel de magus definitivo (1º a 5º) otorga un nivel de lanzador arcano adicional a CADA UNA de las dos clases de lanzador arcano que el personaje ya poseyera antes de entrar en la clase de prestigio, exactamente como si hubiera obtenido un nivel en cada una de ellas a efectos de conjuros por día, conjuros conocidos y nivel de lanzador (pero no otros rasgos de esas clases).",
+  },
+  {
+    level: 1,
+    name: "Poder de Conjuro",
+    description:
+      "El magus definitivo obtiene un bonificador de +1 en las pruebas de nivel de lanzador realizadas para superar la resistencia a la magia.",
+  },
+  {
+    level: 2,
+    name: "Dote Adicional",
+    description:
+      "El magus definitivo obtiene una dote adicional de metamagia o de creación de objetos mágicos que cumpla sus requisitos.",
+  },
+  {
+    level: 3,
+    name: "Poder de Conjuro Mejorado",
+    description: "El bonificador de Poder de Conjuro aumenta a +2.",
+  },
+  {
+    level: 4,
+    name: "Dote Adicional",
+    description:
+      "El magus definitivo obtiene una segunda dote adicional de metamagia o de creación de objetos mágicos que cumpla sus requisitos.",
+  },
+  {
+    level: 5,
+    name: "Maestría Arcana Definitiva",
+    description:
+      "El bonificador de Poder de Conjuro aumenta a +3. Además, una vez al día el magus definitivo puede lanzar un conjuro preparado o conocido de cualquiera de sus dos clases de lanzador arcano sin gastar el espacio de conjuro correspondiente.",
+  },
+];
+
 // ---------------------------------------------------------------------------
 // Acorde Sublime (Sublime Chord)
 // ---------------------------------------------------------------------------
@@ -462,6 +593,93 @@ export const CM_CLASSES: ClassDef[] = [
         check: (ctx) => (ctx.skillRanks["knowledge-arcana"] ?? 0) >= 5,
       },
       { description: "Nivel de lanzador arcano 5", check: (ctx) => ctx.casterLevel >= 5 },
+    ],
+  },
+  {
+    id: "cm-abjurant-champion",
+    name: "Campeón Abjurador (Abjurant Champion)",
+    source: "complete-mage",
+    description:
+      "Un lanzador arcano que combina la magia de abjuración con la destreza marcial, reforzándose a sí mismo y su equipo en pleno combate mientras sigue progresando en su arte arcano.",
+    hitDie: 10,
+    skillPointsPerLevel: 2,
+    classSkills: [
+      "climb",
+      "concentration",
+      "craft",
+      "handle-animal",
+      "intimidate",
+      "jump",
+      "knowledge-arcana",
+      "ride",
+      "spellcraft",
+      "swim",
+    ],
+    babProgression: "completa",
+    saves: { fort: "mala", ref: "mala", will: "buena" },
+    weaponProficiencies: [],
+    armorProficiencies: [],
+    features: ABJURANT_CHAMPION_FEATURES,
+    maxLevel: 5,
+    isPrestige: true,
+    prerequisites: [
+      {
+        description: "Bonificador base de ataque +5",
+        check: (ctx) => ctx.babTotal >= 5,
+      },
+      {
+        description: "Lanzar Conjuros en Combate (Combat Casting)",
+        check: (ctx) => ctx.featIds.has("combat-casting"),
+      },
+      {
+        description: "Competencia con al menos un arma marcial",
+      },
+      {
+        description:
+          "Capacidad de lanzar conjuros arcanos de nivel 1, incluyendo al menos un conjuro de abjuración",
+        check: (ctx) => ctx.casterLevel >= 1,
+      },
+    ],
+  },
+  {
+    id: "cm-ultimate-magus",
+    name: "Magus Definitivo (Ultimate Magus)",
+    source: "complete-mage",
+    description:
+      "Un lanzador que ha dividido su formación arcana entre dos tradiciones distintas (por ejemplo, mago y hechicero) y que en esta clase de prestigio hace progresar ambas a la vez, en vez de tener que elegir entre ellas.",
+    hitDie: 4,
+    skillPointsPerLevel: 2,
+    classSkills: ["concentration", "craft", "decipher-script", "knowledge-arcana", "profession", "spellcraft"],
+    babProgression: "media",
+    saves: { fort: "mala", ref: "mala", will: "buena" },
+    weaponProficiencies: [],
+    armorProficiencies: [],
+    features: ULTIMATE_MAGUS_FEATURES,
+    choices: ULTIMATE_MAGUS_CHOICES,
+    maxLevel: 5,
+    isPrestige: true,
+    prerequisites: [
+      {
+        description: "Saber (Arcano): 15 rangos",
+        check: (ctx) => (ctx.skillRanks["knowledge-arcana"] ?? 0) >= 15,
+      },
+      {
+        description: "Conocimiento de Conjuros: 15 rangos",
+        check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 15,
+      },
+      {
+        description: "Dos dotes cualesquiera de metamagia o de creación de objetos mágicos",
+        check: (ctx) =>
+          countMatchingFeats(ctx.featIds, [...ARCANE_METAMAGIC_FEAT_IDS, ...ITEM_CREATION_FEAT_IDS]) >= 2,
+      },
+      {
+        description:
+          "Capacidad de lanzar conjuros arcanos de nivel 2 procedentes de dos clases de lanzador arcano distintas (por ejemplo, mago y hechicero)",
+        check: (ctx) =>
+          Object.entries(ctx.classLevels).filter(
+            ([classId, level]) => ["wizard", "sorcerer"].includes(classId) && level >= 1,
+          ).length >= 2,
+      },
     ],
   },
 ];

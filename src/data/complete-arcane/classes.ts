@@ -19,25 +19,6 @@ const SPELLSWORD_CHOICES: ClassFeatureChoice[] = [
   },
 ];
 
-const ULTIMATE_MAGUS_CHOICES: ClassFeatureChoice[] = [
-  {
-    id: "dote-adicional-1",
-    featureName: "Dote Adicional",
-    levels: [2],
-    label: "Dote adicional (1.ª): metamagia o creación de objetos",
-    kind: "dote_categoria",
-    featCategoryOptions: ["metamagia", "creacion_objetos"],
-  },
-  {
-    id: "dote-adicional-2",
-    featureName: "Dote Adicional",
-    levels: [4],
-    label: "Dote adicional (2.ª): metamagia o creación de objetos",
-    kind: "dote_categoria",
-    featCategoryOptions: ["metamagia", "creacion_objetos"],
-  },
-];
-
 const ELEMENTAL_SAVANT_CHOICES: ClassFeatureChoice[] = [
   {
     id: "vinculo-elemental",
@@ -84,69 +65,9 @@ const ARCANE_METAMAGIC_FEAT_IDS = [
   "widen-spell",
 ];
 
-const ITEM_CREATION_FEAT_IDS = [
-  "brew-potion",
-  "craft-magic-arms-and-armor",
-  "craft-rod",
-  "craft-staff",
-  "craft-wand",
-  "craft-wondrous-item",
-  "forge-ring",
-  "scribe-scroll",
-];
-
 function countMatchingFeats(featIds: Set<string>, candidates: string[]): number {
   return candidates.filter((id) => featIds.has(id)).length;
 }
-
-// ---------------------------------------------------------------------------
-// Campeón Abjurador (Abjurant Champion)
-// ---------------------------------------------------------------------------
-
-const ABJURANT_CHAMPION_FEATURES = [
-  {
-    level: 1,
-    name: "Escudo Repentino",
-    description:
-      "El campeón abjurador puede lanzar el conjuro escudo sobre sí mismo como acción rápida un número de veces por día igual a su modificador de Inteligencia, Sabiduría o Carisma (la que use como característica de lanzamiento), en vez del tiempo de lanzamiento normal.",
-  },
-  {
-    level: 1,
-    name: "Guerrero con Armadura Ligera",
-    description:
-      "Mientras lleve armadura ligera, el campeón abjurador no sufre la probabilidad de fallo arcano al lanzar sus conjuros arcanos.",
-  },
-  {
-    level: 1,
-    name: "Progresión de Conjuros Arcanos",
-    description:
-      "Cada nivel de campeón abjurador (1º a 5º) otorga un nivel de lanzador arcano adicional a una clase de lanzador arcano preparado o espontáneo que el personaje ya poseyera antes de entrar en la clase de prestigio, exactamente como si hubiera obtenido un nivel en dicha clase a efectos de conjuros por día, conjuros conocidos y nivel de lanzador (pero no otros rasgos de esa clase).",
-  },
-  {
-    level: 2,
-    name: "Canalización Arcana",
-    description:
-      "El campeón abjurador puede lanzar un conjuro de toque y \"guardarlo\" en su arma cuerpo a cuerpo, de modo que el siguiente golpe con éxito con esa arma administra el efecto del conjuro además del daño normal del arma.",
-  },
-  {
-    level: 3,
-    name: "Canalización Arcana Mejorada",
-    description:
-      "La Canalización Arcana del campeón abjurador funciona también con conjuros de toque a distancia, permitiéndole administrarlos mediante un disparo con éxito de un arma a distancia.",
-  },
-  {
-    level: 4,
-    name: "Aura de Protección",
-    description:
-      "Mientras el campeón abjurador se beneficia de un conjuro escudo (incluido el lanzado mediante Escudo Repentino), todos sus aliados en un radio de 3 metros obtienen un bonificador de +1 a la Clase de Armadura.",
-  },
-  {
-    level: 5,
-    name: "Aura de Protección Mejorada",
-    description:
-      "El bonificador de la Aura de Protección aumenta a +2 y su radio se extiende a 6 metros. Además, el conjuro escudo lanzado mediante Escudo Repentino dura el doble de lo normal.",
-  },
-];
 
 // ---------------------------------------------------------------------------
 // Erudito Elemental (Elemental Savant)
@@ -381,84 +302,7 @@ const SPELLSWORD_FEATURES = [
   },
 ];
 
-// ---------------------------------------------------------------------------
-// Magus Definitivo (Ultimate Magus)
-// ---------------------------------------------------------------------------
-
-const ULTIMATE_MAGUS_FEATURES = [
-  {
-    level: 1,
-    name: "Doble Progresión Arcana",
-    description:
-      "Cada nivel de magus definitivo (1º a 5º) otorga un nivel de lanzador arcano adicional a CADA UNA de las dos clases de lanzador arcano que el personaje ya poseyera antes de entrar en la clase de prestigio, exactamente como si hubiera obtenido un nivel en cada una de ellas a efectos de conjuros por día, conjuros conocidos y nivel de lanzador (pero no otros rasgos de esas clases).",
-  },
-  {
-    level: 1,
-    name: "Poder de Conjuro",
-    description:
-      "El magus definitivo obtiene un bonificador de +1 en las pruebas de nivel de lanzador realizadas para superar la resistencia a la magia.",
-  },
-  {
-    level: 2,
-    name: "Dote Adicional",
-    description:
-      "El magus definitivo obtiene una dote adicional de metamagia o de creación de objetos mágicos que cumpla sus requisitos.",
-  },
-  {
-    level: 3,
-    name: "Poder de Conjuro Mejorado",
-    description: "El bonificador de Poder de Conjuro aumenta a +2.",
-  },
-  {
-    level: 4,
-    name: "Dote Adicional",
-    description:
-      "El magus definitivo obtiene una segunda dote adicional de metamagia o de creación de objetos mágicos que cumpla sus requisitos.",
-  },
-  {
-    level: 5,
-    name: "Maestría Arcana Definitiva",
-    description:
-      "El bonificador de Poder de Conjuro aumenta a +3. Además, una vez al día el magus definitivo puede lanzar un conjuro preparado o conocido de cualquiera de sus dos clases de lanzador arcano sin gastar el espacio de conjuro correspondiente.",
-  },
-];
-
 export const CA_CLASSES: ClassDef[] = [
-  {
-    id: "ca-abjurant-champion",
-    name: "Campeón Abjurador (Abjurant Champion)",
-    source: "complete-arcane",
-    description:
-      "Un lanzador arcano que combina la magia de abjuración con la destreza marcial, protegiéndose a sí mismo y a sus aliados en pleno combate cuerpo a cuerpo mientras sigue progresando en su arte arcano.",
-    hitDie: 6,
-    skillPointsPerLevel: 2,
-    classSkills: ["concentration", "craft", "jump", "knowledge-arcana", "profession", "spellcraft", "tumble"],
-    babProgression: "tres_cuartos",
-    saves: { fort: "buena", ref: "mala", will: "buena" },
-    weaponProficiencies: [],
-    armorProficiencies: ["Armadura ligera"],
-    features: ABJURANT_CHAMPION_FEATURES,
-    maxLevel: 5,
-    isPrestige: true,
-    prerequisites: [
-      {
-        description: "Bonificador base de ataque +5",
-        check: (ctx) => ctx.babTotal >= 5,
-      },
-      {
-        description: "Conocimiento de Conjuros: 4 rangos",
-        check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 4,
-      },
-      {
-        description: "Conjurar en Combate",
-        check: (ctx) => ctx.featIds.has("combat-casting"),
-      },
-      {
-        description: "Capacidad de lanzar conjuros de abjuración arcanos de nivel 3, nivel de lanzador arcano 3",
-        check: (ctx) => ctx.casterLevel >= 3,
-      },
-    ],
-  },
   {
     id: "ca-elemental-savant",
     name: "Erudito Elemental (Elemental Savant)",
@@ -607,47 +451,6 @@ export const CA_CLASSES: ClassDef[] = [
       {
         description: "Capacidad de lanzar conjuros arcanos de nivel 2, nivel de lanzador arcano 3",
         check: (ctx) => ctx.casterLevel >= 3,
-      },
-    ],
-  },
-  {
-    id: "ca-ultimate-magus",
-    name: "Magus Definitivo (Ultimate Magus)",
-    source: "complete-arcane",
-    description:
-      "Un lanzador que ha dividido su formación arcana entre dos tradiciones distintas (por ejemplo, mago y hechicero) y que en esta clase de prestigio hace progresar ambas a la vez, en vez de tener que elegir entre ellas.",
-    hitDie: 4,
-    skillPointsPerLevel: 2,
-    classSkills: ["concentration", "craft", "decipher-script", "knowledge-arcana", "profession", "spellcraft"],
-    babProgression: "media",
-    saves: { fort: "mala", ref: "mala", will: "buena" },
-    weaponProficiencies: [],
-    armorProficiencies: [],
-    features: ULTIMATE_MAGUS_FEATURES,
-    choices: ULTIMATE_MAGUS_CHOICES,
-    maxLevel: 5,
-    isPrestige: true,
-    prerequisites: [
-      {
-        description: "Saber (Arcano): 15 rangos",
-        check: (ctx) => (ctx.skillRanks["knowledge-arcana"] ?? 0) >= 15,
-      },
-      {
-        description: "Conocimiento de Conjuros: 15 rangos",
-        check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 15,
-      },
-      {
-        description: "Dos dotes cualesquiera de metamagia o de creación de objetos mágicos",
-        check: (ctx) =>
-          countMatchingFeats(ctx.featIds, [...ARCANE_METAMAGIC_FEAT_IDS, ...ITEM_CREATION_FEAT_IDS]) >= 2,
-      },
-      {
-        description:
-          "Capacidad de lanzar conjuros arcanos de nivel 2 procedentes de dos clases de lanzador arcano distintas (por ejemplo, mago y hechicero)",
-        check: (ctx) =>
-          Object.entries(ctx.classLevels).filter(
-            ([classId, level]) => ["wizard", "sorcerer"].includes(classId) && level >= 1,
-          ).length >= 2,
       },
     ],
   },

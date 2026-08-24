@@ -433,6 +433,45 @@ export interface WondrousItem {
   costPerBonusSquared: number;
 }
 
+/** Categoría de un objeto mágico de referencia (catálogo, no automatizado mecánicamente en la hoja). */
+export type MagicItemReferenceCategory =
+  | "arma_especifica"
+  | "armadura_o_escudo_especifica"
+  | "maravilloso"
+  | "anillo"
+  | "baston_de_mando"
+  | "baculo"
+  | "pocion_o_aceite"
+  | "maldito"
+  | "artefacto_menor"
+  | "artefacto_mayor";
+
+/**
+ * Objeto mágico de catálogo (arma/armadura específica con nombre propio,
+ * objeto maravilloso, anillo, bastón de mando, báculo, poción, objeto
+ * maldito o artefacto). A diferencia de `WondrousItem` y `MagicItemProperty`,
+ * no tiene automatización mecánica numérica en el motor (bonificadores de CA,
+ * salvaciones, etc.): es contenido de referencia para consulta y hoja de
+ * personaje, con precio y prerrequisitos reproducidos tal cual del SRD.
+ */
+export interface MagicItemReference {
+  id: string;
+  name: string;
+  source: SourceBookId;
+  category: MagicItemReferenceCategory;
+  /** Precio de mercado en po, tal como figura en el SRD (puede incluir varios niveles de bonificador, p.ej. "2,000 po (+1), 8,000 po (+2)..."). */
+  price: string;
+  /** Nivel de conjurador (NC), cuando el objeto lo especifica. */
+  casterLevel?: number;
+  /** Escuela y fuerza del aura de magia (p.ej. "Transmutación moderada"). */
+  aura?: string;
+  /** Ranura de cuerpo, solo para objetos maravillosos. */
+  bodySlot?: BodySlot | "ninguna";
+  /** Dotes/conjuros/condiciones necesarios para crear el objeto. */
+  prerequisites?: string;
+  description: string;
+}
+
 export type ArmorCategory = "ligera" | "media" | "pesada" | "escudo";
 
 export interface Armor {

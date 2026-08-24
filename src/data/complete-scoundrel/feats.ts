@@ -224,7 +224,7 @@ export const CS_FEATS: Feat[] = [
     types: ["combate"],
     description: "Un golpe furtivo dirigido a los oídos del enemigo deja un pitido que ahoga cualquier otro sonido.",
     benefit: "Cuando inflige daño por ataque furtivo, puede sacrificar 3d6 de esos dados de daño para dejar sordo al objetivo durante 3 asaltos.",
-    prerequisites: [{ description: "Ataque furtivo +3d6" }],
+    prerequisites: [{ description: "Ataque furtivo +4d6" }],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -247,7 +247,7 @@ export const CS_FEATS: Feat[] = [
     types: ["combate"],
     description: "El pícaro apunta su golpe furtivo directamente a la cabeza del objetivo, buscando dejarlo confuso.",
     benefit:
-      "Cuando inflige daño por ataque furtivo con un arma contundente, puede sacrificar 5d6 de esos dados de daño para que el objetivo deba superar una salvación de Voluntad o quede confuso durante 1 asalto.",
+      "Cuando inflige daño por ataque furtivo con un arma contundente, puede sacrificar 5d6 de esos dados de daño para que el objetivo deba superar una salvación de Voluntad (CD 10 + dados adicionales de ataque furtivo + modificador de Destreza del personaje) o quede confuso durante 1 asalto.",
     prerequisites: [
       { description: "Ataque furtivo +6d6" },
       { description: "Soltura con un Arma (arma contundente)", check: hasFeat("weapon-focus") },
@@ -264,7 +264,7 @@ export const CS_FEATS: Feat[] = [
     benefit:
       "Una vez al día por objetivo, cuando inflige daño por ataque furtivo con un arma cortante, puede sacrificar 4d6 de esos dados de daño para infligir 1d4 puntos de daño de Constitución adicionales.",
     prerequisites: [
-      { description: "Ataque furtivo +4d6" },
+      { description: "Ataque furtivo +5d6" },
       { description: "Soltura con un Arma (arma cortante)", check: hasFeat("weapon-focus") },
     ],
     fighterBonusFeat: false,
@@ -277,9 +277,9 @@ export const CS_FEATS: Feat[] = [
     types: ["combate"],
     description: "Un golpe furtivo sin armas dirigido a la garganta deja al objetivo sin aliento para hablar o conjurar con claridad.",
     benefit:
-      "Cuando inflige daño por ataque furtivo con un ataque sin armas, puede sacrificar 2d6 de esos dados de daño para imponer al objetivo una penalización de -5 a las pruebas de habilidad basadas en el habla y una probabilidad de fallo del 50% al lanzar conjuros con componente verbal durante 3 asaltos.",
+      "Cuando inflige daño por ataque furtivo con un ataque sin armas, puede sacrificar 2d6 de esos dados de daño para imponer al objetivo una penalización de -5 a las pruebas de habilidad basadas en el habla y una probabilidad de fallo del 50% al usar conjuros u objetos mágicos activados por palabra de mando, durante 3 asaltos.",
     prerequisites: [
-      { description: "Ataque furtivo +2d6" },
+      { description: "Ataque furtivo +3d6" },
       { description: "Impacto sin Arma Mejorado", check: hasFeat("improved-unarmed-strike") },
     ],
     fighterBonusFeat: false,
@@ -296,7 +296,7 @@ export const CS_FEATS: Feat[] = [
     types: ["general"],
     description: "El personaje arriesga el cuerpo en el último instante para lograr una proeza física imposible.",
     benefit:
-      "Hasta 3 veces al día, como acción inmediata, obtiene un bonificador de competencia +5 a una prueba de Equilibrio, Trepar, Escapismo, Saltar, Montar o Piruetas.",
+      "Hasta 3 veces al día, como acción inmediata, obtiene un bonificador de competencia +5 a una prueba de Equilibrio, Trepar, Escapismo, Saltar, Montar o Nadar.",
     prerequisites: [],
     fighterBonusFeat: false,
     stackable: false,
@@ -328,7 +328,7 @@ export const CS_FEATS: Feat[] = [
     types: ["general"],
     description: "El personaje combina el entrenamiento del batidor con el sigilo del pícaro para abrir nuevas formas de tender emboscadas.",
     benefit:
-      "A efectos de determinar el daño adicional y el bonificador a la Clase de Armadura del Golpe de Escaramuza, los niveles de pícaro y de batidor del personaje se suman entre sí. Además, el personaje puede cumplir los requisitos de dotes que exijan un bonificador de ataque furtivo tratando su daño adicional por ataque furtivo como si incluyera también su daño adicional por Golpe de Escaramuza.",
+      "A efectos de determinar el daño adicional y el bonificador a la Clase de Armadura del Golpe de Escaramuza, los niveles de pícaro y de batidor del personaje se suman entre sí. Además, el personaje puede cumplir los requisitos de las dotes de emboscada que exijan un bonificador de ataque furtivo sumando su daño adicional por ataque furtivo y su daño adicional por Golpe de Escaramuza, aunque no puede sacrificar el daño de Golpe de Escaramuza para cumplir dicho requisito.",
     prerequisites: [
       { description: "Golpe de Escaramuza +1d6/+1 CA (rasgo de clase de batidor)", check: hasClassLevel("cad-scout", 1) },
       { description: "Capacidad de infligir daño de ataque furtivo +1d6" },
@@ -365,14 +365,16 @@ export const CS_FEATS: Feat[] = [
     stackable: false,
   },
   {
-    id: "cs-second-chance",
-    name: "Segunda Oportunidad",
+    id: "cs-survivors-luck",
+    name: "Suerte del Superviviente (Survivor's Luck)",
     source: "complete-scoundrel",
     types: ["especial"],
     description: "La providencia parece darle al personaje una oportunidad más justo cuando todo parece perdido.",
-    benefit:
-      "Una vez al día, cuando falla una tirada de salvación, el personaje puede repetirla inmediatamente, conservando el segundo resultado aunque sea peor que el primero.",
-    prerequisites: [{ description: "Favor de la Fortuna", check: hasFeat("cs-fortunes-favor") }],
+    benefit: "Puede gastar una repetición de suerte diaria (acción inmediata) para repetir una tirada de salvación que acaba de fallar.",
+    prerequisites: [
+      { description: "Nivel de personaje 9 o superior", check: (ctx) => ctx.totalCharacterLevel >= 9 },
+      { description: "Cualquier otra dote de suerte" },
+    ],
     fighterBonusFeat: false,
     stackable: false,
   },

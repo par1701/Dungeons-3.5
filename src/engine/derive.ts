@@ -1049,9 +1049,16 @@ const SUEL_ARCANAMACH_DR_LEVELS: [level: number, dr: number][] = [
   [10, 4],
 ];
 
-/** Reducción de Daño del arcanamach suelio (Complete Mage, nivel 6+): RD X/- fija. */
+/**
+ * Reducción de Daño del arcanamach suelio (Complete Arcane, nivel 6+): RD X/-
+ * fija. Nota: el documento de referencia (docs/prestige/suel-arcanamach.md)
+ * no menciona esta reducción de daño en absoluto; se conserva esta lógica ya
+ * cableada en el motor solo renombrando el id de clase al que apunta, sin
+ * verificar ni fabricar la mecánica en sí. Ver el informe de la tarea que
+ * introdujo este cambio para más detalle.
+ */
 function getSuelArcanamachDamageReduction(classLevels: CharacterClassLevel[]): number {
-  const level = classLevels.find((cl) => cl.classId === "cm-suel-arcanamach")?.level ?? 0;
+  const level = classLevels.find((cl) => cl.classId === "ca-suel-arcanamach")?.level ?? 0;
   let dr = 0;
   for (const [reqLevel, d] of SUEL_ARCANAMACH_DR_LEVELS) if (level >= reqLevel) dr = d;
   return dr;

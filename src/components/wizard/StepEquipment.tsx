@@ -1,9 +1,10 @@
-import { Fragment, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import {
   findWondrousItem,
   getEnabledArmors,
   getEnabledGear,
   getEnabledMagicItemProperties,
+  getEnabledMagicItemReferences,
   getEnabledSpecialMaterials,
   getEnabledWeapons,
   getEnabledWondrousItems,
@@ -20,11 +21,11 @@ import {
   isEnhancedItem,
   propertiesApplicableTo,
 } from "../../engine/itemEnhancements";
-import type { BodySlot, CharacterEquipmentItem } from "../../types";
+import type { BodySlot, CharacterEquipmentItem, MagicItemReferenceCategory } from "../../types";
 
-type Tab = "weapon" | "armor" | "gear" | "wondrous";
+type Tab = "weapon" | "armor" | "gear" | "wondrous" | "reference";
 
-const TAB_TO_KIND: Record<Tab, CharacterEquipmentItem["itemKind"]> = {
+const TAB_TO_KIND: Record<Exclude<Tab, "reference">, CharacterEquipmentItem["itemKind"]> = {
   weapon: "weapon",
   armor: "armor",
   gear: "gear",
@@ -42,15 +43,39 @@ const BODY_SLOT_LABELS: Record<BodySlot, string> = {
   pies: "Pies",
 };
 
+const MAGIC_ITEM_CATEGORY_LABELS: Record<MagicItemReferenceCategory, string> = {
+  arma_especifica: "Arma específica",
+  armadura_o_escudo_especifica: "Armadura/escudo específico",
+  maravilloso: "Objeto maravilloso",
+  anillo: "Anillo",
+  baston_de_mando: "Bastón de mando (rod)",
+  baculo: "Báculo (staff)",
+  pocion_o_aceite: "Poción o aceite",
+  maldito: "Objeto maldito",
+  artefacto_menor: "Artefacto menor",
+  artefacto_mayor: "Artefacto mayor",
+};
+
 export default function StepEquipment({ character, onChange }: StepProps) {
   const [tab, setTab] = useState<Tab>("weapon");
   const [expanded, setExpanded] = useState<Set<number>>(new Set());
+  const [referenceCategory, setReferenceCategory] = useState<MagicItemReferenceCategory | "todas">("todas");
+  const [referenceSearch, setReferenceSearch] = useState("");
   const weapons = getEnabledWeapons(character.activeSourceBooks);
   const armors = getEnabledArmors(character.activeSourceBooks);
   const gear = getEnabledGear(character.activeSourceBooks);
   const wondrousItems = getEnabledWondrousItems(character.activeSourceBooks);
   const materials = getEnabledSpecialMaterials(character.activeSourceBooks);
   const magicProperties = getEnabledMagicItemProperties(character.activeSourceBooks);
+  const magicItemReferences = getEnabledMagicItemReferences(character.activeSourceBooks);
+  const filteredReferences = useMemo(() => {
+    const search = referenceSearch.trim().toLowerCase();
+    return magicItemReferences.filter((m) => {
+      if (referenceCategory !== "todas" && m.category !== referenceCategory) return false;
+      if (search && !m.name.toLowerCase().includes(search)) return false;
+      return true;
+    });
+  }, [magicItemReferences, referenceCategory, referenceSearch]);
   const race = findRace(character.raceId);
   const finalScores = computeFinalAbilityScores(character.abilityScores, race, character.equipment);
   const carrying = computeCarryingCapacity(finalScores.str, race?.size ?? "Mediano");
@@ -198,7 +223,7 @@ export default function StepEquipment({ character, onChange }: StepProps) {
       </p>
 
       <div className="wizard-steps">
-        {(["weapon", "armor", "gear", "wondrous"] as Tab[]).map((t) => (
+        {(["weapon", "armor", "gear", "wondrous", "reference"] as Tab[]).map((t) => (
           <button
             key={t}
             className={`wizard-step-pill ${tab === t ? "active" : ""}`}
@@ -210,12 +235,79 @@ export default function StepEquipment({ character, onChange }: StepProps) {
                 ? "Armaduras"
                 : t === "gear"
                   ? "Equipo general"
-                  : "Objetos maravillosos"}
+                  : t === "wondrous"
+                    ? "Objetos maravillosos"
+                    : "Catálogo mágico (consulta)"}
           </button>
         ))}
       </div>
 
-      {tab === "wondrous" ? (
+      {tab === "reference" ? (
+        <div>
+          <p className="muted">
+            Catálogo de referencia del SRD (armas/armaduras específicas con nombre propio, objetos maravillosos,
+            anillos, bastones de mando, báculos, pociones, objetos malditos y artefactos). Es solo consulta: precio,
+            NC y efecto, sin automatización mecánica en la hoja ni integración con el inventario.
+          </p>
+          <div className="grid grid-2" style={{ maxWidth: 600, marginBottom: 12 }}>
+            <div className="form-row">
+              <label>Categoría</label>
+              <select
+                value={referenceCategory}
+                onChange={(e) => setReferenceCategory(e.target.value as MagicItemReferenceCategory | "todas")}
+              >
+                <option value="todas">Todas</option>
+                {Object.entries(MAGIC_ITEM_CATEGORY_LABELS).map(([id, label]) => (
+                  <option key={id} value={id}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="form-row">
+              <label>Buscar por nombre</label>
+              <input
+                type="text"
+                value={referenceSearch}
+                onChange={(e) => setReferenceSearch(e.target.value)}
+                placeholder="p.ej. bolsa, anillo de..."
+              />
+            </div>
+          </div>
+          <p className="muted">{filteredReferences.length} objetos.</p>
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Categoría</th>
+                <th>Precio</th>
+                <th>NC</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredReferences.map((m) => (
+                <tr key={m.id}>
+                  <td>
+                    {m.name}
+                    <div className="muted" style={{ fontSize: "0.8rem" }}>
+                      {m.description}
+                      {m.prerequisites && (
+                        <>
+                          <br />
+                          <em>Prerrequisitos: {m.prerequisites}</em>
+                        </>
+                      )}
+                    </div>
+                  </td>
+                  <td>{MAGIC_ITEM_CATEGORY_LABELS[m.category]}</td>
+                  <td>{m.price}</td>
+                  <td>{m.casterLevel ?? "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : tab === "wondrous" ? (
         <table className="data-table">
           <thead>
             <tr>

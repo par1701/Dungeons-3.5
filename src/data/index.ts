@@ -5,6 +5,7 @@ import type {
   Feat,
   GearItem,
   MagicItemProperty,
+  MagicItemReference,
   PsionicPower,
   Race,
   Skill,
@@ -26,6 +27,15 @@ import { SRD_WEAPONS, SRD_ARMORS, SRD_GEAR } from "./srd/equipment";
 import { SRD_SPECIAL_MATERIALS } from "./srd/special-materials";
 import { SRD_MAGIC_ITEM_PROPERTIES } from "./srd/magic-item-properties";
 import { SRD_WONDROUS_ITEMS } from "./srd/wondrous-items";
+import { SRD_SPECIFIC_MAGIC_ITEMS } from "./srd/magic-items-specific";
+import { SRD_WONDROUS_ITEMS_REFERENCE_1 } from "./srd/wondrous-items-reference-1";
+import { SRD_WONDROUS_ITEMS_REFERENCE_2 } from "./srd/wondrous-items-reference-2";
+import { SRD_POTIONS } from "./srd/magic-potions";
+import { SRD_RINGS } from "./srd/magic-rings";
+import { SRD_RODS } from "./srd/magic-rods";
+import { SRD_STAFFS } from "./srd/magic-staffs";
+import { SRD_CURSED_ITEMS } from "./srd/cursed-items";
+import { SRD_ARTIFACTS } from "./srd/artifacts";
 import { CW_CLASSES } from "./complete-warrior/classes";
 import { CW_FEATS } from "./complete-warrior/feats";
 import { CA_CLASSES } from "./complete-arcane/classes";
@@ -84,6 +94,17 @@ export const ALL_GEAR: GearItem[] = [...SRD_GEAR];
 export const ALL_SPECIAL_MATERIALS: SpecialMaterial[] = [...SRD_SPECIAL_MATERIALS];
 export const ALL_MAGIC_ITEM_PROPERTIES: MagicItemProperty[] = [...SRD_MAGIC_ITEM_PROPERTIES];
 export const ALL_WONDROUS_ITEMS: WondrousItem[] = [...SRD_WONDROUS_ITEMS];
+export const ALL_MAGIC_ITEM_REFERENCES: MagicItemReference[] = [
+  ...SRD_SPECIFIC_MAGIC_ITEMS,
+  ...SRD_WONDROUS_ITEMS_REFERENCE_1,
+  ...SRD_WONDROUS_ITEMS_REFERENCE_2,
+  ...SRD_POTIONS,
+  ...SRD_RINGS,
+  ...SRD_RODS,
+  ...SRD_STAFFS,
+  ...SRD_CURSED_ITEMS,
+  ...SRD_ARTIFACTS,
+];
 export const ALL_POWERS: PsionicPower[] = [...CPS_POWERS];
 export const ALL_COMPANIONS: CompanionBaseCreature[] = [...SRD_COMPANIONS];
 
@@ -123,6 +144,9 @@ export function getEnabledMagicItemProperties(enabled: SourceBookId[]): MagicIte
 }
 export function getEnabledWondrousItems(enabled: SourceBookId[]): WondrousItem[] {
   return bySource(ALL_WONDROUS_ITEMS, enabled);
+}
+export function getEnabledMagicItemReferences(enabled: SourceBookId[]): MagicItemReference[] {
+  return bySource(ALL_MAGIC_ITEM_REFERENCES, enabled);
 }
 export function getEnabledPowers(enabled: SourceBookId[]): PsionicPower[] {
   return bySource(ALL_POWERS, enabled);
@@ -169,4 +193,7 @@ export function findMagicItemProperty(id: string): MagicItemProperty | undefined
 }
 export function findWondrousItem(id: string): WondrousItem | undefined {
   return ALL_WONDROUS_ITEMS.find((w) => w.id === id);
+}
+export function findMagicItemReference(id: string): MagicItemReference | undefined {
+  return ALL_MAGIC_ITEM_REFERENCES.find((m) => m.id === id);
 }

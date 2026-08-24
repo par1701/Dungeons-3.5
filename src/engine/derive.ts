@@ -342,6 +342,28 @@ export function sizeModifier(size: string): number {
   return SIZE_MODIFIER[size] ?? 0;
 }
 
+// Modificador de tamaño para presas (grapple), CD de Escapismo/Presa y maniobras
+// enfrentadas de tamaño: escala de forma uniforme (±4 por categoría desde
+// Mediano), a diferencia del modificador de tamaño de la CA/ataque normal
+// (que se concentra en los tamaños intermedios). Son tablas distintas del
+// SRD; no es el mismo valor con el signo invertido salvo en Mediano.
+const GRAPPLE_SIZE_MODIFIER: Record<string, number> = {
+  Fino: -16,
+  Diminuto: -12,
+  Diminuta: -12,
+  Pequeño: -4,
+  Mediano: 0,
+  Grande: 4,
+  Enorme: 8,
+  Descomunal: 12,
+  Colosal: 16,
+};
+
+/** Modificador de tamaño específico para la prueba de presa (grapple), distinto del de CA/ataque. */
+export function grappleSizeModifier(size: string): number {
+  return GRAPPLE_SIZE_MODIFIER[size] ?? 0;
+}
+
 export interface ArmorClassInputs {
   armorBonus: number;
   shieldBonus: number;

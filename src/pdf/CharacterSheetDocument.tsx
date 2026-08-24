@@ -48,6 +48,7 @@ import {
   resolveSpellDuration,
   resolveSpellRange,
   sizeModifier,
+  grappleSizeModifier,
   totalCharacterLevel,
 } from "../engine/derive";
 import { computeWondrousItemMarketPrice } from "../engine/itemEnhancements";
@@ -146,7 +147,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
   const dexMod = abilityModifier(finalScores.dex);
   const meleeAttackBonus = bab + abilityModifier(finalScores.str) + sizeModifier(size);
   const rangedAttackBonus = bab + abilityModifier(finalScores.dex) + sizeModifier(size);
-  const grapple = bab + abilityModifier(finalScores.str) - sizeModifier(size);
+  const grapple = bab + abilityModifier(finalScores.str) + grappleSizeModifier(size);
 
   const equippedWeapons = rawEquippedWeapons.map((x) =>
     computeWeaponAttack(

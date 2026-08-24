@@ -50,6 +50,7 @@ import {
   resolveSpellDuration,
   resolveSpellRange,
   sizeModifier,
+  grappleSizeModifier,
   totalCharacterLevel,
 } from "../engine/derive";
 import { computeWondrousItemMarketPrice } from "../engine/itemEnhancements";
@@ -195,7 +196,7 @@ export default function CharacterSheetPage() {
 
   const meleeAttackBonus = bab + abilityModifier(finalScores.str) + sizeModifier(size);
   const rangedAttackBonus = bab + abilityModifier(finalScores.dex) + sizeModifier(size);
-  const grapple = bab + abilityModifier(finalScores.str) + sizeModifier(size) * -1;
+  const grapple = bab + abilityModifier(finalScores.str) + grappleSizeModifier(size);
   const dexMod = abilityModifier(finalScores.dex);
 
   // Opciones de ataque activables por dotes/estilos de combate.
@@ -330,7 +331,7 @@ export default function CharacterSheetPage() {
                 <div className="part"><span className="num">{ac.monkWisdomBonus + ac.dervishGraceBonus + ac.tempestDefenseBonus}</span><span className="lbl">Clase</span></div>
               </div>
               <p className="muted" style={{ textAlign: "center", margin: 0 }}>
-                CA a distancia: {ac.touch} · CA desprevenido: {ac.flatFooted}
+                CA de toque: {ac.touch} · CA desprevenido: {ac.flatFooted}
               </p>
               {ac.damageReduction > 0 && (
                 <p className="muted" style={{ textAlign: "center", margin: 0 }}>

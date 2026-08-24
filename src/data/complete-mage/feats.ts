@@ -199,13 +199,13 @@ export const CM_FEATS: Feat[] = [
     id: "cm-rapid-metamagic",
     name: "Metamagia Rápida",
     source: "complete-mage",
-    types: ["metamagia"],
-    description: "El lanzador experimentado en el uso de la metamagia aprende a aplicarla sin perder tiempo.",
+    types: ["general"],
+    description: "El lanzador espontáneo experimentado en el uso de la metamagia aprende a aplicarla sin perder tiempo.",
     benefit:
-      "Un número de veces al día igual a 1 + su modificador de característica de lanzamiento, puede aplicar una dote de metamagia que conozca a un conjuro sin aumentar su tiempo de lanzamiento habitual (aunque el conjuro sigue ocupando el espacio de nivel superior que exige la dote).",
+      "Al aplicar una dote de metamagia que conozca a un conjuro que lance de forma espontánea, su tiempo de lanzamiento no aumenta (aunque el conjuro sigue ocupando el espacio de nivel superior que exige la dote). Solo aplicable a lanzadores espontáneos.",
     prerequisites: [
-      { description: "Tres dotes de metamagia cualesquiera" },
-      { description: "Nivel de lanzador 9", check: (ctx) => ctx.casterLevel >= 9 },
+      { description: "Conocimiento de Conjuros 12 rangos", check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 12 },
+      { description: "Capacidad de lanzar conjuros de forma espontánea" },
     ],
     fighterBonusFeat: false,
     stackable: false,
@@ -278,7 +278,7 @@ export const CM_FEATS: Feat[] = [
     id: "cm-alacritous-cogitation",
     name: "Cogitación Presurosa",
     source: "complete-mage",
-    types: ["metamagia"],
+    types: ["general"],
     description: "El lanzador preparado aprende a reservar parte de su magia diaria para improvisar sobre la marcha.",
     benefit:
       "Una vez al día, al preparar sus conjuros, puede dejar un espacio de conjuro sin asignar. Más tarde ese mismo día, como acción de asalto completo, puede llenar ese espacio vacío lanzando de forma espontánea cualquier conjuro de ese nivel o inferior que conozca o tenga en su libro de conjuros, sin necesidad de haberlo preparado específicamente.",
@@ -290,16 +290,13 @@ export const CM_FEATS: Feat[] = [
     id: "cm-captivating-melody",
     name: "Melodía Cautivadora",
     source: "complete-mage",
-    types: ["metamagia"],
+    types: ["general"],
     description: "El intérprete aprende a entrelazar su música con sus conjuros de encantamiento e ilusión para hacerlos más difíciles de resistir.",
     benefit:
       "Como acción rápida, puede gastar un uso diario de música de bardo y superar una prueba de Interpretar (CD 15 + el nivel del conjuro) para añadir +2 a la CD de salvación del siguiente conjuro de encantamiento o ilusión que lance ese mismo asalto.",
     prerequisites: [
-      { description: "Capacidad de usar música de bardo" },
-      {
-        description:
-          "Capacidad de lanzar conjuros arcanos de encantamiento o ilusión de la misma clase que otorga música de bardo",
-      },
+      { description: "Música de bardo" },
+      { description: "Capacidad de lanzar conjuros arcanos" },
     ],
     fighterBonusFeat: false,
     stackable: false,
@@ -308,11 +305,13 @@ export const CM_FEATS: Feat[] = [
     id: "cm-cloudy-conjuration",
     name: "Conjuración Nublada",
     source: "complete-mage",
-    types: ["metamagia"],
+    types: ["general"],
     description: "El lanzador aprende a envolver sus conjuros de conjuración en una densa nube de humo negro.",
     benefit:
       "Un conjuro de conjuración puede lanzarse de modo que, además de su efecto normal, quede rodeado durante 1 asalto por una densa nube de humo negro en un radio de 1,5 m alrededor de su área o del propio lanzador (a elección de este). Cualquier criatura viva que comience su turno dentro de la nube queda enfermiza durante 1 asalto. No cambia el nivel del conjuro.",
-    prerequisites: [{ description: "Capacidad de lanzar conjuros de conjuración" }],
+    prerequisites: [
+      { description: "Soltura con una Escuela de Magia (Conjuración) o nivel de conjurador especialista 1", check: hasFeat("spell-focus") },
+    ],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -320,11 +319,13 @@ export const CM_FEATS: Feat[] = [
     id: "cm-dazzling-illusion",
     name: "Ilusión Deslumbrante",
     source: "complete-mage",
-    types: ["metamagia"],
+    types: ["general"],
     description: "El lanzador aprende a acompañar sus ilusiones de un destello que deslumbra a quienes las presencian.",
     benefit:
       "Un conjuro de ilusión puede lanzarse de modo que, además de su efecto normal, todos los enemigos en un radio de 9 m desde el punto de origen queden deslumbrados durante 1 asalto. No cambia el nivel del conjuro.",
-    prerequisites: [{ description: "Capacidad de lanzar conjuros de ilusión" }],
+    prerequisites: [
+      { description: "Soltura con una Escuela de Magia (Ilusión) o nivel de ilusionista especialista 1", check: hasFeat("spell-focus") },
+    ],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -336,7 +337,9 @@ export const CM_FEATS: Feat[] = [
     description: "El personaje aprende a beber una poción sin activar de inmediato su efecto.",
     benefit:
       "Al beber una poción, puede posponer el inicio de su efecto hasta un número de horas igual a su modificador de Constitución (mínimo 1). Activar el efecto retrasado es una acción rápida.",
-    prerequisites: [],
+    prerequisites: [
+      { description: "Saber (Arcano) 1 rango", check: (ctx) => (ctx.skillRanks["knowledge-arcana"] ?? 0) >= 1 },
+    ],
     fighterBonusFeat: false,
     stackable: false,
   },

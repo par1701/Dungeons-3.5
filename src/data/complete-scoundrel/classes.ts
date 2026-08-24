@@ -2,20 +2,38 @@ import type { ClassDef, ClassFeature, FeatPrereqContext } from "../../types";
 
 // Clases de prestigio de Complete Scoundrel (2007).
 //
-// Complete Scoundrel presenta cinco clases de prestigio: Fortune's Friend,
-// Golden Lion, Invisible Blade, Spellwarp Sniper y Uncanny Trickster. Se
-// incluyen las cinco porque hay confianza razonable en su existencia y en el
-// concepto central de cada una, aunque los rasgos por nivel se han resumido
-// y aproximado con las propias palabras de quien mantiene estos datos (no
-// son una transcripción literal del libro). Como en el resto de libros de
-// esta app, se ha preferido omitir cualquier detalle numérico del que no
-// haya confianza antes que inventarlo con precisión falsa.
+// Complete Scoundrel tiene 11 clases de prestigio reales: Avenging
+// Executioner, Battle Trickster, Cloaked Dancer, Combat Trapsmith, Fortune's
+// Friend, Gray Guard, Magical Trickster, Master of Masks, Psibond Agent,
+// Spellwarp Sniper y Uncanny Trickster (ver docs/prestige/README.md). Este
+// archivo solo tenía 5 clases, y una auditoría contra docs/prestige/ mostró
+// que únicamente 2 de ellas (Fortune's Friend y Spellwarp Sniper) se
+// corresponden con clases reales de este libro; ambas han sido reescritas
+// por completo para igualar sus fichas (docs/prestige/fortunes-friend.md y
+// docs/prestige/spellwarp-sniper.md) tras confirmar que la versión anterior
+// tenía prerrequisitos, progresión de salvaciones, habilidades de clase y
+// rasgos por nivel completamente inventados.
 //
-// Ninguna de estas clases tiene una lista de conjuros propia con progresión
-// completa: Fortune's Friend y Uncanny Trickster continúan el nivel de
-// lanzador de una clase de conjuros que el personaje ya poseía (divina y
-// arcana respectivamente), y Spellwarp Sniper reutiliza los conjuros de
-// toque arcanos que el personaje ya conoce. En los tres casos se omite el
+// Las otras 3 clases del archivo NO tienen una ficha de referencia válida
+// para Complete Scoundrel y se dejan sin tocar a la espera de una decisión
+// explícita sobre qué hacer con ellas (ver también los comentarios junto a
+// cada una):
+// - "León Dorado" (Golden Lion): no existe ninguna ficha con ese nombre en
+//   docs/prestige/ para ningún libro. Parece enteramente inventada.
+// - "Hoja Invisible" (Invisible Blade): SÍ existe una ficha real
+//   (docs/prestige/invisible-blade.md), pero pertenece a Complete Warrior,
+//   no a Complete Scoundrel, y sus mecánicas reales (d6, ataque furtivo con
+//   daga/kukri/daga de puño, defensa desatada, herida sangrante, amago
+//   certero) no tienen nada que ver con las que hay codificadas aquí.
+// - "Truhan Certero" (Uncanny Trickster): sí es una clase real de Complete
+//   Scoundrel (aparece en el índice de docs/prestige/README.md), pero el
+//   archivo docs/prestige/uncanny-trickster.md no existe en el repositorio,
+//   así que no hay ficha con la que verificar sus mecánicas.
+//
+// Ninguna de las clases con ficha verificada tiene una lista de conjuros
+// propia con progresión completa: Fortune's Friend continúa el nivel de
+// lanzador divino que el personaje ya poseía, y Spellwarp Sniper continúa
+// el nivel de lanzador arcano que ya poseía. En ambos casos se omite el
 // campo `spellcasting` y el efecto se documenta como un `ClassFeature` de
 // texto, tal como indican las convenciones de este proyecto.
 
@@ -28,42 +46,54 @@ const hasFeat = (id: string) => (ctx: FeatPrereqContext) => ctx.featIds.has(id);
 const FORTUNES_FRIEND_FEATURES: ClassFeature[] = [
   {
     level: 1,
-    name: "Lanzamiento de conjuros continuado",
+    name: "Suerte Fácil",
     description:
-      "Los niveles de amigo de la fortuna se suman a los de su clase divina previa a efectos de conjuros por día y nivel de lanzador, pero no otorgan conjuros de nivel superior al que ya podía lanzar por esa clase.",
+      "Usar una dote de suerte que requiera una acción rápida o inmediata no cuenta contra el límite habitual de una acción rápida por turno (sigue limitado a un único relanzamiento de suerte por turno sobre el mismo resultado).",
   },
   {
     level: 1,
-    name: "Toque de fortuna",
+    name: "Fortuna Extra",
     description:
-      "Una vez al día, como acción estándar, puede tocar a un aliado para concederle un bonificador de suerte de +2 a una única tirada de ataque, salvación o prueba de habilidad que realice antes de que termine el siguiente asalto.",
+      "En cada nivel impar de amigo de la fortuna (1.º, 3.º y 5.º) obtiene un relanzamiento de suerte diario adicional, que se suma a los concedidos por sus dotes de suerte.",
+  },
+  {
+    level: 1,
+    name: "Más Suerte que Destreza",
+    description:
+      "Una vez al día, como acción rápida, suma su nivel de clase como bonificador de suerte a todas las pruebas de habilidad que realice hasta el comienzo de su siguiente turno.",
   },
   {
     level: 2,
-    name: "Suerte compartida",
-    description: "El alcance de Toque de Fortuna aumenta a 9 metros y ya no requiere tocar al aliado, solo señalarlo.",
+    name: "Lanzamiento de conjuros continuado",
+    description:
+      "En cada nivel par de amigo de la fortuna (2.º y 4.º), gana conjuros por día, nivel de lanzador y conjuros conocidos como si hubiera obtenido un nivel en una clase de lanzador divino previa, sin ningún otro beneficio de esa clase.",
+  },
+  {
+    level: 2,
+    name: "Dote de Suerte Extra",
+    description: "En los niveles 2.º y 4.º de esta clase obtiene una dote de suerte adicional que cumpla sus prerrequisitos.",
   },
   {
     level: 3,
-    name: "Bendición de la fortuna",
+    name: "Favorito de la Fortuna",
     description:
-      "Una vez al día, como acción estándar, puede conceder un bonificador de suerte de +1 a la Clase de Armadura y a las tiradas de salvación a todos los aliados en un radio de 9 metros durante 1 minuto.",
-  },
-  {
-    level: 4,
-    name: "Fortuna redoblada",
-    description: "Puede usar Toque de Fortuna dos veces al día en lugar de una.",
+      "Una vez al día, como acción inmediata, suma su nivel de clase como bonificador de suerte a todas las tiradas de salvación que realice hasta el comienzo de su siguiente turno.",
   },
   {
     level: 5,
-    name: "El favor de la Dama Fortuna",
+    name: "Golpe de Suerte",
     description:
-      "Una vez al día, como acción inmediata, puede obligar a un enemigo a repetir una tirada de ataque, salvación o prueba de habilidad que le acabe de resultar favorable, quedándose con el peor de los dos resultados.",
+      "Una vez al día, como acción rápida, suma su nivel de clase como bonificador de suerte a todas las tiradas de ataque que realice hasta el comienzo de su siguiente turno.",
   },
 ];
 
 // ---------------------------------------------------------------------------
 // León Dorado (Golden Lion)
+//
+// SIN FICHA DE REFERENCIA: no existe ningún docs/prestige/golden-lion.md ni
+// nada equivalente en el índice de docs/prestige/README.md, para ningún
+// libro. No se ha podido verificar ni corregir; se deja tal cual estaba a
+// la espera de que el usuario decida qué hacer con ella.
 // ---------------------------------------------------------------------------
 
 const GOLDEN_LION_FEATURES: ClassFeature[] = [
@@ -125,6 +155,14 @@ const GOLDEN_LION_FEATURES: ClassFeature[] = [
 
 // ---------------------------------------------------------------------------
 // Hoja Invisible (Invisible Blade)
+//
+// MAL FILIADA: existe una ficha real, pero es de Complete Warrior
+// (docs/prestige/invisible-blade.md), no de Complete Scoundrel, y no tiene
+// nada en común con lo codificado aquí (allí es d6, prerrequisito de matar
+// en duelo singular con daga/kukri/daga de puño, con ataque furtivo con
+// daga, defensa desatada, herida sangrante y amago certero). No se toca
+// para no fabricar ni una versión "Complete Scoundrel" ni una versión
+// "Complete Warrior" sin que el usuario decida primero qué hacer con ella.
 // ---------------------------------------------------------------------------
 
 const INVISIBLE_BLADE_FEATURES: ClassFeature[] = [
@@ -189,35 +227,49 @@ const INVISIBLE_BLADE_FEATURES: ClassFeature[] = [
 const SPELLWARP_SNIPER_FEATURES: ClassFeature[] = [
   {
     level: 1,
-    name: "Disparo de toque",
+    name: "Deformar Conjuro (Spellwarp)",
     description:
-      "Puede lanzar cualquier conjuro arcano de toque que conozca y disparar de inmediato una ballesta cuyo proyectil transporta el efecto, entregándolo como un ataque de toque a distancia contra un objetivo dentro del alcance normal de la ballesta, en lugar de necesitar tocar al objetivo en persona.",
+      "Como acción gratuita, puede transformar un conjuro de área con duración instantánea y alcance mayor que toque en un rayo: conserva el mismo nivel, componentes, alcance y daño, pero pasa a requerir un ataque de toque a distancia y anula cualquier tirada de salvación de Reflejos que tuviera (conserva las de Fortaleza o Voluntad, si las tenía). Debe decidir la transformación al lanzar el conjuro; admite dotes de metamagia compatibles con rayos. El nivel máximo de conjuro que puede deformar así aumenta en 1 por cada nivel de francotirador deformaconjuros (hasta nivel 5 de conjuro en el nivel 5 de clase).",
+  },
+  {
+    level: 1,
+    name: "Lanzamiento de conjuros continuado",
+    description:
+      "En cada nivel de francotirador deformaconjuros, gana conjuros por día, nivel de lanzador y conjuros conocidos como si hubiera obtenido un nivel en una clase de lanzador arcano previa, sin ningún otro beneficio de esa clase.",
   },
   {
     level: 2,
-    name: "Lanzamiento de conjuros continuado",
+    name: "Golpe de Rayo Súbito +1d6",
     description:
-      "Los niveles de francotirador deformaconjuros se suman a los de su clase de lanzador arcano previa a efectos de conjuros por día y nivel de lanzador, pero no otorgan acceso a conjuros de nivel superior al que ya podía lanzar por esa clase.",
+      "Si el objetivo de un conjuro de rayo lanzado por el francotirador pierde su bonificador de Destreza a la Clase de Armadura frente a él, el conjuro inflige 1d6 puntos de daño adicional. Se acumula con el ataque furtivo o ataque súbito de otras fuentes; solo funciona contra objetivos a 9 metros (30 pies) o menos, y no afecta a criaturas con ocultación total, sin anatomía discernible o inmunes a daño adicional de golpe crítico.",
   },
   {
     level: 3,
-    name: "Perforar resistencia con el disparo",
-    description: "Gana un bonificador de +2 a las pruebas de nivel de lanzador para superar la resistencia a conjuros cuando entrega un conjuro de toque a través de un disparo de ballesta.",
+    name: "Disparo Certero (dote de bonificación)",
+    description:
+      "Obtiene Disparo Certero (Precise Shot) como dote de bonificación; si ya la posee, puede elegir en su lugar cualquier otra dote que tenga Disparo a Bocajarro (Point-Blank Shot) como prerrequisito.",
   },
   {
     level: 4,
-    name: "Doble entrega",
-    description: "Al entregar un conjuro de toque mediante un disparo de ballesta, el proyectil también causa su daño normal de arma además del efecto del conjuro.",
+    name: "Golpe de Rayo Súbito +2d6",
+    description: "El daño adicional del Golpe de Rayo Súbito aumenta a 2d6.",
   },
   {
     level: 5,
-    name: "Golpe deformador perfecto",
-    description: "Sus disparos que entregan conjuros de toque ignoran por completo la resistencia a conjuros del objetivo.",
+    name: "Maestría del Rayo",
+    description:
+      "Obtiene tres beneficios: el alcance del Golpe de Rayo Súbito (y del ataque furtivo/súbito que se le sume) aumenta a 18 metros (60 pies); puede asestar un golpe de gracia con un conjuro de rayo que inflija daño si está adyacente al objetivo; y una vez al día puede potenciar un conjuro de rayo como con la dote Potenciar Conjuro, sin cambiar su nivel efectivo ni su tiempo de lanzamiento.",
   },
 ];
 
 // ---------------------------------------------------------------------------
 // Truhan Certero (Uncanny Trickster)
+//
+// SIN FICHA DISPONIBLE: es una de las 11 clases reales de Complete
+// Scoundrel (aparece listada en docs/prestige/README.md), pero el archivo
+// docs/prestige/uncanny-trickster.md no existe en el repositorio, así que
+// no hay ficha con la que contrastar sus mecánicas. Se deja sin tocar en
+// vez de arriesgarse a mantener o inventar rasgos sin verificar.
 // ---------------------------------------------------------------------------
 
 const UNCANNY_TRICKSTER_FEATURES: ClassFeature[] = [
@@ -266,22 +318,37 @@ export const CS_CLASSES: ClassDef[] = [
     name: "Amigo de la Fortuna (Fortune's Friend)",
     source: "complete-scoundrel",
     description:
-      "Un devoto de la suerte y el azar que aprende a compartir su providencia personal con sus aliados, tocándolos con la fortuna en el momento justo.",
+      "Un devoto de la buena suerte que ha aprendido a acumular relanzamientos y bonificadores de suerte propios y a canalizarlos en el momento decisivo, además de seguir progresando en los conjuros de una clase divina que ya dominaba.",
     hitDie: 6,
-    skillPointsPerLevel: 4,
+    skillPointsPerLevel: 6,
     classSkills: [
+      "balance",
       "bluff",
+      "climb",
+      "craft",
+      "decipher-script",
       "diplomacy",
+      "disable-device",
+      "disguise",
+      "escape-artist",
       "gather-information",
-      "heal",
-      "knowledge-history",
-      "knowledge-religion",
+      "hide",
+      "jump",
+      "listen",
+      "move-silently",
+      "open-lock",
+      "perform",
       "profession",
-      "sense-motive",
-      "spellcraft",
+      "search",
+      "sleight-of-hand",
+      "spot",
+      "swim",
+      "tumble",
+      "use-magic-device",
+      "use-rope",
     ],
     babProgression: "media",
-    saves: { fort: "mala", ref: "mala", will: "buena" },
+    saves: { fort: "mala", ref: "buena", will: "mala" },
     weaponProficiencies: [],
     armorProficiencies: [],
     features: FORTUNES_FRIEND_FEATURES,
@@ -289,15 +356,16 @@ export const CS_CLASSES: ClassDef[] = [
     isPrestige: true,
     prerequisites: [
       {
-        description: "Saber (Religión): 4 rangos",
-        check: (ctx) => (ctx.skillRanks["knowledge-religion"] ?? 0) >= 4,
+        description: "Bonificador base de ataque +3",
+        check: (ctx) => ctx.babTotal >= 3,
       },
       {
-        description: "Nivel de lanzador divino 3 o superior",
-        check: (ctx) => ctx.casterLevel >= 3,
+        description: "8 rangos en cualquier habilidad",
+        check: (ctx) => Object.values(ctx.skillRanks).some((r) => r >= 8),
       },
       {
-        description: "Acceso al dominio de la Suerte o devoción declarada a un concepto o deidad de la fortuna",
+        description: "Cualquier dote de suerte (p. ej. Favor de la Fortuna o Segunda Oportunidad)",
+        check: (ctx) => ctx.featIds.has("cs-fortunes-favor") || ctx.featIds.has("cs-second-chance"),
       },
     ],
   },
@@ -395,22 +463,29 @@ export const CS_CLASSES: ClassDef[] = [
     name: "Francotirador Deformaconjuros (Spellwarp Sniper)",
     source: "complete-scoundrel",
     description:
-      "Un tirador arcano que ha aprendido a canalizar sus conjuros de toque a través de los virotes de su ballesta, alcanzando a distancia enemigos que de otro modo solo podría tocar con la mano.",
+      "Un tirador arcano que ha aprendido a deformar sus conjuros de área en rayos certeros, convirtiendo conjuros de alcance mayor que toque y duración instantánea en ataques de toque a distancia que anulan la salvación de Reflejos original.",
     hitDie: 6,
     skillPointsPerLevel: 4,
-    classSkills: ["craft", "hide", "knowledge-arcana", "move-silently", "profession", "search", "spellcraft", "spot"],
+    classSkills: ["concentration", "craft", "hide", "intimidate", "knowledge-arcana", "move-silently", "profession", "spellcraft", "spot"],
     babProgression: "tres_cuartos",
-    saves: { fort: "mala", ref: "buena", will: "buena" },
+    saves: { fort: "mala", ref: "mala", will: "buena" },
     weaponProficiencies: [],
     armorProficiencies: [],
     features: SPELLWARP_SNIPER_FEATURES,
     maxLevel: 5,
     isPrestige: true,
     prerequisites: [
+      {
+        description: "Concentración: 8 rangos",
+        check: (ctx) => (ctx.skillRanks["concentration"] ?? 0) >= 8,
+      },
+      {
+        description: "Conocimiento de Conjuros: 8 rangos",
+        check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 8,
+      },
       { description: "Disparo a Bocajarro", check: hasFeat("point-blank-shot") },
-      { description: "Disparo Preciso", check: hasFeat("precise-shot") },
-      { description: "Bonificador base de ataque +5", check: (ctx) => ctx.babTotal >= 5 },
-      { description: "Capacidad de lanzar conjuros arcanos de toque de nivel 2 o superior" },
+      { description: "Capacidad de lanzar conjuros arcanos de nivel 3" },
+      { description: "Capacidad de infligir ataque furtivo o ataque súbito de +1d6" },
     ],
   },
   {

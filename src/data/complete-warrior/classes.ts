@@ -1,5 +1,16 @@
 import type { ClassDef, ClassFeature, ClassFeatureChoice } from "../../types";
 
+const SPELLSWORD_CHOICES: ClassFeatureChoice[] = [
+  {
+    id: "dote-bonificada",
+    featureName: "Dote Bonificada",
+    levels: [2],
+    label: "Dote bonificada (metamagia o de la lista de dotes de bonificación de guerrero)",
+    kind: "dote_categoria",
+    featCategoryOptions: ["combate", "metamagia"],
+  },
+];
+
 const BOW_INITIATE_CHOICES: ClassFeatureChoice[] = [
   {
     id: "tipo-arco",
@@ -27,8 +38,14 @@ const BOW_INITIATE_CHOICES: ClassFeatureChoice[] = [
 // Horizon Walker, Hospitaler, Kensai o Exotic Weapon Master) antes que
 // arriesgarse a inventar números o rasgos que no se recuerdan con precisión.
 //
-// Ninguna de las clases incluidas aquí es una clase de lanzador de conjuros:
-// todas son mundanas, por lo que el campo `spellcasting` se omite en todas.
+// La mayoría de las clases incluidas aquí son mundanas y no lanzan conjuros,
+// por lo que el campo `spellcasting` se omite en ellas. La excepción es
+// Espadamante (Spellsword): avanza el nivel de lanzador de una clase arcana
+// que el personaje ya poseía en vez de tener su propia tabla independiente
+// de conjuros por día, así que ese efecto se documenta como texto en sus
+// rasgos de clase y el campo `spellcasting` se omite también, siguiendo la
+// misma convención usada para las clases de prestigio equivalentes de
+// Complete Arcane.
 
 // ---------------------------------------------------------------------------
 // Derviche (Dervish)
@@ -246,6 +263,71 @@ const ORDER_OF_THE_BOW_INITIATE_FEATURES: ClassFeature[] = [
     name: "Precisión extendida",
     description:
       "El alcance al que puede realizar ataques de precisión a distancia (y ataques furtivos, si los posee) aumenta de 9 m a 18 m.",
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Espadamante (Spellsword)
+// ---------------------------------------------------------------------------
+
+const SPELLSWORD_FEATURES: ClassFeature[] = [
+  {
+    level: 1,
+    name: "Ignorar Fallo de Conjuro (10%)",
+    description:
+      "Ignora un 10% de probabilidad de fallo de conjuro arcano por llevar armadura o escudo; el porcentaje ignorado aumenta un 5% adicional cada dos niveles (15% en nivel 3, 20% en nivel 5, 25% en nivel 7, 30% en nivel 9).",
+  },
+  {
+    level: 1,
+    name: "Progresión de Conjuros Arcanos",
+    description:
+      "En los niveles impares (1º, 3º, 5º, 7º y 9º), la espadamante obtiene un nivel de lanzador arcano adicional en una clase de lanzador arcano que ya poseyera antes de entrar en la clase de prestigio, exactamente como si hubiera obtenido un nivel en dicha clase a efectos de conjuros por día, conjuros conocidos y nivel de lanzador (pero no otros rasgos de esa clase). Los niveles pares no otorgan este beneficio.",
+  },
+  {
+    level: 2,
+    name: "Dote Bonificada",
+    description: "Gana una dote bonificada, que debe ser una dote de metamagia o pertenecer a la lista de dotes de bonificación de guerrero.",
+  },
+  {
+    level: 3,
+    name: "Ignorar Fallo de Conjuro (15%)",
+    description: "El porcentaje de fallo de conjuro arcano ignorado aumenta al 15%.",
+  },
+  {
+    level: 4,
+    name: "Canalizar Conjuro (3/día)",
+    description:
+      "Como acción de movimiento, hasta tres veces al día, puede canalizar cualquier conjuro que sepa lanzar dentro de su arma cuerpo a cuerpo, afectando solo al próximo objetivo alcanzado con éxito.",
+  },
+  {
+    level: 5,
+    name: "Ignorar Fallo de Conjuro (20%)",
+    description: "El porcentaje de fallo de conjuro arcano ignorado aumenta al 20%.",
+  },
+  {
+    level: 6,
+    name: "Canalizar Conjuro (4/día)",
+    description: "Puede usar Canalizar Conjuro hasta cuatro veces al día.",
+  },
+  {
+    level: 7,
+    name: "Ignorar Fallo de Conjuro (25%)",
+    description: "El porcentaje de fallo de conjuro arcano ignorado aumenta al 25%.",
+  },
+  {
+    level: 8,
+    name: "Canalizar Conjuro (5/día)",
+    description: "Puede usar Canalizar Conjuro hasta cinco veces al día.",
+  },
+  {
+    level: 9,
+    name: "Ignorar Fallo de Conjuro (30%)",
+    description: "El porcentaje de fallo de conjuro arcano ignorado aumenta al 30%.",
+  },
+  {
+    level: 10,
+    name: "Canalizar Conjuro Múltiple",
+    description: "Puede canalizar dos conjuros distintos en su arma, usando una acción de movimiento para canalizar cada uno.",
   },
 ];
 
@@ -491,6 +573,37 @@ export const CW_CLASSES: ClassDef[] = [
         description: "Soltura con un Arma (arco largo, arco corto, o su versión compuesta)",
         check: (ctx) => ctx.featIds.has("weapon-focus"),
       },
+    ],
+  },
+  {
+    id: "cw-spellsword",
+    name: "Espadamante (Spellsword)",
+    source: "complete-warrior",
+    description:
+      "Un guerrero que también domina la magia arcana, capaz de combinar el acero y el conjuro en un mismo combate sin que el peso de su armadura le impida lanzar sus hechizos.",
+    hitDie: 8,
+    skillPointsPerLevel: 2,
+    classSkills: ["climb", "concentration", "jump", "knowledge-arcana", "profession", "spellcraft"],
+    babProgression: "completa",
+    saves: { fort: "buena", ref: "mala", will: "buena" },
+    weaponProficiencies: [],
+    armorProficiencies: [],
+    features: SPELLSWORD_FEATURES,
+    choices: SPELLSWORD_CHOICES,
+    maxLevel: 10,
+    isPrestige: true,
+    prerequisites: [
+      {
+        description: "Bonificador base de ataque +4",
+        check: (ctx) => ctx.babTotal >= 4,
+      },
+      {
+        description: "Saber (Arcano): 6 rangos",
+        check: (ctx) => (ctx.skillRanks["knowledge-arcana"] ?? 0) >= 6,
+      },
+      { description: "Competencia con todas las armas simples y marciales y con todas las armaduras" },
+      { description: "Capacidad de lanzar conjuros arcanos de nivel 2" },
+      { description: "Haber derrotado a un enemigo solo por la fuerza de las armas, sin recurrir a lanzar conjuros" },
     ],
   },
   {

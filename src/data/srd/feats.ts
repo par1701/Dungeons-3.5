@@ -447,8 +447,8 @@ export const SRD_FEATS: Feat[] = [
     description: "Una constitución especialmente dura de matar.",
     benefit: "+3 puntos de golpe.",
     prerequisites: [],
-    fighterBonusFeat: true,
-    stackable: false,
+    fighterBonusFeat: false,
+    stackable: true,
   },
   {
     id: "track",

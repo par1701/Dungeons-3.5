@@ -674,21 +674,43 @@ const CW_PALADIN_NO_SPELLS_FEATURES: { level: number; name: string; description:
   },
 ];
 
+/**
+ * Cazador Veloz (Swift Hunter, Complete Scoundrel): mientras el personaje
+ * tenga esta dote, sus niveles de explorador y de batidor se suman entre sí
+ * a efectos de la progresión de Enemigo predilecto (explorador) y de Golpe
+ * de Escaramuza (batidor). Sin la dote, cada clase progresa solo con sus
+ * propios niveles.
+ */
+function getSwiftHunterCombinedLevel(classLevels: CharacterClassLevel[], knownFeatIds: Set<string>): number {
+  if (!knownFeatIds.has("cs-swift-hunter")) return 0;
+  const rangerLevel = classLevels.find((cl) => cl.classId === "ranger")?.level ?? 0;
+  const scoutLevel = classLevels.find((cl) => cl.classId === "cad-scout")?.level ?? 0;
+  return rangerLevel + scoutLevel;
+}
+
 /** Rasgos de clase ya obtenidos según el nivel actual de cada clase del personaje. */
 export function getUnlockedClassFeatures(
   classLevels: CharacterClassLevel[],
   classes: ClassDef[],
   activeVariantRules: string[] = [],
+  knownFeatIds: Set<string> = new Set(),
 ): UnlockedClassFeature[] {
   const championOfTheWild = activeVariantRules.includes("vr-cw-champion-of-the-wild");
   const cwRangerNoSpells = activeVariantRules.includes("vr-cw-ranger-no-spells");
   const cwPaladinNoSpells = activeVariantRules.includes("vr-cw-paladin-no-spells");
+  const swiftHunterLevel = getSwiftHunterCombinedLevel(classLevels, knownFeatIds);
   return classLevels.flatMap((cl) => {
     const def = classes.find((c) => c.id === cl.classId);
     if (!def) return [];
     const isRangerSpellless = (championOfTheWild || cwRangerNoSpells) && def.id === "ranger";
+    const effectiveLevel = (featureName: string) => {
+      if (swiftHunterLevel <= cl.level) return cl.level;
+      if (def.id === "ranger" && featureName.startsWith("Enemigo predilecto")) return swiftHunterLevel;
+      if (def.id === "cad-scout" && featureName.startsWith("Golpe de Escaramuza")) return swiftHunterLevel;
+      return cl.level;
+    };
     const features: UnlockedClassFeature[] = def.features
-      .filter((f) => f.level <= cl.level)
+      .filter((f) => f.level <= effectiveLevel(f.name))
       .filter((f) => !(isRangerSpellless && f.name === "Conjuros divinos"))
       .map((f) => ({ classId: def.id, className: def.name, level: f.level, name: f.name, description: f.description }));
     if (championOfTheWild && def.id === "ranger") {
@@ -730,17 +752,21 @@ export function getUnlockedClassFeatureChoices(
   classLevels: CharacterClassLevel[],
   classes: ClassDef[],
   activeVariantRules: string[] = [],
+  knownFeatIds: Set<string> = new Set(),
 ): UnlockedClassFeatureChoice[] {
+  const swiftHunterLevel = getSwiftHunterCombinedLevel(classLevels, knownFeatIds);
   return classLevels.flatMap((cl) => {
     const def = classes.find((c) => c.id === cl.classId);
     if (!def?.choices) return [];
+    const effectiveLevel = def.id === "ranger" && swiftHunterLevel > cl.level ? swiftHunterLevel : cl.level;
     return def.choices
       .filter((choice) => !choice.requiresVariantRule || activeVariantRules.includes(choice.requiresVariantRule))
-      .flatMap((choice) =>
-        choice.levels
-          .filter((level) => level <= cl.level)
-          .map((level) => ({ classId: def.id, className: def.name, level, choice })),
-      );
+      .flatMap((choice) => {
+        const levelCap = choice.id.startsWith("enemigo-predilecto") ? effectiveLevel : cl.level;
+        return choice.levels
+          .filter((level) => level <= levelCap)
+          .map((level) => ({ classId: def.id, className: def.name, level, choice }));
+      });
   });
 }
 
@@ -1411,6 +1437,37 @@ export function monkUnarmedDamage(monkLevel: number): string {
   const thresholds = [20, 16, 12, 8, 4, 1];
   const level = thresholds.find((t) => monkLevel >= t) ?? 1;
   return MONK_UNARMED_DAMAGE[level];
+}
+
+// Dotes "ascéticas" (Complete Adventurer): cada una hace que los niveles de
+// otra clase concreta cuenten como niveles de monje únicamente a efectos del
+// daño con ataques sin armas (no de la Ráfaga de Golpes en sí, que sigue
+// exigiendo niveles reales de monje, ni de otras capacidades de monje).
+const ASCETIC_UNARMED_DAMAGE_FEATS: [featId: string, otherClassId: string][] = [
+  ["cad-ascetic-knight", "paladin"],
+  ["cad-ascetic-rogue", "rogue"],
+  ["cad-ascetic-hunter", "ranger"],
+  ["cad-ascetic-performer", "bard"],
+];
+
+/**
+ * Nivel de monje "efectivo" a efectos únicamente del tamaño de dado de daño
+ * desarmado (`monkUnarmedDamage`): el nivel real de monje más los niveles de
+ * cualquier otra clase que, por una dote ascética conocida, cuenten como
+ * niveles de monje para este propósito. Exige tener al menos 1 nivel real de
+ * monje (la dote no otorga Ráfaga de Golpes por sí sola, solo mejora el dado
+ * de daño de la que el personaje ya tenga).
+ */
+export function getMonkUnarmedDamageLevel(classLevels: CharacterClassLevel[], knownFeatIds: Set<string>): number {
+  const monkLevel = classLevels.find((cl) => cl.classId === "monk")?.level ?? 0;
+  if (monkLevel <= 0) return 0;
+  let level = monkLevel;
+  for (const [featId, otherClassId] of ASCETIC_UNARMED_DAMAGE_FEATS) {
+    if (knownFeatIds.has(featId)) {
+      level += classLevels.find((cl) => cl.classId === otherClassId)?.level ?? 0;
+    }
+  }
+  return level;
 }
 
 /**

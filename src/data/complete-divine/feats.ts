@@ -187,7 +187,7 @@ export const CDV_FEATS: Feat[] = [
     types: ["general"],
     description: "El personaje domina el arte de concentrar e intensificar su capacidad de expulsar o reprender no muertos.",
     benefit:
-      "Suma +10 al resultado de la tirada al expulsar o reprender no muertos, como si hubiera sacado un 10 más en la tirada de expulsión.",
+      "Tras sumar su nivel de clérigo y su modificador de Carisma al daño de expulsión o reprensión, multiplica el resultado por 1,5.",
     prerequisites: [
       { description: "Carisma 13", check: minCha(13) },
       { description: "Capacidad de expulsar o reprender a los no muertos" },
@@ -222,7 +222,7 @@ export const CDV_FEATS: Feat[] = [
     types: ["general"],
     description: "El personaje ha estudiado técnicas para maximizar la eficacia de sus conjuros curativos.",
     benefit:
-      "Cualquier conjuro que lance que restaure puntos de golpe cura un 50% adicional de puntos de golpe, como si estuviera potenciado, sin aumentar el nivel de conjuro ni el tiempo de lanzamiento.",
+      "Los conjuros de conjuración (curación) que lance restauran 2 puntos de golpe adicionales por nivel de conjuro.",
     prerequisites: [{ description: "Sanar 5 rangos", check: minSkillRanks("heal", 5) }],
     fighterBonusFeat: false,
     stackable: false,

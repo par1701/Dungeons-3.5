@@ -681,7 +681,7 @@ export const PHB2_FEATS: Feat[] = [
     types: ["combate"],
     description: "El pináculo del dominio marcial: un arma que se ha convertido en una extensión perfecta de su cuerpo.",
     benefit:
-      "Elija un arma con la que posea Soltura Mayor y Especialización Mayor. Al combatir con esa arma, obtiene un bonificador de +4 en las pruebas para resistirse a ser desarmado; puede combatir con normalidad contra un enemigo que lo agarre sin necesidad de superar una prueba de presa; y al realizar una acción de ataque completo, puede aplicar un bonificador de +5 a una única tirada de ataque tras la primera.",
+      "Elija un arma con la que posea Soltura Mayor y Especialización Mayor. Al combatir con esa arma: obtiene un bonificador de +4 en las pruebas para resistirse a ser desarmado; puede combatir con normalidad contra un enemigo que lo agarre, sin necesidad de superar antes una prueba de presa; al realizar una acción de ataque completo, puede aplicar un bonificador de +5 a cualquier tirada de ataque posterior a la primera; una vez por asalto, antes de una tirada de ataque, puede decidir que su resultado en el d20 sea automáticamente un 10; y obtiene un bonificador de +1 a la CA.",
     prerequisites: [
       { description: "Competencia con el arma elegida" },
       { description: "Soltura con un Arma (con el arma elegida)" },
@@ -745,7 +745,7 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-robilars-gambit",
-    name: "Ardid de Robilar",
+    name: "Gambito de Robilar",
     source: "phb2",
     types: ["combate"],
     description: "Baja deliberadamente la guardia para atraer el golpe de su rival justo donde puede devolvérselo.",
@@ -818,6 +818,33 @@ export const PHB2_FEATS: Feat[] = [
       { description: "Competencia con Escudo", check: hasFeat("shield-proficiency") },
     ],
     fighterBonusFeat: true,
+    stackable: false,
+  },
+  {
+    id: "phb2-shield-ward",
+    name: "Protección Adicional con el Escudo",
+    source: "phb2",
+    types: ["combate"],
+    description: "Su escudo se convierte en un muro de acero y madera que le permite mantener a raya a sus rivales.",
+    benefit:
+      "Puede aplicar su bonificador de escudo a la Clase de Armadura de toque, y también a las pruebas o tiradas para resistir intentos de atropello, derribo, desarme, embestida o presa realizados contra él.",
+    prerequisites: [
+      { description: "Competencia con Escudo", check: hasFeat("shield-proficiency") },
+      { description: "Especialización con Escudos", check: hasFeat("cw-shield-specialization") },
+    ],
+    fighterBonusFeat: true,
+    stackable: false,
+  },
+  {
+    id: "phb2-steadfast-determination",
+    name: "Determinación Firme",
+    source: "phb2",
+    types: ["general"],
+    description: "Su aguante físico le permite ignorar ataques que doblegarían a una persona más débil, confiando en la fuerza bruta antes que en la agilidad o la fuerza de voluntad.",
+    benefit:
+      "Puede usar su modificador de Constitución en lugar del de Sabiduría en sus tiradas de salvación de Voluntad. Además, ya no falla automáticamente sus tiradas de salvación de Voluntad al obtener un 1 natural en el dado.",
+    prerequisites: [{ description: "Aguante", check: hasFeat("endurance") }],
+    fighterBonusFeat: false,
     stackable: false,
   },
 ];

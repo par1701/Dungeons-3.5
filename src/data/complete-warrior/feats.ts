@@ -38,17 +38,6 @@ export const CW_FEATS: Feat[] = [
     stackable: false,
   },
   {
-    id: "cw-discipline",
-    name: "Disciplina",
-    source: "complete-warrior",
-    types: ["general"],
-    description: "Una calma entrenada que ayuda a mantener la concentración incluso bajo amenaza directa.",
-    benefit: "+2 de bonificador de competencia en las pruebas de Concentración e Intimidar.",
-    prerequisites: [],
-    fighterBonusFeat: false,
-    stackable: false,
-  },
-  {
     id: "cw-divine-might",
     name: "Poder Divino (Complete Warrior)",
     source: "complete-warrior",
@@ -134,18 +123,6 @@ export const CW_FEATS: Feat[] = [
     stackable: false,
   },
   {
-    id: "cw-militia",
-    name: "Milicia",
-    source: "complete-warrior",
-    types: ["general"],
-    description: "Entrenamiento básico recibido junto a los vecinos de su comunidad para defenderla en caso de necesidad.",
-    benefit:
-      "Gana competencia con un arma marcial a su elección y con armadura ligera. Además, mientras luche en formación cerrada junto a al menos otros dos aliados que también posean este dote y empuñen el mismo tipo de arma, todos ganan +1 de bonificador de moral a la Clase de Armadura.",
-    prerequisites: [],
-    fighterBonusFeat: true,
-    stackable: false,
-  },
-  {
     id: "cw-monkey-grip",
     name: "Agarre del Mono",
     source: "complete-warrior",
@@ -154,18 +131,6 @@ export const CW_FEATS: Feat[] = [
     benefit:
       "Puede empuñar un arma cuerpo a cuerpo de una categoría de tamaño mayor a la que le correspondería como si fuese de su tamaño, sufriendo -2 a las tiradas de ataque mientras la use, sin que ello aumente el esfuerzo necesario para manejarla: un arma ligera de tamaño superior sigue tratándose como ligera, y solo un arma a dos manos de tamaño superior debe empuñarse con las dos manos.",
     prerequisites: [{ description: "Bonificador base de ataque +1", check: (ctx) => ctx.babTotal >= 1 }],
-    fighterBonusFeat: false,
-    stackable: false,
-  },
-  {
-    id: "cw-steadfast-determination",
-    name: "Determinación Firme",
-    source: "complete-warrior",
-    types: ["general"],
-    description: "Una voluntad forjada más en la terquedad que en la sabiduría.",
-    benefit:
-      "Puede usar su modificador de Constitución en lugar del de Sabiduría en las tiradas de salvación de Voluntad para resistir efectos de miedo y de aturdimiento.",
-    prerequisites: [],
     fighterBonusFeat: false,
     stackable: false,
   },
@@ -204,51 +169,6 @@ export const CW_FEATS: Feat[] = [
   // ---------------------------------------------------------------------
   // COMBATE — cuerpo a cuerpo general
   // ---------------------------------------------------------------------
-  {
-    id: "cw-adaptable-flanker",
-    name: "Flanqueo Adaptable (Complete Warrior)",
-    source: "complete-warrior",
-    types: ["combate"],
-    description: "Un luchador que ajusta su posición en pleno combate para aprovechar cualquier flanqueo posible.",
-    benefit:
-      "Cuando está flanqueando a un enemigo, puede ceder de forma voluntaria su posición de flanqueo a un aliado que se desplace a una casilla adyacente válida, permitiéndole beneficiarse igualmente del flanqueo ese mismo turno.",
-    prerequisites: [
-      { description: "Destreza 13", check: (ctx) => ctx.abilityScores.dex >= 13 },
-      { description: "Bonificador base de ataque +6", check: (ctx) => ctx.babTotal >= 6 },
-    ],
-    fighterBonusFeat: true,
-    stackable: false,
-  },
-  {
-    id: "cw-agile-shield-fighter",
-    name: "Uso Ágil de Escudos (Complete Warrior)",
-    source: "complete-warrior",
-    types: ["combate"],
-    description: "Un experto en broqueles capaz de atacar con libertad sin descuidar su defensa.",
-    benefit:
-      "Puede atacar con un arma sostenida en la misma mano que porta un broquel sin sufrir la penalización de -1 a la Clase de Armadura habitual, y reduce a la mitad la penalización por usar un arma a dos manos mientras lleva puesto un broquel.",
-    prerequisites: [
-      { description: "Competencia con Escudo", check: hasFeat("shield-proficiency") },
-      { description: "Destreza 13", check: (ctx) => ctx.abilityScores.dex >= 13 },
-    ],
-    fighterBonusFeat: true,
-    stackable: false,
-  },
-  {
-    id: "cw-bounding-assault",
-    name: "Asalto Doble (Complete Warrior)",
-    source: "complete-warrior",
-    types: ["combate"],
-    description: "Un combatiente que aprovecha el impulso de sus fintas de movimiento para golpear más de una vez.",
-    benefit:
-      "Cuando usa Ataque Elástico, puede realizar todos los ataques a los que tendría derecho en un ataque completo, en lugar de uno solo, siempre que se desplace tanto antes como después de atacar.",
-    prerequisites: [
-      { description: "Ataque Elástico", check: hasFeat("spring-attack") },
-      { description: "Bonificador base de ataque +6", check: (ctx) => ctx.babTotal >= 6 },
-    ],
-    fighterBonusFeat: true,
-    stackable: false,
-  },
   {
     id: "cw-brutal-throw",
     name: "Lanzamiento Brutal",
@@ -423,18 +343,6 @@ export const CW_FEATS: Feat[] = [
     stackable: false,
   },
   {
-    id: "cw-leap-attack",
-    name: "Ataque en Salto",
-    source: "complete-warrior",
-    types: ["combate"],
-    description: "Un guerrero que convierte un salto en el preludio de un golpe devastador.",
-    benefit:
-      "Si se desplaza al menos 3 metros (10 pies) mediante un salto antes de realizar un ataque cuerpo a cuerpo con Ataque Poderoso, obtiene el doble del bonificador de daño de Ataque Poderoso en ese golpe (el triple si empuña el arma a dos manos).",
-    prerequisites: [{ description: "Ataque Poderoso", check: hasFeat("power-attack") }],
-    fighterBonusFeat: true,
-    stackable: false,
-  },
-  {
     id: "cw-roundabout-kick",
     name: "Patada Giratoria",
     source: "complete-warrior",
@@ -459,21 +367,6 @@ export const CW_FEATS: Feat[] = [
     benefit:
       "Puede emplear un ataque de oportunidad para realizar una prueba enfrentada de Fuerza (sin causar daño ni arriesgarse a caer) e intentar detener a un enemigo que se mueva a través del área que amenaza, en lugar de atacarlo.",
     prerequisites: [{ description: "Reflejos de Combate", check: hasFeat("combat-reflexes") }],
-    fighterBonusFeat: true,
-    stackable: false,
-  },
-  {
-    id: "cw-twin-sword-style",
-    name: "Estilo de la Espada Gemela",
-    source: "complete-warrior",
-    types: ["combate"],
-    description: "Una técnica que enseña a manejar dos espadas idénticas casi como si fueran una sola arma.",
-    benefit:
-      "Mientras empuñe dos armas idénticas con las que tenga Soltura, una en cada mano, puede usar su arma secundaria para parar como si portara un escudo ligero, ganando +1 de bonificador de escudo a la Clase de Armadura.",
-    prerequisites: [
-      { description: "Soltura con el arma elegida", check: hasFeat("weapon-focus") },
-      { description: "Combate con Dos Armas", check: hasFeat("two-weapon-fighting") },
-    ],
     fighterBonusFeat: true,
     stackable: false,
   },
@@ -536,19 +429,6 @@ export const CW_FEATS: Feat[] = [
     fighterBonusFeat: true,
     stackable: true,
   },
-  {
-    id: "cw-shield-ward",
-    name: "Guardia de Escudo",
-    source: "complete-warrior",
-    types: ["combate"],
-    description: "Un combatiente que convierte su escudo en un baluarte contra los intentos de desequilibrarlo.",
-    benefit:
-      "Mientras porte un escudo, gana +2 de bonificador en las pruebas enfrentadas para resistir ser derribado, desarmado o empujado.",
-    prerequisites: [{ description: "Competencia con Escudo", check: hasFeat("shield-proficiency") }],
-    fighterBonusFeat: true,
-    stackable: false,
-  },
-
   // ---------------------------------------------------------------------
   // COMBATE — ataque poderoso / arma a dos manos / cargas
   // ---------------------------------------------------------------------
@@ -565,18 +445,6 @@ export const CW_FEATS: Feat[] = [
       { description: "Ataque Poderoso", check: hasFeat("power-attack") },
       { description: "Bonificador base de ataque +6", check: (ctx) => ctx.babTotal >= 6 },
     ],
-    fighterBonusFeat: true,
-    stackable: false,
-  },
-  {
-    id: "cw-rapid-blitz",
-    name: "Ataque Relámpago (Complete Warrior)",
-    source: "complete-warrior",
-    types: ["combate"],
-    description: "Un combatiente capaz de recorrer el campo de batalla sin perder ímpetu ofensivo.",
-    benefit:
-      "Puede moverse hasta su velocidad y aun así realizar un ataque completo (todos los ataques a los que tenga derecho por su bonificador base de ataque) en el mismo turno, en lugar de un único ataque; sigue provocando ataques de oportunidad por moverse con normalidad.",
-    prerequisites: [{ description: "Bonificador base de ataque +6", check: (ctx) => ctx.babTotal >= 6 }],
     fighterBonusFeat: true,
     stackable: false,
   },
@@ -645,7 +513,7 @@ export const CW_FEATS: Feat[] = [
   // ---------------------------------------------------------------------
   {
     id: "cw-clever-wrestling",
-    name: "Presa Astuta",
+    name: "Lucha Astuta",
     source: "complete-warrior",
     types: ["combate"],
     description: "Un luchador que convierte cada agarre en una oportunidad para golpear con otra arma.",
@@ -813,7 +681,7 @@ export const CW_FEATS: Feat[] = [
   },
   {
     id: "cw-ranged-pin",
-    name: "Inmovilizar a Distancia",
+    name: "Sujetar a Distancia",
     source: "complete-warrior",
     types: ["combate"],
     description: "El combatiente puede clavar la ropa de su enemigo contra una superficie cercana para inmovilizarlo a distancia.",
@@ -848,7 +716,7 @@ export const CW_FEATS: Feat[] = [
   },
   {
     id: "cw-sharp-shooting",
-    name: "Puntería",
+    name: "Disparo Certero",
     source: "complete-warrior",
     types: ["combate"],
     description: "El tirador sabe encontrar el hueco justo en la cobertura de su objetivo.",
@@ -881,7 +749,7 @@ export const CW_FEATS: Feat[] = [
   },
   {
     id: "cw-greater-two-weapon-defense",
-    name: "Defensa con Dos Armas Superior",
+    name: "Defensa con Dos Armas Mayor",
     source: "complete-warrior",
     types: ["combate"],
     description: "El combatiente domina por completo el arte de defenderse con un arma en cada mano.",

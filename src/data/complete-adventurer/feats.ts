@@ -448,6 +448,21 @@ export const CAD_FEATS: Feat[] = [
     fighterBonusFeat: false,
     stackable: false,
   },
+  {
+    id: "cad-leap-attack",
+    name: "Ataque en Salto",
+    source: "complete-adventurer",
+    types: ["general"],
+    description: "El personaje convierte un salto en el preludio de un golpe devastador.",
+    benefit:
+      "Si salta 3 metros (10 pies) o más en horizontal y termina en una casilla desde la que amenaza al objetivo de una carga, duplica el bonificador de daño de Ataque Poderoso en ese golpe (lo triplica si empuña el arma a dos manos). Sigue las reglas normales de Saltar y de carga; ignora el terreno difícil en las casillas que salta.",
+    prerequisites: [
+      { description: "Saltar 8 rangos", check: (ctx) => (ctx.skillRanks["jump"] ?? 0) >= 8 },
+      { description: "Ataque Poderoso", check: hasFeat("power-attack") },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
 ];
 
 export const CAD_FEAT_IDS = CAD_FEATS.map((f) => f.id);

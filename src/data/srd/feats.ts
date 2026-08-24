@@ -221,7 +221,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "improved-counterspell",
-    name: "Contrahechizo Mejorado",
+    name: "Contraconjuro Mejorado",
     source: "srd",
     types: ["general"],
     description: "Un lanzador aprende a interrumpir la magia ajena con más flexibilidad.",
@@ -447,8 +447,8 @@ export const SRD_FEATS: Feat[] = [
     description: "Una constitución especialmente dura de matar.",
     benefit: "+3 puntos de golpe.",
     prerequisites: [],
-    fighterBonusFeat: true,
-    stackable: false,
+    fighterBonusFeat: false,
+    stackable: true,
   },
   {
     id: "track",
@@ -954,7 +954,7 @@ export const SRD_FEATS: Feat[] = [
   },
   {
     id: "greater-weapon-specialization",
-    name: "Especialización con un Arma Mayor",
+    name: "Especialización Mayor con un Arma",
     source: "srd",
     types: ["combate"],
     description: "La especialización con un arma alcanza su punto culminante.",

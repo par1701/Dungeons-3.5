@@ -745,7 +745,7 @@ export const PHB2_FEATS: Feat[] = [
   },
   {
     id: "phb2-robilars-gambit",
-    name: "Ardid de Robilar",
+    name: "Gambito de Robilar",
     source: "phb2",
     types: ["combate"],
     description: "Baja deliberadamente la guardia para atraer el golpe de su rival justo donde puede devolvérselo.",

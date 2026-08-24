@@ -645,7 +645,7 @@ export const CW_FEATS: Feat[] = [
   // ---------------------------------------------------------------------
   {
     id: "cw-clever-wrestling",
-    name: "Presa Astuta",
+    name: "Lucha Astuta",
     source: "complete-warrior",
     types: ["combate"],
     description: "Un luchador que convierte cada agarre en una oportunidad para golpear con otra arma.",
@@ -813,7 +813,7 @@ export const CW_FEATS: Feat[] = [
   },
   {
     id: "cw-ranged-pin",
-    name: "Inmovilizar a Distancia",
+    name: "Sujetar a Distancia",
     source: "complete-warrior",
     types: ["combate"],
     description: "El combatiente puede clavar la ropa de su enemigo contra una superficie cercana para inmovilizarlo a distancia.",
@@ -848,7 +848,7 @@ export const CW_FEATS: Feat[] = [
   },
   {
     id: "cw-sharp-shooting",
-    name: "Puntería",
+    name: "Disparo Certero",
     source: "complete-warrior",
     types: ["combate"],
     description: "El tirador sabe encontrar el hueco justo en la cobertura de su objetivo.",
@@ -881,7 +881,7 @@ export const CW_FEATS: Feat[] = [
   },
   {
     id: "cw-greater-two-weapon-defense",
-    name: "Defensa con Dos Armas Superior",
+    name: "Defensa con Dos Armas Mayor",
     source: "complete-warrior",
     types: ["combate"],
     description: "El combatiente domina por completo el arte de defenderse con un arma en cada mano.",

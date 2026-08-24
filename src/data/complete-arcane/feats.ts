@@ -197,7 +197,7 @@ export const CA_FEATS: Feat[] = [
   },
   {
     id: "ca-pierce-magical-concealment",
-    name: "Perforar Ocultación Mágica",
+    name: "Traspasar Ocultación Mágica",
     source: "complete-arcane",
     types: ["combate"],
     description: "El personaje distingue la silueta real de un enemigo incluso a través de efectos mágicos que deberían camuflarla.",
@@ -212,7 +212,7 @@ export const CA_FEATS: Feat[] = [
   },
   {
     id: "ca-pierce-magical-protection",
-    name: "Perforar Protección Mágica",
+    name: "Traspasar Protección Mágica",
     source: "complete-arcane",
     types: ["combate"],
     description: "El personaje sabe dirigir un golpe certero contra el aura mágica que protege a un enemigo, no contra su cuerpo.",

@@ -327,7 +327,7 @@ export const CA_FEATS: Feat[] = [
     description:
       "El lanzador que ha consagrado un lugar como santuario personal aprende a potenciar allí su magia sin esfuerzo adicional.",
     benefit:
-      "Mientras se encuentre dentro de su santuario personal, puede lanzar cualquier conjuro con +2 a la CD de salvación y +2 a las pruebas de nivel de lanzador para superar resistencia a conjuros, sin ocupar un espacio de conjuro de nivel superior al real.",
+      "El conjuro tiene nivel efectivo +1 si se lanza dentro de su santuario personal designado, o nivel efectivo -1 si se lanza fuera de él. Usa el espacio de conjuro normal (no uno de nivel superior).",
     prerequisites: [{ description: "Poseer un santuario personal consagrado mediante el ritual apropiado" }],
     fighterBonusFeat: false,
     stackable: false,

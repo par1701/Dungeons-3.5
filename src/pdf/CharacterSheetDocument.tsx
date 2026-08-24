@@ -42,6 +42,7 @@ import {
   getSoulknifeMindBladeBonus,
   getUnlockedClassFeatureChoices,
   getUnlockedClassFeatures,
+  getMonkUnarmedDamageLevel,
   monkUnarmedDamage,
   parseSkillKey,
   resolveSpellDuration,
@@ -109,10 +110,11 @@ export default function CharacterSheetDocument({ character }: { character: Chara
   const classSummary = character.classLevels
     .map((cl) => `${findClass(cl.classId)?.name ?? cl.classId} ${cl.level}`)
     .join(" / ");
-  const unlockedFeatures = getUnlockedClassFeatures(character.classLevels, classes, character.activeVariantRules);
   const classFeatureChoices = character.classFeatureChoices ?? [];
+  const knownFeatIds = getAllKnownFeatIds(character.feats, character.classLevels, classes, classFeatureChoices, character.activeVariantRules);
+  const unlockedFeatures = getUnlockedClassFeatures(character.classLevels, classes, character.activeVariantRules, knownFeatIds);
   const favoredEnemyBonuses = getFavoredEnemyBonuses(classFeatureChoices);
-  const unlockedChoices = getUnlockedClassFeatureChoices(character.classLevels, classes, character.activeVariantRules);
+  const unlockedChoices = getUnlockedClassFeatureChoices(character.classLevels, classes, character.activeVariantRules, knownFeatIds);
   const bonusFeats = getBonusFeatsFromClasses(character.classLevels, classes, classFeatureChoices, character.activeVariantRules);
 
   const equippedArmorItems = character.equipment
@@ -186,7 +188,6 @@ export default function CharacterSheetDocument({ character }: { character: Chara
     : undefined;
   const allAttacks = mindBladeAttack ? [...equippedWeapons, mindBladeAttack] : equippedWeapons;
 
-  const knownFeatIds = getAllKnownFeatIds(character.feats, character.classLevels, classes, classFeatureChoices, character.activeVariantRules);
   const initiativeBonus = computeInitiativeBonus(knownFeatIds, character.classLevels);
   const initiative = dexMod + initiativeBonus;
   const rangedWeapons = equippedWeapons.filter((w) => w.type === "distancia" && w.rangeIncrement);
@@ -409,7 +410,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
               ))}
             {monkLevel > 0 && (
               <Text>
-                Ráfaga de Golpes (desarmado, {monkUnarmedDamage(monkLevel)}):{" "}
+                Ráfaga de Golpes (desarmado, {monkUnarmedDamage(getMonkUnarmedDamageLevel(character.classLevels, knownFeatIds))}):{" "}
                 {fmtSeq(computeFlurryOfBlowsSequence(unarmedAttackBonus, monkLevel, bab))}
               </Text>
             )}

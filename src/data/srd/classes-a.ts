@@ -3,12 +3,21 @@ import type { ClassDef, ClassFeature, ClassFeatureChoice } from "../../types";
 const RANGER_CHOICES: ClassFeatureChoice[] = [
   {
     id: "enemigo-predilecto",
-    featureName: "Enemigo predilecto",
+    featureName: "Enemigo predilecto (nuevo)",
     levels: [1, 5, 10, 15, 20],
-    label: "Enemigo predilecto",
+    label: "Enemigo predilecto nuevo",
     kind: "texto_libre",
     placeholder: "p.ej. No muertos, Gigantes, Humanos (tipo o subtipo de criatura)",
-    hint: "Cada elección da +2 contra ese enemigo. Para reforzar uno ya elegido en vez de añadir uno nuevo, escribe aquí el mismo texto exacto que en un nivel anterior: sumará otro +2 al mismo enemigo en vez de crear uno distinto.",
+    hint: "En nivel 1 se elige un único enemigo predilecto. En niveles 5, 10, 15 y 20 se añade uno nuevo a la lista (+2 contra él) y, además, se refuerza en +2 el bono contra un enemigo cualquiera de la lista (ver más abajo): puede ser este mismo enemigo recién elegido u otro anterior.",
+  },
+  {
+    id: "enemigo-predilecto-refuerzo",
+    featureName: "Enemigo predilecto (refuerzo)",
+    levels: [5, 10, 15, 20],
+    label: "Enemigo predilecto reforzado (+2 adicional)",
+    kind: "texto_libre",
+    placeholder: "Escribe aquí, exactamente igual, el nombre de un enemigo predilecto ya elegido (puede ser el que acabas de añadir en este mismo nivel)",
+    hint: "Suma otro +2 al enemigo predilecto indicado, sin ocupar una elección de enemigo nuevo. Debe coincidir textualmente con un enemigo predilecto ya elegido (incluido el añadido en este mismo nivel).",
   },
   {
     id: "estilo-combate",
@@ -61,8 +70,8 @@ const RANGER_BONUS_FEAT_GRANTS = [
   { level: 3, featId: "endurance" },
 ];
 
-// Complete Champion: rasgo de clase alternativo "Campeón de lo Salvaje" (solo
-// activo con la regla variante vr-cc-champion-of-the-wild). En vez de
+// Complete Warrior: rasgo de clase alternativo "Campeón de lo Salvaje" (solo
+// activo con la regla variante vr-cw-champion-of-the-wild). En vez de
 // conjuros divinos, el explorador obtiene una dote de bonificación en los
 // niveles 4, 8, 11 y 14, elegida entre una lista fija de dotes de combate
 // más las propias de su estilo de combate (arquería o dos armas), aunque no
@@ -119,7 +128,7 @@ const CHAMPION_OF_THE_WILD_CHOICES: ClassFeatureChoice[] = [
         "dos-armas": CHAMPION_OF_THE_WILD_TWO_WEAPON_FEATS,
       },
     },
-    requiresVariantRule: "vr-cc-champion-of-the-wild",
+    requiresVariantRule: "vr-cw-champion-of-the-wild",
   },
   {
     id: "campeon-salvaje-dote-2",
@@ -134,7 +143,7 @@ const CHAMPION_OF_THE_WILD_CHOICES: ClassFeatureChoice[] = [
         "dos-armas": CHAMPION_OF_THE_WILD_TWO_WEAPON_FEATS,
       },
     },
-    requiresVariantRule: "vr-cc-champion-of-the-wild",
+    requiresVariantRule: "vr-cw-champion-of-the-wild",
   },
   {
     id: "campeon-salvaje-dote-3",
@@ -149,7 +158,7 @@ const CHAMPION_OF_THE_WILD_CHOICES: ClassFeatureChoice[] = [
         "dos-armas": CHAMPION_OF_THE_WILD_TWO_WEAPON_FEATS,
       },
     },
-    requiresVariantRule: "vr-cc-champion-of-the-wild",
+    requiresVariantRule: "vr-cw-champion-of-the-wild",
   },
   {
     id: "campeon-salvaje-dote-4",
@@ -164,7 +173,7 @@ const CHAMPION_OF_THE_WILD_CHOICES: ClassFeatureChoice[] = [
         "dos-armas": CHAMPION_OF_THE_WILD_TWO_WEAPON_FEATS,
       },
     },
-    requiresVariantRule: "vr-cc-champion-of-the-wild",
+    requiresVariantRule: "vr-cw-champion-of-the-wild",
   },
 ];
 
@@ -336,17 +345,17 @@ const rangerFeatures: ClassFeature[] = [
   { level: 3, name: "Aguante", description: "El explorador obtiene la dote Aguante como dote de bonificación." },
   { level: 4, name: "Compañero animal", description: "El explorador puede convocar a un compañero animal que le sirve fielmente." },
   { level: 4, name: "Conjuros divinos", description: "El explorador comienza a lanzar conjuros divinos de la lista de conjuros de explorador, con Sabiduría como característica clave." },
-  { level: 5, name: "Enemigo predilecto (2)", description: "El explorador elige un segundo tipo de enemigo predilecto." },
+  { level: 5, name: "Enemigo predilecto (2)", description: "El explorador elige un segundo tipo de enemigo predilecto (+2) y, además, refuerza en +2 el bono contra un enemigo predilecto cualquiera de su lista (puede ser el que acaba de elegir u otro anterior)." },
   { level: 6, name: "Estilo de combate mejorado", description: "El explorador obtiene la segunda dote de bonificación de la senda de estilo de combate elegida." },
   { level: 7, name: "Movimiento en la naturaleza", description: "El explorador puede moverse a través de terreno difícil de origen natural (como zarzas o enredaderas) a su velocidad normal y sin sufrir daño ni otros efectos adversos." },
   { level: 8, name: "Rastreador veloz", description: "El explorador puede seguir rastros a su velocidad normal sin penalizador y al doble de su velocidad con un penalizador de -5." },
   { level: 9, name: "Evasión", description: "Si el explorador debe realizar una tirada de salvación de Reflejos por la mitad de daño, en su lugar no sufre ningún daño si tiene éxito." },
-  { level: 10, name: "Enemigo predilecto (3)", description: "El explorador elige un tercer tipo de enemigo predilecto." },
+  { level: 10, name: "Enemigo predilecto (3)", description: "El explorador elige un tercer tipo de enemigo predilecto (+2) y, además, refuerza en +2 el bono contra un enemigo predilecto cualquiera de su lista (puede ser el que acaba de elegir u otro anterior)." },
   { level: 11, name: "Maestría en el estilo de combate", description: "El explorador obtiene la tercera dote de bonificación de la senda de estilo de combate elegida." },
   { level: 13, name: "Camuflaje", description: "El explorador puede usar Esconderse incluso mientras es observado, siempre que esté en cualquier tipo de terreno natural." },
-  { level: 15, name: "Enemigo predilecto (4)", description: "El explorador elige un cuarto tipo de enemigo predilecto." },
+  { level: 15, name: "Enemigo predilecto (4)", description: "El explorador elige un cuarto tipo de enemigo predilecto (+2) y, además, refuerza en +2 el bono contra un enemigo predilecto cualquiera de su lista (puede ser el que acaba de elegir u otro anterior)." },
   { level: 17, name: "Esconderse a plena vista", description: "El explorador puede usar la habilidad Esconderse incluso mientras es observado, en cualquier tipo de terreno natural, salvo bajo la observación directa de un enemigo predilecto en persecución activa." },
-  { level: 20, name: "Enemigo predilecto (5)", description: "El explorador elige un quinto tipo de enemigo predilecto." },
+  { level: 20, name: "Enemigo predilecto (5)", description: "El explorador elige un quinto tipo de enemigo predilecto (+2) y, además, refuerza en +2 el bono contra un enemigo predilecto cualquiera de su lista (puede ser el que acaba de elegir u otro anterior)." },
 ];
 
 export const SRD_CLASSES_A: ClassDef[] = [

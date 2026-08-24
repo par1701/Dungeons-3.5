@@ -1,13 +1,38 @@
 import type { ClassDef } from "../../types";
 
-// Clases de prestigio psiónicas de Complete Psionic (2006) / Manual de Psiónica
-// Ampliado.
+// Clases de prestigio de Complete Psionic (2006).
+//
+// Las 8 clases de prestigio reales de Complete Psionic son: Anarchic
+// Initiate, Ebon Saint, Ectopic Adept, Flayerspawn Psychic, Illumine Soul,
+// Soulbow, Storm Disciple y Zerth Cenobite (ver docs/prestige/README.md).
+// Ninguna de ellas está todavía representada en este archivo: el listado que
+// había aquí (Cerebremante, Metamente, Elocuter y Pirocinético) estaba mal
+// filiado. Sus fichas de referencia (docs/prestige/cerebremancer.md,
+// metamind.md, elocater.md, pyrokineticist.md) indican explícitamente
+// "Fuente: Expanded Psionics Handbook", no Complete Psionic, y ese libro no
+// es un sourcebook implementado en la app (no existe en `src/data/
+// sourcebooks.ts`). Mantenerlas aquí atribuidas a `source: "complete-
+// psionic"` habría perpetuado justo el tipo de filiación incorrecta que esta
+// auditoría corrige, así que se retiran en vez de mantener contenido mal
+// etiquetado. No se añaden en su lugar las 8 clases reales de Complete
+// Psionic: aunque sus fichas de referencia sí existen, el sistema psiónico
+// base de esta app modela poderes por punto de poder en vez de conjuros y
+// depende de mecánicas (enfoque psiónico, golpe psíquico, hoja mental...) que
+// exceden el alcance de esta pasada de auditoría; añadir clases de prestigio
+// nuevas queda fuera de alcance (ver instrucciones del encargo).
+//
+// El Vasallista (Thrallherd) se mantiene sin cambios: el índice de
+// referencia (docs/prestige/README.md) lo cita como clase de Expanded
+// Psionics Handbook, pero a diferencia de las otras cuatro no existe un
+// fichero docs/prestige/thrallherd.md real con el que verificar o corregir
+// sus mecánicas, así que se deja intacto en vez de inventar una ficha o
+// borrar contenido no verificable.
 //
 // El sistema psiónico base (Psiónico, Guerrero Psíquico, Indómito, Cuchillo
 // del Alma, la lista de poderes y habilidades propias como Psicognosis/Psicraft,
 // Autohipnosis o Saber [Psiónica]) todavía no está implementado en
-// esta app (ver `src/data/sourcebooks.ts`, `complete-psionic.implemented =
-// false`, y `ALL_POWERS = []` en `src/data/index.ts`). Por eso:
+// esta app (ver `src/data/sourcebooks.ts` y `ALL_POWERS = []` en
+// `src/data/index.ts`). Por eso, para el Vasallista:
 //
 //   - `classSkills` solo incluye habilidades que YA existen en
 //     `src/data/srd/skills.ts`; se omiten Psicraft, Autohipnosis y
@@ -17,164 +42,10 @@ import type { ClassDef } from "../../types";
 //     esas habilidades psiónicas se documentan como texto informativo (sin
 //     `check`), igual que se hace en `complete-arcane/classes.ts` con
 //     prerrequisitos no verificables mecánicamente todavía.
-//   - `ctx.casterLevel` se usa como aproximación del nivel de manifestador
-//     (el contexto de prerrequisitos todavía no distingue lanzador arcano de
-//     manifestador psiónico).
-//   - Todas estas clases avanzan el nivel de manifestador de una clase
-//     psiónica (y, en el caso de la Cerebremante, también el nivel de
-//     lanzador arcano) que el personaje ya poseyera, en vez de tener su
-//     propia tabla de `ManifestingInfo`. Ese efecto se documenta como un
-//     `ClassFeature` de texto y el campo `manifesting` se omite a propósito,
-//     igual que con los PrCs arcanos de progresión combinada.
 
 function hasAnyKnowledgeRanks(skillRanks: Record<string, number>, minRanks: number): boolean {
   return Object.entries(skillRanks).some(([id, ranks]) => id.startsWith("knowledge-") && ranks >= minRanks);
 }
-
-// ---------------------------------------------------------------------------
-// Cerebremante (Cerebremancer)
-// ---------------------------------------------------------------------------
-
-const CEREBREMANCER_FEATURES = [
-  {
-    level: 1,
-    name: "Progresión Arcana y Psiónica",
-    description:
-      "Cada nivel de cerebremante (1º a 10º) otorga un nivel de lanzador arcano adicional a una clase de lanzador arcano que el personaje ya poseyera Y, al mismo tiempo, un nivel de manifestador adicional a una clase psiónica que ya poseyera, exactamente como si hubiera obtenido un nivel en cada una de ellas a efectos de conjuros o poderes por día, conjuros o poderes conocidos, y nivel de lanzador/manifestador (pero no otros rasgos de esas clases).",
-  },
-  {
-    level: 1,
-    name: "Doble Origen del Poder",
-    description:
-      "La cerebremante ha aprendido a sostener a la vez la disciplina arcana y la disciplina psiónica en su mente sin que una interfiera con la otra, algo que la mayoría de estudiosos considera imposible.",
-  },
-];
-
-// ---------------------------------------------------------------------------
-// Metamente (Metamind)
-// ---------------------------------------------------------------------------
-
-const METAMIND_FEATURES = [
-  {
-    level: 1,
-    name: "Progresión de Manifestación",
-    description:
-      "Cada nivel de metamente (1º a 10º) otorga un nivel de manifestador adicional a una clase psiónica que el personaje ya poseyera, exactamente como si hubiera obtenido un nivel en dicha clase a efectos de puntos de poder por día, poderes conocidos y nivel de manifestador (pero no otros rasgos de esa clase).",
-  },
-  {
-    level: 1,
-    name: "Puntos de Poder Adicionales",
-    description:
-      "La mente de la metamente es capaz de sostener más energía psiónica de la habitual: obtiene puntos de poder adicionales cada nivel, por encima de los que le corresponderían por su progresión de manifestación normal.",
-  },
-  {
-    level: 3,
-    name: "Fortaleza Mental",
-    description:
-      "La metamente obtiene un bonificador de +2 a las tiradas de salvación de Voluntad contra efectos que afecten a la mente (encantamiento, compulsión y similares).",
-  },
-  {
-    level: 5,
-    name: "Claridad de Pensamiento",
-    description:
-      "La metamente puede volver a intentar una prueba de Concentración fallida al manifestar un poder, una vez por asalto, gastando un punto de poder adicional.",
-  },
-  {
-    level: 7,
-    name: "Genio Psiónico",
-    description:
-      "La metamente añade un poder más del que le correspondería por su nivel de manifestador a su lista de poderes conocidos, elegido de cualquier nivel que ya pueda manifestar.",
-  },
-  {
-    level: 10,
-    name: "Mente Trascendente",
-    description:
-      "Una vez al día, la metamente puede manifestar cualquier poder que conozca sin gastar los puntos de poder que costaría normalmente.",
-  },
-];
-
-// ---------------------------------------------------------------------------
-// Elocuter (Elocater)
-// ---------------------------------------------------------------------------
-
-const ELOCATER_FEATURES = [
-  {
-    level: 1,
-    name: "Progresión de Manifestación",
-    description:
-      "Cada nivel de elocuter (1º a 10º) otorga un nivel de manifestador adicional a una clase psiónica que el personaje ya poseyera, exactamente como si hubiera obtenido un nivel en dicha clase a efectos de puntos de poder por día, poderes conocidos y nivel de manifestador (pero no otros rasgos de esa clase).",
-  },
-  {
-    level: 1,
-    name: "Paso Veloz",
-    description: "La velocidad del elocuter aumenta en 3 metros mientras no lleve una carga pesada.",
-  },
-  {
-    level: 3,
-    name: "Evasión Dimensional",
-    description:
-      "Mientras esté bajo los efectos de un poder de psicoportación que haya manifestado, el elocuter obtiene un bonificador de esquiva de +2 a la Clase de Armadura.",
-  },
-  {
-    level: 5,
-    name: "Reducción de Coste Psicoportador",
-    description:
-      "El coste en puntos de poder de cualquier poder de la disciplina de psicoportación que manifieste el elocuter se reduce en 1 (mínimo 1 punto de poder).",
-  },
-  {
-    level: 7,
-    name: "Salto Dimensional Menor",
-    description:
-      "El elocuter puede teleportarse a un punto que pueda ver dentro de 9 metros, como acción rápida, un número de veces por día igual a su modificador de la característica de manifestación, sin gastar puntos de poder.",
-  },
-  {
-    level: 10,
-    name: "Viajero Definitivo",
-    description:
-      "El elocuter puede usar su Salto Dimensional Menor como acción libre en respuesta a un ataque en su contra, antes de que se resuelva, un número de veces por día igual a la mitad de su nivel de elocuter.",
-  },
-];
-
-// ---------------------------------------------------------------------------
-// Pirocinético (Pyrokineticist)
-// ---------------------------------------------------------------------------
-
-const PYROKINETICIST_FEATURES = [
-  {
-    level: 1,
-    name: "Progresión de Manifestación",
-    description:
-      "Cada nivel de pirocinético (1º a 10º) otorga un nivel de manifestador adicional a una clase psiónica que el personaje ya poseyera, exactamente como si hubiera obtenido un nivel en dicha clase a efectos de puntos de poder por día, poderes conocidos y nivel de manifestador (pero no otros rasgos de esa clase).",
-  },
-  {
-    level: 1,
-    name: "Vínculo Ígneo",
-    description:
-      "El pirocinético obtiene resistencia al fuego 5 y puede hacer que cualquier poder de psicocinesis que manifieste y que normalmente inflija daño de energía sin tipo fijo inflija en su lugar daño de fuego.",
-  },
-  {
-    level: 3,
-    name: "Resistencia al Fuego 10",
-    description: "La resistencia al fuego del pirocinético aumenta a 10.",
-  },
-  {
-    level: 5,
-    name: "Golpe Ardiente",
-    description:
-      "Los poderes de psicocinesis que manifieste el pirocinético e inflijan daño de fuego (por su Vínculo Ígneo o de forma natural) causan 1 punto adicional de daño de fuego por dado de daño del poder.",
-  },
-  {
-    level: 7,
-    name: "Resistencia al Fuego 20",
-    description: "La resistencia al fuego del pirocinético aumenta a 20.",
-  },
-  {
-    level: 10,
-    name: "Inmunidad al Fuego",
-    description:
-      "El pirocinético se vuelve inmune al daño de fuego. Además, un número de veces por día igual a su modificador de la característica de manifestación, puede hacer que un poder con daño de fuego ignore la resistencia a la energía (aunque no la inmunidad) del objetivo.",
-  },
-];
 
 // ---------------------------------------------------------------------------
 // Vasallista (Thrallherd)
@@ -208,142 +79,6 @@ const THRALLHERD_FEATURES = [
 ];
 
 export const CPS_PRESTIGE_CLASSES: ClassDef[] = [
-  {
-    id: "cps-cerebremancer",
-    name: "Cerebremante (Cerebremancer)",
-    source: "complete-psionic",
-    description:
-      "Un estudioso que ha logrado lo que la mayoría considera imposible: sostener a la vez el estudio de la magia arcana y la disciplina psiónica, haciendo progresar ambas artes en paralelo.",
-    hitDie: 4,
-    skillPointsPerLevel: 2,
-    classSkills: ["concentration", "craft", "knowledge-arcana", "profession", "spellcraft"],
-    babProgression: "media",
-    saves: { fort: "mala", ref: "mala", will: "buena" },
-    weaponProficiencies: [],
-    armorProficiencies: [],
-    features: CEREBREMANCER_FEATURES,
-    maxLevel: 10,
-    isPrestige: true,
-    prerequisites: [
-      {
-        description: "Saber (Arcano): 8 rangos",
-        check: (ctx) => (ctx.skillRanks["knowledge-arcana"] ?? 0) >= 8,
-      },
-      {
-        description: "Saber (Psiónica): 8 rangos",
-      },
-      {
-        description: "Manifestación en Combate",
-        check: (ctx) => ctx.featIds.has("combat-manifestation"),
-      },
-      {
-        description: "Capacidad de manifestar poderes psiónicos de nivel 3 (nivel de manifestador 5)",
-        check: (ctx) => ctx.casterLevel >= 5,
-      },
-      {
-        description: "Capacidad de lanzar conjuros arcanos de nivel 3 (nivel de lanzador arcano 5)",
-      },
-    ],
-  },
-  {
-    id: "cps-metamind",
-    name: "Metamente (Metamind)",
-    source: "complete-psionic",
-    description:
-      "Un manifestador de intelecto excepcional que ha aprendido a exprimir su mente hasta sostener más energía psiónica de la que debería ser posible, sacrificando robustez física por una capacidad mental cada vez mayor.",
-    hitDie: 4,
-    skillPointsPerLevel: 2,
-    classSkills: ["concentration", "craft", "profession", "sense-motive"],
-    babProgression: "media",
-    saves: { fort: "mala", ref: "mala", will: "buena" },
-    weaponProficiencies: [],
-    armorProficiencies: [],
-    features: METAMIND_FEATURES,
-    maxLevel: 10,
-    isPrestige: true,
-    prerequisites: [
-      {
-        description: "Voluntad de Hierro",
-        check: (ctx) => ctx.featIds.has("iron-will"),
-      },
-      {
-        description: "Concentración: 6 rangos",
-        check: (ctx) => (ctx.skillRanks["concentration"] ?? 0) >= 6,
-      },
-      {
-        description: "Inteligencia 19",
-        check: (ctx) => ctx.abilityScores.int >= 19,
-      },
-      {
-        description: "Capacidad de manifestar poderes psiónicos de nivel 3 (nivel de manifestador 5)",
-        check: (ctx) => ctx.casterLevel >= 5,
-      },
-    ],
-  },
-  {
-    id: "cps-elocater",
-    name: "Elocuter (Elocater)",
-    source: "complete-psionic",
-    description:
-      "Un manifestador especializado en la disciplina de psicoportación que aprende a moverse por el campo de batalla, y entre planos, más deprisa de lo que el ojo puede seguir.",
-    hitDie: 4,
-    skillPointsPerLevel: 2,
-    classSkills: ["concentration", "craft", "jump", "profession", "tumble"],
-    babProgression: "media",
-    saves: { fort: "mala", ref: "buena", will: "buena" },
-    weaponProficiencies: [],
-    armorProficiencies: [],
-    features: ELOCATER_FEATURES,
-    maxLevel: 10,
-    isPrestige: true,
-    prerequisites: [
-      {
-        description: "Velocidad de Pensamiento",
-        check: (ctx) => ctx.featIds.has("cps-speed-of-thought"),
-      },
-      {
-        description: "Saltar: 5 rangos",
-        check: (ctx) => (ctx.skillRanks["jump"] ?? 0) >= 5,
-      },
-      {
-        description: "Capacidad de manifestar un poder de psicoportación de nivel 3, como puerta dimensional",
-      },
-      {
-        description: "Nivel de manifestador 5",
-        check: (ctx) => ctx.casterLevel >= 5,
-      },
-    ],
-  },
-  {
-    id: "cps-pyrokineticist",
-    name: "Pirocinético (Pyrokineticist)",
-    source: "complete-psionic",
-    description:
-      "Un manifestador de psicocinesis que dirige su energía psíquica hacia el elemento del fuego, hasta el punto de que su propio cuerpo deja de temer las llamas.",
-    hitDie: 6,
-    skillPointsPerLevel: 2,
-    classSkills: ["concentration", "craft", "profession", "spot"],
-    babProgression: "tres_cuartos",
-    saves: { fort: "buena", ref: "mala", will: "mala" },
-    weaponProficiencies: [],
-    armorProficiencies: [],
-    features: PYROKINETICIST_FEATURES,
-    maxLevel: 10,
-    isPrestige: true,
-    prerequisites: [
-      {
-        description: "Concentración: 6 rangos",
-        check: (ctx) => (ctx.skillRanks["concentration"] ?? 0) >= 6,
-      },
-      {
-        description: "Capacidad de manifestar un poder de psicocinesis de energía de nivel 3",
-      },
-      {
-        description: "Nivel de manifestador 5",
-        check: (ctx) => ctx.casterLevel >= 5,
-      },
-    ],
-  },
   {
     id: "cps-thrallherd",
     name: "Vasallista (Thrallherd)",

@@ -2,22 +2,12 @@ import type { VariantRule } from "../../types";
 
 export const COMPLETE_CHAMPION_VARIANT_RULES: VariantRule[] = [
   {
-    id: "vr-cc-champion-of-the-wild",
-    name: "Rasgo de clase alternativo: Campeón de lo Salvaje (explorador)",
-    source: "complete-champion",
-    category: "clase",
-    description:
-      "Rasgo de clase alternativo para el explorador. Renuncia por completo a su capacidad de lanzar conjuros divinos (no obtiene la característica \"Conjuros divinos\" de nivel 4 ni ninguna progresión de conjuros posterior), pero a cambio obtiene una dote de bonificación en los niveles 4, 8, 11 y 14, elegida entre Lucha a Ciegas, Pericia en Combate, Desarme Mejorado, Enemigo Predilecto Mejorado, Finta Mejorada, Derribo Mejorado, o de la lista propia de su estilo de combate (arquería o combate con dos armas) — elígela en \"Elecciones de clase\" una vez alcanzado cada nivel. Conserva el resto de rasgos de explorador sin cambios, incluido el compañero animal. Es incompatible con la variante de explorador sin conjuros de Complete Warrior: ambas sustituyen el mismo rasgo de conjuros, así que solo puede activarse una de las dos.",
-    defaultEnabled: false,
-    exclusiveGroup: "explorador_sin_conjuros",
-  },
-  {
     id: "vr-cc-aligned-strike",
     name: "Rasgo de clase alternativo: Golpe alineado (guerrero)",
     source: "complete-champion",
     category: "clase",
     description:
-      "Rasgo de clase alternativo para el guerrero, que puede tomarse en vez de una de sus dotes de bonificación. Como acción gratuita, el guerrero puede alinear su arma como buena, malvada, legal o caótica, de forma que cuente con ese alineamiento a efectos de superar la reducción de daño.",
+      "Rasgo de clase alternativo para el guerrero, que puede tomarse en vez de una de sus dotes de bonificación. Como acción gratuita, el guerrero puede alinear su arma con uno de los componentes de su propio alineamiento (por ejemplo, un guerrero caótico bueno puede elegir caótica o buena, pero no legal ni malvada), de forma que cuente con ese alineamiento a efectos de superar la reducción de daño. El efecto dura hasta que decide cambiarlo (también como acción gratuita), terminarlo, o hasta que deja de empuñar el arma.",
     defaultEnabled: false,
   },
   {
@@ -53,7 +43,7 @@ export const COMPLETE_CHAMPION_VARIANT_RULES: VariantRule[] = [
     source: "complete-champion",
     category: "clase",
     description:
-      "Rasgo de clase alternativo para el hechicero. En el nivel 5, en vez de aprender nuevos conjuros conocidos de nivel 1 y 2 ese nivel (y uno menos de conjuro conocido en cada nivel posterior), el hechicero obtiene acceso a un dominio de clérigo, incluyendo su conjuro de dominio una vez al día por cada nivel de conjuro que pueda lanzar. Nota: esta app no modela un sistema de dominios para el clérigo, así que el dominio elegido queda a discreción del jugador/DJ.",
+      "Rasgo de clase alternativo para el hechicero. En el nivel 5, en vez de aprender nuevos conjuros conocidos de nivel 1 y 2 ese nivel (y uno menos de conjuro conocido en cada nivel posterior), el hechicero elige un dominio de clérigo (compatible con su deidad, si venera a una) y obtiene su poder concedido, además de poder lanzar un conjuro de dominio de cada nivel de conjuro que pueda lanzar, una vez al día. Nota: esta app no modela un sistema de dominios para el clérigo, así que el dominio elegido y su poder concedido quedan a discreción del jugador/DJ.",
     defaultEnabled: false,
   },
   {
@@ -71,7 +61,7 @@ export const COMPLETE_CHAMPION_VARIANT_RULES: VariantRule[] = [
     source: "complete-champion",
     category: "clase",
     description:
-      "Rasgo de clase alternativo para el pícaro, que sustituye el Sentido de trampas. El pícaro puede aplicar la mitad de sus dados de ataque furtivo (redondeando hacia abajo) contra no-muertos, sin necesidad de flanquear ni de ninguna otra condición que normalmente requeriría el ataque furtivo.",
+      "Rasgo de clase alternativo para el pícaro, que sustituye el Sentido de trampas (y sus mejoras en niveles superiores). El pícaro puede infligir daño de ataque furtivo a criaturas no muertas, algo que normalmente serían inmunes a él, pero solo con la mitad de sus dados de ataque furtivo (redondeando hacia abajo); sigue necesitando flanquear o que el objetivo esté desprevenido, como cualquier otro ataque furtivo.",
     defaultEnabled: false,
   },
   {
@@ -80,7 +70,7 @@ export const COMPLETE_CHAMPION_VARIANT_RULES: VariantRule[] = [
     source: "complete-champion",
     category: "clase",
     description:
-      "Rasgo de clase alternativo para el bardo, que sustituye Fascinar. Con al menos 3 rangos en una habilidad de Interpretar, los aliados que vean y oigan la actuación del bardo y lancen un conjuro de curación de la escuela de conjuración obtienen un bonificador sagrado o profano de +1 por cada rango de Interpretar del bardo al total de curación. Si el bardo actúa durante 1 minuto completo antes de que sus aliados descansen, estos recuperan puntos de golpe como si hubieran descansado 24 horas completas (2 × nivel de bardo puntos de golpe).",
+      "Rasgo de clase alternativo para el bardo, que sustituye Fascinar. Con al menos 3 rangos en una habilidad de Interpretar, los aliados que vean y oigan la actuación del bardo (mientras dure, y hasta 5 asaltos después) y lancen un conjuro de curación de la escuela de conjuración obtienen un bonificador sagrado (si el bardo es bueno o neutral) o profano (si es malvado) de +1 por cada rango de Interpretar del bardo al total de curación, limitado al bonificador máximo por nivel de lanzador que ese conjuro de curación pueda recibir normalmente. Si el bardo actúa durante 1 minuto completo antes de que sus aliados descansen, cada uno de ellos recupera puntos de golpe como si hubiera completado 24 horas de descanso (el doble de su propio nivel de personaje en puntos de golpe, no del nivel del bardo).",
     defaultEnabled: false,
   },
 ];

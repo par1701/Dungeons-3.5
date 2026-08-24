@@ -35,8 +35,9 @@ function featOptionsFor(
 
 export default function StepClassChoices({ character, onChange }: StepProps) {
   const classes = getEnabledClasses(character.activeSourceBooks);
-  const unlocked = getUnlockedClassFeatureChoices(character.classLevels, classes, character.activeVariantRules);
   const classFeatureChoices = character.classFeatureChoices ?? [];
+  const knownFeatIds = getAllKnownFeatIds(character.feats, character.classLevels, classes, classFeatureChoices, character.activeVariantRules);
+  const unlocked = getUnlockedClassFeatureChoices(character.classLevels, classes, character.activeVariantRules, knownFeatIds);
 
   const race = findRace(character.raceId);
   const finalScores = computeFinalAbilityScores(character.abilityScores, race, character.equipment);
@@ -46,7 +47,7 @@ export default function StepClassChoices({ character, onChange }: StepProps) {
     babTotal: computeBabTotal(character.classLevels, classes),
     classLevels: Object.fromEntries(character.classLevels.map((cl) => [cl.classId, cl.level])),
     totalCharacterLevel: totalLevel,
-    featIds: getAllKnownFeatIds(character.feats, character.classLevels, classes, classFeatureChoices, character.activeVariantRules),
+    featIds: knownFeatIds,
     skillRanks: flattenSkillRanksForPrereqs(character.skillRanks),
     casterLevel: totalLevel,
   };

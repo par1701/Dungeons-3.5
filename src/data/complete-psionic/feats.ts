@@ -621,8 +621,7 @@ export const CPS_FEATS: Feat[] = [
     source: "complete-psionic",
     types: ["general"],
     description: "El manifestador ha ejercitado su disciplina mental hasta el punto de mantenerla firme bajo cualquier circunstancia.",
-    benefit:
-      "Puede sacar 10 en las pruebas de nivel de manifestador, incluso en circunstancias que normalmente se lo impedirían.",
+    benefit: "Puede sacar 10 en las pruebas de nivel de manifestador, como si fueran pruebas de habilidad.",
     prerequisites: [
       { description: "Capacidad de manifestar poderes psiónicos o usar habilidades psi-símiles", check: (ctx) => ctx.casterLevel >= 1 },
     ],
@@ -679,7 +678,8 @@ export const CPS_FEATS: Feat[] = [
     source: "complete-psionic",
     types: ["especial"],
     description: "La reacción psíquica del personaje ante las intrusiones mentales se vuelve mucho más dañina.",
-    benefit: "El daño de la reacción psíquica de Mente Hostil aumenta de 1d4 a 2d6.",
+    benefit:
+      "Cuando una criatura manifiesta un poder de telepatía dirigido contra el personaje, esa criatura debe superar una salvación de Voluntad (CD 10 + la mitad del nivel del personaje + su modificador de Carisma) o sufre 4d6 puntos de daño en total (en vez del daño normal de Mente Hostil). No es aplicable si la criatura tiene su propia reserva de puntos de poder.",
     prerequisites: [
       { description: "Mente Hostil", check: hasFeat("cps-hostile-mind") },
       { description: "Carisma 15", check: (ctx) => ctx.abilityScores.cha >= 15 },

@@ -674,21 +674,43 @@ const CW_PALADIN_NO_SPELLS_FEATURES: { level: number; name: string; description:
   },
 ];
 
+/**
+ * Cazador Veloz (Swift Hunter, Complete Scoundrel): mientras el personaje
+ * tenga esta dote, sus niveles de explorador y de batidor se suman entre sí
+ * a efectos de la progresión de Enemigo predilecto (explorador) y de Golpe
+ * de Escaramuza (batidor). Sin la dote, cada clase progresa solo con sus
+ * propios niveles.
+ */
+function getSwiftHunterCombinedLevel(classLevels: CharacterClassLevel[], knownFeatIds: Set<string>): number {
+  if (!knownFeatIds.has("cs-swift-hunter")) return 0;
+  const rangerLevel = classLevels.find((cl) => cl.classId === "ranger")?.level ?? 0;
+  const scoutLevel = classLevels.find((cl) => cl.classId === "cad-scout")?.level ?? 0;
+  return rangerLevel + scoutLevel;
+}
+
 /** Rasgos de clase ya obtenidos según el nivel actual de cada clase del personaje. */
 export function getUnlockedClassFeatures(
   classLevels: CharacterClassLevel[],
   classes: ClassDef[],
   activeVariantRules: string[] = [],
+  knownFeatIds: Set<string> = new Set(),
 ): UnlockedClassFeature[] {
-  const championOfTheWild = activeVariantRules.includes("vr-cc-champion-of-the-wild");
+  const championOfTheWild = activeVariantRules.includes("vr-cw-champion-of-the-wild");
   const cwRangerNoSpells = activeVariantRules.includes("vr-cw-ranger-no-spells");
   const cwPaladinNoSpells = activeVariantRules.includes("vr-cw-paladin-no-spells");
+  const swiftHunterLevel = getSwiftHunterCombinedLevel(classLevels, knownFeatIds);
   return classLevels.flatMap((cl) => {
     const def = classes.find((c) => c.id === cl.classId);
     if (!def) return [];
     const isRangerSpellless = (championOfTheWild || cwRangerNoSpells) && def.id === "ranger";
+    const effectiveLevel = (featureName: string) => {
+      if (swiftHunterLevel <= cl.level) return cl.level;
+      if (def.id === "ranger" && featureName.startsWith("Enemigo predilecto")) return swiftHunterLevel;
+      if (def.id === "cad-scout" && featureName.startsWith("Golpe de Escaramuza")) return swiftHunterLevel;
+      return cl.level;
+    };
     const features: UnlockedClassFeature[] = def.features
-      .filter((f) => f.level <= cl.level)
+      .filter((f) => f.level <= effectiveLevel(f.name))
       .filter((f) => !(isRangerSpellless && f.name === "Conjuros divinos"))
       .map((f) => ({ classId: def.id, className: def.name, level: f.level, name: f.name, description: f.description }));
     if (championOfTheWild && def.id === "ranger") {
@@ -730,17 +752,21 @@ export function getUnlockedClassFeatureChoices(
   classLevels: CharacterClassLevel[],
   classes: ClassDef[],
   activeVariantRules: string[] = [],
+  knownFeatIds: Set<string> = new Set(),
 ): UnlockedClassFeatureChoice[] {
+  const swiftHunterLevel = getSwiftHunterCombinedLevel(classLevels, knownFeatIds);
   return classLevels.flatMap((cl) => {
     const def = classes.find((c) => c.id === cl.classId);
     if (!def?.choices) return [];
+    const effectiveLevel = def.id === "ranger" && swiftHunterLevel > cl.level ? swiftHunterLevel : cl.level;
     return def.choices
       .filter((choice) => !choice.requiresVariantRule || activeVariantRules.includes(choice.requiresVariantRule))
-      .flatMap((choice) =>
-        choice.levels
-          .filter((level) => level <= cl.level)
-          .map((level) => ({ classId: def.id, className: def.name, level, choice })),
-      );
+      .flatMap((choice) => {
+        const levelCap = choice.id.startsWith("enemigo-predilecto") ? effectiveLevel : cl.level;
+        return choice.levels
+          .filter((level) => level <= levelCap)
+          .map((level) => ({ classId: def.id, className: def.name, level, choice }));
+      });
   });
 }
 
@@ -809,31 +835,52 @@ export interface FavoredEnemyBonus {
 }
 
 /**
- * Agrega las elecciones de "enemigo predilecto" del explorador (niveles 1,
- * 5, 10, 15 y 20) en un bono por enemigo. Según el SRD, en cada uno de esos
- * niveles el jugador elige entre seleccionar un enemigo predilecto nuevo (a
- * +2) o reforzar en +2 uno ya elegido antes, en vez de añadir uno distinto:
- * esta app modela esa elección simplemente dejando repetir el mismo texto en
- * un nivel posterior (comparado sin mayúsculas/acentos), y cada repetición
- * suma otro +2 al bono total de ese enemigo.
+ * Agrega las elecciones de "enemigo predilecto" del explorador en un bono
+ * por enemigo. Según el SRD, en nivel 1 el explorador elige un único
+ * enemigo predilecto (+2); en niveles 5, 10, 15 y 20 elige ADEMÁS un enemigo
+ * predilecto nuevo (+2) Y refuerza en +2 el bono contra cualquier enemigo
+ * predilecto ya elegido, incluido el que acaba de añadir ese mismo nivel
+ * ("the bonus against any one favored enemy, including the one just
+ * selected, increases by 2") — son dos beneficios distintos del mismo
+ * nivel, no una alternativa entre "nuevo" o "reforzar uno existente". Se
+ * modelan como dos elecciones de nivel independientes: `newChoiceId` (nuevo
+ * enemigo, en todos los niveles) y `reinforceChoiceId` (enemigo reforzado,
+ * solo niveles 5/10/15/20), donde el texto de un refuerzo debe coincidir
+ * (sin mayúsculas/acentos) con un enemigo ya presente en la lista agregada
+ * hasta ese nivel; un refuerzo que no coincide con ningún enemigo conocido
+ * se ignora en vez de crear una entrada nueva.
  */
 export function getFavoredEnemyBonuses(
   classFeatureChoices: CharacterClassFeatureChoice[],
   classId = "ranger",
-  choiceId = "enemigo-predilecto",
+  newChoiceId = "enemigo-predilecto",
+  reinforceChoiceId = "enemigo-predilecto-refuerzo",
 ): FavoredEnemyBonus[] {
-  const entries = classFeatureChoices
-    .filter((c) => c.classId === classId && c.choiceId === choiceId && c.value.trim())
-    .sort((a, b) => a.level - b.level);
+  const relevant = classFeatureChoices.filter((c) => c.classId === classId && c.value.trim());
+  const newEntries = relevant.filter((c) => c.choiceId === newChoiceId).sort((a, b) => a.level - b.level);
+  const reinforceEntries = relevant.filter((c) => c.choiceId === reinforceChoiceId).sort((a, b) => a.level - b.level);
+
   const byKey = new Map<string, FavoredEnemyBonus>();
-  for (const entry of entries) {
+  for (const entry of newEntries) {
+    const key = normalizeForMatch(entry.value);
+    const existing = byKey.get(key);
+    if (existing) {
+      // Texto repetido en un nuevo nivel: no debería ocurrir según las
+      // reglas (cada elección "nueva" debería ser un enemigo distinto),
+      // pero si sucede se trata igual que un refuerzo en vez de perder el
+      // dato.
+      existing.bonus += 2;
+      existing.levels.push(entry.level);
+    } else {
+      byKey.set(key, { enemy: entry.value.trim(), bonus: 2, levels: [entry.level] });
+    }
+  }
+  for (const entry of reinforceEntries) {
     const key = normalizeForMatch(entry.value);
     const existing = byKey.get(key);
     if (existing) {
       existing.bonus += 2;
       existing.levels.push(entry.level);
-    } else {
-      byKey.set(key, { enemy: entry.value.trim(), bonus: 2, levels: [entry.level] });
     }
   }
   return Array.from(byKey.values());
@@ -1390,6 +1437,37 @@ export function monkUnarmedDamage(monkLevel: number): string {
   const thresholds = [20, 16, 12, 8, 4, 1];
   const level = thresholds.find((t) => monkLevel >= t) ?? 1;
   return MONK_UNARMED_DAMAGE[level];
+}
+
+// Dotes "ascéticas" (Complete Adventurer): cada una hace que los niveles de
+// otra clase concreta cuenten como niveles de monje únicamente a efectos del
+// daño con ataques sin armas (no de la Ráfaga de Golpes en sí, que sigue
+// exigiendo niveles reales de monje, ni de otras capacidades de monje).
+const ASCETIC_UNARMED_DAMAGE_FEATS: [featId: string, otherClassId: string][] = [
+  ["cad-ascetic-knight", "paladin"],
+  ["cad-ascetic-rogue", "rogue"],
+  ["cad-ascetic-hunter", "ranger"],
+  ["cad-ascetic-performer", "bard"],
+];
+
+/**
+ * Nivel de monje "efectivo" a efectos únicamente del tamaño de dado de daño
+ * desarmado (`monkUnarmedDamage`): el nivel real de monje más los niveles de
+ * cualquier otra clase que, por una dote ascética conocida, cuenten como
+ * niveles de monje para este propósito. Exige tener al menos 1 nivel real de
+ * monje (la dote no otorga Ráfaga de Golpes por sí sola, solo mejora el dado
+ * de daño de la que el personaje ya tenga).
+ */
+export function getMonkUnarmedDamageLevel(classLevels: CharacterClassLevel[], knownFeatIds: Set<string>): number {
+  const monkLevel = classLevels.find((cl) => cl.classId === "monk")?.level ?? 0;
+  if (monkLevel <= 0) return 0;
+  let level = monkLevel;
+  for (const [featId, otherClassId] of ASCETIC_UNARMED_DAMAGE_FEATS) {
+    if (knownFeatIds.has(featId)) {
+      level += classLevels.find((cl) => cl.classId === otherClassId)?.level ?? 0;
+    }
+  }
+  return level;
 }
 
 /**

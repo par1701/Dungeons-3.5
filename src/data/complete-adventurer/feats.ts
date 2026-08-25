@@ -463,6 +463,17 @@ export const CAD_FEATS: Feat[] = [
     fighterBonusFeat: false,
     stackable: false,
   },
+  {
+    id: "cad-brutal-throw",
+    name: "Lanzamiento Brutal",
+    source: "complete-adventurer",
+    types: ["general"],
+    description: "El combatiente lanza sus armas arrojadizas con la misma fuerza bruta que golpea cuerpo a cuerpo.",
+    benefit: "Usa su modificador de Fuerza, en vez de Destreza, en las tiradas de ataque con armas arrojadizas.",
+    prerequisites: [],
+    fighterBonusFeat: true,
+    stackable: false,
+  },
 ];
 
 export const CAD_FEAT_IDS = CAD_FEATS.map((f) => f.id);

@@ -46,3 +46,10 @@ Las dos dotes de los monitores kuo-toa (*Monacato kuo-toa* y *Golpe que fragment
 ---
 
 *Nota: las dotes que ya aparecían en las Reglas básicas (p. ej. Enfoque de habilidad como dote general, Ataque poderoso, Ambidiestría, Combate con dos armas...) no se repiten aquí salvo cuando el propio Manual de Monstruos las reimprime con una versión distinta pensada para monstruos.*
+
+## Notas de contraste (verificación cruzada al implementar en la app)
+
+- **Golpe imponente (Awesome Blow)**: esta tabla indica como prerrequisito "Ataque poderoso, Derribo mejorado", pero varias fuentes independientes (realmshelps.net, d20pfsrd, D&D Tools, nwnprc.com) coinciden en que el prerrequisito real es **Empujón mejorado** (Improved Bull Rush), no Derribo mejorado. Se ha implementado con Empujón mejorado, que también coincide con el doc `docs/feats/monster-manual.md` ya existente en el repo. Parece un error de esta tabla (probablemente del scrape de D&D Tools).
+- **Carga poderosa, Resistencia mejorada, Lanzamiento brutal**: esta tabla las marca como dotes de bonificación de guerrero; se confirmó por búsqueda web independiente y se ha corregido `fighterBonusFeat` en la app en consecuencia (antes solo Golpe imponente estaba marcada así).
+- **Lanzamiento brutal**: aunque esta tabla la atribuye a MM V, todo apunta a que su origen real es *Complete Adventurer* (reimpresa sin cambios en MM V). Como Complete Adventurer ya es un libro implementado en la app, se ha añadido ahí (`source: "complete-adventurer"`) en vez de bajo SRD/Manual de Monstruos, para que respete el interruptor de libros activos del personaje.
+- El resto de las dotes de esta tabla que dependen de una raza no implementada en la app (forjado, cambiante, githyanki, monitor kuo-toa) o de un subsistema no rastreado (afiliación con Thoon) no se han añadido como dotes seleccionables, ya que ningún personaje podría cumplir jamás su prerrequisito.

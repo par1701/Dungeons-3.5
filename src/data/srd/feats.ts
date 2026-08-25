@@ -1439,7 +1439,7 @@ export const SRD_FEATS: Feat[] = [
       { description: "Tamaño Mediano o mayor" },
       { description: "Bonificador base de ataque +1", check: (ctx) => ctx.babTotal >= 1 },
     ],
-    fighterBonusFeat: false,
+    fighterBonusFeat: true,
     stackable: false,
   },
   {
@@ -1613,6 +1613,94 @@ export const SRD_FEATS: Feat[] = [
     prerequisites: [{ description: "Velocidad de vuelo" }],
     fighterBonusFeat: false,
     stackable: false,
+  },
+  {
+    id: "battle-sorcery",
+    name: "Tácticas de Mago de Batalla",
+    source: "srd",
+    types: ["general"],
+    description: "El lanzador arcano aprende a desgastar las defensas de sus enemigos con cada conjuro.",
+    benefit:
+      "Cada vez que lanza un conjuro que permite tirada de salvación, el objetivo sufre un penalizador acumulable de -1 a sus tiradas de salvación contra el resto de tus conjuros durante ese mismo asalto.",
+    prerequisites: [
+      { description: "Lanzador arcano de nivel 3", check: (ctx) => ctx.casterLevel >= 3 },
+      { description: "Conocimiento de Conjuros 6 rangos", check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 6 },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "improved-toughness",
+    name: "Resistencia Mejorada",
+    source: "srd",
+    types: ["general"],
+    description: "El combatiente desarrolla una vitalidad excepcional para su nivel.",
+    benefit:
+      "Gana puntos de golpe extra iguales a sus Dados de Golpe actuales; cada vez que gana un nuevo Dado de Golpe (por ejemplo, al subir de nivel), gana 1 punto de golpe adicional.",
+    prerequisites: [{ description: "Bonificador base de salvación de Fortaleza +2" }],
+    fighterBonusFeat: true,
+    stackable: false,
+  },
+  {
+    id: "mage-slayer",
+    name: "Cazador de Magos",
+    source: "srd",
+    types: ["general"],
+    description: "El combatiente se especializa en presionar a los lanzadores de conjuros hasta hacerles perder la concentración.",
+    benefit:
+      "Gana +1 de bonificador en salvaciones de Voluntad. Los lanzadores de conjuros a los que amenaza fallan automáticamente si intentan lanzar un conjuro de forma defensiva. A cambio, su propio nivel de lanzador efectivo se reduce en 4 puntos a todos los efectos.",
+    prerequisites: [
+      { description: "Bonificador base de ataque +3", check: (ctx) => ctx.babTotal >= 3 },
+      { description: "Conocimiento de Conjuros 2 rangos", check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 2 },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "multidexterity",
+    name: "Multidestreza",
+    source: "srd",
+    types: ["general"],
+    description: "El monstruo con más de dos brazos aprende a usar cualquiera de ellos con la misma soltura.",
+    benefit:
+      "Ignora las penalizaciones por usar una mano torpe (no primaria). En criaturas con más de dos brazos, esta dote sustituye a Ambidiestría.",
+    prerequisites: [
+      { description: "Destreza 15", check: (ctx) => ctx.abilityScores.dex >= 15 },
+      { description: "Tres o más brazos" },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "sticky-breath",
+    name: "Aliento Adherente",
+    source: "srd",
+    types: ["especial"],
+    description: "El monstruo con arma de aliento consigue que su efecto se prolongue en el objetivo.",
+    benefit:
+      "Cualquier criatura que siga en el área de su arma de aliento sufre de nuevo la mitad del daño original al asalto siguiente. El tiempo de recarga del arma de aliento aumenta en 1 asalto.",
+    prerequisites: [
+      { description: "Constitución 13", check: (ctx) => ctx.abilityScores.con >= 13 },
+      { description: "Arma de aliento con tiempo de recarga en asaltos" },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "persistent-breath",
+    name: "Aliento Persistente",
+    source: "srd",
+    types: ["especial"],
+    description: "El monstruo con arma de aliento deja tras de sí una nube que sigue siendo peligrosa.",
+    benefit:
+      "El área de su arma de aliento deja una nube residual que persiste 1 asalto; tocarla o entrar en ella causa la mitad del efecto original del arma de aliento. El tiempo de recarga aumenta en 2 asaltos adicionales. Especial: puede tomarse varias veces para la misma arma de aliento; cada vez, la nube persiste 1 asalto más.",
+    prerequisites: [
+      { description: "Constitución 15", check: (ctx) => ctx.abilityScores.con >= 15 },
+      { description: "Arma de aliento con tiempo de recarga en asaltos" },
+      { description: "Aliento Adherente", check: hasFeat("sticky-breath") },
+    ],
+    fighterBonusFeat: false,
+    stackable: true,
   },
 ];
 

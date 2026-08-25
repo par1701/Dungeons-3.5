@@ -46,12 +46,14 @@ const SPECIAL_QUALITY_GLOSSARY: Record<string, string> = {
   "aguantar la respiración":
     "Puede contener la respiración durante un número de asaltos igual a 5 veces su puntuación de Constitución antes de arriesgarse a ahogarse.",
   "derribo (trip)":
-    "Si acierta su ataque de mordisco, puede intentar un derribo como acción libre sin provocar ataque de oportunidad; si el intento falla, el objetivo no puede derribarlo en respuesta.",
+    "Si acierta su ataque de mordisco, puede intentar un derribo (con +2 al modificador de la prueba) como acción libre, sin hacer una prueba de ataque de toque ni provocar ataque de oportunidad; si el intento falla, el objetivo no puede derribarlo en respuesta.",
   ferocidad: "Sigue luchando sin penalización por las tiradas de ataque, aunque esté agonizando o incapacitado.",
   "furia (rage)":
     "Una vez por combate, si sufre daño en combate, puede entrar en furia durante varios asaltos: gana un bonificador de moral a Fuerza y Constitución y a las salvaciones de Voluntad, pero sufre una penalización a la CA, igual que la furia del bárbaro.",
   "agarre mejorado":
     "Si acierta un ataque con la parte del cuerpo indicada, puede iniciar una presa como acción libre sin necesidad de una prueba de agarre para asir, y sin provocar ataque de oportunidad.",
+  embestida:
+    "Si carga, puede realizar un ataque completo (todos sus ataques naturales) al final de la carga, en vez de un único ataque como es normal al cargar.",
   "adiestrado para la guerra":
     "No se asusta ante situaciones de combate y puede llevar a un jinete a la batalla sin necesidad de pruebas de Montar adicionales por el fragor de la lucha.",
   "puede imitar habla simple":
@@ -76,6 +78,7 @@ const SPECIAL_QUALITY_PREFIXES: [prefix: string, description: string][] = [
   ["trepar", "Tiene velocidad de trepar: siempre puede tomar 10 al trepar, y gana +8 de bonificador racial a las pruebas de Trepar para tareas especiales o evitar peligros."],
   ["excavar", "Tiene velocidad de excavar, que le permite abrirse camino a través de tierra blanda o arena (no roca sólida, salvo que se indique lo contrario)."],
   ["vista ciega", "Puede detectar y ubicar con precisión a criaturas y objetos cercanos sin depender de la vista (ignora ocultación e invisibilidad), dentro del alcance indicado."],
+  ["desgarrar", "Si mantiene una presa (tras un Agarre Mejorado exitoso), puede hacer además dos ataques de garra automáticos con las patas traseras, con el daño indicado, sin necesidad de una tirada de ataque."],
 ];
 
 /** Explicación en lenguaje llano de una cualidad especial (racial o de progresión de compañero), o undefined si no está catalogada. */

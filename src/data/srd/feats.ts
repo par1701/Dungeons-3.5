@@ -1424,6 +1424,284 @@ export const SRD_FEATS: Feat[] = [
     fighterBonusFeat: false,
     stackable: false,
   },
+  // ---------------------------------------------------------------------
+  // MANUAL DE MONSTRUOS (dotes típicas de criaturas, usables por compañeros)
+  // ---------------------------------------------------------------------
+  {
+    id: "powerful-charge",
+    name: "Carga Poderosa",
+    source: "srd",
+    types: ["general"],
+    description: "El combatiente golpea con fuerza bruta al final de una carga.",
+    benefit:
+      "Si impacta con un ataque cuerpo a cuerpo al cargar, inflige daño extra según su tamaño: Mediano 1d8, Grande 2d6, Enorme 3d6, Descomunal 4d6, Colosal 6d6. Solo funciona al cargar (no si va montado), y si dispone de varios ataques en la carga, el daño extra se aplica a uno solo de ellos.",
+    prerequisites: [
+      { description: "Tamaño Mediano o mayor" },
+      { description: "Bonificador base de ataque +1", check: (ctx) => ctx.babTotal >= 1 },
+    ],
+    fighterBonusFeat: true,
+    stackable: false,
+  },
+  {
+    id: "ability-focus",
+    name: "Enfoque de Habilidad",
+    source: "srd",
+    types: ["general"],
+    description: "El monstruo perfecciona uno de sus ataques especiales para que sea más difícil resistirlo.",
+    benefit:
+      "Elige un ataque especial de la criatura que permita salvación (aliento, veneno, mirada, etc.); la CD de la tirada de salvación contra ese ataque aumenta en +2.",
+    prerequisites: [{ description: "Un ataque especial de la criatura con tirada de salvación (aliento, veneno, mirada, etc.)" }],
+    fighterBonusFeat: false,
+    stackable: true,
+  },
+  {
+    id: "awesome-blow",
+    name: "Golpe Arrollador",
+    source: "srd",
+    types: ["general"],
+    description: "Un golpe brutal capaz de derribar y lanzar por los aires a un enemigo más pequeño.",
+    benefit:
+      "Acción estándar: resta 4 a tu ataque cuerpo a cuerpo para intentar un golpe arrollador. Si impactas a un oponente corpóreo más pequeño que tú, este debe hacer una salvación de Reflejos (CD igual al daño infligido) o sale despedido 10 pies en línea recta (elegida por ti) y cae postrado. Si un obstáculo detiene el empujón, tanto el oponente como el obstáculo sufren 1d6 de daño. El oponente no puede terminar más cerca de ti que su casilla inicial.",
+    prerequisites: [
+      { description: "Fuerza 25", check: (ctx) => ctx.abilityScores.str >= 25 },
+      { description: "Ataque Poderoso", check: hasFeat("power-attack") },
+      { description: "Empujón Mejorado", check: hasFeat("improved-bull-rush") },
+      { description: "Tamaño Grande o mayor" },
+    ],
+    fighterBonusFeat: true,
+    stackable: false,
+  },
+  {
+    id: "craft-construct",
+    name: "Fabricar Constructo",
+    source: "srd",
+    types: ["creacion_objetos"],
+    description: "El artesano aprende a insuflar vida artificial en constructos mágicos.",
+    benefit:
+      "Puede crear cualquier constructo cuyos requisitos cumpla. Fabricarlo lleva 1 día por cada 1000 po de su precio de mercado; el coste en materiales es la mitad de ese precio, y además gasta 1/25 del precio en PX. También puede reparar constructos dañados, hasta 20 puntos de golpe por día de trabajo, a 50 po por punto reparado. Un constructo recién creado tiene los puntos de golpe medios para sus Dados de Golpe.",
+    prerequisites: [
+      { description: "Fabricar Armas y Armaduras Mágicas", check: hasFeat("craft-magic-arms-and-armor") },
+      { description: "Fabricar Objeto Maravilloso", check: hasFeat("craft-wondrous-item") },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "empower-spell-like-ability",
+    name: "Potenciar Habilidad Tipo Conjuro",
+    source: "srd",
+    types: ["general"],
+    description: "El monstruo intensifica una de sus habilidades sobrenaturales que imita un conjuro.",
+    benefit:
+      "Elige una habilidad tipo conjuro que dupliqué un conjuro de nivel igual o inferior a la mitad de su nivel de lanzador (redondeado hacia abajo) menos 2. Puede usarla potenciada (todos sus efectos numéricos variables aumentan un 50%, sin afectar a salvaciones ni pruebas enfrentadas) hasta 3 veces al día, o menos si su uso normal ya está limitado a menos de 3 veces al día.",
+    prerequisites: [{ description: "Habilidad sobrenatural tipo conjuro (spell-like ability) a nivel de lanzador 6º o superior" }],
+    fighterBonusFeat: false,
+    stackable: true,
+  },
+  {
+    id: "flyby-attack",
+    name: "Ataque en Vuelo Rasante",
+    source: "srd",
+    types: ["general"],
+    description: "El monstruo alado ataca sin verse obligado a completar antes todo su movimiento.",
+    benefit:
+      "Mientras vuela, puede realizar una acción de movimiento (incluido un picado) y una acción estándar en cualquier punto de ese movimiento, sin necesidad de completarlo antes o después del ataque. No puede realizar una segunda acción de movimiento en la misma ronda.",
+    prerequisites: [{ description: "Velocidad de vuelo" }],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "hover",
+    name: "Cernerse",
+    source: "srd",
+    types: ["general"],
+    description: "El monstruo alado puede quedarse quieto en el aire y maniobrar libremente mientras lo hace.",
+    benefit:
+      "Como acción de movimiento, detiene su avance y se cierne en el sitio; puede volar en cualquier dirección (incluso recto hacia arriba o abajo) a media velocidad de vuelo, sin que le afecte su maniobrabilidad. Si empieza su turno cerniéndose, puede realizar una acción de asalto completo (sin ataques de alas, pero sí con otras extremidades, aliento o conjuros). Si es Grande o mayor y se cierne a menos de 20 pies del suelo sobre escombros sueltos, genera una nube semiesférica de 60 pies de radio que apaga llamas pequeñas no mágicas, limita la visión clara a 10 pies y da ocultación (20% de fallo entre 15 y 20 pies) u ocultación total (50% de fallo a partir de 25 pies); lanzar conjuros dentro de la nube exige una prueba de Concentración (CD 10 + la mitad de los Dados de Golpe de la criatura).",
+    prerequisites: [{ description: "Velocidad de vuelo" }],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "improved-natural-armor",
+    name: "Armadura Natural Mejorada",
+    source: "srd",
+    types: ["general"],
+    description: "La piel, escamas o caparazón del monstruo se endurecen todavía más.",
+    benefit: "Su bonificador de armadura natural aumenta en +1.",
+    prerequisites: [
+      { description: "Armadura natural" },
+      { description: "Constitución 13", check: (ctx) => ctx.abilityScores.con >= 13 },
+    ],
+    fighterBonusFeat: false,
+    stackable: true,
+  },
+  {
+    id: "improved-natural-attack",
+    name: "Ataque Natural Mejorado",
+    source: "srd",
+    types: ["general"],
+    description: "Uno de los ataques naturales del monstruo se vuelve más dañino de lo normal para su tamaño.",
+    benefit:
+      "Elige un ataque natural de la criatura; su daño sube un escalón, como si su tamaño aumentara una categoría (progresión 1d2→1d3→1d4→1d6→1d8→2d6→3d6→4d6→6d6→8d6→12d6; para ataques de 1d10, la progresión es 1d10→2d8→3d8→4d8→6d8→8d8→12d8).",
+    prerequisites: [
+      { description: "Arma natural" },
+      { description: "Bonificador base de ataque +4", check: (ctx) => ctx.babTotal >= 4 },
+    ],
+    fighterBonusFeat: false,
+    stackable: true,
+  },
+  {
+    id: "multiattack",
+    name: "Ataque Múltiple",
+    source: "srd",
+    types: ["general"],
+    description: "El monstruo aprende a coordinar sus numerosos ataques naturales con más precisión.",
+    benefit:
+      "Sus ataques secundarios con armas naturales solo sufren -2 al ataque, en vez de la penalización habitual de -5.",
+    prerequisites: [{ description: "Tres o más ataques naturales" }],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "multiweapon-fighting",
+    name: "Combate con Varias Armas",
+    source: "srd",
+    types: ["general"],
+    description: "El monstruo con más de dos brazos aprende a atacar con todos ellos a la vez con más soltura.",
+    benefit:
+      "Sus penalizaciones por luchar con varias armas se reducen en 2 con la mano primaria y en 6 con cada mano secundaria. En criaturas con más de dos brazos, esta dote sustituye a Combate con Dos Armas.",
+    prerequisites: [
+      { description: "Destreza 13", check: (ctx) => ctx.abilityScores.dex >= 13 },
+      { description: "Tres o más manos" },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "quicken-spell-like-ability",
+    name: "Acelerar Habilidad Tipo Conjuro",
+    source: "srd",
+    types: ["general"],
+    description: "El monstruo aprende a desatar una de sus habilidades sobrenaturales de forma instantánea.",
+    benefit:
+      "Elige una habilidad tipo conjuro que dupliqué un conjuro de nivel igual o inferior a la mitad de su nivel de lanzador (redondeado hacia abajo) menos 4, y con tiempo de lanzamiento de 1 asalto completo o menos. Puede usarla acelerada (acción gratuita, sin provocar ataque de oportunidad, dejándole libre otra acción o habilidad esa misma ronda, máximo una habilidad acelerada por ronda) hasta 3 veces al día, o menos si su uso normal ya está limitado a menos de 3 veces al día.",
+    prerequisites: [{ description: "Habilidad tipo conjuro a nivel de lanzador 10º o superior" }],
+    fighterBonusFeat: false,
+    stackable: true,
+  },
+  {
+    id: "snatch",
+    name: "Arrebatar",
+    source: "srd",
+    types: ["general"],
+    description: "El monstruo enorme puede atrapar a sus presas al impactarlas con zarpazo o mordisco.",
+    benefit:
+      "Al impactar con un ataque de zarpazo o mordisco, puede iniciar una presa como agarre mejorado sin necesidad de una prueba de agarre adicional. Si sujeta a una criatura 3 o más categorías de tamaño menor, la aplasta cada ronda causando automáticamente el daño de mordisco o zarpazo; una víctima atrapada en la boca no puede salvar contra el aliento de la criatura. Puede soltar a la víctima como acción gratuita, o lanzarla como acción estándar: recorre 1d6×10 pies y sufre 1d6 de daño por cada 10 pies recorridos (o el daño de caída habitual si se lanza en vuelo, el que sea mayor).",
+    prerequisites: [{ description: "Tamaño Enorme o mayor" }],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "wingover",
+    name: "Viraje Brusco",
+    source: "srd",
+    types: ["general"],
+    description: "El monstruo alado gira en pleno vuelo con una agilidad que su maniobrabilidad normal no permitiría.",
+    benefit:
+      "Como acción gratuita, una vez por ronda, cambia de dirección hasta 180° sin que le afecte su maniobrabilidad (no puede ganar altura esa ronda, pero sí picar). Consume 10 pies de su movimiento de vuelo.",
+    prerequisites: [{ description: "Velocidad de vuelo" }],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "battle-sorcery",
+    name: "Tácticas de Mago de Batalla",
+    source: "srd",
+    types: ["general"],
+    description: "El lanzador arcano aprende a desgastar las defensas de sus enemigos con cada conjuro.",
+    benefit:
+      "Cada vez que lanza un conjuro que permite tirada de salvación, el objetivo sufre un penalizador acumulable de -1 a sus tiradas de salvación contra el resto de tus conjuros durante ese mismo asalto.",
+    prerequisites: [
+      { description: "Lanzador arcano de nivel 3", check: (ctx) => ctx.casterLevel >= 3 },
+      { description: "Conocimiento de Conjuros 6 rangos", check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 6 },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "improved-toughness",
+    name: "Resistencia Mejorada",
+    source: "srd",
+    types: ["general"],
+    description: "El combatiente desarrolla una vitalidad excepcional para su nivel.",
+    benefit:
+      "Gana puntos de golpe extra iguales a sus Dados de Golpe actuales; cada vez que gana un nuevo Dado de Golpe (por ejemplo, al subir de nivel), gana 1 punto de golpe adicional.",
+    prerequisites: [{ description: "Bonificador base de salvación de Fortaleza +2" }],
+    fighterBonusFeat: true,
+    stackable: false,
+  },
+  {
+    id: "mage-slayer",
+    name: "Cazador de Magos",
+    source: "srd",
+    types: ["general"],
+    description: "El combatiente se especializa en presionar a los lanzadores de conjuros hasta hacerles perder la concentración.",
+    benefit:
+      "Gana +1 de bonificador en salvaciones de Voluntad. Los lanzadores de conjuros a los que amenaza fallan automáticamente si intentan lanzar un conjuro de forma defensiva. A cambio, su propio nivel de lanzador efectivo se reduce en 4 puntos a todos los efectos.",
+    prerequisites: [
+      { description: "Bonificador base de ataque +3", check: (ctx) => ctx.babTotal >= 3 },
+      { description: "Conocimiento de Conjuros 2 rangos", check: (ctx) => (ctx.skillRanks["spellcraft"] ?? 0) >= 2 },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "multidexterity",
+    name: "Multidestreza",
+    source: "srd",
+    types: ["general"],
+    description: "El monstruo con más de dos brazos aprende a usar cualquiera de ellos con la misma soltura.",
+    benefit:
+      "Ignora las penalizaciones por usar una mano torpe (no primaria). En criaturas con más de dos brazos, esta dote sustituye a Ambidiestría.",
+    prerequisites: [
+      { description: "Destreza 15", check: (ctx) => ctx.abilityScores.dex >= 15 },
+      { description: "Tres o más brazos" },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "sticky-breath",
+    name: "Aliento Adherente",
+    source: "srd",
+    types: ["especial"],
+    description: "El monstruo con arma de aliento consigue que su efecto se prolongue en el objetivo.",
+    benefit:
+      "Cualquier criatura que siga en el área de su arma de aliento sufre de nuevo la mitad del daño original al asalto siguiente. El tiempo de recarga del arma de aliento aumenta en 1 asalto.",
+    prerequisites: [
+      { description: "Constitución 13", check: (ctx) => ctx.abilityScores.con >= 13 },
+      { description: "Arma de aliento con tiempo de recarga en asaltos" },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
+  {
+    id: "persistent-breath",
+    name: "Aliento Persistente",
+    source: "srd",
+    types: ["especial"],
+    description: "El monstruo con arma de aliento deja tras de sí una nube que sigue siendo peligrosa.",
+    benefit:
+      "El área de su arma de aliento deja una nube residual que persiste 1 asalto; tocarla o entrar en ella causa la mitad del efecto original del arma de aliento. El tiempo de recarga aumenta en 2 asaltos adicionales. Especial: puede tomarse varias veces para la misma arma de aliento; cada vez, la nube persiste 1 asalto más.",
+    prerequisites: [
+      { description: "Constitución 15", check: (ctx) => ctx.abilityScores.con >= 15 },
+      { description: "Arma de aliento con tiempo de recarga en asaltos" },
+      { description: "Aliento Adherente", check: hasFeat("sticky-breath") },
+    ],
+    fighterBonusFeat: false,
+    stackable: true,
+  },
 ];
 
 export const SRD_FEAT_IDS = SRD_FEATS.map((f) => f.id);

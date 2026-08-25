@@ -46,7 +46,7 @@ const SPECIAL_QUALITY_GLOSSARY: Record<string, string> = {
   "aguantar la respiración":
     "Puede contener la respiración durante un número de asaltos igual a 5 veces su puntuación de Constitución antes de arriesgarse a ahogarse.",
   "derribo (trip)":
-    "Si acierta su ataque de mordisco, puede intentar un derribo como acción libre sin provocar ataque de oportunidad; si el intento falla, el objetivo no puede derribarlo en respuesta.",
+    "Si acierta su ataque de mordisco, puede intentar un derribo (con +2 al modificador de la prueba) como acción libre, sin hacer una prueba de ataque de toque ni provocar ataque de oportunidad; si el intento falla, el objetivo no puede derribarlo en respuesta.",
   ferocidad: "Sigue luchando sin penalización por las tiradas de ataque, aunque esté agonizando o incapacitado.",
   "furia (rage)":
     "Una vez por combate, si sufre daño en combate, puede entrar en furia durante varios asaltos: gana un bonificador de moral a Fuerza y Constitución y a las salvaciones de Voluntad, pero sufre una penalización a la CA, igual que la furia del bárbaro.",

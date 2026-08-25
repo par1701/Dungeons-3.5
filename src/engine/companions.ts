@@ -10,6 +10,28 @@ export interface CompanionBonus {
   special: string[];
 }
 
+export interface CompanionTrick {
+  id: string;
+  name: string;
+  description: string;
+}
+
+/** Lista estándar de trucos que un animal puede aprender (habilidad Adiestrar Animales, SRD). */
+export const COMPANION_TRICKS: CompanionTrick[] = [
+  { id: "attack", name: "Atacar", description: "El animal ataca a los enemigos que le señales, o a cualquiera que te ataque a ti o a él; también puede enseñarse a atacar solo a un tipo concreto de criatura." },
+  { id: "come", name: "Venir", description: "El animal viene hacia ti, incluso si normalmente no lo haría." },
+  { id: "defend", name: "Defender", description: "El animal te defiende a ti (o se defiende a sí mismo), incluso sin que se lo ordenes, si normalmente no lo haría." },
+  { id: "down", name: "Echarse", description: "El animal se tumba y permanece quieto, soltando cualquier cosa que llevase en la boca." },
+  { id: "fetch", name: "Buscar", description: "El animal recoge un objeto concreto, lo sostiene en la boca o entre las garras, y vuelve contigo." },
+  { id: "guard", name: "Guardar", description: "El animal permanece en un lugar y evita que otros se acerquen, atacando a los intrusos." },
+  { id: "heel", name: "Junto", description: "El animal sigue de cerca a su amo, incluso pasando junto a otros animales o personas." },
+  { id: "perform", name: "Actuar", description: "El animal realiza un pequeño repertorio de trucos o acrobacias al recibir la orden." },
+  { id: "seek", name: "Buscar Rastro", description: "El animal explora un área a tu alrededor en busca de cualquier criatura viva." },
+  { id: "stay", name: "Quieto", description: "El animal permanece en el sitio que le indiques hasta que lo llames o vayas a buscarlo." },
+  { id: "track", name: "Rastrear", description: "El animal sigue un rastro con el olfato." },
+  { id: "work", name: "Trabajar", description: "El animal tira o carga con normalidad, con o sin jinete." },
+];
+
 // Tabla de bonos de compañero animal del SRD (Manual del Jugador), indexada
 // por nivel efectivo (nivel de druida, o nivel de explorador con el desfase
 // que ya aplica `effectiveCompanionLevel`).

@@ -55,6 +55,7 @@ import {
 } from "../engine/derive";
 import { computeWondrousItemMarketPrice } from "../engine/itemEnhancements";
 import {
+  COMPANION_TRICKS,
   computeAnimalCompanionBonus,
   computeCompanionDerivedStats,
   computeFamiliarDerivedStats,
@@ -63,6 +64,7 @@ import {
   effectiveCompanionLevel,
   type CompanionDerivedStats,
 } from "../engine/companions";
+import type { CharacterCompanion } from "../types";
 import CharacterSheetDocument from "../pdf/CharacterSheetDocument";
 
 function Field({ label, value }: { label: string; value: ReactNode }) {
@@ -88,7 +90,9 @@ function fmtSigned(n: number): string {
 }
 
 /** Bloque de estadísticas ya calculadas de un compañero animal, montura especial o familiar, listo para jugar en mesa. */
-function CompanionStatBlock({ stats }: { stats: CompanionDerivedStats }) {
+function CompanionStatBlock({ stats, comp }: { stats: CompanionDerivedStats; comp: CharacterCompanion }) {
+  const chosenTricks = (comp.tricks ?? []).map((id) => COMPANION_TRICKS.find((t) => t.id === id)?.name ?? id);
+  const chosenFeats = (comp.featIds ?? []).filter(Boolean).map((id) => findFeat(id)?.name ?? id);
   return (
     <div style={{ margin: "4px 0 6px", fontSize: "0.92rem" }}>
       <p style={{ margin: "0 0 2px" }}>
@@ -108,11 +112,15 @@ function CompanionStatBlock({ stats }: { stats: CompanionDerivedStats }) {
         <strong>Ataques:</strong>{" "}
         {stats.attacks.map((a) => `${a.name} ${fmtSigned(a.bonus)} cuerpo a cuerpo (${a.damage})`).join(", ") || "—"}
       </p>
-      <p style={{ margin: 0 }}>
+      <p style={{ margin: "0 0 2px" }}>
         <strong>Armadura natural total:</strong> +{stats.naturalArmorTotal} · <strong>Dotes:</strong> {stats.featCount} en
-        total (incluidas las ya listadas más abajo; las adicionales por DG extra se eligen con las reglas normales de
-        dotes de monstruo)
+        total{chosenFeats.length > 0 ? ` (elegidas: ${chosenFeats.join(", ")})` : ""}
       </p>
+      {chosenTricks.length > 0 && (
+        <p style={{ margin: 0 }}>
+          <strong>Trucos conocidos:</strong> {chosenTricks.join(", ")}
+        </p>
+      )}
     </div>
   );
 }
@@ -738,7 +746,7 @@ export default function CharacterSheetPage() {
                       const stats = computeCompanionDerivedStats(base, bonus.hitDiceBonus, bonus.naturalArmorBonus, bonus.abilityBonus);
                       return (
                         <>
-                          <CompanionStatBlock stats={stats} />
+                          <CompanionStatBlock stats={stats} comp={comp} />
                           <p className="muted" style={{ margin: 0 }}>
                             Nivel efectivo {effLevel}: {bonus.bonusTricks} trucos de bonificación
                             {bonus.special.length > 0 ? `, ${bonus.special.join(", ")}` : ""}.
@@ -751,7 +759,7 @@ export default function CharacterSheetPage() {
                       const stats = computeFamiliarDerivedStats(base, level, hp, character.classLevels, classes);
                       return (
                         <>
-                          <CompanionStatBlock stats={stats} />
+                          <CompanionStatBlock stats={stats} comp={comp} />
                           <p className="muted" style={{ margin: 0 }}>
                             Habilidades otorgadas al amo: {computeFamiliarGrantedAbilities(level).join(", ")}.
                           </p>
@@ -766,7 +774,7 @@ export default function CharacterSheetPage() {
                       const stats = computeCompanionDerivedStats(base, bonus.hitDiceBonus, bonus.naturalArmorBonus, bonus.strBonus, bonus.intScore);
                       return (
                         <>
-                          <CompanionStatBlock stats={stats} />
+                          <CompanionStatBlock stats={stats} comp={comp} />
                           {bonus.special.length > 0 && (
                             <p className="muted" style={{ margin: 0 }}>
                               Nivel de paladín {paladinLevel}: {bonus.special.join(", ")}.

@@ -1,4 +1,5 @@
-import type { CharacterClassLevel, ClassDef, CompanionGrant } from "../types";
+import type { AbilityScores, CharacterClassLevel, ClassDef, CompanionAttack, CompanionBaseCreature, CompanionGrant } from "../types";
+import { abilityModifier, computeBabTotal, computeBaseSave, grappleSizeModifier, sizeModifier } from "./derive";
 
 export interface CompanionBonus {
   effectiveLevel: number;
@@ -83,4 +84,225 @@ export function computeSpecialMountBonus(paladinLevel: number): SpecialMountBonu
 
 export function findCompanionGrant(classes: ClassDef[], classId: string): CompanionGrant | undefined {
   return classes.find((c) => c.id === classId)?.companionGrant;
+}
+
+// ---------------------------------------------------------------------
+// Bloque de estadísticas jugables (PG, CA, ataque base, presa, salvaciones,
+// iniciativa y ataques ya recalculados), para no tener que consultar el
+// manual de monstruos en mesa.
+// ---------------------------------------------------------------------
+
+export interface CompanionDerivedStats {
+  totalHitDice: number;
+  finalAbilityScores: AbilityScores;
+  hp: number;
+  ac: number;
+  touchAc: number;
+  flatFootedAc: number;
+  naturalArmorTotal: number;
+  bab: number;
+  grapple: number;
+  fort: number;
+  ref: number;
+  will: number;
+  initiative: number;
+  attacks: CompanionAttack[];
+  featCount: number;
+}
+
+function parseDamageDie(damage: string): { dice: string; mod: number } | null {
+  const m = /^(\d+d\d+)([+-]\d+)?$/.exec(damage.trim());
+  if (!m) return null;
+  return { dice: m[1], mod: m[2] ? parseInt(m[2], 10) : 0 };
+}
+
+function formatDamage(dice: string, mod: number): string {
+  return mod === 0 ? dice : `${dice}${mod > 0 ? "+" : ""}${mod}`;
+}
+
+/**
+ * Recalcula los ataques base de la criatura tras los bonos de DG extra y de
+ * característica por nivel de amo, desplazando solo lo que realmente cambia
+ * (ataque base y característica) sobre el valor ya correcto de partida, en
+ * vez de recalcular desde cero — así se conserva cualquier bonificador ya
+ * incluido en el dato base que no depende del nivel de amo (p.ej. Enfoque en
+ * un Arma, o el uso de Destreza en vez de Fuerza por Soltura en Combate).
+ *
+ * El ataque con mayor bonificador de la lista original se trata como
+ * "principal" (característica completa al ataque y al daño); el resto,
+ * como "secundario" (característica completa al ataque —el penalizador de
+ * ataque natural secundario es un -5 fijo, no relacionado con la
+ * característica— pero solo la mitad, redondeada hacia abajo, al daño),
+ * según la regla SRD de ataques naturales múltiples.
+ */
+export function computeCompanionAttacks(baseAttacks: CompanionAttack[], babDelta: number, abilityDelta: number): CompanionAttack[] {
+  if (baseAttacks.length === 0) return [];
+  const maxBonus = Math.max(...baseAttacks.map((a) => a.bonus));
+  return baseAttacks.map((atk) => {
+    const isPrimary = atk.bonus === maxBonus;
+    const damageDelta = isPrimary ? abilityDelta : Math.floor(abilityDelta / 2);
+    const parsed = parseDamageDie(atk.damage);
+    const damage = parsed ? formatDamage(parsed.dice, parsed.mod + damageDelta) : atk.damage;
+    return { ...atk, bonus: atk.bonus + babDelta + abilityDelta, damage };
+  });
+}
+
+/** Ataque base "de tipo Animal" (progresión de 3/4, igual que un druida del mismo nivel que los DG totales de la criatura). */
+export function computeCompanionBab(totalHitDice: number): number {
+  return Math.floor((totalHitDice * 3) / 4);
+}
+
+/** Salvación base "de tipo Animal" (buena Fortaleza/Reflejos, mala Voluntad), antes del modificador de característica. */
+export function computeCompanionBaseSaves(totalHitDice: number): { fort: number; ref: number; will: number } {
+  const good = Math.floor(totalHitDice / 2) + 2;
+  const poor = Math.floor(totalHitDice / 3);
+  return { fort: good, ref: good, will: poor };
+}
+
+/** Dotes totales de una criatura según sus DG (1 a 1 DG, +1 dote cada 3 DG completos adicionales), regla estándar de avance de monstruos. */
+export function computeCompanionFeatCount(totalHitDice: number): number {
+  if (totalHitDice <= 0) return 0;
+  return 1 + Math.floor((totalHitDice - 1) / 3);
+}
+
+/**
+ * Bloque de estadísticas completo de un compañero animal o montura especial
+ * ya avanzado por nivel de amo, a partir del bloque base de la criatura (a
+ * su nivel de DG inicial) y los bonos ya calculados (DG extra, ajuste de
+ * armadura natural, ajuste de característica aplicado a Fuerza y Destreza
+ * por igual, e Inteligencia fija si la regla la especifica, como en la
+ * montura especial del paladín).
+ */
+export function computeCompanionDerivedStats(
+  base: CompanionBaseCreature,
+  hitDiceBonus: number,
+  naturalArmorBonus: number,
+  abilityBonus: number,
+  intOverride?: number,
+): CompanionDerivedStats {
+  const totalHitDice = base.baseHitDice + hitDiceBonus;
+  const finalAbilityScores: AbilityScores = {
+    ...base.baseAbilityScores,
+    str: base.baseAbilityScores.str + abilityBonus,
+    dex: base.baseAbilityScores.dex + abilityBonus,
+    int: intOverride !== undefined ? Math.max(base.baseAbilityScores.int, intOverride) : base.baseAbilityScores.int,
+  };
+  const conMod = abilityModifier(finalAbilityScores.con);
+  const dexMod = abilityModifier(finalAbilityScores.dex);
+  const strMod = abilityModifier(finalAbilityScores.str);
+  const hp = Math.max(1, Math.floor(totalHitDice * (base.hitDie / 2 + 0.5)) + totalHitDice * conMod);
+  const naturalArmorTotal = base.baseNaturalArmor + naturalArmorBonus;
+  const sizeMod = sizeModifier(base.size);
+  const ac = 10 + dexMod + sizeMod + naturalArmorTotal;
+  const touchAc = 10 + dexMod + sizeMod;
+  const flatFootedAc = ac - (dexMod > 0 ? dexMod : 0);
+  const bab = computeCompanionBab(totalHitDice);
+  const babDelta = bab - computeCompanionBab(base.baseHitDice);
+  const grapple = bab + strMod + grappleSizeModifier(base.size);
+  const baseSaves = computeCompanionBaseSaves(totalHitDice);
+  return {
+    totalHitDice,
+    finalAbilityScores,
+    hp,
+    ac,
+    touchAc,
+    flatFootedAc,
+    naturalArmorTotal,
+    bab,
+    grapple,
+    fort: baseSaves.fort + conMod,
+    ref: baseSaves.ref + dexMod,
+    will: baseSaves.will + abilityModifier(finalAbilityScores.wis),
+    initiative: dexMod,
+    attacks: computeCompanionAttacks(base.attacks, babDelta, abilityBonus),
+    featCount: computeCompanionFeatCount(totalHitDice),
+  };
+}
+
+export interface FamiliarProgression {
+  naturalArmorAdj: number;
+  intScore: number;
+}
+
+// Tabla de familiares del SRD (Manual del Jugador), indexada por nivel de
+// personaje del amo: ajuste de armadura natural e Inteligencia del familiar.
+// Las demás columnas de esta tabla (habilidades otorgadas al amo) ya están
+// en `computeFamiliarGrantedAbilities`.
+const FAMILIAR_TABLE: [minMasterLevel: number, naturalArmorAdj: number, intScore: number][] = [
+  [1, 0, 6],
+  [3, 1, 7],
+  [5, 2, 8],
+  [7, 3, 9],
+  [9, 4, 10],
+  [11, 5, 11],
+  [13, 6, 12],
+  [15, 7, 13],
+  [17, 8, 14],
+  [19, 9, 15],
+];
+
+/** Ajuste de armadura natural e Inteligencia del familiar según el nivel de personaje del amo (tabla SRD de familiares). */
+export function computeFamiliarProgression(masterLevel: number): FamiliarProgression {
+  let best = FAMILIAR_TABLE[0];
+  for (const row of FAMILIAR_TABLE) if (row[0] <= masterLevel) best = row;
+  return { naturalArmorAdj: best[1], intScore: best[2] };
+}
+
+/**
+ * Bloque de estadísticas de un familiar, aplicando sus reglas especiales del
+ * SRD: usa el mayor de sus propios DG o el nivel de personaje del amo a
+ * efectos de DG totales; tiene la mitad de los puntos de golpe totales del
+ * amo (o los suyos propios si fuesen más altos); usa el mejor ataque base y
+ * la mejor salvación base entre las suyas propias y las del amo (aplicando
+ * siempre su propio modificador de característica); y su armadura natural e
+ * Inteligencia suben según el nivel del amo (tabla de familiares).
+ */
+export function computeFamiliarDerivedStats(
+  base: CompanionBaseCreature,
+  masterLevel: number,
+  masterHp: number,
+  masterClassLevels: CharacterClassLevel[],
+  masterClasses: ClassDef[],
+): CompanionDerivedStats {
+  const progression = computeFamiliarProgression(masterLevel);
+  const totalHitDice = Math.max(base.baseHitDice, masterLevel);
+  const finalAbilityScores: AbilityScores = {
+    ...base.baseAbilityScores,
+    int: Math.max(base.baseAbilityScores.int, progression.intScore),
+  };
+  const conMod = abilityModifier(finalAbilityScores.con);
+  const dexMod = abilityModifier(finalAbilityScores.dex);
+  const strMod = abilityModifier(finalAbilityScores.str);
+  const ownHp = Math.max(1, Math.floor(base.baseHitDice * (base.hitDie / 2 + 0.5)) + base.baseHitDice * conMod);
+  const hp = Math.max(ownHp, Math.floor(masterHp / 2));
+  const naturalArmorTotal = base.baseNaturalArmor + progression.naturalArmorAdj;
+  const sizeMod = sizeModifier(base.size);
+  const ac = 10 + dexMod + sizeMod + naturalArmorTotal;
+  const touchAc = 10 + dexMod + sizeMod;
+  const flatFootedAc = ac - (dexMod > 0 ? dexMod : 0);
+  const ownBab = computeCompanionBab(base.baseHitDice);
+  const bab = Math.max(ownBab, computeBabTotal(masterClassLevels, masterClasses));
+  const babDelta = bab - ownBab;
+  const grapple = bab + strMod + grappleSizeModifier(base.size);
+  const ownSaves = computeCompanionBaseSaves(base.baseHitDice);
+  const masterBaseFort = computeBaseSave("fort", masterClassLevels, masterClasses);
+  const masterBaseRef = computeBaseSave("ref", masterClassLevels, masterClasses);
+  const masterBaseWill = computeBaseSave("will", masterClassLevels, masterClasses);
+  return {
+    totalHitDice,
+    finalAbilityScores,
+    hp,
+    ac,
+    touchAc,
+    flatFootedAc,
+    naturalArmorTotal,
+    bab,
+    grapple,
+    fort: Math.max(ownSaves.fort, masterBaseFort) + conMod,
+    ref: Math.max(ownSaves.ref, masterBaseRef) + dexMod,
+    will: Math.max(ownSaves.will, masterBaseWill) + abilityModifier(finalAbilityScores.wis),
+    initiative: dexMod,
+    attacks: computeCompanionAttacks(base.attacks, babDelta, 0),
+    featCount: computeCompanionFeatCount(totalHitDice),
+  };
 }

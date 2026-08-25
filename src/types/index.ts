@@ -618,6 +618,10 @@ export interface CharacterCompanion {
   name: string;
   /** Clase del personaje que otorga este compañero (druida, explorador, paladín, mago, hechicero...). */
   masterClassId: string;
+  /** Ids de trucos de bonificación elegidos (solo compañero animal), de la lista estándar de Adiestrar Animales. */
+  tricks?: string[];
+  /** Ids de dotes elegidas para el compañero/familiar/montura, más allá de las ya incluidas en su bloque base. */
+  featIds?: string[];
 }
 
 export interface Character {

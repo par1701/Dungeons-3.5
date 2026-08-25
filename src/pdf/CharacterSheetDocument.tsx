@@ -1,5 +1,5 @@
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
-import type { Character } from "../types";
+import type { Character, CharacterCompanion } from "../types";
 import {
   findArmor,
   findClass,
@@ -53,10 +53,14 @@ import {
 } from "../engine/derive";
 import { computeWondrousItemMarketPrice } from "../engine/itemEnhancements";
 import {
+  COMPANION_TRICKS,
   computeAnimalCompanionBonus,
+  computeCompanionDerivedStats,
+  computeFamiliarDerivedStats,
   computeFamiliarGrantedAbilities,
   computeSpecialMountBonus,
   effectiveCompanionLevel,
+  type CompanionDerivedStats,
 } from "../engine/companions";
 
 const styles = StyleSheet.create({
@@ -85,6 +89,41 @@ function Panel({ title, children }: { title: string; children: React.ReactNode }
       <Text style={styles.panelTitle}>{title}</Text>
       <View style={styles.panelBody}>{children}</View>
     </View>
+  );
+}
+
+function fmtSigned(n: number): string {
+  return n >= 0 ? `+${n}` : `${n}`;
+}
+
+/** Bloque de estadísticas ya calculadas de un compañero animal, montura especial o familiar, listo para jugar en mesa. */
+function CompanionStatBlock({ stats, comp }: { stats: CompanionDerivedStats; comp: CharacterCompanion }) {
+  const chosenTricks = (comp.tricks ?? []).map((id) => COMPANION_TRICKS.find((t) => t.id === id)?.name ?? id);
+  const chosenFeats = (comp.featIds ?? []).filter(Boolean).map((id) => findFeat(id)?.name ?? id);
+  return (
+    <>
+      <Text>
+        DG {stats.totalHitDice} · PG {stats.hp} · CA {stats.ac} (toque {stats.touchAc}, desprevenido {stats.flatFootedAc}) ·
+        Iniciativa {fmtSigned(stats.initiative)}
+      </Text>
+      <Text>
+        BAB/Presa {fmtSigned(stats.bab)}/{fmtSigned(stats.grapple)} · Salvaciones Fort {fmtSigned(stats.fort)}, Ref{" "}
+        {fmtSigned(stats.ref)}, Vol {fmtSigned(stats.will)}
+      </Text>
+      <Text>
+        Características: Fue {stats.finalAbilityScores.str}, Des {stats.finalAbilityScores.dex}, Con{" "}
+        {stats.finalAbilityScores.con}, Int {stats.finalAbilityScores.int}, Sab {stats.finalAbilityScores.wis}, Car{" "}
+        {stats.finalAbilityScores.cha}
+      </Text>
+      <Text>
+        Ataques: {stats.attacks.map((a) => `${a.name} ${fmtSigned(a.bonus)} cc (${a.damage})`).join(", ") || "—"}
+      </Text>
+      <Text>
+        Armadura natural total +{stats.naturalArmorTotal} · Dotes: {stats.featCount} en total
+        {chosenFeats.length > 0 ? ` (elegidas: ${chosenFeats.join(", ")})` : ""}
+      </Text>
+      {chosenTricks.length > 0 && <Text>Trucos conocidos: {chosenTricks.join(", ")}</Text>}
+    </>
   );
 }
 
@@ -533,31 +572,45 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                     {comp.name || base.name} — {base.name} ({comp.masterClassId})
                   </Text>
                   <Text>
-                    {base.size} · {base.baseHitDice}d{base.hitDie} DG · Vel. {base.baseSpeed} pies · Ataques:{" "}
-                    {base.attacks.map((a) => `${a.name} (${a.damage})`).join(", ") || "—"}
+                    {base.size} · Vel. {base.baseSpeed} pies
+                    {base.specialQualities.length > 0 ? ` · ${base.specialQualities.join(", ")}` : ""}
                   </Text>
                   {grant?.kind === "animal_companion" &&
                     (() => {
                       const effLevel = effectiveCompanionLevel(character.classLevels, grant, comp.masterClassId);
                       const bonus = computeAnimalCompanionBonus(effLevel);
+                      const stats = computeCompanionDerivedStats(base, bonus.hitDiceBonus, bonus.naturalArmorBonus, bonus.abilityBonus);
                       return (
-                        <Text>
-                          Bonos (nivel efectivo {effLevel}): +{bonus.hitDiceBonus} DG, +{bonus.naturalArmorBonus} armadura
-                          natural, +{bonus.abilityBonus} Fue/Des, {bonus.bonusTricks} trucos.
-                        </Text>
+                        <>
+                          <CompanionStatBlock stats={stats} comp={comp} />
+                          <Text>
+                            Nivel efectivo {effLevel}: {bonus.bonusTricks} trucos de bonificación
+                            {bonus.special.length > 0 ? `, ${bonus.special.join(", ")}` : ""}.
+                          </Text>
+                        </>
                       );
                     })()}
-                  {grant?.kind === "familiar" && <Text>Otorga: {computeFamiliarGrantedAbilities(level).join(", ")}.</Text>}
+                  {grant?.kind === "familiar" &&
+                    (() => {
+                      const stats = computeFamiliarDerivedStats(base, level, hp, character.classLevels, classes);
+                      return (
+                        <>
+                          <CompanionStatBlock stats={stats} comp={comp} />
+                          <Text>Otorga al amo: {computeFamiliarGrantedAbilities(level).join(", ")}.</Text>
+                        </>
+                      );
+                    })()}
                   {grant?.kind === "special_mount" &&
                     (() => {
                       const paladinLevel = character.classLevels.find((cl) => cl.classId === comp.masterClassId)?.level ?? 0;
                       const bonus = computeSpecialMountBonus(paladinLevel);
                       if (!bonus) return null;
+                      const stats = computeCompanionDerivedStats(base, bonus.hitDiceBonus, bonus.naturalArmorBonus, bonus.strBonus, bonus.intScore);
                       return (
-                        <Text>
-                          Bonos: +{bonus.hitDiceBonus} DG, +{bonus.strBonus} Fue, Int {bonus.intScore}, +
-                          {bonus.naturalArmorBonus} armadura natural.
-                        </Text>
+                        <>
+                          <CompanionStatBlock stats={stats} comp={comp} />
+                          {bonus.special.length > 0 && <Text>Nivel de paladín {paladinLevel}: {bonus.special.join(", ")}.</Text>}
+                        </>
                       );
                     })()}
                 </View>

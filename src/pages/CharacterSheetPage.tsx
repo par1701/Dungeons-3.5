@@ -55,11 +55,16 @@ import {
 } from "../engine/derive";
 import { computeWondrousItemMarketPrice } from "../engine/itemEnhancements";
 import {
+  COMPANION_TRICKS,
   computeAnimalCompanionBonus,
+  computeCompanionDerivedStats,
+  computeFamiliarDerivedStats,
   computeFamiliarGrantedAbilities,
   computeSpecialMountBonus,
   effectiveCompanionLevel,
+  type CompanionDerivedStats,
 } from "../engine/companions";
+import type { CharacterCompanion } from "../types";
 import CharacterSheetDocument from "../pdf/CharacterSheetDocument";
 
 function Field({ label, value }: { label: string; value: ReactNode }) {
@@ -76,6 +81,46 @@ function Panel({ title, children }: { title: string; children: ReactNode }) {
     <div className="sheet-panel">
       <div className="sheet-panel-title">{title}</div>
       <div className="sheet-panel-body">{children}</div>
+    </div>
+  );
+}
+
+function fmtSigned(n: number): string {
+  return n >= 0 ? `+${n}` : `${n}`;
+}
+
+/** Bloque de estadísticas ya calculadas de un compañero animal, montura especial o familiar, listo para jugar en mesa. */
+function CompanionStatBlock({ stats, comp }: { stats: CompanionDerivedStats; comp: CharacterCompanion }) {
+  const chosenTricks = (comp.tricks ?? []).map((id) => COMPANION_TRICKS.find((t) => t.id === id)?.name ?? id);
+  const chosenFeats = (comp.featIds ?? []).filter(Boolean).map((id) => findFeat(id)?.name ?? id);
+  return (
+    <div style={{ margin: "4px 0 6px", fontSize: "0.92rem" }}>
+      <p style={{ margin: "0 0 2px" }}>
+        <strong>DG:</strong> {stats.totalHitDice} · <strong>PG:</strong> {stats.hp} · <strong>CA:</strong> {stats.ac} (toque{" "}
+        {stats.touchAc}, desprevenido {stats.flatFootedAc}) · <strong>Iniciativa:</strong> {fmtSigned(stats.initiative)}
+      </p>
+      <p style={{ margin: "0 0 2px" }}>
+        <strong>BAB/Presa:</strong> {fmtSigned(stats.bab)}/{fmtSigned(stats.grapple)} · <strong>Salvaciones:</strong> Fort{" "}
+        {fmtSigned(stats.fort)}, Ref {fmtSigned(stats.ref)}, Vol {fmtSigned(stats.will)}
+      </p>
+      <p style={{ margin: "0 0 2px" }}>
+        <strong>Características:</strong> Fue {stats.finalAbilityScores.str}, Des {stats.finalAbilityScores.dex}, Con{" "}
+        {stats.finalAbilityScores.con}, Int {stats.finalAbilityScores.int}, Sab {stats.finalAbilityScores.wis}, Car{" "}
+        {stats.finalAbilityScores.cha}
+      </p>
+      <p style={{ margin: "0 0 2px" }}>
+        <strong>Ataques:</strong>{" "}
+        {stats.attacks.map((a) => `${a.name} ${fmtSigned(a.bonus)} cuerpo a cuerpo (${a.damage})`).join(", ") || "—"}
+      </p>
+      <p style={{ margin: "0 0 2px" }}>
+        <strong>Armadura natural total:</strong> +{stats.naturalArmorTotal} · <strong>Dotes:</strong> {stats.featCount} en
+        total{chosenFeats.length > 0 ? ` (elegidas: ${chosenFeats.join(", ")})` : ""}
+      </p>
+      {chosenTricks.length > 0 && (
+        <p style={{ margin: 0 }}>
+          <strong>Trucos conocidos:</strong> {chosenTricks.join(", ")}
+        </p>
+      )}
     </div>
   );
 }
@@ -684,10 +729,6 @@ export default function CharacterSheetPage() {
                     {base.size} · {base.baseHitDice}d{base.hitDie} DG · Vel. {base.baseSpeed} pies · Armadura natural +
                     {base.baseNaturalArmor}
                   </p>
-                  <p style={{ margin: "0 0 4px" }}>
-                    <strong>Ataques:</strong>{" "}
-                    {base.attacks.map((a) => `${a.name} (${a.damage})`).join(", ") || "—"}
-                  </p>
                   {base.specialQualities.length > 0 && (
                     <p style={{ margin: "0 0 4px" }}>
                       <strong>Cualidades especiales:</strong> {base.specialQualities.join(", ")}
@@ -695,38 +736,51 @@ export default function CharacterSheetPage() {
                   )}
                   {base.skillBonuses.length > 0 && (
                     <p style={{ margin: "0 0 4px" }}>
-                      <strong>Bonos de habilidad:</strong> {base.skillBonuses.join(", ")}
+                      <strong>Bonos de habilidad (a nivel de DG inicial):</strong> {base.skillBonuses.join(", ")}
                     </p>
                   )}
                   {grant?.kind === "animal_companion" &&
                     (() => {
                       const effLevel = effectiveCompanionLevel(character.classLevels, grant, comp.masterClassId);
                       const bonus = computeAnimalCompanionBonus(effLevel);
+                      const stats = computeCompanionDerivedStats(base, bonus.hitDiceBonus, bonus.naturalArmorBonus, bonus.abilityBonus);
                       return (
-                        <p className="muted" style={{ margin: 0 }}>
-                          Bonos por nivel de amo (nivel efectivo {effLevel}): +{bonus.hitDiceBonus} DG, +
-                          {bonus.naturalArmorBonus} armadura natural, +{bonus.abilityBonus} Fue/Des,{" "}
-                          {bonus.bonusTricks} trucos de bonificación
-                          {bonus.special.length > 0 ? `, ${bonus.special.join(", ")}` : ""}.
-                        </p>
+                        <>
+                          <CompanionStatBlock stats={stats} comp={comp} />
+                          <p className="muted" style={{ margin: 0 }}>
+                            Nivel efectivo {effLevel}: {bonus.bonusTricks} trucos de bonificación
+                            {bonus.special.length > 0 ? `, ${bonus.special.join(", ")}` : ""}.
+                          </p>
+                        </>
                       );
                     })()}
-                  {grant?.kind === "familiar" && (
-                    <p className="muted" style={{ margin: 0 }}>
-                      Habilidades otorgadas al amo: {computeFamiliarGrantedAbilities(level).join(", ")}.
-                    </p>
-                  )}
+                  {grant?.kind === "familiar" &&
+                    (() => {
+                      const stats = computeFamiliarDerivedStats(base, level, hp, character.classLevels, classes);
+                      return (
+                        <>
+                          <CompanionStatBlock stats={stats} comp={comp} />
+                          <p className="muted" style={{ margin: 0 }}>
+                            Habilidades otorgadas al amo: {computeFamiliarGrantedAbilities(level).join(", ")}.
+                          </p>
+                        </>
+                      );
+                    })()}
                   {grant?.kind === "special_mount" &&
                     (() => {
                       const paladinLevel = character.classLevels.find((cl) => cl.classId === comp.masterClassId)?.level ?? 0;
                       const bonus = computeSpecialMountBonus(paladinLevel);
                       if (!bonus) return null;
+                      const stats = computeCompanionDerivedStats(base, bonus.hitDiceBonus, bonus.naturalArmorBonus, bonus.strBonus, bonus.intScore);
                       return (
-                        <p className="muted" style={{ margin: 0 }}>
-                          Bonos por nivel de paladín: +{bonus.hitDiceBonus} DG, +{bonus.strBonus} Fue, Int{" "}
-                          {bonus.intScore}, +{bonus.naturalArmorBonus} armadura natural
-                          {bonus.special.length > 0 ? `, ${bonus.special.join(", ")}` : ""}.
-                        </p>
+                        <>
+                          <CompanionStatBlock stats={stats} comp={comp} />
+                          {bonus.special.length > 0 && (
+                            <p className="muted" style={{ margin: 0 }}>
+                              Nivel de paladín {paladinLevel}: {bonus.special.join(", ")}.
+                            </p>
+                          )}
+                        </>
                       );
                     })()}
                 </div>

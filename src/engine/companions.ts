@@ -32,6 +32,60 @@ export const COMPANION_TRICKS: CompanionTrick[] = [
   { id: "work", name: "Trabajar", description: "El animal tira o carga con normalidad, con o sin jinete." },
 ];
 
+// Glosario de cualidades especiales recurrentes (raciales de las criaturas
+// base, y las otorgadas por la tabla de progresión de compañero animal /
+// montura especial), para no tener que consultar el manual. Las entradas con
+// número o calidad variable (velocidad de vuelo/nado/trepa/excavar, alcance
+// de vista ciega) se buscan por prefijo, ya que el propio nombre de la
+// cualidad ya incluye ese valor concreto.
+const SPECIAL_QUALITY_GLOSSARY: Record<string, string> = {
+  "visión con poca luz":
+    "Puede ver el doble de lejos que un humano con luz tenue (luz de luna, antorchas, etc.), conservando distinciones de color y detalle en esas condiciones.",
+  olfato:
+    "Puede detectar enemigos por el olfato dentro de 9 m (30 pies, o 4,5 m contra el viento, 18 m a favor del viento), distinguir la dirección aproximada de un olor a partir de 1,5 m, y rastrear por olfato.",
+  "aguantar la respiración":
+    "Puede contener la respiración durante un número de asaltos igual a 5 veces su puntuación de Constitución antes de arriesgarse a ahogarse.",
+  "derribo (trip)":
+    "Si acierta su ataque de mordisco, puede intentar un derribo como acción libre sin provocar ataque de oportunidad; si el intento falla, el objetivo no puede derribarlo en respuesta.",
+  ferocidad: "Sigue luchando sin penalización por las tiradas de ataque, aunque esté agonizando o incapacitado.",
+  "furia (rage)":
+    "Una vez por combate, si sufre daño en combate, puede entrar en furia durante varios asaltos: gana un bonificador de moral a Fuerza y Constitución y a las salvaciones de Voluntad, pero sufre una penalización a la CA, igual que la furia del bárbaro.",
+  "agarre mejorado":
+    "Si acierta un ataque con la parte del cuerpo indicada, puede iniciar una presa como acción libre sin necesidad de una prueba de agarre para asir, y sin provocar ataque de oportunidad.",
+  "adiestrado para la guerra":
+    "No se asusta ante situaciones de combate y puede llevar a un jinete a la batalla sin necesidad de pruebas de Montar adicionales por el fragor de la lucha.",
+  "puede imitar habla simple":
+    "Puede repetir unas pocas palabras o frases sencillas en un idioma que haya oído, aunque sin comprender realmente su significado.",
+  // Progresión de compañero animal (SRD, ver docs/animalcompanions/reglas.md).
+  "vínculo (compartir conjuros)":
+    "El amo puede manejar a su compañero como acción gratuita, o instarlo como acción de movimiento, incluso sin rangos en Adiestrar Animales, y obtiene +4 de circunstancia en Adiestrar Animales y empatía salvaje referidas a él (Vínculo). Además, cualquier conjuro que el amo se lance a sí mismo también afecta al compañero si está a 1,5 m o menos al lanzarlo, incluso si el conjuro no afectaría normalmente a animales; o puede lanzar sobre el compañero como conjuro de toque un conjuro dirigido a «Vos» (Compartir conjuros).",
+  evasión:
+    "Si sufre un ataque que permite una salvación de Reflejos para reducir el daño a la mitad, no sufre ningún daño si la salvación tiene éxito.",
+  devoción: "Obtiene +4 de bonificador moral en las tiradas de salvación de Voluntad contra conjuros y efectos de encantamiento.",
+  multiataque:
+    "Si tiene tres o más ataques naturales, obtiene la dote Ataque Múltiple como dote de bonificación (si no la tenía ya); si no cumple ese requisito, en su lugar obtiene un segundo ataque con su arma natural principal, con un penalizador de -5.",
+  "evasión mejorada":
+    "Ante un ataque que permite una salvación de Reflejos para reducir el daño a la mitad, no sufre ningún daño si la salvación tiene éxito, y solo la mitad del daño si falla (incluso estando desprevenido).",
+  // Progresión de montura especial del paladín (SRD).
+  "vínculo empático": "El paladín tiene un vínculo empático con su montura hasta 1,5 km (1 milla) de distancia, y puede percibir lo que percibe la montura estando dentro de ese alcance.",
+};
+
+const SPECIAL_QUALITY_PREFIXES: [prefix: string, description: string][] = [
+  ["volar", "Tiene velocidad de vuelo, con la maniobrabilidad indicada entre paréntesis."],
+  ["nadar", "Tiene velocidad de nado: siempre puede tomar 10 al nadar, y gana +8 de bonificador racial a las pruebas de Nadar para tareas especiales o evitar peligros."],
+  ["trepar", "Tiene velocidad de trepar: siempre puede tomar 10 al trepar, y gana +8 de bonificador racial a las pruebas de Trepar para tareas especiales o evitar peligros."],
+  ["excavar", "Tiene velocidad de excavar, que le permite abrirse camino a través de tierra blanda o arena (no roca sólida, salvo que se indique lo contrario)."],
+  ["vista ciega", "Puede detectar y ubicar con precisión a criaturas y objetos cercanos sin depender de la vista (ignora ocultación e invisibilidad), dentro del alcance indicado."],
+];
+
+/** Explicación en lenguaje llano de una cualidad especial (racial o de progresión de compañero), o undefined si no está catalogada. */
+export function describeSpecialQuality(quality: string): string | undefined {
+  const key = quality.trim().toLowerCase();
+  if (SPECIAL_QUALITY_GLOSSARY[key]) return SPECIAL_QUALITY_GLOSSARY[key];
+  const prefixMatch = SPECIAL_QUALITY_PREFIXES.find(([prefix]) => key.startsWith(prefix));
+  return prefixMatch?.[1];
+}
+
 // Tabla de bonos de compañero animal del SRD (Manual del Jugador), indexada
 // por nivel efectivo (nivel de druida, o nivel de explorador con el desfase
 // que ya aplica `effectiveCompanionLevel`).

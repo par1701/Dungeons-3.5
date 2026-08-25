@@ -61,6 +61,7 @@ import {
   computeFamiliarDerivedStats,
   computeFamiliarGrantedAbilities,
   computeSpecialMountBonus,
+  describeSpecialQuality,
   effectiveCompanionLevel,
   type CompanionDerivedStats,
 } from "../engine/companions";
@@ -90,6 +91,24 @@ function fmtSigned(n: number): string {
 }
 
 /** Bloque de estadísticas ya calculadas de un compañero animal, montura especial o familiar, listo para jugar en mesa. */
+/** Lista de cualidades especiales (raciales o de progresión de compañero) con su explicación, cuando se conoce. */
+function SpecialAbilityList({ names }: { names: string[] }) {
+  if (names.length === 0) return null;
+  return (
+    <ul style={{ margin: "2px 0 4px", paddingLeft: 18 }}>
+      {names.map((n) => {
+        const desc = describeSpecialQuality(n);
+        return (
+          <li key={n}>
+            <strong>{n}</strong>
+            {desc ? `: ${desc}` : ""}
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
 function CompanionStatBlock({ stats, comp }: { stats: CompanionDerivedStats; comp: CharacterCompanion }) {
   const chosenTricks = (comp.tricks ?? []).map((id) => COMPANION_TRICKS.find((t) => t.id === id)?.name ?? id);
   const chosenFeats = (comp.featIds ?? []).filter(Boolean).map((id) => findFeat(id)?.name ?? id);
@@ -730,9 +749,10 @@ export default function CharacterSheetPage() {
                     {base.baseNaturalArmor}
                   </p>
                   {base.specialQualities.length > 0 && (
-                    <p style={{ margin: "0 0 4px" }}>
-                      <strong>Cualidades especiales:</strong> {base.specialQualities.join(", ")}
-                    </p>
+                    <div style={{ margin: "0 0 4px" }}>
+                      <strong>Cualidades especiales:</strong>
+                      <SpecialAbilityList names={base.specialQualities} />
+                    </div>
                   )}
                   {base.skillBonuses.length > 0 && (
                     <p style={{ margin: "0 0 4px" }}>
@@ -748,9 +768,9 @@ export default function CharacterSheetPage() {
                         <>
                           <CompanionStatBlock stats={stats} comp={comp} />
                           <p className="muted" style={{ margin: 0 }}>
-                            Nivel efectivo {effLevel}: {bonus.bonusTricks} trucos de bonificación
-                            {bonus.special.length > 0 ? `, ${bonus.special.join(", ")}` : ""}.
+                            Nivel efectivo {effLevel}: {bonus.bonusTricks} trucos de bonificación.
                           </p>
+                          <SpecialAbilityList names={bonus.special} />
                         </>
                       );
                     })()}
@@ -776,9 +796,12 @@ export default function CharacterSheetPage() {
                         <>
                           <CompanionStatBlock stats={stats} comp={comp} />
                           {bonus.special.length > 0 && (
-                            <p className="muted" style={{ margin: 0 }}>
-                              Nivel de paladín {paladinLevel}: {bonus.special.join(", ")}.
-                            </p>
+                            <>
+                              <p className="muted" style={{ margin: 0 }}>
+                                Nivel de paladín {paladinLevel}:
+                              </p>
+                              <SpecialAbilityList names={bonus.special} />
+                            </>
                           )}
                         </>
                       );

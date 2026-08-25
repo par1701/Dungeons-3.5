@@ -1424,6 +1424,24 @@ export const SRD_FEATS: Feat[] = [
     fighterBonusFeat: false,
     stackable: false,
   },
+  // ---------------------------------------------------------------------
+  // MANUAL DE MONSTRUOS (dotes típicas de criaturas, usables por compañeros)
+  // ---------------------------------------------------------------------
+  {
+    id: "powerful-charge",
+    name: "Carga Poderosa",
+    source: "srd",
+    types: ["general"],
+    description: "El combatiente golpea con fuerza bruta al final de una carga.",
+    benefit:
+      "Si impacta con un ataque cuerpo a cuerpo al cargar, inflige daño extra según su tamaño: Mediano 1d8, Grande 2d6, Enorme 3d6, Descomunal 4d6, Colosal 6d6. Solo funciona al cargar (no si va montado), y si dispone de varios ataques en la carga, el daño extra se aplica a uno solo de ellos.",
+    prerequisites: [
+      { description: "Tamaño Mediano o mayor" },
+      { description: "Bonificador base de ataque +1", check: (ctx) => ctx.babTotal >= 1 },
+    ],
+    fighterBonusFeat: false,
+    stackable: false,
+  },
 ];
 
 export const SRD_FEAT_IDS = SRD_FEATS.map((f) => f.id);

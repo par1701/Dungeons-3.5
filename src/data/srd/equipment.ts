@@ -85,6 +85,7 @@ export const SRD_WEAPONS: Weapon[] = [
   { id: "dwarven-urgrosh", name: "Urgrosh Enano", source: "srd", category: "exotica", type: "cuerpo_a_cuerpo", damageSmall: "1d6/1d4", damageMedium: "1d8/1d6", critical: "x3", weight: 12, cost: 50, damageType: "P o E" },
 
   // ----- Armas Exóticas: a distancia -----
+  { id: "bola", name: "Bolas", source: "srd", category: "exotica", type: "distancia", damageSmall: "1d3", damageMedium: "1d4", critical: "x2", rangeIncrement: 10, weight: 2, cost: 5, damageType: "C" },
   { id: "hand-crossbow", name: "Ballesta de Mano", source: "srd", category: "exotica", type: "distancia", damageSmall: "1d3", damageMedium: "1d4", critical: "19-20/x2", rangeIncrement: 30, weight: 2, cost: 100, damageType: "P" },
   { id: "repeating-heavy-crossbow", name: "Ballesta Pesada Repetidora", source: "srd", category: "exotica", type: "distancia", damageSmall: "1d8", damageMedium: "1d10", critical: "19-20/x2", rangeIncrement: 120, weight: 12, cost: 400, damageType: "P" },
   { id: "repeating-light-crossbow", name: "Ballesta Ligera Repetidora", source: "srd", category: "exotica", type: "distancia", damageSmall: "1d6", damageMedium: "1d8", critical: "19-20/x2", rangeIncrement: 80, weight: 6, cost: 250, damageType: "P" },
@@ -115,6 +116,10 @@ export const SRD_ARMORS: Armor[] = [
   { id: "full-plate", name: "Armadura Completa", source: "srd", category: "pesada", armorBonus: 8, maxDexBonus: 1, armorCheckPenalty: -6, arcaneSpellFailure: 35, speed30: 20, speed20: 15, weight: 50, cost: 1500 },
 
   // ----- Escudos -----
+  // Broquel: a diferencia de los demás escudos, puede llevarse y seguir usando esa mano con normalidad
+  // (aunque atacar con un arma en esa mano da -1 a las tiradas de ataque ese asalto, y el bono de escudo
+  // no se aplica el asalto en que se ataca así); no se modela esta regla especial, solo sus valores numéricos.
+  { id: "buckler", name: "Broquel", source: "srd", category: "escudo", armorBonus: 1, maxDexBonus: null, armorCheckPenalty: -1, arcaneSpellFailure: 5, speed30: 30, speed20: 20, weight: 5, cost: 5 },
   { id: "small-wooden-shield", name: "Escudo Pequeño de Madera", source: "srd", category: "escudo", armorBonus: 1, maxDexBonus: null, armorCheckPenalty: -1, arcaneSpellFailure: 5, speed30: 30, speed20: 20, weight: 5, cost: 3 },
   { id: "small-steel-shield", name: "Escudo Pequeño de Metal", source: "srd", category: "escudo", armorBonus: 1, maxDexBonus: null, armorCheckPenalty: -1, arcaneSpellFailure: 5, speed30: 30, speed20: 20, weight: 6, cost: 9 },
   { id: "large-wooden-shield", name: "Escudo Grande de Madera", source: "srd", category: "escudo", armorBonus: 2, maxDexBonus: null, armorCheckPenalty: -2, arcaneSpellFailure: 15, speed30: 30, speed20: 20, weight: 10, cost: 7 },

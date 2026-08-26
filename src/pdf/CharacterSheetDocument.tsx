@@ -142,7 +142,7 @@ function SpecialAbilityList({ names }: { names: string[] }) {
 
 function CompanionStatBlock({ stats, comp }: { stats: CompanionDerivedStats; comp: CharacterCompanion }) {
   const chosenTricks = (comp.tricks ?? []).map((id) => COMPANION_TRICKS.find((t) => t.id === id)?.name ?? id);
-  const chosenFeats = (comp.featIds ?? []).filter(Boolean).map((id) => findFeat(id)?.name ?? id);
+  const chosenFeatIds = (comp.featIds ?? []).filter(Boolean);
   return (
     <>
       <Text style={styles.bullet}>
@@ -163,8 +163,21 @@ function CompanionStatBlock({ stats, comp }: { stats: CompanionDerivedStats; com
       </Text>
       <Text style={styles.bullet}>
         Armadura natural total +{stats.naturalArmorTotal} · Dotes: {stats.featCount} en total
-        {chosenFeats.length > 0 ? ` (elegidas: ${chosenFeats.join(", ")})` : ""}
+        {chosenFeatIds.length < stats.featCount ? " (sin elegir todas)" : ""}
       </Text>
+      {chosenFeatIds.length > 0 && (
+        <>
+          <Text style={styles.subLabel}>Dotes elegidas</Text>
+          {chosenFeatIds.map((id, i) => {
+            const feat = findFeat(id);
+            return (
+              <Text key={`${id}-${i}`} style={styles.bullet}>
+                <Text style={styles.bulletLabel}>• {feat?.name ?? id}</Text>: {feat?.benefit ?? ""}
+              </Text>
+            );
+          })}
+        </>
+      )}
       {chosenTricks.length > 0 && <Text style={styles.bullet}>Trucos conocidos: {chosenTricks.join(", ")}</Text>}
     </>
   );
@@ -666,20 +679,31 @@ export default function CharacterSheetDocument({ character }: { character: Chara
         {unlockedChoices.filter((uc) => uc.choice.kind !== "dote_restringida").length > 0 && (
           <>
             <Text style={styles.sectionTitle}>Elecciones de clase</Text>
-            {unlockedChoices
-              .filter((uc) => uc.choice.kind !== "dote_restringida")
-              .map((uc, i) => {
-                const value = findChoiceValue(classFeatureChoices, uc.classId, uc.choice.id, uc.level);
-                const selectedOption = uc.choice.options?.find((o) => o.id === value);
-                const optionLabel = uc.choice.kind === "lista_fija" ? selectedOption?.label : value;
-                return (
-                  <Text key={i} style={[styles.bullet, { fontSize: 7 }]}>
-                    <Text style={styles.bulletLabel}>• {uc.choice.label}</Text> ({uc.className} {uc.level}):{" "}
-                    {optionLabel || "sin elegir"}
-                    {selectedOption?.description ? ` — ${selectedOption.description}` : ""}
-                  </Text>
-                );
-              })}
+            {(() => {
+              const choiceNodes = unlockedChoices
+                .filter((uc) => uc.choice.kind !== "dote_restringida")
+                .map((uc, i) => {
+                  const value = findChoiceValue(classFeatureChoices, uc.classId, uc.choice.id, uc.level);
+                  const selectedOption = uc.choice.options?.find((o) => o.id === value);
+                  const optionLabel = uc.choice.kind === "lista_fija" ? selectedOption?.label : value;
+                  return (
+                    <Text key={i} style={[styles.bullet, { fontSize: 7 }]}>
+                      <Text style={styles.bulletLabel}>• {uc.choice.label}</Text> ({uc.className} {uc.level}):{" "}
+                      {optionLabel || "sin elegir"}
+                      {selectedOption?.description ? ` — ${selectedOption.description}` : ""}
+                    </Text>
+                  );
+                });
+              return (
+                <View style={{ flexDirection: "row", gap: 16 }}>
+                  {[0, 1].map((col) => (
+                    <View key={col} style={{ flex: 1 }}>
+                      {choiceNodes.filter((_, i) => i % 2 === col)}
+                    </View>
+                  ))}
+                </View>
+              );
+            })()}
             {favoredEnemyBonuses.length > 0 && (
               <Text style={[styles.bullet, { fontSize: 7 }]}>
                 Bono total contra enemigos predilectos: {favoredEnemyBonuses.map((fe) => `${fe.enemy} +${fe.bonus}`).join(" · ")}

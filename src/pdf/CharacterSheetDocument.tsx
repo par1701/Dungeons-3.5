@@ -66,7 +66,7 @@ import {
 } from "../engine/companions";
 
 const styles = StyleSheet.create({
-  page: { padding: 26, fontSize: 8.5, fontFamily: "Helvetica", lineHeight: 1.4 },
+  page: { padding: 26, fontSize: 8.5, fontFamily: "Helvetica", lineHeight: 1.25 },
   title: { fontSize: 16, fontWeight: 700, marginBottom: 2 },
   fieldGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10, marginBottom: 10, borderBottom: "1pt solid #333", paddingBottom: 8 },
   field: { minWidth: 90 },
@@ -78,20 +78,20 @@ const styles = StyleSheet.create({
   panel: { border: "1.2pt solid #111", borderRadius: 4, marginBottom: 8 },
   panelTitle: { backgroundColor: "#111", color: "white", fontSize: 8, fontWeight: 700, textTransform: "uppercase", padding: "3 6" },
   panelBody: { padding: 6 },
-  sectionTitle: { fontSize: 11, fontWeight: 700, marginTop: 14, marginBottom: 6, borderBottom: "1pt solid #333", paddingBottom: 2 },
+  sectionTitle: { fontSize: 11, fontWeight: 700, marginTop: 12, marginBottom: 5, borderBottom: "1pt solid #333", paddingBottom: 2 },
   tableRow: { flexDirection: "row", borderBottom: "0.5pt solid #ccc", paddingVertical: 3 },
   tableHeaderRow: { flexDirection: "row", borderBottom: "1pt solid #333", paddingVertical: 3, fontWeight: 700 },
   cell: { flex: 2 },
   smallCell: { flex: 1, textAlign: "center" },
   // Ítem de lista con nombre en negrita + descripción, con separación entre ítems (dotes, rasgos, cualidades...).
-  bullet: { marginBottom: 5 },
-  bulletTight: { marginBottom: 2.5 },
+  bullet: { marginBottom: 3.5 },
+  bulletTight: { marginBottom: 2 },
   bulletLabel: { fontWeight: 700 },
-  bulletMeta: { fontSize: 7, color: "#555", marginBottom: 5 },
-  subLabel: { fontWeight: 700, fontSize: 7.5, textTransform: "uppercase", color: "#333", marginTop: 5, marginBottom: 3 },
+  bulletMeta: { fontSize: 7, color: "#555", marginBottom: 3.5 },
+  subLabel: { fontWeight: 700, fontSize: 7.5, textTransform: "uppercase", color: "#333", marginTop: 4, marginBottom: 2.5 },
   // Tarjeta individual para cada compañero/familiar/montura, separada visualmente del resto.
-  companionCard: { border: "0.75pt solid #999", borderRadius: 3, padding: 8, marginBottom: 10 },
-  companionTitle: { fontWeight: 700, fontSize: 9.5, marginBottom: 4 },
+  companionCard: { border: "0.75pt solid #999", borderRadius: 3, padding: 8, marginBottom: 8 },
+  companionTitle: { fontWeight: 700, fontSize: 9.5, marginBottom: 3 },
 });
 
 function Panel({ title, children }: { title: string; children: React.ReactNode }) {

@@ -76,8 +76,10 @@ const styles = StyleSheet.create({
   label: { fontSize: 6.5, textTransform: "uppercase", color: "#555" },
   value: { fontSize: 13, fontWeight: 700, lineHeight: 1 },
   panel: { border: "1.2pt solid #111", borderRadius: 4, marginBottom: 8 },
+  panelFill: { border: "1.2pt solid #111", borderRadius: 4, flex: 1 },
   panelTitle: { backgroundColor: "#111", color: "white", fontSize: 8, fontWeight: 700, textTransform: "uppercase", padding: "3 6" },
   panelBody: { padding: 6 },
+  panelBodyFill: { padding: 6, flex: 1 },
   sectionTitle: { fontSize: 11, fontWeight: 700, marginTop: 12, marginBottom: 5, borderBottom: "1pt solid #333", paddingBottom: 2 },
   tableRow: { flexDirection: "row", borderBottom: "0.5pt solid #ccc", paddingVertical: 3 },
   tableHeaderRow: { flexDirection: "row", borderBottom: "1pt solid #333", paddingVertical: 3, fontWeight: 700 },
@@ -96,13 +98,16 @@ const styles = StyleSheet.create({
   sideRow: { flexDirection: "row", gap: 8, marginTop: 12, marginBottom: 4, alignItems: "stretch" },
   sideBox: { flex: 1, border: "0.75pt solid #999", borderRadius: 3, padding: 8 },
   boxTitle: { fontSize: 9.5, fontWeight: 700, marginBottom: 4, borderBottom: "0.75pt solid #333", paddingBottom: 2 },
+  // Línea en blanco para anotar a mano durante la partida (p.ej. PG actuales).
+  writeLine: { borderBottom: "0.75pt solid #999", marginTop: 16 },
 });
 
-function Panel({ title, children }: { title: string; children: React.ReactNode }) {
+/** `fill`: variante que ocupa todo el alto disponible de su fila (p.ej. Puntos de golpe, para dejar hueco de escritura a mano). */
+function Panel({ title, children, fill }: { title: string; children: React.ReactNode; fill?: boolean }) {
   return (
-    <View style={styles.panel} wrap={false}>
+    <View style={fill ? styles.panelFill : styles.panel} wrap={false}>
       <Text style={styles.panelTitle}>{title}</Text>
-      <View style={styles.panelBody}>{children}</View>
+      <View style={fill ? styles.panelBodyFill : styles.panelBody}>{children}</View>
     </View>
   );
 }
@@ -354,73 +359,93 @@ export default function CharacterSheetDocument({ character }: { character: Chara
           ))}
         </View>
 
-        <View style={styles.row}>
-          <View style={{ flex: 1 }}>
-            <Panel title="Clase de armadura">
-              <Text style={{ fontSize: 16, fontWeight: 700, textAlign: "center", lineHeight: 1 }}>{ac.total}</Text>
-              <Text style={{ fontSize: 7, textAlign: "center" }}>
-                10 base + {ac.armorBonus} armadura + {ac.shieldBonus} escudo +{" "}
-                {ac.maxDexBonus === null ? dexMod : Math.min(dexMod, ac.maxDexBonus)} Des + {sizeModifier(size)} tamaño
-                {ac.naturalArmorBonus !== 0 ? ` + ${ac.naturalArmorBonus} natural` : ""}
-                {ac.deflectionBonus !== 0 ? ` + ${ac.deflectionBonus} desviación` : ""}
-                {ac.insightBonus !== 0 ? ` + ${ac.insightBonus} perspicacia` : ""}
-                {ac.monkWisdomBonus + ac.dervishGraceBonus + ac.tempestDefenseBonus !== 0
-                  ? ` + ${ac.monkWisdomBonus + ac.dervishGraceBonus + ac.tempestDefenseBonus} clase`
-                  : ""}
-              </Text>
-              <Text style={{ fontSize: 7, textAlign: "center" }}>
-                Tocar {ac.touch} · Desprevenido {ac.flatFooted}
-              </Text>
-              {ac.damageReduction > 0 && <Text style={{ fontSize: 7, textAlign: "center" }}>RD: {ac.damageReduction}/-</Text>}
-            </Panel>
+        <View style={{ flexDirection: "row", gap: 6, alignItems: "stretch" }}>
+          <View style={{ flex: 3, gap: 6 }}>
+            <View style={styles.row}>
+              <View style={{ flex: 1 }}>
+                <Panel title="Clase de armadura">
+                  <Text style={{ fontSize: 16, fontWeight: 700, textAlign: "center", lineHeight: 1 }}>{ac.total}</Text>
+                  <Text style={{ fontSize: 7, textAlign: "center" }}>
+                    10 base + {ac.armorBonus} armadura + {ac.shieldBonus} escudo +{" "}
+                    {ac.maxDexBonus === null ? dexMod : Math.min(dexMod, ac.maxDexBonus)} Des + {sizeModifier(size)} tamaño
+                    {ac.naturalArmorBonus !== 0 ? ` + ${ac.naturalArmorBonus} natural` : ""}
+                    {ac.deflectionBonus !== 0 ? ` + ${ac.deflectionBonus} desviación` : ""}
+                    {ac.insightBonus !== 0 ? ` + ${ac.insightBonus} perspicacia` : ""}
+                    {ac.monkWisdomBonus + ac.dervishGraceBonus + ac.tempestDefenseBonus !== 0
+                      ? ` + ${ac.monkWisdomBonus + ac.dervishGraceBonus + ac.tempestDefenseBonus} clase`
+                      : ""}
+                  </Text>
+                  <Text style={{ fontSize: 7, textAlign: "center" }}>
+                    Tocar {ac.touch} · Desprevenido {ac.flatFooted}
+                  </Text>
+                  {ac.damageReduction > 0 && (
+                    <Text style={{ fontSize: 7, textAlign: "center" }}>RD: {ac.damageReduction}/-</Text>
+                  )}
+                </Panel>
+              </View>
+              <View style={{ flex: 1 }}>
+                <Panel title="Iniciativa y velocidad">
+                  <Text>Iniciativa: {initiative >= 0 ? `+${initiative}` : initiative}</Text>
+                  <Text>Velocidad: {race?.speed ?? 30} pies</Text>
+                </Panel>
+              </View>
+            </View>
+
+            <View style={styles.row}>
+              <View style={{ flex: 1 }}>
+                <Panel title="Salvaciones">
+                  <Text>
+                    Fortaleza: {saves.fort >= 0 ? `+${saves.fort}` : saves.fort} (base{" "}
+                    {computeBaseSave("fort", character.classLevels, classes, race)})
+                  </Text>
+                  <Text>
+                    Reflejos: {saves.ref >= 0 ? `+${saves.ref}` : saves.ref} (base{" "}
+                    {computeBaseSave("ref", character.classLevels, classes, race)})
+                  </Text>
+                  <Text>
+                    Voluntad: {saves.will >= 0 ? `+${saves.will}` : saves.will} (base{" "}
+                    {computeBaseSave("will", character.classLevels, classes, race)})
+                  </Text>
+                  {(equipmentBonuses.saveResistance > 0 ||
+                    getDivineGraceBonus(character.classLevels, finalScores) > 0 ||
+                    getScoutBattleBonus(character.classLevels) > 0) && (
+                    <Text style={{ fontSize: 6.5 }}>
+                      Incluye
+                      {equipmentBonuses.saveResistance > 0 ? ` resistencia +${equipmentBonuses.saveResistance};` : ""}
+                      {getDivineGraceBonus(character.classLevels, finalScores) > 0
+                        ? ` Gracia Divina +${getDivineGraceBonus(character.classLevels, finalScores)};`
+                        : ""}
+                      {getScoutBattleBonus(character.classLevels) > 0
+                        ? ` Bono de Batalla +${getScoutBattleBonus(character.classLevels)};`
+                        : ""}
+                    </Text>
+                  )}
+                </Panel>
+              </View>
+              <View style={{ flex: 1 }}>
+                <Panel title="Ataque">
+                  <Text>Bonif. ataque base: +{bab}</Text>
+                  <Text>Cuerpo a cuerpo: {meleeAttackBonus >= 0 ? `+${meleeAttackBonus}` : meleeAttackBonus}</Text>
+                  <Text>A distancia: {rangedAttackBonus >= 0 ? `+${rangedAttackBonus}` : rangedAttackBonus}</Text>
+                  <Text>Golpe de presa: {grapple >= 0 ? `+${grapple}` : grapple}</Text>
+                </Panel>
+              </View>
+            </View>
           </View>
-          <View style={{ flex: 1 }}>
-            <Panel title="Puntos de golpe y carga">
+
+          <View style={{ flex: 2 }}>
+            <Panel title="Puntos de golpe y carga" fill>
               <Text>PG máximos: {hp}</Text>
               <Text>
                 Carga: ligera hasta {carrying.light} · media hasta {carrying.medium} · pesada hasta {carrying.heavy} lb
               </Text>
-            </Panel>
-          </View>
-        </View>
-
-        <View style={[styles.row, { width: "62%", alignItems: "stretch" }]}>
-          <View style={{ flex: 1 }}>
-            <Panel title="Salvaciones">
-              <Text>
-                Fortaleza: {saves.fort >= 0 ? `+${saves.fort}` : saves.fort} (base{" "}
-                {computeBaseSave("fort", character.classLevels, classes, race)})
+              <Text style={{ marginTop: 10, fontSize: 7, color: "#555" }}>
+                Espacio para anotar a mano durante la partida (PG actuales, daño, condiciones...):
               </Text>
-              <Text>
-                Reflejos: {saves.ref >= 0 ? `+${saves.ref}` : saves.ref} (base{" "}
-                {computeBaseSave("ref", character.classLevels, classes, race)})
-              </Text>
-              <Text>
-                Voluntad: {saves.will >= 0 ? `+${saves.will}` : saves.will} (base{" "}
-                {computeBaseSave("will", character.classLevels, classes, race)})
-              </Text>
-              {(equipmentBonuses.saveResistance > 0 ||
-                getDivineGraceBonus(character.classLevels, finalScores) > 0 ||
-                getScoutBattleBonus(character.classLevels) > 0) && (
-                <Text style={{ fontSize: 6.5 }}>
-                  Incluye
-                  {equipmentBonuses.saveResistance > 0 ? ` resistencia +${equipmentBonuses.saveResistance};` : ""}
-                  {getDivineGraceBonus(character.classLevels, finalScores) > 0
-                    ? ` Gracia Divina +${getDivineGraceBonus(character.classLevels, finalScores)};`
-                    : ""}
-                  {getScoutBattleBonus(character.classLevels) > 0 ? ` Bono de Batalla +${getScoutBattleBonus(character.classLevels)};` : ""}
-                </Text>
-              )}
-            </Panel>
-          </View>
-          <View style={{ flex: 1 }}>
-            <Panel title="Ataque">
-              <Text>Bonif. ataque base: +{bab}</Text>
-              <Text>Cuerpo a cuerpo: {meleeAttackBonus >= 0 ? `+${meleeAttackBonus}` : meleeAttackBonus}</Text>
-              <Text>A distancia: {rangedAttackBonus >= 0 ? `+${rangedAttackBonus}` : rangedAttackBonus}</Text>
-              <Text>Golpe de presa: {grapple >= 0 ? `+${grapple}` : grapple}</Text>
-              <Text>Iniciativa: {initiative >= 0 ? `+${initiative}` : initiative}</Text>
-              <Text>Velocidad: {race?.speed ?? 30} pies</Text>
+              <View style={styles.writeLine} />
+              <View style={styles.writeLine} />
+              <View style={styles.writeLine} />
+              <View style={styles.writeLine} />
             </Panel>
           </View>
         </View>

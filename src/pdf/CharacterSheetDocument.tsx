@@ -67,14 +67,14 @@ import {
 
 const styles = StyleSheet.create({
   page: { padding: 26, fontSize: 8.5, fontFamily: "Helvetica", lineHeight: 1.25 },
-  title: { fontSize: 16, fontWeight: 700, marginBottom: 2 },
+  title: { fontSize: 16, fontWeight: 700, marginBottom: 2, lineHeight: 1 },
   fieldGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10, marginBottom: 10, borderBottom: "1pt solid #333", paddingBottom: 8 },
   field: { minWidth: 90 },
   row: { flexDirection: "row", marginBottom: 8, gap: 6 },
   col: { flex: 1, gap: 6 },
   box: { border: "1pt solid #333", borderRadius: 3, padding: 6, flex: 1 },
   label: { fontSize: 6.5, textTransform: "uppercase", color: "#555" },
-  value: { fontSize: 13, fontWeight: 700 },
+  value: { fontSize: 13, fontWeight: 700, lineHeight: 1 },
   panel: { border: "1.2pt solid #111", borderRadius: 4, marginBottom: 8 },
   panelTitle: { backgroundColor: "#111", color: "white", fontSize: 8, fontWeight: 700, textTransform: "uppercase", padding: "3 6" },
   panelBody: { padding: 6 },
@@ -92,6 +92,10 @@ const styles = StyleSheet.create({
   // Tarjeta individual para cada compañero/familiar/montura, separada visualmente del resto.
   companionCard: { border: "0.75pt solid #999", borderRadius: 3, padding: 8, marginBottom: 8 },
   companionTitle: { fontWeight: 700, fontSize: 9.5, marginBottom: 3 },
+  // Fila de dos cuadros lado a lado (Habilidades + Rasgos raciales/Dotes), para no dejar Habilidades vacía a ancho completo.
+  sideRow: { flexDirection: "row", gap: 8, marginTop: 12, marginBottom: 4, alignItems: "stretch" },
+  sideBox: { flex: 1, border: "0.75pt solid #999", borderRadius: 3, padding: 8 },
+  boxTitle: { fontSize: 9.5, fontWeight: 700, marginBottom: 4, borderBottom: "0.75pt solid #333", paddingBottom: 2 },
 });
 
 function Panel({ title, children }: { title: string; children: React.ReactNode }) {
@@ -186,6 +190,10 @@ export default function CharacterSheetDocument({ character }: { character: Chara
   const favoredEnemyBonuses = getFavoredEnemyBonuses(classFeatureChoices);
   const unlockedChoices = getUnlockedClassFeatureChoices(character.classLevels, classes, character.activeVariantRules, knownFeatIds);
   const bonusFeats = getBonusFeatsFromClasses(character.classLevels, classes, classFeatureChoices, character.activeVariantRules);
+  const featSummaryNames = [
+    ...character.feats.map((f) => findFeat(f.featId)?.name ?? f.featId),
+    ...bonusFeats.map((bf) => findFeat(bf.featId)?.name ?? bf.featId),
+  ];
 
   const equippedArmorItems = character.equipment
     .filter((e) => e.equipped && e.itemKind === "armor")
@@ -349,7 +357,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
         <View style={styles.row}>
           <View style={{ flex: 1 }}>
             <Panel title="Clase de armadura">
-              <Text style={{ fontSize: 16, fontWeight: 700, textAlign: "center" }}>{ac.total}</Text>
+              <Text style={{ fontSize: 16, fontWeight: 700, textAlign: "center", lineHeight: 1 }}>{ac.total}</Text>
               <Text style={{ fontSize: 7, textAlign: "center" }}>
                 10 base + {ac.armorBonus} armadura + {ac.shieldBonus} escudo +{" "}
                 {ac.maxDexBonus === null ? dexMod : Math.min(dexMod, ac.maxDexBonus)} Des + {sizeModifier(size)} tamaño
@@ -507,37 +515,52 @@ export default function CharacterSheetDocument({ character }: { character: Chara
           </Panel>
         )}
 
-        <Text style={styles.sectionTitle}>Habilidades</Text>
-        {Object.entries(character.skillRanks)
-          .filter(([, ranks]) => ranks > 0)
-          .map(([key, ranks]) => {
-            const { skillId, specialization } = parseSkillKey(key);
-            const skill = findSkill(skillId);
-            const isClassSkill = character.classLevels.some((cl) =>
-              classes.find((c) => c.id === cl.classId)?.classSkills.includes(skillId),
-            );
-            const mod = skill ? abilityModifier(finalScores[skill.keyAbility]) : 0;
-            const label = skill ? (specialization ? `${skill.name} (${specialization})` : skill.name) : key;
-            return (
-              <View style={styles.tableRow} key={key}>
-                <Text style={styles.smallCell}>{isClassSkill ? "✓" : ""}</Text>
-                <Text style={styles.cell}>{label}</Text>
-                <Text style={styles.smallCell}>Rangos {ranks}</Text>
-                <Text style={styles.smallCell}>Total {ranks + mod}</Text>
-              </View>
-            );
-          })}
-
-        {race && race.traits.length > 0 && (
-          <>
-            <Text style={styles.sectionTitle}>Rasgos raciales</Text>
-            {race.traits.map((t) => (
-              <Text key={t.name} style={styles.bullet}>
-                <Text style={styles.bulletLabel}>• {t.name}</Text>: {t.description}
-              </Text>
-            ))}
-          </>
-        )}
+        <View style={styles.sideRow}>
+          <View style={styles.sideBox}>
+            <Text style={styles.boxTitle}>Habilidades</Text>
+            {Object.entries(character.skillRanks).filter(([, ranks]) => ranks > 0).length === 0 ? (
+              <Text style={{ fontSize: 7.5, color: "#777" }}>Sin rangos invertidos.</Text>
+            ) : (
+              Object.entries(character.skillRanks)
+                .filter(([, ranks]) => ranks > 0)
+                .map(([key, ranks]) => {
+                  const { skillId, specialization } = parseSkillKey(key);
+                  const skill = findSkill(skillId);
+                  const isClassSkill = character.classLevels.some((cl) =>
+                    classes.find((c) => c.id === cl.classId)?.classSkills.includes(skillId),
+                  );
+                  const mod = skill ? abilityModifier(finalScores[skill.keyAbility]) : 0;
+                  const label = skill ? (specialization ? `${skill.name} (${specialization})` : skill.name) : key;
+                  return (
+                    <View style={styles.tableRow} key={key}>
+                      <Text style={styles.smallCell}>{isClassSkill ? "✓" : ""}</Text>
+                      <Text style={styles.cell}>{label}</Text>
+                      <Text style={styles.smallCell}>R {ranks}</Text>
+                      <Text style={styles.smallCell}>T {ranks + mod}</Text>
+                    </View>
+                  );
+                })
+            )}
+          </View>
+          <View style={styles.sideBox}>
+            {race && race.traits.length > 0 && (
+              <>
+                <Text style={styles.boxTitle}>Rasgos raciales</Text>
+                {race.traits.map((t) => (
+                  <Text key={t.name} style={[styles.bullet, { fontSize: 7.5 }]}>
+                    <Text style={styles.bulletLabel}>• {t.name}</Text>: {t.description}
+                  </Text>
+                ))}
+              </>
+            )}
+            {featSummaryNames.length > 0 && (
+              <>
+                <Text style={[styles.boxTitle, { marginTop: race && race.traits.length > 0 ? 6 : 0 }]}>Dotes (resumen)</Text>
+                <Text style={{ fontSize: 7.5 }}>{featSummaryNames.join(" · ")}</Text>
+              </>
+            )}
+          </View>
+        </View>
 
         {unlockedFeatures.length > 0 && (
           <>

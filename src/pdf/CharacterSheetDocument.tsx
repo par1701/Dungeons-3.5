@@ -373,6 +373,19 @@ export default function CharacterSheetDocument({ character }: { character: Chara
               </Text>
               {ac.damageReduction > 0 && <Text style={{ fontSize: 7, textAlign: "center" }}>RD: {ac.damageReduction}/-</Text>}
             </Panel>
+          </View>
+          <View style={{ flex: 1 }}>
+            <Panel title="Puntos de golpe y carga">
+              <Text>PG máximos: {hp}</Text>
+              <Text>
+                Carga: ligera hasta {carrying.light} · media hasta {carrying.medium} · pesada hasta {carrying.heavy} lb
+              </Text>
+            </Panel>
+          </View>
+        </View>
+
+        <View style={[styles.row, { width: "62%", alignItems: "stretch" }]}>
+          <View style={{ flex: 1 }}>
             <Panel title="Salvaciones">
               <Text>
                 Fortaleza: {saves.fort >= 0 ? `+${saves.fort}` : saves.fort} (base{" "}
@@ -408,12 +421,6 @@ export default function CharacterSheetDocument({ character }: { character: Chara
               <Text>Golpe de presa: {grapple >= 0 ? `+${grapple}` : grapple}</Text>
               <Text>Iniciativa: {initiative >= 0 ? `+${initiative}` : initiative}</Text>
               <Text>Velocidad: {race?.speed ?? 30} pies</Text>
-            </Panel>
-            <Panel title="Puntos de golpe y carga">
-              <Text>PG máximos: {hp}</Text>
-              <Text>
-                Carga: ligera hasta {carrying.light} · media hasta {carrying.medium} · pesada hasta {carrying.heavy} lb
-              </Text>
             </Panel>
           </View>
         </View>

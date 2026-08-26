@@ -66,7 +66,7 @@ import {
 } from "../engine/companions";
 
 const styles = StyleSheet.create({
-  page: { padding: 26, fontSize: 8.5, fontFamily: "Helvetica" },
+  page: { padding: 26, fontSize: 8.5, fontFamily: "Helvetica", lineHeight: 1.4 },
   title: { fontSize: 16, fontWeight: 700, marginBottom: 2 },
   fieldGrid: { flexDirection: "row", flexWrap: "wrap", gap: 10, marginBottom: 10, borderBottom: "1pt solid #333", paddingBottom: 8 },
   field: { minWidth: 90 },
@@ -78,11 +78,20 @@ const styles = StyleSheet.create({
   panel: { border: "1.2pt solid #111", borderRadius: 4, marginBottom: 8 },
   panelTitle: { backgroundColor: "#111", color: "white", fontSize: 8, fontWeight: 700, textTransform: "uppercase", padding: "3 6" },
   panelBody: { padding: 6 },
-  sectionTitle: { fontSize: 11, fontWeight: 700, marginTop: 10, marginBottom: 4, borderBottom: "1pt solid #333" },
-  tableRow: { flexDirection: "row", borderBottom: "0.5pt solid #ccc", paddingVertical: 2 },
-  tableHeaderRow: { flexDirection: "row", borderBottom: "1pt solid #333", paddingVertical: 2, fontWeight: 700 },
+  sectionTitle: { fontSize: 11, fontWeight: 700, marginTop: 14, marginBottom: 6, borderBottom: "1pt solid #333", paddingBottom: 2 },
+  tableRow: { flexDirection: "row", borderBottom: "0.5pt solid #ccc", paddingVertical: 3 },
+  tableHeaderRow: { flexDirection: "row", borderBottom: "1pt solid #333", paddingVertical: 3, fontWeight: 700 },
   cell: { flex: 2 },
   smallCell: { flex: 1, textAlign: "center" },
+  // Ítem de lista con nombre en negrita + descripción, con separación entre ítems (dotes, rasgos, cualidades...).
+  bullet: { marginBottom: 5 },
+  bulletTight: { marginBottom: 2.5 },
+  bulletLabel: { fontWeight: 700 },
+  bulletMeta: { fontSize: 7, color: "#555", marginBottom: 5 },
+  subLabel: { fontWeight: 700, fontSize: 7.5, textTransform: "uppercase", color: "#333", marginTop: 5, marginBottom: 3 },
+  // Tarjeta individual para cada compañero/familiar/montura, separada visualmente del resto.
+  companionCard: { border: "0.75pt solid #999", borderRadius: 3, padding: 8, marginBottom: 10 },
+  companionTitle: { fontWeight: 700, fontSize: 9.5, marginBottom: 4 },
 });
 
 function Panel({ title, children }: { title: string; children: React.ReactNode }) {
@@ -106,8 +115,8 @@ function SpecialAbilityList({ names }: { names: string[] }) {
       {names.map((n) => {
         const desc = describeSpecialQuality(n);
         return (
-          <Text key={n}>
-            • {n}
+          <Text key={n} style={styles.bullet}>
+            <Text style={styles.bulletLabel}>• {n}</Text>
             {desc ? `: ${desc}` : ""}
           </Text>
         );
@@ -121,27 +130,27 @@ function CompanionStatBlock({ stats, comp }: { stats: CompanionDerivedStats; com
   const chosenFeats = (comp.featIds ?? []).filter(Boolean).map((id) => findFeat(id)?.name ?? id);
   return (
     <>
-      <Text>
+      <Text style={styles.bullet}>
         DG {stats.totalHitDice} · PG {stats.hp} · CA {stats.ac} (toque {stats.touchAc}, desprevenido {stats.flatFootedAc}) ·
         Iniciativa {fmtSigned(stats.initiative)}
       </Text>
-      <Text>
+      <Text style={styles.bullet}>
         BAB/Presa {fmtSigned(stats.bab)}/{fmtSigned(stats.grapple)} · Salvaciones Fort {fmtSigned(stats.fort)}, Ref{" "}
         {fmtSigned(stats.ref)}, Vol {fmtSigned(stats.will)}
       </Text>
-      <Text>
+      <Text style={styles.bullet}>
         Características: Fue {stats.finalAbilityScores.str}, Des {stats.finalAbilityScores.dex}, Con{" "}
         {stats.finalAbilityScores.con}, Int {stats.finalAbilityScores.int}, Sab {stats.finalAbilityScores.wis}, Car{" "}
         {stats.finalAbilityScores.cha}
       </Text>
-      <Text>
+      <Text style={styles.bullet}>
         Ataques: {stats.attacks.map((a) => `${a.name} ${fmtSigned(a.bonus)} cc (${a.damage})`).join(", ") || "—"}
       </Text>
-      <Text>
+      <Text style={styles.bullet}>
         Armadura natural total +{stats.naturalArmorTotal} · Dotes: {stats.featCount} en total
         {chosenFeats.length > 0 ? ` (elegidas: ${chosenFeats.join(", ")})` : ""}
       </Text>
-      {chosenTricks.length > 0 && <Text>Trucos conocidos: {chosenTricks.join(", ")}</Text>}
+      {chosenTricks.length > 0 && <Text style={styles.bullet}>Trucos conocidos: {chosenTricks.join(", ")}</Text>}
     </>
   );
 }
@@ -523,8 +532,8 @@ export default function CharacterSheetDocument({ character }: { character: Chara
           <>
             <Text style={styles.sectionTitle}>Rasgos raciales</Text>
             {race.traits.map((t) => (
-              <Text key={t.name}>
-                • {t.name}: {t.description}
+              <Text key={t.name} style={styles.bullet}>
+                <Text style={styles.bulletLabel}>• {t.name}</Text>: {t.description}
               </Text>
             ))}
           </>
@@ -534,8 +543,8 @@ export default function CharacterSheetDocument({ character }: { character: Chara
           <>
             <Text style={styles.sectionTitle}>Rasgos de clase</Text>
             {unlockedFeatures.map((f, i) => (
-              <Text key={i}>
-                • {f.name} ({f.className} {f.level}): {f.description}
+              <Text key={i} style={styles.bullet}>
+                <Text style={styles.bulletLabel}>• {f.name}</Text> ({f.className} {f.level}): {f.description}
               </Text>
             ))}
           </>
@@ -551,14 +560,15 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                 const selectedOption = uc.choice.options?.find((o) => o.id === value);
                 const optionLabel = uc.choice.kind === "lista_fija" ? selectedOption?.label : value;
                 return (
-                  <Text key={i} style={{ fontSize: 7 }}>
-                    • {uc.choice.label} ({uc.className} {uc.level}): {optionLabel || "sin elegir"}
+                  <Text key={i} style={[styles.bullet, { fontSize: 7 }]}>
+                    <Text style={styles.bulletLabel}>• {uc.choice.label}</Text> ({uc.className} {uc.level}):{" "}
+                    {optionLabel || "sin elegir"}
                     {selectedOption?.description ? ` — ${selectedOption.description}` : ""}
                   </Text>
                 );
               })}
             {favoredEnemyBonuses.length > 0 && (
-              <Text style={{ fontSize: 7 }}>
+              <Text style={[styles.bullet, { fontSize: 7 }]}>
                 Bono total contra enemigos predilectos: {favoredEnemyBonuses.map((fe) => `${fe.enemy} +${fe.bonus}`).join(" · ")}
               </Text>
             )}
@@ -569,18 +579,21 @@ export default function CharacterSheetDocument({ character }: { character: Chara
         {character.feats.map((f, i) => {
           const feat = findFeat(f.featId);
           return (
-            <Text key={`${f.featId}-${i}`}>
-              • {feat?.name ?? f.featId}
-              {f.selection ? ` (${f.selection})` : ""}: {feat?.benefit ?? ""}
+            <Text key={`${f.featId}-${i}`} style={styles.bullet}>
+              <Text style={styles.bulletLabel}>
+                • {feat?.name ?? f.featId}
+                {f.selection ? ` (${f.selection})` : ""}
+              </Text>
+              : {feat?.benefit ?? ""}
             </Text>
           );
         })}
         {bonusFeats.map((bf, i) => {
           const feat = findFeat(bf.featId);
           return (
-            <Text key={`bonus-${i}`}>
-              • {feat?.name ?? bf.featId} (dote de bonificación — {bf.sourceLabel}, {bf.className} {bf.level}):{" "}
-              {feat?.benefit ?? ""}
+            <Text key={`bonus-${i}`} style={styles.bullet}>
+              <Text style={styles.bulletLabel}>• {feat?.name ?? bf.featId}</Text> (dote de bonificación — {bf.sourceLabel},{" "}
+              {bf.className} {bf.level}): {feat?.benefit ?? ""}
             </Text>
           );
         })}
@@ -593,16 +606,16 @@ export default function CharacterSheetDocument({ character }: { character: Chara
               if (!base) return null;
               const grant = classes.find((c) => c.id === comp.masterClassId)?.companionGrant;
               return (
-                <View key={comp.id} style={{ marginBottom: 4 }}>
-                  <Text style={{ fontWeight: 700 }}>
+                <View key={comp.id} style={styles.companionCard} wrap={false}>
+                  <Text style={styles.companionTitle}>
                     {comp.name || base.name} — {base.name} ({comp.masterClassId})
                   </Text>
-                  <Text>
+                  <Text style={styles.bulletMeta}>
                     {base.size} · Vel. {base.baseSpeed} pies
                   </Text>
                   {base.specialQualities.length > 0 && (
                     <>
-                      <Text>Cualidades especiales:</Text>
+                      <Text style={styles.subLabel}>Cualidades especiales</Text>
                       <SpecialAbilityList names={base.specialQualities} />
                     </>
                   )}
@@ -613,8 +626,9 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                       const stats = computeCompanionDerivedStats(base, bonus.hitDiceBonus, bonus.naturalArmorBonus, bonus.abilityBonus);
                       return (
                         <>
+                          <Text style={styles.subLabel}>Estadísticas</Text>
                           <CompanionStatBlock stats={stats} comp={comp} />
-                          <Text>
+                          <Text style={styles.bullet}>
                             Nivel efectivo {effLevel}: {bonus.bonusTricks} trucos de bonificación.
                           </Text>
                           <SpecialAbilityList names={bonus.special} />
@@ -626,8 +640,9 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                       const stats = computeFamiliarDerivedStats(base, level, hp, character.classLevels, classes);
                       return (
                         <>
+                          <Text style={styles.subLabel}>Estadísticas</Text>
                           <CompanionStatBlock stats={stats} comp={comp} />
-                          <Text>Otorga al amo: {computeFamiliarGrantedAbilities(level).join(", ")}.</Text>
+                          <Text style={styles.bullet}>Otorga al amo: {computeFamiliarGrantedAbilities(level).join(", ")}.</Text>
                         </>
                       );
                     })()}
@@ -639,10 +654,11 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                       const stats = computeCompanionDerivedStats(base, bonus.hitDiceBonus, bonus.naturalArmorBonus, bonus.strBonus, bonus.intScore);
                       return (
                         <>
+                          <Text style={styles.subLabel}>Estadísticas</Text>
                           <CompanionStatBlock stats={stats} comp={comp} />
                           {bonus.special.length > 0 && (
                             <>
-                              <Text>Nivel de paladín {paladinLevel}:</Text>
+                              <Text style={styles.subLabel}>Nivel de paladín {paladinLevel}</Text>
                               <SpecialAbilityList names={bonus.special} />
                             </>
                           )}
@@ -711,7 +727,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
             const w = findWondrousItem(e.itemId);
             const bonus = e.enhancementBonus ?? w?.minBonus ?? 0;
             return (
-              <Text key={i}>
+              <Text key={i} style={styles.bulletTight}>
                 • {w ? `${w.name} +${bonus}` : e.itemId} x{e.quantity} {e.equipped ? "(equipado)" : ""}
               </Text>
             );
@@ -719,12 +735,12 @@ export default function CharacterSheetDocument({ character }: { character: Chara
           const data =
             e.itemKind === "weapon" ? findWeapon(e.itemId) : e.itemKind === "armor" ? findArmor(e.itemId) : findGear(e.itemId);
           return (
-            <Text key={i}>
+            <Text key={i} style={styles.bulletTight}>
               • {data?.name ?? e.itemId} x{e.quantity} {e.equipped ? "(equipado)" : ""}
             </Text>
           );
         })}
-        <Text style={{ marginTop: 4 }}>Oro restante: {totalGold.toFixed(2)} po</Text>
+        <Text style={{ marginTop: 6 }}>Oro restante: {totalGold.toFixed(2)} po</Text>
 
         {character.notes && (
           <>

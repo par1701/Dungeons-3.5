@@ -8,11 +8,11 @@ import {
   findGear,
   findPower,
   findRace,
-  findSkill,
   findSpell,
   findWeapon,
   findWondrousItem,
   getEnabledClasses,
+  getEnabledSkills,
 } from "../data";
 import {
   abilityModifier,
@@ -100,6 +100,12 @@ const styles = StyleSheet.create({
   boxTitle: { fontSize: 9.5, fontWeight: 700, marginBottom: 4, borderBottom: "0.75pt solid #333", paddingBottom: 2 },
   // Línea en blanco para anotar a mano durante la partida (p.ej. PG actuales).
   writeLine: { borderBottom: "0.75pt solid #999", marginTop: 16 },
+  skillCell: {
+    fontSize: 7,
+    borderBottom: "0.5pt solid #ccc",
+    paddingVertical: 1.5,
+  },
+  skillNums: { fontSize: 6.5, color: "#555" },
 });
 
 /** `fill`: variante que ocupa todo el alto disponible de su fila (p.ej. Puntos de golpe, para dejar hueco de escritura a mano). */
@@ -166,6 +172,7 @@ function CompanionStatBlock({ stats, comp }: { stats: CompanionDerivedStats; com
 
 export default function CharacterSheetDocument({ character }: { character: Character }) {
   const classes = getEnabledClasses(character.activeSourceBooks);
+  const skills = getEnabledSkills(character.activeSourceBooks);
   const race = findRace(character.raceId);
   const size = race?.size ?? "Mediano";
   const finalScores = computeFinalAbilityScores(character.abilityScores, race, character.equipment);
@@ -384,9 +391,11 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                 </Panel>
               </View>
               <View style={{ flex: 1 }}>
-                <Panel title="Iniciativa y velocidad">
-                  <Text>Iniciativa: {initiative >= 0 ? `+${initiative}` : initiative}</Text>
-                  <Text>Velocidad: {race?.speed ?? 30} pies</Text>
+                <Panel title="Ataque">
+                  <Text>Bonif. ataque base: +{bab}</Text>
+                  <Text>Cuerpo a cuerpo: {meleeAttackBonus >= 0 ? `+${meleeAttackBonus}` : meleeAttackBonus}</Text>
+                  <Text>A distancia: {rangedAttackBonus >= 0 ? `+${rangedAttackBonus}` : rangedAttackBonus}</Text>
+                  <Text>Golpe de presa: {grapple >= 0 ? `+${grapple}` : grapple}</Text>
                 </Panel>
               </View>
             </View>
@@ -423,29 +432,75 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                 </Panel>
               </View>
               <View style={{ flex: 1 }}>
-                <Panel title="Ataque">
-                  <Text>Bonif. ataque base: +{bab}</Text>
-                  <Text>Cuerpo a cuerpo: {meleeAttackBonus >= 0 ? `+${meleeAttackBonus}` : meleeAttackBonus}</Text>
-                  <Text>A distancia: {rangedAttackBonus >= 0 ? `+${rangedAttackBonus}` : rangedAttackBonus}</Text>
-                  <Text>Golpe de presa: {grapple >= 0 ? `+${grapple}` : grapple}</Text>
+                <Panel title="Iniciativa y velocidad">
+                  <Text>Iniciativa: {initiative >= 0 ? `+${initiative}` : initiative}</Text>
+                  <Text>Velocidad: {race?.speed ?? 30} pies</Text>
                 </Panel>
               </View>
             </View>
-          </View>
 
-          <View style={{ flex: 2 }}>
-            <Panel title="Puntos de golpe y carga" fill>
+            <Panel title="Puntos de golpe y carga">
               <Text>PG máximos: {hp}</Text>
               <Text>
                 Carga: ligera hasta {carrying.light} · media hasta {carrying.medium} · pesada hasta {carrying.heavy} lb
               </Text>
-              <Text style={{ marginTop: 10, fontSize: 7, color: "#555" }}>
+              <Text style={{ marginTop: 8, fontSize: 7, color: "#555" }}>
                 Espacio para anotar a mano durante la partida (PG actuales, daño, condiciones...):
               </Text>
               <View style={styles.writeLine} />
               <View style={styles.writeLine} />
-              <View style={styles.writeLine} />
-              <View style={styles.writeLine} />
+            </Panel>
+          </View>
+
+          <View style={{ flex: 2 }}>
+            <Panel title="Habilidades" fill>
+              <Text style={{ fontSize: 6.5, color: "#555", marginBottom: 4 }}>
+                ✓ = habilidad de clase · R = rangos · T = total
+              </Text>
+              {(() => {
+                const skillEntries = Object.entries(character.skillRanks);
+                const rows = skills
+                  .flatMap((skill) => {
+                    const isClassSkill = character.classLevels.some((cl) =>
+                      classes.find((c) => c.id === cl.classId)?.classSkills.includes(skill.id),
+                    );
+                    const mod = abilityModifier(finalScores[skill.keyAbility]);
+                    const matching = skillEntries.filter(([key]) => parseSkillKey(key).skillId === skill.id);
+                    if (matching.length === 0) {
+                      return [{ id: skill.id, name: skill.name, ranks: 0, isClassSkill, mod }];
+                    }
+                    return matching.map(([key, ranks]) => {
+                      const { specialization } = parseSkillKey(key);
+                      return {
+                        id: key,
+                        name: specialization ? `${skill.name} (${specialization})` : skill.name,
+                        ranks,
+                        isClassSkill,
+                        mod,
+                      };
+                    });
+                  })
+                  .sort((a, b) => a.name.localeCompare(b.name, "es"));
+                const columns: (typeof rows)[] = [[], []];
+                rows.forEach((row, i) => columns[i % 2].push(row));
+                return (
+                  <View style={{ flexDirection: "row", gap: 10 }}>
+                    {columns.map((col, ci) => (
+                      <View key={ci} style={{ flex: 1 }}>
+                        {col.map((row) => (
+                          <Text key={row.id} style={styles.skillCell}>
+                            {row.isClassSkill ? "✓ " : ""}
+                            {row.name}{" "}
+                            <Text style={styles.skillNums}>
+                              R{row.ranks} T{row.ranks + row.mod}
+                            </Text>
+                          </Text>
+                        ))}
+                      </View>
+                    ))}
+                  </View>
+                );
+              })()}
             </Panel>
           </View>
         </View>
@@ -547,63 +602,47 @@ export default function CharacterSheetDocument({ character }: { character: Chara
           </Panel>
         )}
 
-        <View style={styles.sideRow}>
-          <View style={styles.sideBox}>
-            <Text style={styles.boxTitle}>Habilidades</Text>
-            {Object.entries(character.skillRanks).filter(([, ranks]) => ranks > 0).length === 0 ? (
-              <Text style={{ fontSize: 7.5, color: "#777" }}>Sin rangos invertidos.</Text>
-            ) : (
-              Object.entries(character.skillRanks)
-                .filter(([, ranks]) => ranks > 0)
-                .map(([key, ranks]) => {
-                  const { skillId, specialization } = parseSkillKey(key);
-                  const skill = findSkill(skillId);
-                  const isClassSkill = character.classLevels.some((cl) =>
-                    classes.find((c) => c.id === cl.classId)?.classSkills.includes(skillId),
-                  );
-                  const mod = skill ? abilityModifier(finalScores[skill.keyAbility]) : 0;
-                  const label = skill ? (specialization ? `${skill.name} (${specialization})` : skill.name) : key;
-                  return { key, ranks, isClassSkill, mod, label };
-                })
-                .sort((a, b) => a.label.localeCompare(b.label, "es"))
-                .map(({ key, ranks, isClassSkill, mod, label }) => (
-                  <View style={styles.tableRow} key={key}>
-                    <Text style={styles.smallCell}>{isClassSkill ? "✓" : ""}</Text>
-                    <Text style={styles.cell}>{label}</Text>
-                    <Text style={styles.smallCell}>R {ranks}</Text>
-                    <Text style={styles.smallCell}>T {ranks + mod}</Text>
-                  </View>
-                ))
-            )}
+        {(race && race.traits.length > 0) || featSummaryNames.length > 0 ? (
+          <View style={styles.sideRow}>
+            <View style={styles.sideBox}>
+              {race && race.traits.length > 0 && (
+                <>
+                  <Text style={styles.boxTitle}>Rasgos raciales</Text>
+                  {race.traits.map((t) => (
+                    <Text key={t.name} style={[styles.bullet, { fontSize: 7.5 }]}>
+                      <Text style={styles.bulletLabel}>• {t.name}</Text>: {t.description}
+                    </Text>
+                  ))}
+                </>
+              )}
+            </View>
+            <View style={styles.sideBox}>
+              {featSummaryNames.length > 0 && (
+                <>
+                  <Text style={styles.boxTitle}>Dotes (resumen)</Text>
+                  <Text style={{ fontSize: 7.5 }}>{featSummaryNames.join(" · ")}</Text>
+                </>
+              )}
+            </View>
           </View>
-          <View style={styles.sideBox}>
-            {race && race.traits.length > 0 && (
-              <>
-                <Text style={styles.boxTitle}>Rasgos raciales</Text>
-                {race.traits.map((t) => (
-                  <Text key={t.name} style={[styles.bullet, { fontSize: 7.5 }]}>
-                    <Text style={styles.bulletLabel}>• {t.name}</Text>: {t.description}
-                  </Text>
-                ))}
-              </>
-            )}
-            {featSummaryNames.length > 0 && (
-              <>
-                <Text style={[styles.boxTitle, { marginTop: race && race.traits.length > 0 ? 6 : 0 }]}>Dotes (resumen)</Text>
-                <Text style={{ fontSize: 7.5 }}>{featSummaryNames.join(" · ")}</Text>
-              </>
-            )}
-          </View>
-        </View>
+        ) : null}
 
         {unlockedFeatures.length > 0 && (
           <>
             <Text style={styles.sectionTitle}>Rasgos de clase</Text>
-            {unlockedFeatures.map((f, i) => (
-              <Text key={i} style={styles.bullet}>
-                <Text style={styles.bulletLabel}>• {f.name}</Text> ({f.className} {f.level}): {f.description}
-              </Text>
-            ))}
+            <View style={{ flexDirection: "row", gap: 16 }}>
+              {[0, 1].map((col) => (
+                <View key={col} style={{ flex: 1 }}>
+                  {unlockedFeatures
+                    .filter((_, i) => i % 2 === col)
+                    .map((f, i) => (
+                      <Text key={i} style={styles.bullet}>
+                        <Text style={styles.bulletLabel}>• {f.name}</Text> ({f.className} {f.level}): {f.description}
+                      </Text>
+                    ))}
+                </View>
+              ))}
+            </View>
           </>
         )}
 
@@ -633,27 +672,40 @@ export default function CharacterSheetDocument({ character }: { character: Chara
         )}
 
         <Text style={styles.sectionTitle}>Dotes</Text>
-        {character.feats.map((f, i) => {
-          const feat = findFeat(f.featId);
+        {(() => {
+          const featNodes = [
+            ...character.feats.map((f, i) => {
+              const feat = findFeat(f.featId);
+              return (
+                <Text key={`feat-${f.featId}-${i}`} style={styles.bullet}>
+                  <Text style={styles.bulletLabel}>
+                    • {feat?.name ?? f.featId}
+                    {f.selection ? ` (${f.selection})` : ""}
+                  </Text>
+                  : {feat?.benefit ?? ""}
+                </Text>
+              );
+            }),
+            ...bonusFeats.map((bf, i) => {
+              const feat = findFeat(bf.featId);
+              return (
+                <Text key={`bonus-${i}`} style={styles.bullet}>
+                  <Text style={styles.bulletLabel}>• {feat?.name ?? bf.featId}</Text> (dote de bonificación —{" "}
+                  {bf.sourceLabel}, {bf.className} {bf.level}): {feat?.benefit ?? ""}
+                </Text>
+              );
+            }),
+          ];
           return (
-            <Text key={`${f.featId}-${i}`} style={styles.bullet}>
-              <Text style={styles.bulletLabel}>
-                • {feat?.name ?? f.featId}
-                {f.selection ? ` (${f.selection})` : ""}
-              </Text>
-              : {feat?.benefit ?? ""}
-            </Text>
+            <View style={{ flexDirection: "row", gap: 16 }}>
+              {[0, 1].map((col) => (
+                <View key={col} style={{ flex: 1 }}>
+                  {featNodes.filter((_, i) => i % 2 === col)}
+                </View>
+              ))}
+            </View>
           );
-        })}
-        {bonusFeats.map((bf, i) => {
-          const feat = findFeat(bf.featId);
-          return (
-            <Text key={`bonus-${i}`} style={styles.bullet}>
-              <Text style={styles.bulletLabel}>• {feat?.name ?? bf.featId}</Text> (dote de bonificación — {bf.sourceLabel},{" "}
-              {bf.className} {bf.level}): {feat?.benefit ?? ""}
-            </Text>
-          );
-        })}
+        })()}
 
         {character.companions.length > 0 && (
           <>
@@ -779,24 +831,35 @@ export default function CharacterSheetDocument({ character }: { character: Chara
         )}
 
         <Text style={styles.sectionTitle}>Equipo</Text>
-        {character.equipment.map((e, i) => {
-          if (e.itemKind === "maravilloso") {
-            const w = findWondrousItem(e.itemId);
-            const bonus = e.enhancementBonus ?? w?.minBonus ?? 0;
+        {(() => {
+          const equipNodes = character.equipment.map((e, i) => {
+            if (e.itemKind === "maravilloso") {
+              const w = findWondrousItem(e.itemId);
+              const bonus = e.enhancementBonus ?? w?.minBonus ?? 0;
+              return (
+                <Text key={i} style={styles.bulletTight}>
+                  • {w ? `${w.name} +${bonus}` : e.itemId} x{e.quantity} {e.equipped ? "(equipado)" : ""}
+                </Text>
+              );
+            }
+            const data =
+              e.itemKind === "weapon" ? findWeapon(e.itemId) : e.itemKind === "armor" ? findArmor(e.itemId) : findGear(e.itemId);
             return (
               <Text key={i} style={styles.bulletTight}>
-                • {w ? `${w.name} +${bonus}` : e.itemId} x{e.quantity} {e.equipped ? "(equipado)" : ""}
+                • {data?.name ?? e.itemId} x{e.quantity} {e.equipped ? "(equipado)" : ""}
               </Text>
             );
-          }
-          const data =
-            e.itemKind === "weapon" ? findWeapon(e.itemId) : e.itemKind === "armor" ? findArmor(e.itemId) : findGear(e.itemId);
+          });
           return (
-            <Text key={i} style={styles.bulletTight}>
-              • {data?.name ?? e.itemId} x{e.quantity} {e.equipped ? "(equipado)" : ""}
-            </Text>
+            <View style={{ flexDirection: "row", gap: 16 }}>
+              {[0, 1].map((col) => (
+                <View key={col} style={{ flex: 1 }}>
+                  {equipNodes.filter((_, i) => i % 2 === col)}
+                </View>
+              ))}
+            </View>
           );
-        })}
+        })()}
         <Text style={{ marginTop: 6 }}>Oro restante: {totalGold.toFixed(2)} po</Text>
 
         {character.notes && (

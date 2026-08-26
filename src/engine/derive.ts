@@ -3,6 +3,7 @@ import type {
   AbilityScores,
   Armor,
   ArmorCategory,
+  BabProgression,
   Character,
   CharacterClassFeatureChoice,
   CharacterClassLevel,
@@ -155,37 +156,56 @@ export function totalCharacterLevel(classLevels: CharacterClassLevel[]): number 
   return classLevels.reduce((sum, cl) => sum + cl.level, 0);
 }
 
-export function computeBabTotal(classLevels: CharacterClassLevel[], classes: ClassDef[]): number {
-  return classLevels.reduce((sum, cl) => {
+function babForProgression(levelOrHitDice: number, progression: BabProgression): number {
+  switch (progression) {
+    case "completa":
+      return levelOrHitDice;
+    case "tres_cuartos":
+      return Math.floor((levelOrHitDice * 3) / 4);
+    case "media":
+      return Math.floor(levelOrHitDice / 2);
+    default:
+      return 0;
+  }
+}
+
+/** BBA que ya aportan los Dados de Golpe raciales de la criatura (razas monstruosas como osgo o minotauro), antes de sumar niveles de clase. */
+export function racialBabBonus(race?: Race): number {
+  if (!race?.racialHitDice) return 0;
+  return babForProgression(race.racialHitDice.count, race.racialHitDice.babProgression);
+}
+
+export function computeBabTotal(classLevels: CharacterClassLevel[], classes: ClassDef[], race?: Race): number {
+  const fromClasses = classLevels.reduce((sum, cl) => {
     const def = classDefFor(cl.classId, classes);
     if (!def) return sum;
-    switch (def.babProgression) {
-      case "completa":
-        return sum + cl.level;
-      case "tres_cuartos":
-        return sum + Math.floor((cl.level * 3) / 4);
-      case "media":
-        return sum + Math.floor(cl.level / 2);
-      default:
-        return sum;
-    }
+    return sum + babForProgression(cl.level, def.babProgression);
   }, 0);
+  return fromClasses + racialBabBonus(race);
 }
 
 function baseSaveForClassLevel(level: number, progression: SaveProgression): number {
   return progression === "buena" ? Math.floor(level / 2) + 2 : Math.floor(level / 3);
 }
 
+/** Salvación base que ya aportan los Dados de Golpe raciales de la criatura, antes de sumar niveles de clase. */
+export function racialSaveBonus(save: "fort" | "ref" | "will", race?: Race): number {
+  if (!race?.racialHitDice) return 0;
+  return baseSaveForClassLevel(race.racialHitDice.count, race.racialHitDice.saves[save]);
+}
+
 export function computeBaseSave(
   save: "fort" | "ref" | "will",
   classLevels: CharacterClassLevel[],
   classes: ClassDef[],
+  race?: Race,
 ): number {
-  return classLevels.reduce((sum, cl) => {
+  const fromClasses = classLevels.reduce((sum, cl) => {
     const def = classDefFor(cl.classId, classes);
     if (!def) return sum;
     return sum + baseSaveForClassLevel(cl.level, def.saves[save]);
   }, 0);
+  return fromClasses + racialSaveBonus(save, race);
 }
 
 export interface SaveTotals {
@@ -237,23 +257,32 @@ export function computeSaveTotals(
   classes: ClassDef[],
   abilityScores: AbilityScores,
   resistanceBonus = 0,
+  race?: Race,
 ): SaveTotals {
   const divineGrace = getDivineGraceBonus(classLevels, abilityScores);
   const battleBonus = getScoutBattleBonus(classLevels);
   return {
     fort:
-      computeBaseSave("fort", classLevels, classes) +
+      computeBaseSave("fort", classLevels, classes, race) +
       abilityModifier(abilityScores.con) +
       resistanceBonus +
       divineGrace +
       battleBonus,
-    ref: computeBaseSave("ref", classLevels, classes) + abilityModifier(abilityScores.dex) + resistanceBonus + divineGrace,
+    ref:
+      computeBaseSave("ref", classLevels, classes, race) + abilityModifier(abilityScores.dex) + resistanceBonus + divineGrace,
     will:
-      computeBaseSave("will", classLevels, classes) +
+      computeBaseSave("will", classLevels, classes, race) +
       abilityModifier(abilityScores.wis) +
       resistanceBonus +
       divineGrace,
   };
+}
+
+/** Puntos de habilidad que ya aportan los Dados de Golpe raciales de la criatura: (2 + mod. Int, mín. 1) × (DG raciales + 3), regla de creación de monstruos del DMG. */
+export function racialSkillPointsBonus(intScore: number, race?: Race): number {
+  if (!race?.racialHitDice) return 0;
+  const perHitDie = Math.max(1, 2 + abilityModifier(intScore));
+  return perHitDie * (race.racialHitDice.count + 3);
 }
 
 /** Puntos de habilidad totales disponibles a lo largo de la vida del personaje, sin repartir. */
@@ -263,6 +292,7 @@ export function computeTotalSkillPoints(
   intScore: number,
   isHuman: boolean,
   bonusSkillPoints = 0,
+  race?: Race,
 ): number {
   const intMod = abilityModifier(intScore);
   let firstClassHandled = false;
@@ -281,7 +311,7 @@ export function computeTotalSkillPoints(
       }
     }
   });
-  return total + bonusSkillPoints;
+  return total + bonusSkillPoints + racialSkillPointsBonus(intScore, race);
 }
 
 export function computeMaxHp(
@@ -293,10 +323,20 @@ export function computeMaxHp(
   maxFirstLevel: boolean,
   stalwartSorcerer = false,
   manualBonusHp = 0,
+  race?: Race,
 ): number {
   const conMod = abilityModifier(conScore);
   let hp = 0;
   let levelIndex = 0;
+  const racialHitDice = race?.racialHitDice;
+  if (racialHitDice) {
+    for (let i = 0; i < racialHitDice.count; i++) {
+      const isFirstOverall = levelIndex === 0;
+      const roll = isFirstOverall && maxFirstLevel ? racialHitDice.hitDie : Math.floor(racialHitDice.hitDie / 2) + 1;
+      hp += roll + conMod;
+      levelIndex++;
+    }
+  }
   classLevels.forEach((cl) => {
     const def = classDefFor(cl.classId, classes);
     if (!def) return;
@@ -311,7 +351,7 @@ export function computeMaxHp(
       } else if (useAverage) {
         roll = Math.floor(def.hitDie / 2) + 1;
       } else {
-        roll = hpRolls[levelIndex] ?? Math.floor(def.hitDie / 2) + 1;
+        roll = hpRolls[levelIndex - (racialHitDice?.count ?? 0)] ?? Math.floor(def.hitDie / 2) + 1;
       }
       hp += roll + conMod + bonusHp;
       levelIndex++;
@@ -1145,6 +1185,45 @@ export function computeCharacterArmorClass(
     dervishGraceBonus,
     tempestDefenseBonus,
   };
+}
+
+/** Extrae dado y modificador fijo de una cadena de daño simple (p.ej. "1d8+2"). */
+function parseNaturalDamageDie(damage: string): { dice: string; mod: number } | null {
+  const m = /^(\d+d\d+)([+-]\d+)?$/.exec(damage.trim());
+  if (!m) return null;
+  return { dice: m[1], mod: m[2] ? parseInt(m[2], 10) : 0 };
+}
+
+function formatNaturalDamage(dice: string, mod: number): string {
+  return mod === 0 ? dice : `${dice}${mod > 0 ? "+" : ""}${mod}`;
+}
+
+/**
+ * Ataques naturales otorgados directamente por la raza (garra, mordisco,
+ * cornada...), con la tirada de ataque y el daño ya calculados para el
+ * personaje. El primero de la lista se trata como ataque primario (suma el
+ * modificador de Fuerza completo al daño); el resto son secundarios (-5 al
+ * ataque, la mitad del modificador de Fuerza —redondeado hacia abajo— al
+ * daño), igual que la regla SRD de ataques naturales múltiples.
+ */
+export function computeRacialNaturalAttacks(
+  race: Race | undefined,
+  babTotal: number,
+  finalScores: AbilityScores,
+  size: string,
+): { name: string; bonus: number; damage: string }[] {
+  const attacks = race?.racialNaturalAttacks;
+  if (!attacks || attacks.length === 0) return [];
+  const strMod = abilityModifier(finalScores.str);
+  const sizeMod = sizeModifier(size);
+  return attacks.map((atk, index) => {
+    const isPrimary = index === 0;
+    const bonus = babTotal + strMod + sizeMod + (isPrimary ? 0 : -5);
+    const parsed = parseNaturalDamageDie(atk.damage);
+    const damageMod = isPrimary ? strMod : Math.floor(strMod / 2);
+    const damage = parsed ? formatNaturalDamage(parsed.dice, parsed.mod + damageMod) : atk.damage;
+    return { name: atk.name, bonus, damage };
+  });
 }
 
 export interface WeaponAttackSummary {

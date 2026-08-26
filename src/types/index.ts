@@ -198,6 +198,26 @@ export interface RaceTrait {
   description: string;
 }
 
+/**
+ * Dados de Golpe raciales de una raza monstruosa (p.ej. osgo, minotauro):
+ * el BBA, las salvaciones, los puntos de golpe y la armadura natural que la
+ * raza ya aporta antes de sumar ningún nivel de clase, siguiendo las reglas
+ * de creación de monstruos del DMG (no un nivel de clase real).
+ */
+export interface RacialHitDice {
+  count: number;
+  hitDie: number;
+  babProgression: BabProgression;
+  saves: Record<"fort" | "ref" | "will", SaveProgression>;
+  naturalArmor: number;
+}
+
+/** Ataque natural (garra, mordisco, cornada...) otorgado directamente por la raza, en tamaño Mediano. */
+export interface RacialNaturalAttack {
+  name: string;
+  damage: string;
+}
+
 export interface Race {
   id: string;
   name: string;
@@ -211,6 +231,10 @@ export interface Race {
   favoredClass: string; // id de clase o "cualquiera"
   levelAdjustment: number;
   description: string;
+  /** Solo en razas monstruosas con Dados de Golpe raciales propios (p.ej. osgo, minotauro). */
+  racialHitDice?: RacialHitDice;
+  /** Ataques naturales de la raza; el primero de la lista se trata como ataque primario (el resto, secundarios). */
+  racialNaturalAttacks?: RacialNaturalAttack[];
 }
 
 export type FeatType =

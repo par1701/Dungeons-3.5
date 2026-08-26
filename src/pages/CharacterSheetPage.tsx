@@ -112,7 +112,7 @@ function SpecialAbilityList({ names }: { names: string[] }) {
 
 function CompanionStatBlock({ stats, comp }: { stats: CompanionDerivedStats; comp: CharacterCompanion }) {
   const chosenTricks = (comp.tricks ?? []).map((id) => COMPANION_TRICKS.find((t) => t.id === id)?.name ?? id);
-  const chosenFeats = (comp.featIds ?? []).filter(Boolean).map((id) => findFeat(id)?.name ?? id);
+  const chosenFeatIds = (comp.featIds ?? []).filter(Boolean);
   return (
     <div style={{ margin: "4px 0 6px", fontSize: "0.92rem" }}>
       <p style={{ margin: "0 0 2px" }}>
@@ -134,8 +134,20 @@ function CompanionStatBlock({ stats, comp }: { stats: CompanionDerivedStats; com
       </p>
       <p style={{ margin: "0 0 2px" }}>
         <strong>Armadura natural total:</strong> +{stats.naturalArmorTotal} · <strong>Dotes:</strong> {stats.featCount} en
-        total{chosenFeats.length > 0 ? ` (elegidas: ${chosenFeats.join(", ")})` : ""}
+        total{chosenFeatIds.length < stats.featCount ? " (sin elegir todas)" : ""}
       </p>
+      {chosenFeatIds.length > 0 && (
+        <ul style={{ margin: "2px 0 4px", paddingLeft: 18 }}>
+          {chosenFeatIds.map((id, i) => {
+            const feat = findFeat(id);
+            return (
+              <li key={`${id}-${i}`}>
+                <strong>{feat?.name ?? id}</strong>: {feat?.benefit ?? ""}
+              </li>
+            );
+          })}
+        </ul>
+      )}
       {chosenTricks.length > 0 && (
         <p style={{ margin: 0 }}>
           <strong>Trucos conocidos:</strong> {chosenTricks.join(", ")}

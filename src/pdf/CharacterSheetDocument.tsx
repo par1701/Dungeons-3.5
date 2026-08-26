@@ -563,15 +563,17 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                   );
                   const mod = skill ? abilityModifier(finalScores[skill.keyAbility]) : 0;
                   const label = skill ? (specialization ? `${skill.name} (${specialization})` : skill.name) : key;
-                  return (
-                    <View style={styles.tableRow} key={key}>
-                      <Text style={styles.smallCell}>{isClassSkill ? "✓" : ""}</Text>
-                      <Text style={styles.cell}>{label}</Text>
-                      <Text style={styles.smallCell}>R {ranks}</Text>
-                      <Text style={styles.smallCell}>T {ranks + mod}</Text>
-                    </View>
-                  );
+                  return { key, ranks, isClassSkill, mod, label };
                 })
+                .sort((a, b) => a.label.localeCompare(b.label, "es"))
+                .map(({ key, ranks, isClassSkill, mod, label }) => (
+                  <View style={styles.tableRow} key={key}>
+                    <Text style={styles.smallCell}>{isClassSkill ? "✓" : ""}</Text>
+                    <Text style={styles.cell}>{label}</Text>
+                    <Text style={styles.smallCell}>R {ranks}</Text>
+                    <Text style={styles.smallCell}>T {ranks + mod}</Text>
+                  </View>
+                ))
             )}
           </View>
           <View style={styles.sideBox}>

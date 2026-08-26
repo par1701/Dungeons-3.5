@@ -634,18 +634,20 @@ export default function CharacterSheetPage() {
                   );
                   const mod = skill ? abilityModifier(finalScores[skill.keyAbility]) : 0;
                   const label = skill ? (specialization ? `${skill.name} (${specialization})` : skill.name) : key;
-                  return (
-                    <tr key={key}>
-                      <td className="class-skill-mark">{isClassSkill ? "✓" : ""}</td>
-                      <td>{label}</td>
-                      <td>
-                        <strong>{ranks + mod}</strong>
-                      </td>
-                      <td>{ranks}</td>
-                      <td>{mod >= 0 ? `+${mod}` : mod}</td>
-                    </tr>
-                  );
-                })}
+                  return { key, ranks, isClassSkill, mod, label };
+                })
+                .sort((a, b) => a.label.localeCompare(b.label, "es"))
+                .map(({ key, ranks, isClassSkill, mod, label }) => (
+                  <tr key={key}>
+                    <td className="class-skill-mark">{isClassSkill ? "✓" : ""}</td>
+                    <td>{label}</td>
+                    <td>
+                      <strong>{ranks + mod}</strong>
+                    </td>
+                    <td>{ranks}</td>
+                    <td>{mod >= 0 ? `+${mod}` : mod}</td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </Panel>

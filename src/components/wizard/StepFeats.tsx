@@ -62,7 +62,7 @@ export default function StepFeats({ character, onChange }: StepProps) {
   const bonusFeatByFeatId = new Map(bonusFeats.map((bf) => [bf.featId, bf]));
   const ctx: FeatPrereqContext = {
     abilityScores: finalScores,
-    babTotal: computeBabTotal(character.classLevels, classes),
+    babTotal: computeBabTotal(character.classLevels, classes, race),
     classLevels: Object.fromEntries(character.classLevels.map((cl) => [cl.classId, cl.level])),
     totalCharacterLevel: totalCharacterLevel(character.classLevels),
     featIds: getAllKnownFeatIds(character.feats, character.classLevels, classes, classFeatureChoices, character.activeVariantRules),

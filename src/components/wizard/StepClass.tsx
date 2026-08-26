@@ -36,7 +36,7 @@ export default function StepClass({ character, onChange }: StepProps) {
 
   const ctx: FeatPrereqContext = {
     abilityScores: finalScores,
-    babTotal: computeBabTotal(character.classLevels, allClasses),
+    babTotal: computeBabTotal(character.classLevels, allClasses, race),
     classLevels: Object.fromEntries(character.classLevels.map((cl) => [cl.classId, cl.level])),
     totalCharacterLevel: totalLevel,
     featIds: getAllKnownFeatIds(

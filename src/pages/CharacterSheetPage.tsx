@@ -27,6 +27,7 @@ import {
   computeFlurryOfBlowsSequence,
   computeInitiativeBonus,
   computeMaxHp,
+  computeRacialNaturalAttacks,
   computeRapidShotSequence,
   computeSaveTotals,
   computeRangeIncrementAttackBonuses,
@@ -165,8 +166,8 @@ export default function CharacterSheetPage() {
   const finalScores = computeFinalAbilityScores(character.abilityScores, race, character.equipment);
   const equipmentBonuses = computeEquipmentPassiveBonuses(character.equipment);
   const level = totalCharacterLevel(character.classLevels);
-  const bab = computeBabTotal(character.classLevels, classes);
-  const saves = computeSaveTotals(character.classLevels, classes, finalScores, equipmentBonuses.saveResistance);
+  const bab = computeBabTotal(character.classLevels, classes, race);
+  const saves = computeSaveTotals(character.classLevels, classes, finalScores, equipmentBonuses.saveResistance, race);
   const hp = computeMaxHp(
     character.classLevels,
     classes,
@@ -176,7 +177,9 @@ export default function CharacterSheetPage() {
     character.activeVariantRules.includes("vr-max-hp-first-level"),
     character.activeVariantRules.includes("vr-cm-stalwart-sorcerer"),
     character.bonusHp,
+    race,
   );
+  const racialNaturalAttacks = computeRacialNaturalAttacks(race, bab, finalScores, size);
   const carrying = computeCarryingCapacity(finalScores.str, size);
   const classSummary = character.classLevels
     .map((cl) => `${findClass(cl.classId)?.name ?? cl.classId} ${cl.level}`)
@@ -210,7 +213,7 @@ export default function CharacterSheetPage() {
     character.activeVariantRules.includes("vr-ua-armor-as-dr"),
     character.bonusInsightAC,
     equipmentBonuses.deflection,
-    equipmentBonuses.naturalArmor,
+    Math.max(equipmentBonuses.naturalArmor, race?.racialHitDice?.naturalArmor ?? 0),
     character.classLevels,
     meleeWeaponCount,
   );
@@ -418,19 +421,19 @@ export default function CharacterSheetPage() {
                   <tr>
                     <td>Fortaleza (Con)</td>
                     <td><strong>{saves.fort >= 0 ? `+${saves.fort}` : saves.fort}</strong></td>
-                    <td>{computeBaseSave("fort", character.classLevels, classes)}</td>
+                    <td>{computeBaseSave("fort", character.classLevels, classes, race)}</td>
                     <td>{abilityModifier(finalScores.con)}</td>
                   </tr>
                   <tr>
                     <td>Reflejos (Des)</td>
                     <td><strong>{saves.ref >= 0 ? `+${saves.ref}` : saves.ref}</strong></td>
-                    <td>{computeBaseSave("ref", character.classLevels, classes)}</td>
+                    <td>{computeBaseSave("ref", character.classLevels, classes, race)}</td>
                     <td>{dexMod}</td>
                   </tr>
                   <tr>
                     <td>Voluntad (Sab)</td>
                     <td><strong>{saves.will >= 0 ? `+${saves.will}` : saves.will}</strong></td>
-                    <td>{computeBaseSave("will", character.classLevels, classes)}</td>
+                    <td>{computeBaseSave("will", character.classLevels, classes, race)}</td>
                     <td>{abilityModifier(finalScores.wis)}</td>
                   </tr>
                 </tbody>
@@ -554,6 +557,12 @@ export default function CharacterSheetPage() {
                   .join(" · ")}
               </p>
             ))}
+          {racialNaturalAttacks.length > 0 && (
+            <p className="muted" style={{ marginTop: 8, marginBottom: 0 }}>
+              <strong>Ataques naturales de la raza:</strong>{" "}
+              {racialNaturalAttacks.map((a) => `${a.name} ${fmtSigned(a.bonus)} (${a.damage})`).join(", ")}
+            </p>
+          )}
         </Panel>
 
         {showAttackOptions && (

@@ -25,6 +25,7 @@ import {
   computeFlurryOfBlowsSequence,
   computeInitiativeBonus,
   computeMaxHp,
+  computeRacialNaturalAttacks,
   computeRapidShotSequence,
   computeSaveTotals,
   computeRangeIncrementAttackBonuses,
@@ -152,8 +153,8 @@ export default function CharacterSheetDocument({ character }: { character: Chara
   const finalScores = computeFinalAbilityScores(character.abilityScores, race, character.equipment);
   const equipmentBonuses = computeEquipmentPassiveBonuses(character.equipment);
   const level = totalCharacterLevel(character.classLevels);
-  const bab = computeBabTotal(character.classLevels, classes);
-  const saves = computeSaveTotals(character.classLevels, classes, finalScores, equipmentBonuses.saveResistance);
+  const bab = computeBabTotal(character.classLevels, classes, race);
+  const saves = computeSaveTotals(character.classLevels, classes, finalScores, equipmentBonuses.saveResistance, race);
   const hp = computeMaxHp(
     character.classLevels,
     classes,
@@ -163,7 +164,9 @@ export default function CharacterSheetDocument({ character }: { character: Chara
     character.activeVariantRules.includes("vr-max-hp-first-level"),
     character.activeVariantRules.includes("vr-cm-stalwart-sorcerer"),
     character.bonusHp,
+    race,
   );
+  const racialNaturalAttacks = computeRacialNaturalAttacks(race, bab, finalScores, size);
   const carrying = computeCarryingCapacity(finalScores.str, size);
   const classSummary = character.classLevels
     .map((cl) => `${findClass(cl.classId)?.name ?? cl.classId} ${cl.level}`)
@@ -197,7 +200,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
     character.activeVariantRules.includes("vr-ua-armor-as-dr"),
     character.bonusInsightAC,
     equipmentBonuses.deflection,
-    equipmentBonuses.naturalArmor,
+    Math.max(equipmentBonuses.naturalArmor, race?.racialHitDice?.naturalArmor ?? 0),
     character.classLevels,
     meleeWeaponCount,
   );
@@ -356,15 +359,15 @@ export default function CharacterSheetDocument({ character }: { character: Chara
             <Panel title="Salvaciones">
               <Text>
                 Fortaleza: {saves.fort >= 0 ? `+${saves.fort}` : saves.fort} (base{" "}
-                {computeBaseSave("fort", character.classLevels, classes)})
+                {computeBaseSave("fort", character.classLevels, classes, race)})
               </Text>
               <Text>
                 Reflejos: {saves.ref >= 0 ? `+${saves.ref}` : saves.ref} (base{" "}
-                {computeBaseSave("ref", character.classLevels, classes)})
+                {computeBaseSave("ref", character.classLevels, classes, race)})
               </Text>
               <Text>
                 Voluntad: {saves.will >= 0 ? `+${saves.will}` : saves.will} (base{" "}
-                {computeBaseSave("will", character.classLevels, classes)})
+                {computeBaseSave("will", character.classLevels, classes, race)})
               </Text>
               {(equipmentBonuses.saveResistance > 0 ||
                 getDivineGraceBonus(character.classLevels, finalScores) > 0 ||
@@ -444,6 +447,11 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                   </Text>
                 ))}
             </>
+          )}
+          {racialNaturalAttacks.length > 0 && (
+            <Text style={{ fontSize: 7, marginTop: 4 }}>
+              Ataques naturales de la raza: {racialNaturalAttacks.map((a) => `${a.name} ${fmtSigned(a.bonus)} (${a.damage})`).join(", ")}
+            </Text>
           )}
         </Panel>
 

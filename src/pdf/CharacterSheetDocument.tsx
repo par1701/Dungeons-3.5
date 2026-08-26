@@ -202,10 +202,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
   const favoredEnemyBonuses = getFavoredEnemyBonuses(classFeatureChoices);
   const unlockedChoices = getUnlockedClassFeatureChoices(character.classLevels, classes, character.activeVariantRules, knownFeatIds);
   const bonusFeats = getBonusFeatsFromClasses(character.classLevels, classes, classFeatureChoices, character.activeVariantRules);
-  const featSummaryNames = [
-    ...character.feats.map((f) => findFeat(f.featId)?.name ?? f.featId),
-    ...bonusFeats.map((bf) => findFeat(bf.featId)?.name ?? bf.featId),
-  ];
+  const hasFeats = character.feats.length > 0 || bonusFeats.length > 0;
 
   const equippedArmorItems = character.equipment
     .filter((e) => e.equipped && e.itemKind === "armor")
@@ -602,7 +599,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
           </Panel>
         )}
 
-        {(race && race.traits.length > 0) || featSummaryNames.length > 0 ? (
+        {(race && race.traits.length > 0) || hasFeats ? (
           <View style={styles.sideRow}>
             <View style={styles.sideBox}>
               {race && race.traits.length > 0 && (
@@ -617,10 +614,30 @@ export default function CharacterSheetDocument({ character }: { character: Chara
               )}
             </View>
             <View style={styles.sideBox}>
-              {featSummaryNames.length > 0 && (
+              {hasFeats && (
                 <>
-                  <Text style={styles.boxTitle}>Dotes (resumen)</Text>
-                  <Text style={{ fontSize: 7.5 }}>{featSummaryNames.join(" · ")}</Text>
+                  <Text style={styles.boxTitle}>Dotes</Text>
+                  {character.feats.map((f, i) => {
+                    const feat = findFeat(f.featId);
+                    return (
+                      <Text key={`feat-${f.featId}-${i}`} style={[styles.bullet, { fontSize: 7.5 }]}>
+                        <Text style={styles.bulletLabel}>
+                          • {feat?.name ?? f.featId}
+                          {f.selection ? ` (${f.selection})` : ""}
+                        </Text>
+                        : {feat?.benefit ?? ""}
+                      </Text>
+                    );
+                  })}
+                  {bonusFeats.map((bf, i) => {
+                    const feat = findFeat(bf.featId);
+                    return (
+                      <Text key={`bonus-${i}`} style={[styles.bullet, { fontSize: 7.5 }]}>
+                        <Text style={styles.bulletLabel}>• {feat?.name ?? bf.featId}</Text> (dote de bonificación —{" "}
+                        {bf.sourceLabel}, {bf.className} {bf.level}): {feat?.benefit ?? ""}
+                      </Text>
+                    );
+                  })}
                 </>
               )}
             </View>
@@ -670,42 +687,6 @@ export default function CharacterSheetDocument({ character }: { character: Chara
             )}
           </>
         )}
-
-        <Text style={styles.sectionTitle}>Dotes</Text>
-        {(() => {
-          const featNodes = [
-            ...character.feats.map((f, i) => {
-              const feat = findFeat(f.featId);
-              return (
-                <Text key={`feat-${f.featId}-${i}`} style={styles.bullet}>
-                  <Text style={styles.bulletLabel}>
-                    • {feat?.name ?? f.featId}
-                    {f.selection ? ` (${f.selection})` : ""}
-                  </Text>
-                  : {feat?.benefit ?? ""}
-                </Text>
-              );
-            }),
-            ...bonusFeats.map((bf, i) => {
-              const feat = findFeat(bf.featId);
-              return (
-                <Text key={`bonus-${i}`} style={styles.bullet}>
-                  <Text style={styles.bulletLabel}>• {feat?.name ?? bf.featId}</Text> (dote de bonificación —{" "}
-                  {bf.sourceLabel}, {bf.className} {bf.level}): {feat?.benefit ?? ""}
-                </Text>
-              );
-            }),
-          ];
-          return (
-            <View style={{ flexDirection: "row", gap: 16 }}>
-              {[0, 1].map((col) => (
-                <View key={col} style={{ flex: 1 }}>
-                  {featNodes.filter((_, i) => i % 2 === col)}
-                </View>
-              ))}
-            </View>
-          );
-        })()}
 
         {character.companions.length > 0 && (
           <>

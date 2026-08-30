@@ -472,7 +472,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                 </Panel>
               </View>
               <View style={{ flex: 1 }}>
-                <Panel title="Iniciativa y vel.">
+                <Panel title="Iniciativa y velocidad">
                   <Text>Iniciativa: {initiative >= 0 ? `+${initiative}` : initiative}</Text>
                   <Text>Velocidad: {race?.speed ?? 30} pies</Text>
                 </Panel>

@@ -518,6 +518,9 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                       return true;
                     });
                     if (matching.length === 0) {
+                      // Las habilidades que exigen entrenamiento (rangos) no se pueden usar sin ellos, así que no
+                      // tiene sentido ocupar sitio en la hoja con una que no se ha tocado nunca (R0 fijo).
+                      if (skill.trainedOnly) return [];
                       return [
                         {
                           id: skill.id,
@@ -532,7 +535,9 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                         },
                       ];
                     }
-                    return matching.map(([key, ranks]) => {
+                    return matching
+                      .filter(([, ranks]) => !skill.trainedOnly || ranks > 0)
+                      .map(([key, ranks]) => {
                       const { specialization } = parseSkillKey(key);
                       return {
                         id: key,

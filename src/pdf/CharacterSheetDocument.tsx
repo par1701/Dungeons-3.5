@@ -71,6 +71,29 @@ function isFavoredEnemySkill(skillId: string): boolean {
   return FAVORED_ENEMY_SKILL_IDS.has(skillId) || skillId.startsWith("knowledge");
 }
 
+/**
+ * Abreviaturas de nombres de habilidad para el cuadro de Habilidades del PDF, donde el ancho es limitado y un
+ * nombre largo (sobre todo los compuestos y los "Saber (especialidad)") fuerza el salto a una segunda línea,
+ * descuadrando la fila con la siguiente. Solo se abrevian los nombres suficientemente largos; el resto se deja
+ * tal cual. No afecta a la hoja HTML (ahí hay espacio de sobra) ni a ningún otro sitio de la app.
+ */
+const SKILL_NAME_ABBREVIATIONS: Record<string, string> = {
+  concentration: "Concent.",
+  "decipher-script": "Descifrar Escr.",
+  "disable-device": "Inutilizar Mec.",
+  "gather-information": "Reunir Inf.",
+  "handle-animal": "Trato Animales",
+  "knowledge-architecture-engineering": "Saber (Arq./Ing.)",
+  "knowledge-nobility-royalty": "Saber (Nobl./Realeza)",
+  "move-silently": "Mov. Sigilosamente",
+  "sense-motive": "Aver. Intenciones",
+  spellcraft: "Conoc. de Conjuros",
+  "use-magic-device": "Usar Obj. Mágico",
+};
+function abbreviatedSkillName(skillId: string, name: string): string {
+  return SKILL_NAME_ABBREVIATIONS[skillId] ?? name;
+}
+
 const styles = StyleSheet.create({
   page: { padding: 26, fontSize: 8.5, fontFamily: "Helvetica", lineHeight: 1.25 },
   title: { fontSize: 16, fontWeight: 700, marginBottom: 2, lineHeight: 1 },
@@ -107,12 +130,12 @@ const styles = StyleSheet.create({
   // Línea en blanco para anotar a mano durante la partida (p.ej. PG actuales).
   writeLine: { borderBottom: "0.75pt solid #999", marginTop: 16 },
   skillCell: {
-    fontSize: 7,
+    fontSize: 6,
     borderBottom: "0.5pt solid #ccc",
     paddingVertical: 1.5,
   },
-  skillNums: { fontSize: 6.5, color: "#555" },
-  skillFavoredNote: { fontSize: 6, color: "#555", fontStyle: "italic" },
+  skillNums: { fontSize: 5.5, color: "#555" },
+  skillFavoredNote: { fontSize: 5.5, color: "#555", fontStyle: "italic" },
 });
 
 /** `fill`: variante que ocupa todo el alto disponible de su fila (p.ej. Puntos de golpe, para dejar hueco de escritura a mano). */
@@ -384,7 +407,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
         </View>
 
         <View style={{ flexDirection: "row", gap: 6, alignItems: "stretch" }}>
-          <View style={{ flex: 3, gap: 6 }}>
+          <View style={{ flex: 5, gap: 6 }}>
             <View style={styles.row}>
               <View style={{ flex: 1 }}>
                 <Panel title="Clase de armadura">
@@ -449,7 +472,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                 </Panel>
               </View>
               <View style={{ flex: 1 }}>
-                <Panel title="Iniciativa y velocidad">
+                <Panel title="Iniciativa y vel.">
                   <Text>Iniciativa: {initiative >= 0 ? `+${initiative}` : initiative}</Text>
                   <Text>Velocidad: {race?.speed ?? 30} pies</Text>
                 </Panel>
@@ -469,10 +492,10 @@ export default function CharacterSheetDocument({ character }: { character: Chara
             </Panel>
           </View>
 
-          <View style={{ flex: 2 }}>
+          <View style={{ flex: 5 }}>
             <Panel title="Habilidades" fill>
               <Text style={{ fontSize: 6.5, color: "#555", marginBottom: 4 }}>
-                ✓ = habilidad de clase · R = rangos · T = total
+                • = habilidad de clase · R = rangos · T = total
                 {favoredEnemyBonuses.length > 0 ? " · * = bono de enemigo predilecto (ver más abajo)" : ""}
               </Text>
               {(() => {
@@ -485,14 +508,18 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                     const mod = abilityModifier(finalScores[skill.keyAbility]);
                     const matching = skillEntries.filter(([key]) => parseSkillKey(key).skillId === skill.id);
                     if (matching.length === 0) {
-                      return [{ id: skill.id, skillId: skill.id, name: skill.name, ranks: 0, isClassSkill, mod }];
+                      return [
+                        { id: skill.id, skillId: skill.id, baseName: skill.name, name: skill.name, specialization: undefined as string | undefined, ranks: 0, isClassSkill, mod },
+                      ];
                     }
                     return matching.map(([key, ranks]) => {
                       const { specialization } = parseSkillKey(key);
                       return {
                         id: key,
                         skillId: skill.id,
+                        baseName: skill.name,
                         name: specialization ? `${skill.name} (${specialization})` : skill.name,
+                        specialization,
                         ranks,
                         isClassSkill,
                         mod,
@@ -508,8 +535,9 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                       <View key={ci} style={{ flex: 1 }}>
                         {col.map((row) => (
                           <Text key={row.id} style={styles.skillCell}>
-                            {row.isClassSkill ? "✓ " : ""}
-                            {row.name}{" "}
+                            {row.isClassSkill ? "• " : ""}
+                            {abbreviatedSkillName(row.skillId, row.baseName)}
+                            {row.specialization ? ` (${row.specialization})` : ""}{" "}
                             <Text style={styles.skillNums}>
                               R{row.ranks} T{row.ranks + row.mod}
                               {favoredEnemyBonuses.length > 0 && isFavoredEnemySkill(row.skillId) ? " *" : ""}

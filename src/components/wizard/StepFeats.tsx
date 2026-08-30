@@ -323,7 +323,7 @@ export default function StepFeats({ character, onChange }: StepProps) {
                       </select>
                     ) : (
                       <input
-                        style={{ flex: 1, padding: 6, border: "1px solid var(--border)", borderRadius: 6 }}
+                        style={{ flex: 1, minWidth: 0, padding: 6, border: "1px solid var(--border)", borderRadius: 6 }}
                         placeholder="Arma, habilidad, escuela... (opcional)"
                         value={drafts[feat.id] ?? ""}
                         onChange={(e) => setDrafts((d) => ({ ...d, [feat.id]: e.target.value }))}

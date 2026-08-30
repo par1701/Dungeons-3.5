@@ -42,7 +42,10 @@ export default function StepSkills({ character, onChange }: StepProps) {
   );
 
   const spentPoints = Object.entries(character.skillRanks).reduce((sum, [key, ranks]) => {
-    const { skillId } = parseSkillKey(key);
+    const { skillId, specialization } = parseSkillKey(key);
+    // Ignora entradas "genéricas" (sin especialidad) de habilidades que exigen elegirla (Oficio, Artesanía,
+    // Interpretar): no se pueden editar como tales y no deberían poder gastar puntos por sí solas.
+    if (skills.find((s) => s.id === skillId)?.requiresSpecialization && !specialization) return sum;
     const isClassSkill = classSkillIds.has(skillId);
     return sum + ranks * (isClassSkill ? 1 : 2);
   }, 0);

@@ -645,6 +645,12 @@ export default function CharacterSheetPage() {
             <tbody>
               {Object.entries(character.skillRanks)
                 .filter(([, ranks]) => ranks > 0)
+                .filter(([key]) => {
+                  // Ignora entradas "genéricas" (sin especialidad) de habilidades que exigen elegirla (Oficio,
+                  // Artesanía, Interpretar): no tienen sentido por sí solas y solo pueden ser datos obsoletos.
+                  const { skillId, specialization } = parseSkillKey(key);
+                  return !(findSkill(skillId)?.requiresSpecialization && !specialization);
+                })
                 .map(([key, ranks]) => {
                   const { skillId, specialization } = parseSkillKey(key);
                   const skill = findSkill(skillId);

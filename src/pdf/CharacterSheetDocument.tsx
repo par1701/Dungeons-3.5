@@ -508,7 +508,15 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                     );
                     const mod = abilityModifier(finalScores[skill.keyAbility]);
                     const featBonus = computeFeatSkillBonus(skill.id, character.feats, bonusFeats);
-                    const matching = skillEntries.filter(([key]) => parseSkillKey(key).skillId === skill.id);
+                    // Ignora entradas "genéricas" (sin especialidad) de habilidades que exigen elegirla (Oficio,
+                    // Artesanía, Interpretar): no tienen sentido por sí solas y solo pueden ser datos obsoletos;
+                    // si no se filtraran aparecerían como una fila duplicada junto a la especialidad elegida.
+                    const matching = skillEntries.filter(([key]) => {
+                      const parsed = parseSkillKey(key);
+                      if (parsed.skillId !== skill.id) return false;
+                      if (skill.requiresSpecialization && !parsed.specialization) return false;
+                      return true;
+                    });
                     if (matching.length === 0) {
                       return [
                         {

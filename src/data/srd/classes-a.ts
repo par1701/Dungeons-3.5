@@ -340,7 +340,7 @@ const paladinFeatures: ClassFeature[] = [
 const rangerFeatures: ClassFeature[] = [
   { level: 1, name: "Enemigo predilecto (1)", description: "El explorador elige un tipo de enemigo predilecto, obteniendo +2 a Avistar, Buscar, Saber, Averiguar Intenciones y Supervivencia relacionados con él, así como +2 al daño contra esas criaturas." },
   { level: 1, name: "Rastrear", description: "El explorador obtiene la dote Rastrear como dote de bonificación." },
-  { level: 1, name: "Empatía salvaje", description: "El explorador puede mejorar la actitud de un animal, de forma similar a Diplomacia, mediante comunicación e interacción con lenguaje corporal." },
+  { level: 1, name: "Empatía salvaje", description: "El explorador puede mejorar la actitud de un animal, de forma similar a una prueba de Diplomacia. Tira 1d20 y suma su nivel de explorador y su modificador de Carisma para determinar el resultado de la prueba de empatía salvaje. El explorador y el animal deben poder observarse mutuamente a 9 m (30 pies) o menos en condiciones normales de visibilidad; suele llevar 1 minuto. También puede usarse para influir en una bestia mágica con Inteligencia 1 o 2, con un penalizador de -4 a la prueba." },
   { level: 2, name: "Estilo de combate (arquería o dos armas)", description: "El explorador elige entre el estilo de combate a distancia (arquería) o el de combate con dos armas, obteniendo la primera dote de bonificación de esa senda aunque no cumpla los prerrequisitos." },
   { level: 3, name: "Aguante", description: "El explorador obtiene la dote Aguante como dote de bonificación." },
   { level: 4, name: "Compañero animal", description: "El explorador puede convocar a un compañero animal que le sirve fielmente." },

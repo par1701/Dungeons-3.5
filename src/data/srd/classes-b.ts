@@ -124,7 +124,7 @@ const clericFeatures: ClassFeature[] = [
 ];
 
 const druidFeatures: ClassFeature[] = [
-  { level: 1, name: "Empatía con animales", description: "El druida puede mejorar la actitud de un animal de forma similar a Diplomacia, mediante comunicación e interacción con lenguaje corporal." },
+  { level: 1, name: "Empatía con animales", description: "El druida puede mejorar la actitud de un animal, de forma similar a una prueba de Diplomacia. Tira 1d20 y suma su nivel de druida y su modificador de Carisma para determinar el resultado de la prueba de empatía salvaje. El druida y el animal deben poder observarse mutuamente a 9 m (30 pies) o menos en condiciones normales de visibilidad; suele llevar 1 minuto. También puede usarse para influir en una bestia mágica con Inteligencia 1 o 2, con un penalizador de -4 a la prueba." },
   { level: 1, name: "Compañero animal", description: "El druida puede convocar a un compañero animal especial que le sirve fielmente y mejora en poder junto a él." },
   { level: 1, name: "Sentido de la naturaleza", description: "El druida obtiene un bonificador de +2 a las pruebas de Saber (Naturaleza) y de Supervivencia." },
   { level: 2, name: "Paso por el bosque", description: "El druida se mueve a través de terreno difícil de origen natural (zarzas, enredaderas, etc.) a su velocidad normal y sin sufrir daño ni otros efectos adversos." },

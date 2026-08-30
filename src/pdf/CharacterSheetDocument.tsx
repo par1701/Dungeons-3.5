@@ -407,7 +407,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
         </View>
 
         <View style={{ flexDirection: "row", gap: 6, alignItems: "stretch" }}>
-          <View style={{ flex: 2, gap: 6 }}>
+          <View style={{ flex: 5, gap: 6 }}>
             <View style={styles.row}>
               <View style={{ flex: 1 }}>
                 <Panel title="Clase de armadura">
@@ -492,7 +492,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
             </Panel>
           </View>
 
-          <View style={{ flex: 3 }}>
+          <View style={{ flex: 5 }}>
             <Panel title="Habilidades" fill>
               <Text style={{ fontSize: 6.5, color: "#555", marginBottom: 4 }}>
                 • = habilidad de clase · R = rangos · T = total

@@ -683,7 +683,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
         )}
 
         {(race && race.traits.length > 0) || hasFeats ? (
-          <View style={styles.sideRow}>
+          <View style={styles.sideRow} wrap={false}>
             <View style={styles.sideBox}>
               {race && race.traits.length > 0 && (
                 <>

@@ -183,6 +183,9 @@ export const CAD_FEATS: Feat[] = [
     description: "Ha aprendido en las calles que un puño en alto convence tanto como las palabras.",
     benefit:
       "Puede usar su modificador de Fuerza en lugar del de Carisma en las pruebas de Intimidar, y gana un bonificador de competencia +2 en las pruebas de Reunir Información.",
+    // La sustitución de característica en Intimidar (Fuerza en vez de Carisma) no está reflejada en el total de
+    // la hoja: el motor de habilidades no admite cambiar la característica clave dote a dote, solo el +2 fijo.
+    skillBonuses: [{ skillId: "gather-information", bonus: 2 }],
     prerequisites: [],
     fighterBonusFeat: false,
     stackable: false,

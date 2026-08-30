@@ -3,8 +3,10 @@ import { getEnabledClasses, getEnabledSkills } from "../../data";
 import type { StepProps } from "./types";
 import {
   abilityModifier,
+  computeFeatSkillBonus,
   computeFinalAbilityScores,
   computeTotalSkillPoints,
+  getBonusFeatsFromClasses,
   isHumanRace,
   makeSkillKey,
   parseSkillKey,
@@ -27,6 +29,8 @@ export default function StepSkills({ character, onChange }: StepProps) {
   const classSkillIds = new Set(
     character.classLevels.flatMap((cl) => classes.find((c) => c.id === cl.classId)?.classSkills ?? []),
   );
+
+  const bonusFeats = getBonusFeatsFromClasses(character.classLevels, classes, character.classFeatureChoices ?? [], character.activeVariantRules);
 
   const totalPoints = computeTotalSkillPoints(
     character.classLevels,
@@ -133,6 +137,7 @@ export default function StepSkills({ character, onChange }: StepProps) {
             const isClassSkill = classSkillIds.has(skill.id);
             const ranks = character.skillRanks[skill.id] ?? 0;
             const mod = abilityModifier(finalScores[skill.keyAbility]);
+            const featBonus = computeFeatSkillBonus(skill.id, character.feats, bonusFeats);
             const max = isClassSkill ? maxClassRank : maxCrossClassRank;
             const otherOwners = (classSkillOwnerNames.get(skill.id) ?? []).filter((n) => `Habilidades de clase: ${n}` !== groupLabel);
             return (
@@ -142,6 +147,11 @@ export default function StepSkills({ character, onChange }: StepProps) {
                   {otherOwners.length > 0 && (
                     <div className="muted" style={{ fontSize: "0.78rem" }}>
                       también de clase para: {otherOwners.join(", ")}
+                    </div>
+                  )}
+                  {featBonus > 0 && (
+                    <div className="muted" style={{ fontSize: "0.78rem" }}>
+                      +{featBonus} de competencia por dote (incluido en el total)
                     </div>
                   )}
                 </td>
@@ -158,7 +168,7 @@ export default function StepSkills({ character, onChange }: StepProps) {
                   />
                 </td>
                 <td>{mod >= 0 ? `+${mod}` : mod}</td>
-                <td>{ranks + mod}</td>
+                <td>{ranks + mod + featBonus}</td>
               </tr>
             );
           })}
@@ -172,6 +182,7 @@ export default function StepSkills({ character, onChange }: StepProps) {
       const isClassSkill = classSkillIds.has(skill.id);
       const max = isClassSkill ? maxClassRank : maxCrossClassRank;
       const mod = abilityModifier(finalScores[skill.keyAbility]);
+      const featBonus = computeFeatSkillBonus(skill.id, character.feats, bonusFeats);
       const entries = Object.keys(character.skillRanks)
         .map((key) => ({ key, ...parseSkillKey(key) }))
         .filter((e) => e.skillId === skill.id && e.specialization);
@@ -199,7 +210,8 @@ export default function StepSkills({ character, onChange }: StepProps) {
                   onChange={(e) => setRank(key, Number(e.target.value))}
                 />
                 <span className="muted">
-                  Mod. {mod >= 0 ? `+${mod}` : mod} · Total {ranks + mod}
+                  Mod. {mod >= 0 ? `+${mod}` : mod}
+                  {featBonus > 0 ? ` + ${featBonus} dote` : ""} · Total {ranks + mod + featBonus}
                 </span>
                 <button className="btn btn-danger" onClick={() => removeSpecialization(key)}>
                   Quitar

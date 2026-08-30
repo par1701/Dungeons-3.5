@@ -164,6 +164,10 @@ export function findClass(id: string): ClassDef | undefined {
 export function findSkill(id: string): Skill | undefined {
   return ALL_SKILLS.find((s) => s.id === id);
 }
+/** Busca una habilidad por su nombre en español exacto (p.ej. para resolver la "selection" de Soltura con una Habilidad). */
+export function findSkillByName(name: string): Skill | undefined {
+  return ALL_SKILLS.find((s) => s.name === name);
+}
 export function findFeat(id: string): Feat | undefined {
   return ALL_FEATS.find((f) => f.id === id);
 }

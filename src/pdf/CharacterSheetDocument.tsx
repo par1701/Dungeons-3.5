@@ -21,6 +21,7 @@ import {
   computeCarryingCapacity,
   computeCharacterArmorClass,
   computeEquipmentPassiveBonuses,
+  computeFeatSkillBonus,
   computeFinalAbilityScores,
   computeFlurryOfBlowsSequence,
   computeInitiativeBonus,
@@ -506,10 +507,21 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                       classes.find((c) => c.id === cl.classId)?.classSkills.includes(skill.id),
                     );
                     const mod = abilityModifier(finalScores[skill.keyAbility]);
+                    const featBonus = computeFeatSkillBonus(skill.id, character.feats, bonusFeats);
                     const matching = skillEntries.filter(([key]) => parseSkillKey(key).skillId === skill.id);
                     if (matching.length === 0) {
                       return [
-                        { id: skill.id, skillId: skill.id, baseName: skill.name, name: skill.name, specialization: undefined as string | undefined, ranks: 0, isClassSkill, mod },
+                        {
+                          id: skill.id,
+                          skillId: skill.id,
+                          baseName: skill.name,
+                          name: skill.name,
+                          specialization: undefined as string | undefined,
+                          ranks: 0,
+                          isClassSkill,
+                          mod,
+                          featBonus,
+                        },
                       ];
                     }
                     return matching.map(([key, ranks]) => {
@@ -523,6 +535,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                         ranks,
                         isClassSkill,
                         mod,
+                        featBonus,
                       };
                     });
                   })
@@ -539,7 +552,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                             {abbreviatedSkillName(row.skillId, row.baseName)}
                             {row.specialization ? ` (${row.specialization})` : ""}{" "}
                             <Text style={styles.skillNums}>
-                              R{row.ranks} T{row.ranks + row.mod}
+                              R{row.ranks} T{row.ranks + row.mod + row.featBonus}
                               {favoredEnemyBonuses.length > 0 && isFavoredEnemySkill(row.skillId) ? " *" : ""}
                             </Text>
                           </Text>

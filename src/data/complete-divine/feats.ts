@@ -527,6 +527,10 @@ export const CDV_FEATS: Feat[] = [
     description: "El personaje ha entrenado su mente para detectar el engaño y la herejía en nombre de su fe.",
     benefit:
       "Gana un bonificador de competencia +2 en las pruebas de Averiguar Intenciones y Saber (religión), y puede realizar pruebas de Averiguar Intenciones para percibir mentiras como acción libre una vez por asalto.",
+    skillBonuses: [
+      { skillId: "sense-motive", bonus: 2 },
+      { skillId: "knowledge-religion", bonus: 2 },
+    ],
     prerequisites: [{ description: "Saber (religión) 4 rangos", check: minSkillRanks("knowledge-religion", 4) }],
     fighterBonusFeat: false,
     stackable: false,

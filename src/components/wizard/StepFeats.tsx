@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { findFeat, getEnabledFeats, getEnabledClasses, getEnabledWeapons } from "../../data";
+import { findFeat, getEnabledFeats, getEnabledClasses, getEnabledSkills, getEnabledWeapons } from "../../data";
 import { getSourceBook } from "../../data/sourcebooks";
 import type { StepProps } from "./types";
 import type { FeatPrereqContext, FeatType } from "../../types";
@@ -42,6 +42,12 @@ const WEAPON_SELECTION_FEAT_IDS = new Set([
 const DAMAGE_TYPE_SELECTION_FEAT_IDS = new Set(["phb2-melee-weapon-mastery", "phb2-ranged-weapon-mastery"]);
 const DAMAGE_TYPE_OPTIONS = ["Contundente", "Perforante", "Cortante"];
 
+// Dotes cuyo texto de "selection" debe coincidir con el nombre exacto de una habilidad para que el motor de
+// reglas le aplique el bonificador correspondiente (Soltura con una Habilidad). Las habilidades con
+// especialización (Artesanía, Interpretar, Oficio) quedan fuera: la dote se ligaría a una especialidad concreta
+// (p.ej. "Oficio (Herrería)") que este selector de una sola línea no puede representar.
+const SKILL_SELECTION_FEAT_IDS = new Set(["skill-focus"]);
+
 export default function StepFeats({ character, onChange }: StepProps) {
   const [search, setSearch] = useState("");
   const [drafts, setDrafts] = useState<Record<string, string>>({});
@@ -53,6 +59,10 @@ export default function StepFeats({ character, onChange }: StepProps) {
   const weaponNames = [...new Set(getEnabledWeapons(character.activeSourceBooks).map((w) => w.name))].sort((a, b) =>
     a.localeCompare(b, "es"),
   );
+  const skillNames = getEnabledSkills(character.activeSourceBooks)
+    .filter((s) => !s.requiresSpecialization)
+    .map((s) => s.name)
+    .sort((a, b) => a.localeCompare(b, "es"));
   const race = findRace(character.raceId);
   const finalScores = computeFinalAbilityScores(character.abilityScores, race, character.equipment);
 
@@ -285,16 +295,27 @@ export default function StepFeats({ character, onChange }: StepProps) {
                     </ul>
                   )}
                   <div style={{ display: "flex", gap: 6 }}>
-                    {WEAPON_SELECTION_FEAT_IDS.has(feat.id) || DAMAGE_TYPE_SELECTION_FEAT_IDS.has(feat.id) ? (
+                    {WEAPON_SELECTION_FEAT_IDS.has(feat.id) ||
+                    DAMAGE_TYPE_SELECTION_FEAT_IDS.has(feat.id) ||
+                    SKILL_SELECTION_FEAT_IDS.has(feat.id) ? (
                       <select
-                        style={{ flex: 1, padding: 6, border: "1px solid var(--border)", borderRadius: 6 }}
+                        style={{ flex: 1, minWidth: 0, padding: 6, border: "1px solid var(--border)", borderRadius: 6 }}
                         value={drafts[feat.id] ?? ""}
                         onChange={(e) => setDrafts((d) => ({ ...d, [feat.id]: e.target.value }))}
                       >
                         <option value="" disabled>
-                          {WEAPON_SELECTION_FEAT_IDS.has(feat.id) ? "-- Elige un arma --" : "-- Elige un tipo de daño --"}
+                          {WEAPON_SELECTION_FEAT_IDS.has(feat.id)
+                            ? "-- Elige un arma --"
+                            : SKILL_SELECTION_FEAT_IDS.has(feat.id)
+                              ? "-- Elige una habilidad --"
+                              : "-- Elige un tipo de daño --"}
                         </option>
-                        {(WEAPON_SELECTION_FEAT_IDS.has(feat.id) ? weaponNames : DAMAGE_TYPE_OPTIONS).map((name) => (
+                        {(WEAPON_SELECTION_FEAT_IDS.has(feat.id)
+                          ? weaponNames
+                          : SKILL_SELECTION_FEAT_IDS.has(feat.id)
+                            ? skillNames
+                            : DAMAGE_TYPE_OPTIONS
+                        ).map((name) => (
                           <option key={name} value={name}>
                             {name}
                           </option>
@@ -302,7 +323,7 @@ export default function StepFeats({ character, onChange }: StepProps) {
                       </select>
                     ) : (
                       <input
-                        style={{ flex: 1, padding: 6, border: "1px solid var(--border)", borderRadius: 6 }}
+                        style={{ flex: 1, minWidth: 0, padding: 6, border: "1px solid var(--border)", borderRadius: 6 }}
                         placeholder="Arma, habilidad, escuela... (opcional)"
                         value={drafts[feat.id] ?? ""}
                         onChange={(e) => setDrafts((d) => ({ ...d, [feat.id]: e.target.value }))}
@@ -311,7 +332,9 @@ export default function StepFeats({ character, onChange }: StepProps) {
                     <button
                       className="btn"
                       disabled={
-                        (WEAPON_SELECTION_FEAT_IDS.has(feat.id) || DAMAGE_TYPE_SELECTION_FEAT_IDS.has(feat.id)) &&
+                        (WEAPON_SELECTION_FEAT_IDS.has(feat.id) ||
+                          DAMAGE_TYPE_SELECTION_FEAT_IDS.has(feat.id) ||
+                          SKILL_SELECTION_FEAT_IDS.has(feat.id)) &&
                         !(drafts[feat.id] ?? "").trim()
                       }
                       onClick={() => addFeatInstance(feat.id, (drafts[feat.id] ?? "").trim())}

@@ -155,6 +155,7 @@ export const CA_FEATS: Feat[] = [
     description: "El mago que se formó en una academia arcana conserva un repertorio de conjuros más amplio que sus compañeros autodidactas.",
     benefit:
       "Su libro de conjuros inicial contiene 6 conjuros adicionales de 1er nivel (además del bonificador por Inteligencia habitual). Cada vez que sube de nivel y aprende conjuros nuevos gracias a su progresión de mago, aprende 1 conjuro adicional del nivel más alto que pueda lanzar. Además, obtiene un bonificador de competencia +2 a las pruebas de Saber relacionadas con la arcana.",
+    skillBonuses: [{ skillId: "knowledge-arcana", bonus: 2 }],
     prerequisites: [{ description: "Capacidad de lanzar conjuros de mago" }],
     fighterBonusFeat: false,
     stackable: false,

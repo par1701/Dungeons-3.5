@@ -30,7 +30,7 @@ export const COMPLETE_CHAMPION_VARIANT_RULES: VariantRule[] = [
   },
   {
     id: "vr-cc-pool-of-healing",
-    name: "Rasgo de clase alternativo: Charca de curación (clérigo)",
+    name: "Rasgo de clase alternativo: Reserva de curación (clérigo)",
     source: "complete-champion",
     category: "clase",
     description:

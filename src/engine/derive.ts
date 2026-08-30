@@ -11,6 +11,7 @@ import type {
   CharacterFeatChoice,
   ClassDef,
   ClassFeatureChoice,
+  Feat,
   MagicItemProperty,
   Race,
   SaveProgression,
@@ -27,7 +28,7 @@ import {
   resolveProperties,
   wondrousItemBonus,
 } from "./itemEnhancements";
-import { findWondrousItem } from "../data";
+import { findFeat, findSkillByName, findWondrousItem } from "../data";
 
 const SKILL_KEY_SEPARATOR = "::";
 
@@ -312,6 +313,41 @@ export function computeTotalSkillPoints(
     }
   });
   return total + bonusSkillPoints + racialSkillPointsBonus(intScore, race);
+}
+
+/**
+ * Bonificador de competencia fijo e incondicional que las dotes del personaje dan a una habilidad concreta (p.ej.
+ * Alerta: +2 a Escuchar y Avistar), incluidas las dotes de bonificación de clase y la habilidad elegida libremente
+ * en dotes como Soltura con una Habilidad. No incluye bonos solo aplicables en cierta circunstancia (enemigo
+ * predilecto, lanzar a la defensiva...), que se quedan solo como texto en la dote.
+ *
+ * Los bonificadores de competencia del mismo tipo no se acumulan entre sí (regla de apilamiento del SRD): si dos
+ * dotes distintas dieran competencia a la misma habilidad, solo cuenta la más alta, de ahí que se tome el máximo
+ * en vez de sumar todas las coincidencias.
+ */
+export function computeFeatSkillBonus(
+  skillId: string,
+  characterFeats: CharacterFeatChoice[],
+  bonusFeats: { featId: string }[] = [],
+): number {
+  let best = 0;
+  const considerSkillBonuses = (feat: Feat | undefined) => {
+    if (!feat) return;
+    for (const sb of feat.skillBonuses ?? []) {
+      const matches = sb.skillId === "knowledge-any" ? skillId.startsWith("knowledge-") : sb.skillId === skillId;
+      if (matches) best = Math.max(best, sb.bonus);
+    }
+  };
+  for (const cf of characterFeats) {
+    const feat = findFeat(cf.featId);
+    considerSkillBonuses(feat);
+    if (feat?.selectedSkillBonus && cf.selection) {
+      const selectedSkill = findSkillByName(cf.selection);
+      if (selectedSkill?.id === skillId) best = Math.max(best, feat.selectedSkillBonus);
+    }
+  }
+  for (const bf of bonusFeats) considerSkillBonuses(findFeat(bf.featId));
+  return best;
 }
 
 export function computeMaxHp(

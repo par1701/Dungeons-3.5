@@ -260,6 +260,14 @@ export interface FeatPrereqContext {
   casterLevel: number;
 }
 
+export interface FeatSkillBonus {
+  /** Id de la habilidad beneficiada, o "knowledge-any" para "todas las habilidades de Saber" (p.ej. Investigador). */
+  skillId: string;
+  /** Bonificador de competencia. Los bonos de competencia del mismo tipo no se acumulan: si varias dotes dieran
+   *  bono a la misma habilidad, solo cuenta el más alto (ver `computeFeatSkillBonus`). */
+  bonus: number;
+}
+
 export interface Feat {
   id: string;
   name: string;
@@ -270,6 +278,19 @@ export interface Feat {
   prerequisites: FeatPrerequisite[];
   fighterBonusFeat: boolean;
   stackable: boolean;
+  /**
+   * Bonificadores de competencia fijos e incondicionales a habilidades concretas (p.ej. Alerta: Escuchar/Avistar
+   * +2), aplicados automáticamente al total de la habilidad. NO incluye bonos solo aplicables en cierta
+   * circunstancia (enemigo predilecto, lanzar a la defensiva, hacerse pasar por otra raza...), que quedan
+   * documentados únicamente en `benefit` y no se sacan del total de la hoja.
+   */
+  skillBonuses?: FeatSkillBonus[];
+  /**
+   * Si la dote da un bonificador de competencia a una única habilidad elegida libremente al tomarla (p.ej. Soltura
+   * con una Habilidad): la cuantía de ese bonificador. La habilidad afectada es la guardada en `selection` de esa
+   * instancia de dote del personaje.
+   */
+  selectedSkillBonus?: number;
 }
 
 export interface Skill {

@@ -23,6 +23,7 @@ import {
   computeCarryingCapacity,
   computeCharacterArmorClass,
   computeEquipmentPassiveBonuses,
+  computeFeatSkillBonus,
   computeFinalAbilityScores,
   computeFlurryOfBlowsSequence,
   computeInitiativeBonus,
@@ -651,15 +652,21 @@ export default function CharacterSheetPage() {
                     classes.find((c) => c.id === cl.classId)?.classSkills.includes(skillId),
                   );
                   const mod = skill ? abilityModifier(finalScores[skill.keyAbility]) : 0;
+                  const featBonus = skill ? computeFeatSkillBonus(skill.id, character.feats, bonusFeats) : 0;
                   const label = skill ? (specialization ? `${skill.name} (${specialization})` : skill.name) : key;
-                  return { key, skillId, ranks, isClassSkill, mod, label };
+                  return { key, skillId, ranks, isClassSkill, mod, featBonus, label };
                 })
                 .sort((a, b) => a.label.localeCompare(b.label, "es"))
-                .map(({ key, skillId, ranks, isClassSkill, mod, label }) => (
+                .map(({ key, skillId, ranks, isClassSkill, mod, featBonus, label }) => (
                   <tr key={key}>
                     <td className="class-skill-mark">{isClassSkill ? "✓" : ""}</td>
                     <td>
                       {label}
+                      {featBonus > 0 && (
+                        <div className="muted" style={{ fontSize: "0.78rem" }}>
+                          +{featBonus} de competencia por dote (incluido en el total)
+                        </div>
+                      )}
                       {favoredEnemyBonuses.length > 0 && isFavoredEnemySkill(skillId) && (
                         <div className="muted" style={{ fontSize: "0.78rem" }}>
                           enemigo predilecto: {favoredEnemyBonuses.map((fe) => `${fe.enemy} +${fe.bonus}`).join(", ")}
@@ -667,7 +674,7 @@ export default function CharacterSheetPage() {
                       )}
                     </td>
                     <td>
-                      <strong>{ranks + mod}</strong>
+                      <strong>{ranks + mod + featBonus}</strong>
                     </td>
                     <td>{ranks}</td>
                     <td>{mod >= 0 ? `+${mod}` : mod}</td>

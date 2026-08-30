@@ -98,6 +98,10 @@ export const CS_FEATS: Feat[] = [
     description: "El personaje se crió en una familia de comerciantes, contrabandistas o mercaderes itinerantes.",
     benefit:
       "Obtiene +2 de bonificador de competencia a las pruebas de Tasación y Oficio (mercader o similar). Además, al crear el personaje, su oro inicial aumenta un 50% sobre lo habitual para su clase.",
+    // Solo se aplica automáticamente el bono a Tasación: el de Oficio depende de qué especialidad concreta
+    // (mercader o similar) tenga el personaje, y el modelo de datos no vincula bonos de dote a una
+    // especialización de Oficio en particular. Sigue documentado en el texto de benefit para aplicarlo a mano.
+    skillBonuses: [{ skillId: "appraise", bonus: 2 }],
     prerequisites: [],
     fighterBonusFeat: false,
     stackable: false,
@@ -125,6 +129,7 @@ export const CS_FEATS: Feat[] = [
     types: ["general"],
     description: "El personaje ha sobrevivido a suficientes emboscadas y peleas callejeras como para que sus reflejos ya no le fallen ante la violencia repentina.",
     benefit: "+2 de bonificador a las tiradas de Iniciativa y +2 de bonificador de competencia a las pruebas de Intimidar.",
+    skillBonuses: [{ skillId: "intimidate", bonus: 2 }],
     prerequisites: [{ description: "Haber sobrevivido a un encuentro de combate cercano a la muerte" }],
     fighterBonusFeat: false,
     stackable: false,

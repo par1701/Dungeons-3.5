@@ -706,7 +706,9 @@ export default function CharacterSheetDocument({ character }: { character: Chara
             })()}
             {favoredEnemyBonuses.length > 0 && (
               <Text style={[styles.bullet, { fontSize: 7 }]}>
-                Bono total contra enemigos predilectos: {favoredEnemyBonuses.map((fe) => `${fe.enemy} +${fe.bonus}`).join(" · ")}
+                <Text style={styles.bulletLabel}>Bono contra enemigos predilectos</Text> (daño, y Avistar/Buscar/Saber/Averiguar
+                Intenciones/Supervivencia relacionados con ese enemigo):{" "}
+                {favoredEnemyBonuses.map((fe) => `${fe.enemy} +${fe.bonus}`).join(" · ")}
               </Text>
             )}
           </>

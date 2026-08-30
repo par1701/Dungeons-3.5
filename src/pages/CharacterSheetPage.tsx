@@ -720,7 +720,8 @@ export default function CharacterSheetPage() {
             </ul>
             {favoredEnemyBonuses.length > 0 && (
               <p className="muted" style={{ marginTop: 8, marginBottom: 0 }}>
-                <strong>Bono total contra enemigos predilectos:</strong>{" "}
+                <strong>Bono contra enemigos predilectos</strong> (daño, y Avistar/Buscar/Saber/Averiguar
+                Intenciones/Supervivencia relacionados con ese enemigo):{" "}
                 {favoredEnemyBonuses.map((fe) => `${fe.enemy} +${fe.bonus}`).join(" · ")}
               </p>
             )}

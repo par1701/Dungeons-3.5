@@ -65,6 +65,12 @@ import {
   type CompanionDerivedStats,
 } from "../engine/companions";
 
+/** Habilidades que el rasgo de clase "Enemigo predilecto" del explorador bonifica cuando el uso está relacionado con ese enemigo (además del bono a daño, que no es de habilidad). Saber cubre cualquiera de sus especialidades, según cuál aplique a la criatura en cuestión. */
+const FAVORED_ENEMY_SKILL_IDS = new Set(["spot", "search", "sense-motive", "survival"]);
+function isFavoredEnemySkill(skillId: string): boolean {
+  return FAVORED_ENEMY_SKILL_IDS.has(skillId) || skillId.startsWith("knowledge");
+}
+
 const styles = StyleSheet.create({
   page: { padding: 26, fontSize: 8.5, fontFamily: "Helvetica", lineHeight: 1.25 },
   title: { fontSize: 16, fontWeight: 700, marginBottom: 2, lineHeight: 1 },
@@ -106,6 +112,7 @@ const styles = StyleSheet.create({
     paddingVertical: 1.5,
   },
   skillNums: { fontSize: 6.5, color: "#555" },
+  skillFavoredNote: { fontSize: 6, color: "#555", fontStyle: "italic" },
 });
 
 /** `fill`: variante que ocupa todo el alto disponible de su fila (p.ej. Puntos de golpe, para dejar hueco de escritura a mano). */
@@ -466,6 +473,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
             <Panel title="Habilidades" fill>
               <Text style={{ fontSize: 6.5, color: "#555", marginBottom: 4 }}>
                 ✓ = habilidad de clase · R = rangos · T = total
+                {favoredEnemyBonuses.length > 0 ? " · * = bono de enemigo predilecto (ver más abajo)" : ""}
               </Text>
               {(() => {
                 const skillEntries = Object.entries(character.skillRanks);
@@ -477,12 +485,13 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                     const mod = abilityModifier(finalScores[skill.keyAbility]);
                     const matching = skillEntries.filter(([key]) => parseSkillKey(key).skillId === skill.id);
                     if (matching.length === 0) {
-                      return [{ id: skill.id, name: skill.name, ranks: 0, isClassSkill, mod }];
+                      return [{ id: skill.id, skillId: skill.id, name: skill.name, ranks: 0, isClassSkill, mod }];
                     }
                     return matching.map(([key, ranks]) => {
                       const { specialization } = parseSkillKey(key);
                       return {
                         id: key,
+                        skillId: skill.id,
                         name: specialization ? `${skill.name} (${specialization})` : skill.name,
                         ranks,
                         isClassSkill,
@@ -503,6 +512,7 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                             {row.name}{" "}
                             <Text style={styles.skillNums}>
                               R{row.ranks} T{row.ranks + row.mod}
+                              {favoredEnemyBonuses.length > 0 && isFavoredEnemySkill(row.skillId) ? " *" : ""}
                             </Text>
                           </Text>
                         ))}
@@ -511,6 +521,12 @@ export default function CharacterSheetDocument({ character }: { character: Chara
                   </View>
                 );
               })()}
+              {favoredEnemyBonuses.length > 0 && (
+                <Text style={{ fontSize: 6.5, color: "#555", marginTop: 4 }}>
+                  * Avistar/Buscar/Saber/Averiguar Intenciones/Supervivencia relacionados con el enemigo predilecto:{" "}
+                  {favoredEnemyBonuses.map((fe) => `${fe.enemy} +${fe.bonus}`).join(", ")}
+                </Text>
+              )}
             </Panel>
           </View>
         </View>
@@ -706,8 +722,8 @@ export default function CharacterSheetDocument({ character }: { character: Chara
             })()}
             {favoredEnemyBonuses.length > 0 && (
               <Text style={[styles.bullet, { fontSize: 7 }]}>
-                <Text style={styles.bulletLabel}>Bono contra enemigos predilectos</Text> (daño, y Avistar/Buscar/Saber/Averiguar
-                Intenciones/Supervivencia relacionados con ese enemigo):{" "}
+                <Text style={styles.bulletLabel}>Bono de daño contra enemigos predilectos</Text> (el bono de habilidad
+                relacionado aparece junto a cada habilidad, en Habilidades):{" "}
                 {favoredEnemyBonuses.map((fe) => `${fe.enemy} +${fe.bonus}`).join(" · ")}
               </Text>
             )}

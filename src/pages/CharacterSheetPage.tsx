@@ -69,6 +69,12 @@ import {
 import type { CharacterCompanion } from "../types";
 import CharacterSheetDocument from "../pdf/CharacterSheetDocument";
 
+/** Habilidades que el rasgo de clase "Enemigo predilecto" del explorador bonifica cuando el uso está relacionado con ese enemigo (además del bono a daño, que no es de habilidad). Saber cubre cualquiera de sus especialidades, según cuál aplique a la criatura en cuestión. */
+const FAVORED_ENEMY_SKILL_IDS = new Set(["spot", "search", "sense-motive", "survival"]);
+function isFavoredEnemySkill(skillId: string): boolean {
+  return FAVORED_ENEMY_SKILL_IDS.has(skillId) || skillId.startsWith("knowledge");
+}
+
 function Field({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="sheet-field">
@@ -646,13 +652,20 @@ export default function CharacterSheetPage() {
                   );
                   const mod = skill ? abilityModifier(finalScores[skill.keyAbility]) : 0;
                   const label = skill ? (specialization ? `${skill.name} (${specialization})` : skill.name) : key;
-                  return { key, ranks, isClassSkill, mod, label };
+                  return { key, skillId, ranks, isClassSkill, mod, label };
                 })
                 .sort((a, b) => a.label.localeCompare(b.label, "es"))
-                .map(({ key, ranks, isClassSkill, mod, label }) => (
+                .map(({ key, skillId, ranks, isClassSkill, mod, label }) => (
                   <tr key={key}>
                     <td className="class-skill-mark">{isClassSkill ? "✓" : ""}</td>
-                    <td>{label}</td>
+                    <td>
+                      {label}
+                      {favoredEnemyBonuses.length > 0 && isFavoredEnemySkill(skillId) && (
+                        <div className="muted" style={{ fontSize: "0.78rem" }}>
+                          enemigo predilecto: {favoredEnemyBonuses.map((fe) => `${fe.enemy} +${fe.bonus}`).join(", ")}
+                        </div>
+                      )}
+                    </td>
                     <td>
                       <strong>{ranks + mod}</strong>
                     </td>
@@ -720,8 +733,8 @@ export default function CharacterSheetPage() {
             </ul>
             {favoredEnemyBonuses.length > 0 && (
               <p className="muted" style={{ marginTop: 8, marginBottom: 0 }}>
-                <strong>Bono contra enemigos predilectos</strong> (daño, y Avistar/Buscar/Saber/Averiguar
-                Intenciones/Supervivencia relacionados con ese enemigo):{" "}
+                <strong>Bono de daño contra enemigos predilectos</strong> (el bono de habilidad relacionado aparece
+                junto a cada habilidad, en Habilidades):{" "}
                 {favoredEnemyBonuses.map((fe) => `${fe.enemy} +${fe.bonus}`).join(" · ")}
               </p>
             )}
